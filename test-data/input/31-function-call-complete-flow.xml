@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_func_001" status="active" created-at="2026-02-07T11:00:00Z">
+  <user message-id="msg_001" user-id="user_alice" author-name="Alice" created-at="2026-02-07T11:00:00Z">
+    <text>What's the weather in Seattle?</text>
+  </user>
+  <agent message-id="msg_002" agent-id="agent_assistant" created-at="2026-02-07T11:00:02Z">
+    <thinking exposed="false" audience="agent">
+      User wants weather for Seattle. Need to call get_weather tool.
+    </thinking>
+    <function-call call-id="call_001" name="get_weather" audience="agent">
+      {"location": "Seattle, WA", "units": "fahrenheit"}
+    </function-call>
+  </agent>
+  <tool message-id="msg_003" parent-message-id="msg_002" created-at="2026-02-07T11:00:03Z">
+    <function-result call-id="call_001" is-error="false" audience="agent">
+      {"temperature": 52, "conditions": "cloudy", "humidity": 75}
+    </function-result>
+  </tool>
+  <agent message-id="msg_004" parent-message-id="msg_003" agent-id="agent_assistant" created-at="2026-02-07T11:00:04Z">
+    <text audience="user,agent">
+      The weather in Seattle is currently 52°F and cloudy, with 75% humidity.
+    </text>
+  </agent>
+</thread>

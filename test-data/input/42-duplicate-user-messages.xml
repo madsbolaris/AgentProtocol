@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_duplicate_001" status="active" created-at="2026-02-07T13:00:00Z">
+  <user message-id="msg_001" user-id="user_iris" author-name="Iris" created-at="2026-02-07T13:00:00Z">
+    <text>Hello</text>
+  </user>
+  <user message-id="msg_002" user-id="user_iris" author-name="Iris" created-at="2026-02-07T13:00:05Z">
+    <text>Hello</text>
+  </user>
+  <user message-id="msg_003" user-id="user_iris" author-name="Iris" created-at="2026-02-07T13:00:10Z">
+    <text>Hello</text>
+  </user>
+</thread>

@@ -1,0 +1,19 @@
+<user
+  user-id="user_alice_123"
+  author-name="Alice"
+  created-at="2026-02-07T10:03:00Z">
+  <text>What's in this image and where was it taken?</text>
+  <image
+    uri="https://example.com/photos/landmark.jpg"
+    alt="City landmark photo"
+    mime-type="image/jpeg"
+    width="1920"
+    height="1080"
+    audience="user,agent" />
+  <file
+    uri="https://example.com/files/metadata.json"
+    filename="metadata.json"
+    mime-type="application/json"
+    size-bytes="2048"
+    audience="agent" />
+</user>

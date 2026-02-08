@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_long_001" status="active" created-at="2026-02-07T13:10:00Z">
+  <user message-id="msg_001" user-id="user_jack" author-name="Jack" created-at="2026-02-07T13:10:00Z">
+    <text>Message 1</text>
+  </user>
+  <agent message-id="msg_002" agent-id="agent_assistant" created-at="2026-02-07T13:10:01Z">
+    <text>Response 1</text>
+  </agent>
+  <user message-id="msg_003" user-id="user_jack" author-name="Jack" created-at="2026-02-07T13:10:05Z">
+    <text>Message 2</text>
+  </user>
+  <agent message-id="msg_004" agent-id="agent_assistant" created-at="2026-02-07T13:10:06Z">
+    <text>Response 2</text>
+  </agent>
+  <user message-id="msg_005" user-id="user_jack" author-name="Jack" created-at="2026-02-07T13:10:10Z">
+    <text>Message 3</text>
+  </user>
+  <agent message-id="msg_006" agent-id="agent_assistant" created-at="2026-02-07T13:10:11Z">
+    <text>Response 3</text>
+  </agent>
+  <user message-id="msg_007" user-id="user_jack" author-name="Jack" created-at="2026-02-07T13:10:15Z">
+    <text>Message 4</text>
+  </user>
+  <agent message-id="msg_008" agent-id="agent_assistant" created-at="2026-02-07T13:10:16Z">
+    <text>Response 4</text>
+  </agent>
+  <user message-id="msg_009" user-id="user_jack" author-name="Jack" created-at="2026-02-07T13:10:20Z">
+    <text>Message 5</text>
+  </user>
+  <agent message-id="msg_010" agent-id="agent_assistant" created-at="2026-02-07T13:10:21Z">
+    <text>Response 5</text>
+  </agent>
+  <user message-id="msg_011" user-id="user_jack" author-name="Jack" created-at="2026-02-07T13:10:25Z">
+    <text>Message 6</text>
+  </user>
+  <agent message-id="msg_012" agent-id="agent_assistant" created-at="2026-02-07T13:10:26Z">
+    <text>Response 6</text>
+  </agent>
+</thread>

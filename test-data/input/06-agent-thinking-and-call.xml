@@ -1,0 +1,12 @@
+<agent
+  agent-id="agent_claude_v1"
+  author-name="Claude"
+  completion-id="run_abc123"
+  created-at="2026-02-07T10:02:02Z">
+  <thinking exposed="false" audience="agent">
+    User is asking about weather in Seattle. I need to call the get_weather tool with location parameter set to "Seattle, WA".
+  </thinking>
+  <function-call call-id="call_001" name="get_weather" audience="agent">
+    {"location": "Seattle, WA", "units": "fahrenheit", "include_forecast": true}
+  </function-call>
+</agent>

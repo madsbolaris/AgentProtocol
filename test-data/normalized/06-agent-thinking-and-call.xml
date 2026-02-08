@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_example_002" status="active" created-at="2026-02-07T10:00:00Z">
+  <user message-id="msg_003" user-id="user_alice_123" created-at="2026-02-07T10:02:00Z">
+    <text>What's the weather like in Seattle?</text>
+  </user>
+  <agent message-id="msg_004" agent-id="agent_weather_bot" created-at="2026-02-07T10:02:01Z">
+    <thinking exposed="false" audience="agent">
+      User is asking about weather in Seattle. I need to call the get_weather tool with location parameter set to "Seattle, WA".
+    </thinking>
+    <function-call call-id="call_001" name="get_weather" audience="agent">
+      {"location": "Seattle, WA", "units": "fahrenheit", "include_forecast": true}
+    </function-call>
+  </agent>
+</thread>

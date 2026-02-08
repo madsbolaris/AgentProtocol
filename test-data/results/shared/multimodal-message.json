@@ -1,0 +1,16 @@
+{
+  "testId": "multimodal-message",
+  "timestamp": "2026-02-08T04:58:34.414106+00:00",
+  "output": {
+    "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<message role=\"user\" messageId=\"msg-002\">\n  <text>What's in this image?</text>\n  <image uri=\"https://example.com/image.jpg\" altText=\"A photo of a sunset\" />\n</message>",
+    "normalized": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<message role=\"user\" messageId=\"msg-002\">\n <text>What's in this image?</text>\n <image uri=\"https://example.com/image.jpg\" altText=\"A photo of a sunset\" />\n</message>",
+    "hash": "06f5d698b83cf824a1b61155a6deadec50938b52093abab5a81e185079125877"
+  },
+  "metadata": {
+    "description": "Multimodal message with text and image",
+    "content_types": [
+      "text",
+      "image"
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>Microsoft.Agents.Abstractions</PackageId>
+    <Description>Core abstractions and interfaces for the Microsoft Agents Framework</Description>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+
+  <!-- Temporarily disabled to avoid circular dependency during development
+  <Target Name="GenerateFromTypeSpec" BeforeTargets="BeforeBuild">
+    <Exec Command="/usr/local/share/dotnet/dotnet run - -project ../Microsoft.Agents.CodeGen/Microsoft.Agents.CodeGen.csproj - - - -typespec ../../../specs/typespec/messages.tsp - -output ./Models - -namespace Microsoft.Agents"
+          WorkingDirectory="$(ProjectDir)"
+          Condition="Exists('../../../specs/typespec/messages.tsp')" />
+  </Target>
+  -->
+
+</Project>

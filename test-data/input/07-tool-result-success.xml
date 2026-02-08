@@ -1,0 +1,8 @@
+<tool
+  call-id="call_001"
+  name="get_weather"
+  created-at="2026-02-07T10:02:05Z">
+  <function-result audience="agent">
+    {"temperature": 52, "conditions": "cloudy", "humidity": 75, "wind_speed": 8, "forecast": [{"day": "tomorrow", "high": 55, "low": 48}]}
+  </function-result>
+</tool>

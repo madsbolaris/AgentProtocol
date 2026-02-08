@@ -1,0 +1,6 @@
+<!-- ERROR: Malformed XML - unclosed tag -->
+<user
+  user-id="user_123"
+  created-at="2026-02-07T10:02:00Z">
+  <text>This message has an unclosed text tag
+</user>

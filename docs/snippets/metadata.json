@@ -1,0 +1,130 @@
+{
+  "csharp/basic-xml-serialization/main": {
+    "testId": "basic-xml-serialization",
+    "section": "main",
+    "title": "Basic XML Message Serialization",
+    "language": "csharp",
+    "file": "csharp/basic-xml-serialization_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "python/read-xml-file/main": {
+    "testId": "read-xml-file",
+    "section": "main",
+    "title": "Reading XML Test Data",
+    "language": "python",
+    "file": "python/read-xml-file_main.py",
+    "sourceFile": "python/microsoft-agents-xml/tests/test_doc_examples.py"
+  },
+  "csharp/multimodal-message/main": {
+    "testId": "multimodal-message",
+    "section": "main",
+    "title": "Creating Multimodal Messages",
+    "language": "csharp",
+    "file": "csharp/multimodal-message_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/basic-xml-deserialization/main": {
+    "testId": "basic-xml-deserialization",
+    "section": "main",
+    "title": "Deserialize XML to Message Object",
+    "language": "csharp",
+    "file": "csharp/basic-xml-deserialization_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/system-message/main": {
+    "testId": "system-message",
+    "section": "main",
+    "title": "System Instructions Message",
+    "language": "csharp",
+    "file": "csharp/system-message_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/user-message/main": {
+    "testId": "user-message",
+    "section": "main",
+    "title": "User Input Message",
+    "language": "csharp",
+    "file": "csharp/user-message_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/agent-message/main": {
+    "testId": "agent-message",
+    "section": "main",
+    "title": "Agent Response Message",
+    "language": "csharp",
+    "file": "csharp/agent-message_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/tool-call-message/main": {
+    "testId": "tool-call-message",
+    "section": "main",
+    "title": "Function/Tool Call Message",
+    "language": "csharp",
+    "file": "csharp/tool-call-message_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/tool-result-message/main": {
+    "testId": "tool-result-message",
+    "section": "main",
+    "title": "Tool Execution Result",
+    "language": "csharp",
+    "file": "csharp/tool-result-message_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/error-content/main": {
+    "testId": "error-content",
+    "section": "main",
+    "title": "Error Handling Content",
+    "language": "csharp",
+    "file": "csharp/error-content_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/streaming-message/main": {
+    "testId": "streaming-message",
+    "section": "main",
+    "title": "Streaming Message Chunk",
+    "language": "csharp",
+    "file": "csharp/streaming-message_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/message-with-metadata/main": {
+    "testId": "message-with-metadata",
+    "section": "main",
+    "title": "Message with Custom Metadata",
+    "language": "csharp",
+    "file": "csharp/message-with-metadata_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/content-validation/main": {
+    "testId": "content-validation",
+    "section": "main",
+    "title": "Validate Content Properties",
+    "language": "csharp",
+    "file": "csharp/content-validation_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/round-trip-fidelity/main": {
+    "testId": "round-trip-fidelity",
+    "section": "main",
+    "title": "Serialize-Deserialize Round Trip",
+    "language": "csharp",
+    "file": "csharp/round-trip-fidelity_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/batch-messages/main": {
+    "testId": "batch-messages",
+    "section": "main",
+    "title": "Process Multiple Messages",
+    "language": "csharp",
+    "file": "csharp/batch-messages_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  },
+  "csharp/thread-messages/main": {
+    "testId": "thread-messages",
+    "section": "main",
+    "title": "Conversation Thread",
+    "language": "csharp",
+    "file": "csharp/thread-messages_main.cs",
+    "sourceFile": "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/DocExampleTests.cs"
+  }
+}

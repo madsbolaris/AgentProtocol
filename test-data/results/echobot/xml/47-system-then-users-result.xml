@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_example_047" status="active" created-at="2026-02-07T10:00:00Z">
+  <agent>
+    <text>You said: First user message</text>
+  </agent>
+  <agent>
+    <text>You said: Second user message</text>
+  </agent>
+  <agent>
+    <text>You said: Third user message</text>
+  </agent>
+</thread>

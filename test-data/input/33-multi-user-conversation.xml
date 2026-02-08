@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_multi_001" status="active" created-at="2026-02-07T11:10:00Z">
+  <user message-id="msg_001" user-id="user_alice" author-name="Alice" created-at="2026-02-07T11:10:00Z">
+    <text>Hello everyone!</text>
+  </user>
+  <agent message-id="msg_002" agent-id="agent_assistant" created-at="2026-02-07T11:10:01Z">
+    <text>Hi Alice! Welcome to the chat.</text>
+  </agent>
+  <user message-id="msg_003" user-id="user_bob" author-name="Bob" created-at="2026-02-07T11:10:05Z">
+    <text>Hi there! I'm Bob.</text>
+  </user>
+  <agent message-id="msg_004" agent-id="agent_assistant" created-at="2026-02-07T11:10:06Z">
+    <text>Hello Bob! Nice to meet you.</text>
+  </agent>
+  <user message-id="msg_005" user-id="user_alice" author-name="Alice" created-at="2026-02-07T11:10:10Z">
+    <text>How's everyone doing today?</text>
+  </user>
+</thread>

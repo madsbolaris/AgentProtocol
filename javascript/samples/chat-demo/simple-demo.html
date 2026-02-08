@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Protocol Chat Demo (Simple)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .bot-status {
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .bot-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bot-selector select {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            background: white;
+        }
+
+        .bot-selector select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-dot.disconnected {
+            background: #dc3545;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 12px;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-bubble {
+            background: #f0f0f0;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-timestamp {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+            padding: 0 4px;
+        }
+
+        .message-reactions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .reaction-button {
+            padding: 4px 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .reaction-button:hover {
+            background: #f8f9fa;
+            transform: scale(1.05);
+        }
+
+        .reaction-button.active {
+            background: #e3f2fd;
+            border-color: #667eea;
+        }
+
+        .reaction-button .count {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .add-reaction {
+            padding: 4px 8px;
+            border: 1px dashed #ccc;
+            border-radius: 12px;
+            background: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .message:hover .add-reaction {
+            opacity: 1;
+        }
+
+        .add-reaction:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .emoji-picker {
+            position: absolute;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .emoji-picker button {
+            padding: 8px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 20px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .emoji-picker button:hover {
+            background: #f0f0f0;
+        }
+
+        .input-area {
+            padding: 16px 20px;
+            border-top: 1px solid #e0e0e0;
+            background: white;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-container input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-container input:focus {
+            border-color: #667eea;
+        }
+
+        .input-container button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .input-container button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .input-container button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .error-message {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Agent Protocol Chat Demo</h1>
+            <p>Chat with bots and add emoji reactions!</p>
+        </div>
+
+        <div class="bot-status">
+            <div class="status-indicator">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Connecting...</span>
+            </div>
+            <div class="bot-selector">
+                <label for="botSelect" style="font-size: 13px; color: #666;">Bot:</label>
+                <select id="botSelect">
+                    <option value="dotnet">EchoBot (.NET)</option>
+                    <option value="python">EchoBot (Python)</option>
+                    <option value="typescript">EchoBot (TypeScript)</option>
+                    <option value="dotnet-emoji-chat">EmojiChatBot (.NET)</option>
+                    <option value="dotnet-function-tools">FunctionToolsAgent (.NET)</option>
+                </select>
+                <span id="portDisplay" style="font-size: 12px; color: #666;"></span>
+            </div>
+        </div>
+
+        <div id="errorContainer"></div>
+
+        <div class="messages" id="messages">
+            <div class="empty-state">
+                <div class="empty-state-icon">💬</div>
+                <p>Start a conversation with the echo bot!</p>
+                <p style="font-size: 12px; margin-top: 8px;" id="emptyStateMessage">Select a bot and make sure it's running</p>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-container">
+                <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="Type a message..."
+                    autocomplete="off"
+                >
+                <button id="sendButton">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let botConfigs = {
+            dotnet: { name: 'EchoBot (.NET)', port: 3978, baseUrl: 'http://localhost' },
+            python: { name: 'EchoBot (Python)', port: 3979, baseUrl: 'http://localhost' },
+            typescript: { name: 'EchoBot (TypeScript)', port: 3980, baseUrl: 'http://localhost' },
+            'dotnet-function-tools': { name: 'FunctionToolsAgent (.NET)', port: 3981, baseUrl: 'http://localhost' },
+            'dotnet-emoji-chat': { name: 'EmojiChatBot (.NET)', port: 3984, baseUrl: 'http://localhost' }
+        };
+
+        let currentBot = 'dotnet';
+        let API_BASE = `${botConfigs.dotnet.baseUrl}:${botConfigs.dotnet.port}`;
+        let isConnected = false;
+        let threadId = 'demo-thread-' + Date.now();
+        let userId = 'demo-user-' + Math.random().toString(36).substring(7);
+
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const errorContainer = document.getElementById('errorContainer');
+        const botSelect = document.getElementById('botSelect');
+        const portDisplay = document.getElementById('portDisplay');
+        const emptyStateMessage = document.getElementById('emptyStateMessage');
+
+        // Load configuration from agent-config.json
+        async function loadConfig() {
+            try {
+                const response = await fetch('../../../agent-config.json');
+                if (response.ok) {
+                    const config = await response.json();
+                    if (config.bots) {
+                        botConfigs = config.bots;
+                        updateBotConnection();
+                        console.log('Loaded configuration from agent-config.json');
+                    }
+                }
+            } catch (error) {
+                console.warn('Could not load agent-config.json, using defaults:', error);
+            }
+        }
+
+        // Update bot connection when selection changes
+        function updateBotConnection() {
+            currentBot = botSelect.value;
+            const config = botConfigs[currentBot];
+            API_BASE = `${config.baseUrl}:${config.port}`;
+            portDisplay.textContent = `Port: ${config.port}`;
+
+            if (emptyStateMessage) {
+                emptyStateMessage.textContent = `Make sure ${config.name} is running on port ${config.port}`;
+            }
+
+            // Reset connection status and check
+            isConnected = false;
+            statusText.textContent = 'Connecting...';
+            statusDot.classList.remove('disconnected');
+            checkConnection();
+        }
+
+        // Check bot connection
+        async function checkConnection() {
+            const config = botConfigs[currentBot];
+            try {
+                const response = await fetch(API_BASE + '/');
+                if (response.ok) {
+                    isConnected = true;
+                    statusDot.classList.remove('disconnected');
+                    statusText.textContent = `Connected to ${config.name}`;
+                    clearError();
+                } else {
+                    throw new Error('Bot not responding');
+                }
+            } catch (error) {
+                isConnected = false;
+                statusDot.classList.add('disconnected');
+                statusText.textContent = 'Disconnected';
+                showError(`Cannot connect to ${config.name}. Make sure it is running on port ${config.port}.`);
+            }
+        }
+
+        function showError(message) {
+            errorContainer.innerHTML = `<div class="error-message">⚠️ ${message}</div>`;
+        }
+
+        function clearError() {
+            errorContainer.innerHTML = '';
+        }
+
+        function clearEmptyState() {
+            const emptyState = messagesContainer.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+        }
+
+        let messageIdCounter = 0;
+        const messageReactions = new Map(); // messageId -> { emoji -> count }
+
+        function addMessage(text, role, messageId = null) {
+            clearEmptyState();
+
+            if (!messageId) {
+                messageId = `msg-${++messageIdCounter}`;
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.dataset.messageId = messageId;
+
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${role === 'user' ? '👤' : '🤖'}</div>
+                <div>
+                    <div class="message-bubble">${escapeHtml(text)}</div>
+                    <div class="message-timestamp">${timestamp}</div>
+                    <div class="message-reactions" data-message-id="${messageId}">
+                        <button class="add-reaction" onclick="showEmojiPicker('${messageId}', event)">➕</button>
+                    </div>
+                </div>
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return messageId;
+        }
+
+        function showEmojiPicker(messageId, event) {
+            event.stopPropagation();
+
+            // Remove any existing picker
+            const existingPicker = document.querySelector('.emoji-picker');
+            if (existingPicker) {
+                existingPicker.remove();
+                return;
+            }
+
+            const picker = document.createElement('div');
+            picker.className = 'emoji-picker';
+
+            const emojis = ['👍', '❤️', '😊', '🎉', '🤔', '👏', '🔥', '✨', '💯', '🙌', '😢', '😂'];
+
+            emojis.forEach(emoji => {
+                const btn = document.createElement('button');
+                btn.textContent = emoji;
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    addReaction(messageId, emoji);
+                    picker.remove();
+                };
+                picker.appendChild(btn);
+            });
+
+            const button = event.target;
+            const rect = button.getBoundingClientRect();
+            picker.style.position = 'fixed';
+            picker.style.top = `${rect.top - 120}px`;
+            picker.style.left = `${rect.left}px`;
+
+            document.body.appendChild(picker);
+
+            // Close picker when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', function closePickerHandler() {
+                    picker.remove();
+                    document.removeEventListener('click', closePickerHandler);
+                });
+            }, 0);
+        }
+
+        async function addReaction(messageId, emoji) {
+            // Update local state
+            if (!messageReactions.has(messageId)) {
+                messageReactions.set(messageId, new Map());
+            }
+
+            const reactions = messageReactions.get(messageId);
+            const currentCount = reactions.get(emoji) || 0;
+            const newCount = currentCount + 1;
+
+            reactions.set(emoji, newCount);
+
+            // Update UI
+            updateReactionsUI(messageId);
+
+            // Send reaction to bot
+            try {
+                const response = await fetch(API_BASE + '/api/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        type: 'messageReaction',
+                        from: {
+                            id: userId,
+                            name: 'Demo User'
+                        },
+                        recipient: {
+                            id: 'echo-bot'
+                        },
+                        replyToId: messageId,
+                        reactionsAdded: [{
+                            type: 'emoji',
+                            activity: emoji
+                        }],
+                        channelId: 'demo',
+                        conversation: {
+                            id: threadId
+                        },
+                        serviceUrl: API_BASE
+                    })
+                });
+
+                if (response.ok) {
+                    const botResponse = await response.json();
+                    if (botResponse.text) {
+                        addMessage(botResponse.text, 'bot');
+                    }
+                }
+            } catch (error) {
+                console.error('Error sending reaction:', error);
+            }
+        }
+
+        function updateReactionsUI(messageId) {
+            const reactionsContainer = document.querySelector(`.message-reactions[data-message-id="${messageId}"]`);
+            if (!reactionsContainer) return;
+
+            // Clear existing reactions (except add button)
+            const addButton = reactionsContainer.querySelector('.add-reaction');
+            reactionsContainer.innerHTML = '';
+
+            // Add reaction buttons
+            const reactions = messageReactions.get(messageId);
+            if (reactions && reactions.size > 0) {
+                reactions.forEach((count, emoji) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'reaction-button active';
+                    btn.innerHTML = `${emoji} <span class="count">${count}</span>`;
+                    btn.onclick = () => addReaction(messageId, emoji);
+                    reactionsContainer.appendChild(btn);
+                });
+            }
+
+            // Re-add the add button
+            if (addButton) {
+                reactionsContainer.appendChild(addButton);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text || !isConnected) return;
+
+            // Add user message to UI
+            addMessage(text, 'user');
+            messageInput.value = '';
+            sendButton.disabled = true;
+
+            try {
+                // Send to bot API
+                const response = await fetch(API_BASE + '/api/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        type: 'message',
+                        from: {
+                            id: userId,
+                            name: 'Demo User'
+                        },
+                        recipient: {
+                            id: 'echo-bot'
+                        },
+                        text: text,
+                        channelId: 'demo',
+                        conversation: {
+                            id: threadId
+                        },
+                        serviceUrl: API_BASE
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to send message');
+                }
+
+                // Get the bot's actual response
+                const botResponse = await response.json();
+                if (botResponse.text) {
+                    addMessage(botResponse.text, 'bot');
+                }
+                sendButton.disabled = false;
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showError('Failed to send message. Check console for details.');
+                sendButton.disabled = false;
+            }
+        }
+
+        // Event listeners
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        botSelect.addEventListener('change', updateBotConnection);
+
+        // Initialize
+        (async () => {
+            await loadConfig();
+            updateBotConnection();
+
+            // Periodic connection check
+            setInterval(checkConnection, 10000);
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_multi_001" status="active" created-at="2026-02-07T10:00:00Z">
+  <user message-id="msg_001" user-id="user_carol" author-name="Carol" created-at="2026-02-07T10:00:00Z">
+    <text>Can you analyze this image?</text>
+    <image source="https://example.com/image.jpg" media-type="image/jpeg" audience="assistant"/>
+  </user>
+  <agent message-id="msg_002" agent-id="agent_vision" created-at="2026-02-07T10:00:05Z">
+    <text>I can see a landscape photo showing mountains and a lake.</text>
+  </agent>
+</thread>

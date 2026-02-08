@@ -1,0 +1,6 @@
+<!-- ERROR: Message has no content elements -->
+<user
+  user-id="user_123"
+  author-name="Alice"
+  created-at="2026-02-07T10:02:00Z">
+</user>

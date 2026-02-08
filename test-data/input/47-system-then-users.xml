@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_sys_users_001" status="active" created-at="2026-02-07T13:30:00Z">
+  <system message-id="msg_001" created-at="2026-02-07T13:30:00Z">
+    <text>You are a helpful assistant.</text>
+  </system>
+  <user message-id="msg_002" user-id="user_kate" author-name="Kate" created-at="2026-02-07T13:30:10Z">
+    <text>First user message</text>
+  </user>
+  <user message-id="msg_003" user-id="user_kate" author-name="Kate" created-at="2026-02-07T13:30:15Z">
+    <text>Second user message</text>
+  </user>
+  <user message-id="msg_004" user-id="user_kate" author-name="Kate" created-at="2026-02-07T13:30:20Z">
+    <text>Third user message</text>
+  </user>
+</thread>

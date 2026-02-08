@@ -1,0 +1,13 @@
+{
+  "testId": "batch-messages",
+  "timestamp": "2026-02-08T04:58:34.428947+00:00",
+  "output": {
+    "raw": "{\n  \"processed_count\": 3,\n  \"message_types\": [\n    \"user\",\n    \"user\",\n    \"user\"\n  ]\n}",
+    "normalized": "{\n \"processed_count\": 3,\n \"message_types\": [\n \"user\",\n \"user\",\n \"user\"\n ]\n}",
+    "hash": "e668f0db63bb5d1fc6222eb323fc054691afeacfc61397ba3f4d9f0ffb6d9306"
+  },
+  "metadata": {
+    "description": "Batch processing results",
+    "format": "json"
+  }
+}

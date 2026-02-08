@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>Microsoft.Agents.Client</PackageId>
+    <Description>Client library for interacting with Agent Protocol APIs - provides strongly-typed models and HTTP client for creating agents, running conversations, and managing threads</Description>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Agents.Authentication.Msal" Version="1.3.176" />
+    <PackageReference Include="Microsoft.Agents.Hosting.AspNetCore" Version="1.3.176" />
+  </ItemGroup>
+
+</Project>

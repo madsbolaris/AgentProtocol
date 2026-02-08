@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<agent message-id="msg_0013" created-at="2026-02-07T10:00:00Z" agent-id="agent_test_13">
+  <search-result title="Test title" url="https://example.com/test-resource">
+    <snippet>Sample snippet value</snippet>
+  </search-result>
+</agent>

@@ -1,0 +1,10 @@
+<!-- ERROR: Function call missing required name attribute -->
+<agent
+  agent-id="agent_001"
+  created-at="2026-02-07T10:03:00Z">
+  <function-call
+    call-id="call_001"
+    audience="agent">
+    <arguments>{"query": "test"}</arguments>
+  </function-call>
+</agent>

@@ -1,0 +1,11 @@
+<!-- ERROR: Invalid URL format in image content -->
+<user
+  user-id="user_123"
+  author-name="Alice"
+  created-at="2026-02-07T10:02:00Z">
+  <text>Check out this image:</text>
+  <image
+    url="not-a-valid-url"
+    mime-type="image/jpeg"
+    audience="user,agent" />
+</user>

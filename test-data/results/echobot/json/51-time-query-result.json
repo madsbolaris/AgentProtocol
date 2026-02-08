@@ -1,0 +1,20 @@
+{
+  "runId": "run_69378c328d0f4f78",
+  "agentId": "echo-agent",
+  "threadId": "thread_d844f9256a794780",
+  "status": "completed",
+  "input": [],
+  "output": [
+    {
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You said: What time is it?"
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-08T06:29:15Z",
+  "completedAt": "2026-02-08T06:29:15Z"
+}

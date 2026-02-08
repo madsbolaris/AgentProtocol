@@ -1,0 +1,24 @@
+using System;
+using System.Collections.Generic;
+using System.Xml.Serialization;
+using System.Text.Json.Serialization;
+
+namespace Microsoft.Agents
+{
+    /// <summary>/// Error Content/// BASE: Microsoft.Extensions.AI.ErrorContent/// SOURCE: /extensions/src/Libraries/Microsoft.Extensions.AI.Abstractions/Contents/ErrorContent.cs/// XML: &lt;error code="..."&gt;&lt;message&gt;...&lt;/message&gt;&lt;stack-trace&gt;...&lt;/stack-trace&gt;&lt;/error&gt;/// </summary>
+    [XmlRoot("error")]
+    public partial class ErrorContent : AIContentBase
+    {
+        public override string Kind => "error";
+
+        [XmlAttribute("code")]
+        [JsonPropertyName("code")]
+        public string Code { get; set; }
+        [XmlElement("message")]
+        [JsonPropertyName("message")]
+        public string Message { get; set; }
+        [XmlElement("stack-trace")]
+        [JsonPropertyName("stackTrace")]
+        public string StackTrace { get; set; }
+    }
+}

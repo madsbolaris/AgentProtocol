@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_multi_user_001" status="active" created-at="2026-02-07T11:20:00Z">
+  <user message-id="msg_001" user-id="user_carol" author-name="Carol" created-at="2026-02-07T11:20:00Z">
+    <text>First question about weather</text>
+  </user>
+  <user message-id="msg_002" user-id="user_carol" author-name="Carol" created-at="2026-02-07T11:20:02Z">
+    <text>Wait, let me rephrase that</text>
+  </user>
+  <user message-id="msg_003" user-id="user_carol" author-name="Carol" created-at="2026-02-07T11:20:05Z">
+    <text>Actually, what's the weather in Portland?</text>
+  </user>
+</thread>

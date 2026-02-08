@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_multi_func_001" status="active" created-at="2026-02-07T12:00:00Z">
+  <user message-id="msg_001" user-id="user_frank" author-name="Frank" created-at="2026-02-07T12:00:00Z">
+    <text>Compare the weather in Seattle and Portland</text>
+  </user>
+  <agent message-id="msg_002" agent-id="agent_assistant" created-at="2026-02-07T12:00:02Z">
+    <thinking exposed="false" audience="agent">
+      Need to get weather for both cities. Will make two parallel calls.
+    </thinking>
+    <function-call call-id="call_001" name="get_weather" audience="agent">
+      {"location": "Seattle, WA"}
+    </function-call>
+    <function-call call-id="call_002" name="get_weather" audience="agent">
+      {"location": "Portland, OR"}
+    </function-call>
+  </agent>
+  <tool message-id="msg_003" parent-message-id="msg_002" created-at="2026-02-07T12:00:03Z">
+    <function-result call-id="call_001" is-error="false" audience="agent">
+      {"temperature": 52, "conditions": "cloudy"}
+    </function-result>
+  </tool>
+  <tool message-id="msg_004" parent-message-id="msg_002" created-at="2026-02-07T12:00:03Z">
+    <function-result call-id="call_002" is-error="false" audience="agent">
+      {"temperature": 58, "conditions": "rainy"}
+    </function-result>
+  </tool>
+  <agent message-id="msg_005" parent-message-id="msg_004" agent-id="agent_assistant" created-at="2026-02-07T12:00:04Z">
+    <text audience="user,agent">
+      Seattle is 52°F and cloudy, while Portland is 58°F and rainy.
+    </text>
+  </agent>
+</thread>

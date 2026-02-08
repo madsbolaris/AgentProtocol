@@ -1,0 +1,13 @@
+{
+  "testId": "tool-result-message",
+  "timestamp": "2026-02-08T04:58:34.421922+00:00",
+  "output": {
+    "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<chat role=\"tool\" messageId=\"msg-result-1\">\n  <functionResult callId=\"call_abc123\" name=\"get_weather\" content='{\"temperature\": 55, \"conditions\": \"partly cloudy\"}' />\n</chat>",
+    "normalized": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<chat role=\"tool\" messageId=\"msg-result-1\">\n <functionResult callId=\"call_abc123\" name=\"get_weather\" content='{\"temperature\": 55, \"conditions\": \"partly cloudy\"}' />\n</chat>",
+    "hash": "4f2b5dd681281d74e90b468cf5c1ea990428cd27dfe69f4600a9aa7417cf8af1"
+  },
+  "metadata": {
+    "description": "Tool execution result",
+    "format": "xml"
+  }
+}

@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_example_048" status="active" created-at="2026-02-07T10:00:00Z">
+  <agent>
+    <text>You said: First question</text>
+  </agent>
+  <agent>
+    <text>You said: Second question</text>
+  </agent>
+</thread>

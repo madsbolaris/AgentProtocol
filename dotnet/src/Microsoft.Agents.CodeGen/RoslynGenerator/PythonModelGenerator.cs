@@ -1,0 +1,358 @@
+using System.Text;
+using Microsoft.Agents.CodeGen.TypeSpecParser;
+using Microsoft.Agents.CodeGen.Utilities;
+
+namespace Microsoft.Agents.CodeGen.RoslynGenerator;
+
+/// <summary>
+/// Generates Python type definitions from TypeSpec definitions.
+/// Produces clean, idiomatic Python with type hints and docstrings.
+/// </summary>
+public class PythonModelGenerator
+{
+    private readonly string _rootNamespace;
+
+    public PythonModelGenerator(string rootNamespace = "")
+    {
+        _rootNamespace = rootNamespace;
+    }
+
+    public List<string> GenerateModels(TypeSpecModel typeSpec, string outputDirectory)
+    {
+        var generatedFiles = new List<string>();
+
+        Directory.CreateDirectory(outputDirectory);
+
+        // Generate enums
+        foreach (var enumDef in typeSpec.Enums)
+        {
+            var filePath = Path.Combine(outputDirectory, $"{NamingConventions.ToSnakeCase(enumDef.Name)}.py");
+            var code = GenerateEnum(enumDef);
+            File.WriteAllText(filePath, code);
+            generatedFiles.Add(filePath);
+        }
+
+        // Generate model classes
+        foreach (var modelDef in typeSpec.Models)
+        {
+            var filePath = Path.Combine(outputDirectory, $"{NamingConventions.ToSnakeCase(modelDef.Name)}.py");
+            var code = GenerateModel(modelDef);
+            File.WriteAllText(filePath, code);
+            generatedFiles.Add(filePath);
+        }
+
+        // Generate union types
+        foreach (var unionDef in typeSpec.Unions)
+        {
+            var filePath = Path.Combine(outputDirectory, $"{NamingConventions.ToSnakeCase(unionDef.Name)}.py");
+            var code = GenerateUnion(unionDef);
+            File.WriteAllText(filePath, code);
+            generatedFiles.Add(filePath);
+        }
+
+        // Generate __init__.py barrel export
+        var initPath = Path.Combine(outputDirectory, "__init__.py");
+        var initCode = GenerateInitFile(typeSpec);
+        File.WriteAllText(initPath, initCode);
+        generatedFiles.Add(initPath);
+
+        return generatedFiles;
+    }
+
+    private string GenerateEnum(EnumDefinition enumDef)
+    {
+        var sb = new StringBuilder();
+
+        // Add header
+        sb.AppendLine("# Copyright (c) Microsoft Corporation. All rights reserved.");
+        sb.AppendLine("# Licensed under the MIT License.");
+        sb.AppendLine();
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine("Generated from TypeSpec definitions.");
+        sb.AppendLine("DO NOT EDIT MANUALLY");
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine();
+        sb.AppendLine("from enum import Enum");
+        sb.AppendLine("from typing import Literal");
+        sb.AppendLine();
+        sb.AppendLine();
+
+        // Add docstring
+        if (!string.IsNullOrWhiteSpace(enumDef.Documentation))
+        {
+            sb.AppendLine($"class {enumDef.Name}(str, Enum):");
+            sb.AppendLine("    \"\"\"");
+            sb.AppendLine($"    {enumDef.Documentation}");
+            sb.AppendLine("    \"\"\"");
+        }
+        else
+        {
+            sb.AppendLine($"class {enumDef.Name}(str, Enum):");
+        }
+
+        // Generate enum members
+        foreach (var member in enumDef.Members)
+        {
+            var pythonName = NamingConventions.ToUpperSnakeCase(member.Name);
+            var value = member.Value ?? NamingConventions.ToCamelCase(member.Name);
+            sb.AppendLine($"    {pythonName} = \"{value}\"");
+        }
+
+        sb.AppendLine();
+        sb.AppendLine();
+
+        // Generate type alias for literal type hints
+        var literalValues = string.Join(", ", enumDef.Members.Select(m =>
+        {
+            var value = m.Value ?? NamingConventions.ToCamelCase(m.Name);
+            return $"\"{value}\"";
+        }));
+        sb.AppendLine($"{enumDef.Name}Type = Literal[{literalValues}]");
+
+        return sb.ToString();
+    }
+
+    private string GenerateModel(ModelDefinition modelDef)
+    {
+        var sb = new StringBuilder();
+
+        // Add header
+        sb.AppendLine("# Copyright (c) Microsoft Corporation. All rights reserved.");
+        sb.AppendLine("# Licensed under the MIT License.");
+        sb.AppendLine();
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine("Generated from TypeSpec definitions.");
+        sb.AppendLine("DO NOT EDIT MANUALLY");
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine();
+
+        // Collect imports
+        var imports = CollectImports(modelDef);
+        sb.AppendLine("from dataclasses import dataclass, field");
+        sb.AppendLine("from typing import Optional, List, Dict, Any");
+        sb.AppendLine("from datetime import datetime");
+
+        if (imports.Any())
+        {
+            sb.AppendLine();
+            foreach (var import in imports)
+            {
+                var snakeCaseName = NamingConventions.ToSnakeCase(import);
+                sb.AppendLine($"from .{snakeCaseName} import {import}");
+            }
+        }
+
+        sb.AppendLine();
+        sb.AppendLine();
+
+        // Add docstring
+        sb.AppendLine("@dataclass");
+        if (!string.IsNullOrWhiteSpace(modelDef.Documentation))
+        {
+            sb.AppendLine($"class {modelDef.Name}:");
+            sb.AppendLine("    \"\"\"");
+            sb.AppendLine($"    {modelDef.Documentation}");
+            sb.AppendLine("    \"\"\"");
+        }
+        else
+        {
+            sb.AppendLine($"class {modelDef.Name}:");
+        }
+
+        // Generate properties
+        if (!modelDef.Properties.Any())
+        {
+            sb.AppendLine("    pass");
+        }
+        else
+        {
+            foreach (var prop in modelDef.Properties)
+            {
+                // Add property docstring
+                if (!string.IsNullOrWhiteSpace(prop.Documentation))
+                {
+                    sb.AppendLine($"    # {prop.Documentation}");
+                }
+
+                var pythonType = MapTypeSpecTypeToPython(prop.Type, prop.IsArray, prop.IsOptional);
+                var propertyName = NamingConventions.ToSnakeCase(prop.Name);
+
+                // Use field(default=None) for optional fields, or field(default_factory=list) for lists
+                if (prop.IsOptional)
+                {
+                    sb.AppendLine($"    {propertyName}: {pythonType} = None");
+                }
+                else if (prop.IsArray)
+                {
+                    sb.AppendLine($"    {propertyName}: {pythonType} = field(default_factory=list)");
+                }
+                else if (pythonType.Contains("Dict"))
+                {
+                    sb.AppendLine($"    {propertyName}: {pythonType} = field(default_factory=dict)");
+                }
+                else
+                {
+                    sb.AppendLine($"    {propertyName}: {pythonType}");
+                }
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    private string GenerateUnion(UnionDefinition unionDef)
+    {
+        var sb = new StringBuilder();
+
+        // Add header
+        sb.AppendLine("# Copyright (c) Microsoft Corporation. All rights reserved.");
+        sb.AppendLine("# Licensed under the MIT License.");
+        sb.AppendLine();
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine("Generated from TypeSpec definitions.");
+        sb.AppendLine("DO NOT EDIT MANUALLY");
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine();
+        sb.AppendLine("from typing import Union");
+        sb.AppendLine();
+
+        // Import all variant types
+        foreach (var variant in unionDef.Variants)
+        {
+            var snakeCaseName = NamingConventions.ToSnakeCase(variant);
+            sb.AppendLine($"from .{snakeCaseName} import {variant}");
+        }
+
+        sb.AppendLine();
+        sb.AppendLine();
+
+        // Add docstring
+        if (!string.IsNullOrWhiteSpace(unionDef.Documentation))
+        {
+            sb.AppendLine("# " + unionDef.Documentation);
+        }
+
+        // Generate union type
+        var variantsList = string.Join(", ", unionDef.Variants);
+        sb.AppendLine($"{unionDef.Name} = Union[{variantsList}]");
+
+        return sb.ToString();
+    }
+
+    private string GenerateInitFile(TypeSpecModel typeSpec)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("# Copyright (c) Microsoft Corporation. All rights reserved.");
+        sb.AppendLine("# Licensed under the MIT License.");
+        sb.AppendLine();
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine("Generated models from TypeSpec definitions.");
+        sb.AppendLine("DO NOT EDIT MANUALLY");
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine();
+
+        var allExports = new List<string>();
+
+        // Export all enums
+        foreach (var enumDef in typeSpec.Enums)
+        {
+            var snakeCaseName = NamingConventions.ToSnakeCase(enumDef.Name);
+            sb.AppendLine($"from .{snakeCaseName} import {enumDef.Name}, {enumDef.Name}Type");
+            allExports.Add(enumDef.Name);
+            allExports.Add($"{enumDef.Name}Type");
+        }
+
+        // Export all models
+        foreach (var modelDef in typeSpec.Models)
+        {
+            var snakeCaseName = NamingConventions.ToSnakeCase(modelDef.Name);
+            sb.AppendLine($"from .{snakeCaseName} import {modelDef.Name}");
+            allExports.Add(modelDef.Name);
+        }
+
+        // Export all unions
+        foreach (var unionDef in typeSpec.Unions)
+        {
+            var snakeCaseName = NamingConventions.ToSnakeCase(unionDef.Name);
+            sb.AppendLine($"from .{snakeCaseName} import {unionDef.Name}");
+            allExports.Add(unionDef.Name);
+        }
+
+        sb.AppendLine();
+        sb.AppendLine("__all__ = [");
+        foreach (var export in allExports)
+        {
+            sb.AppendLine($"    \"{export}\",");
+        }
+        sb.AppendLine("]");
+
+        return sb.ToString();
+    }
+
+    private HashSet<string> CollectImports(ModelDefinition modelDef)
+    {
+        var imports = new HashSet<string>();
+
+        // Add base model import
+        if (!string.IsNullOrWhiteSpace(modelDef.BaseModel))
+        {
+            imports.Add(modelDef.BaseModel);
+        }
+
+        // Add imports for complex property types
+        foreach (var prop in modelDef.Properties)
+        {
+            var baseType = prop.Type;
+
+            // Skip primitive types
+            if (TypeMapper.IsSimpleType(baseType))
+                continue;
+
+            // Skip Record<T> types
+            if (baseType.StartsWith("Record<"))
+                continue;
+
+            // Skip literal types
+            if (baseType.StartsWith("\""))
+                continue;
+
+            // Add the type to imports
+            imports.Add(baseType);
+        }
+
+        return imports;
+    }
+
+    public static string MapTypeSpecTypeToPython(string typeSpecType, bool isArray, bool isOptional)
+    {
+        var baseType = typeSpecType switch
+        {
+            "string" => "str",
+            "int32" => "int",
+            "int64" => "int",
+            "float32" => "float",
+            "float64" => "float",
+            "boolean" => "bool",
+            "bytes" => "bytes",
+            "utcDateTime" => "datetime",
+            "unknown" => "Any",
+            _ when typeSpecType.StartsWith("Record<") => "Dict[str, Any]",
+            _ when typeSpecType.StartsWith("\"") => "str", // Literal type
+            _ => typeSpecType // Custom type (model/enum/union name)
+        };
+
+        // Handle array types
+        if (isArray)
+        {
+            baseType = $"List[{baseType}]";
+        }
+
+        // Handle optional types
+        if (isOptional)
+        {
+            baseType = $"Optional[{baseType}]";
+        }
+
+        return baseType;
+    }
+}

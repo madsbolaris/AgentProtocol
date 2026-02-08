@@ -1,0 +1,138 @@
+#!/bin/bash
+# Pre-commit hook for Agent Protocol
+# Ensures documentation examples are extracted and tests validate against golden files
+
+set -e
+
+echo "🔍 Running pre-commit checks..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Track if any checks failed
+FAILED=0
+
+# Check 1: Extract documentation examples
+echo ""
+echo "📝 Extracting documentation examples..."
+if python scripts/extract-doc-examples.py > /dev/null 2>&1; then
+    echo -e "${GREEN}✓ Documentation examples extracted${NC}"
+
+    # Check if extraction created new files to stage
+    if git diff --name-only docs/snippets/ | grep -q .; then
+        echo -e "${YELLOW}  ⚠️  New snippets generated - staging them${NC}"
+        git add docs/snippets/
+    fi
+else
+    echo -e "${RED}✗ Failed to extract documentation examples${NC}"
+    echo "  Run: python scripts/extract-doc-examples.py"
+    FAILED=1
+fi
+
+# Check 2: Detect if golden files are being modified
+echo ""
+echo "🔍 Checking for golden file changes..."
+GOLDEN_CHANGES=$(git diff --cached --name-only | grep -E "test-data/results/.*/.*\.json$" || true)
+
+if [ -n "$GOLDEN_CHANGES" ]; then
+    echo -e "${YELLOW}⚠️  Golden files are being modified:${NC}"
+    echo "$GOLDEN_CHANGES" | sed 's/^/    /'
+    echo ""
+    echo -e "${YELLOW}⚠️  Please ensure these changes are intentional!${NC}"
+    echo "  Golden files should only be updated when output intentionally changes."
+    echo "  Review the diff carefully before committing."
+    echo ""
+
+    # Show the diffs for golden files
+    for file in $GOLDEN_CHANGES; do
+        echo -e "${YELLOW}Changes in $file:${NC}"
+        git diff --cached "$file" | head -20
+        echo ""
+    done
+fi
+
+# Check 3: Validate Python tests (if Python files changed)
+PYTHON_CHANGES=$(git diff --cached --name-only | grep -E "\.py$" || true)
+if [ -n "$PYTHON_CHANGES" ]; then
+    echo ""
+    echo "🐍 Running Python tests with golden file validation..."
+
+    if [ -f "python/microsoft-agents-xml/tests/test_doc_examples.py" ]; then
+        cd python/microsoft-agents-xml
+
+        # Ensure we're NOT in update mode
+        unset UPDATE_GOLDEN
+
+        if pytest tests/test_doc_examples.py -v --tb=short 2>&1 | tee /tmp/pytest-output.txt; then
+            echo -e "${GREEN}✓ Python tests passed (validated against golden files)${NC}"
+        else
+            echo -e "${RED}✗ Python tests failed${NC}"
+            echo ""
+            echo "If output changes are intentional, update golden files:"
+            echo "  pytest --update-golden tests/test_doc_examples.py"
+            echo ""
+            echo "Then review and stage the updated golden files:"
+            echo "  git add test-data/results/shared/"
+            FAILED=1
+        fi
+
+        cd - > /dev/null
+    fi
+fi
+
+# Check 4: Validate C# tests (if C# files changed)
+CSHARP_CHANGES=$(git diff --cached --name-only | grep -E "\.cs$" || true)
+if [ -n "$CSHARP_CHANGES" ]; then
+    echo ""
+    echo "🔷 Running C# tests with golden file validation..."
+
+    if [ -f "dotnet/tests/Microsoft.Agents.Xml.Tests/AgentXml.CodeGen.Tests/RoundTripTests.cs" ]; then
+        cd dotnet/tests/Microsoft.Agents.Xml.Tests
+
+        # Ensure we're NOT in update mode
+        unset UPDATE_GOLDEN
+
+        if dotnet test --verbosity quiet --nologo 2>&1 | tee /tmp/dotnet-test-output.txt; then
+            echo -e "${GREEN}✓ C# tests passed (validated against golden files)${NC}"
+        else
+            echo -e "${RED}✗ C# tests failed${NC}"
+            echo ""
+            echo "If output changes are intentional, update golden files:"
+            echo "  UPDATE_GOLDEN=1 dotnet test"
+            echo ""
+            echo "Then review and stage the updated golden files:"
+            echo "  git add test-data/results/shared/"
+            FAILED=1
+        fi
+
+        cd - > /dev/null
+    fi
+fi
+
+# Check 5: Prevent commits with UPDATE_GOLDEN environment variable set
+if [ "$UPDATE_GOLDEN" = "1" ]; then
+    echo ""
+    echo -e "${RED}✗ UPDATE_GOLDEN environment variable is set${NC}"
+    echo "  This prevents accidental commits in update mode."
+    echo "  Unset it before committing: unset UPDATE_GOLDEN"
+    FAILED=1
+fi
+
+# Summary
+echo ""
+echo "═══════════════════════════════════════════════════════════════"
+if [ $FAILED -eq 0 ]; then
+    echo -e "${GREEN}✓ All pre-commit checks passed!${NC}"
+    echo "═══════════════════════════════════════════════════════════════"
+    exit 0
+else
+    echo -e "${RED}✗ Some pre-commit checks failed${NC}"
+    echo "═══════════════════════════════════════════════════════════════"
+    echo ""
+    echo "To bypass this hook (not recommended):"
+    echo "  git commit --no-verify"
+    exit 1
+fi

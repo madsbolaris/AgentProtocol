@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_tool_only_001" status="active" created-at="2026-02-07T12:30:00Z">
+  <tool message-id="msg_001" created-at="2026-02-07T12:30:00Z">
+    <function-result call-id="call_001" is-error="false" audience="agent">
+      {"status": "success", "data": [1, 2, 3]}
+    </function-result>
+  </tool>
+  <tool message-id="msg_002" created-at="2026-02-07T12:30:05Z">
+    <function-result call-id="call_002" is-error="false" audience="agent">
+      {"status": "success", "data": [4, 5, 6]}
+    </function-result>
+  </tool>
+</thread>

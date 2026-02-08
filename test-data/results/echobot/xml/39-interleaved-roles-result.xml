@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_example_039" status="active" created-at="2026-02-07T10:00:00Z">
+  <agent>
+    <text>You said: Hello! Can you help me with something?</text>
+  </agent>
+  <agent>
+    <text>You said: I need to know how to format dates.</text>
+  </agent>
+</thread>

@@ -1,0 +1,7 @@
+<!-- ERROR: Invalid ISO 8601 timestamp format -->
+<user
+  user-id="user_123"
+  author-name="Alice"
+  created-at="2026-02-07 10:02:00">
+  <text>This message has an invalid timestamp format (missing timezone).</text>
+</user>

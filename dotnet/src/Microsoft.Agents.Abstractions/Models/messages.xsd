@@ -1,0 +1,330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.agent.ai/messages/v1" elementFormDefault="qualified" targetNamespace="http://schemas.agent.ai/messages/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ChatMessage">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="thread-id" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="role" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="contents" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="text" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="user-id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="agent-id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="completion-id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="completed-at" type="xs:dateTime" />
+      <xs:element minOccurs="0" maxOccurs="1" name="metadata" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="raw-representation" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="message-id" type="xs:string" use="required" />
+    <xs:attribute name="parent-message-id" type="xs:string" use="optional" />
+    <xs:attribute name="author-name" type="xs:string" use="optional" />
+    <xs:attribute name="created-at" type="xs:dateTime" use="optional" />
+  </xs:complexType>
+  <xs:complexType name="AIContentBase">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="additional-properties" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="audience" type="xs:string" use="optional" />
+    <xs:attribute name="encryption" type="xs:string" use="optional" />
+  </xs:complexType>
+  <xs:complexType name="TextContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="text" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="text" type="tns:TextContent" />
+  <xs:complexType name="FunctionCallContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="arguments" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="call-id" type="xs:string" use="required" />
+    <xs:attribute name="name" type="xs:string" use="required" />
+  </xs:complexType>
+  <xs:element name="function-call" type="tns:FunctionCallContent" />
+  <xs:complexType name="FunctionResultContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="result" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="call-id" type="xs:string" use="optional" />
+    <xs:attribute name="name" type="xs:string" use="optional" />
+  </xs:complexType>
+  <xs:element name="function-result" type="tns:FunctionResultContent" />
+  <xs:complexType name="ErrorContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="message" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="stack-trace" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="code" type="xs:string" use="optional" />
+  </xs:complexType>
+  <xs:element name="error" type="tns:ErrorContent" />
+  <xs:complexType name="TextReasoningContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="text" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="exposed" type="xs:boolean" use="optional" />
+  </xs:complexType>
+  <xs:element name="thinking" type="tns:TextReasoningContent" />
+  <xs:complexType name="DataContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="value" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="uri" type="xs:string" use="optional" />
+    <xs:attribute name="mime-type" type="xs:string" use="optional" />
+  </xs:complexType>
+  <xs:element name="data" type="tns:DataContent" />
+  <xs:complexType name="UriContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="uri" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="uri" type="tns:UriContent" />
+  <xs:complexType name="ImageContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="uri" type="xs:string" use="optional" />
+    <xs:attribute name="alt" type="xs:string" use="optional" />
+    <xs:attribute name="mime-type" type="xs:string" use="optional" />
+    <xs:attribute name="width" type="xs:int" use="optional" />
+    <xs:attribute name="height" type="xs:int" use="optional" />
+  </xs:complexType>
+  <xs:element name="image" type="tns:ImageContent" />
+  <xs:complexType name="AudioContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="uri" type="xs:string" use="optional" />
+    <xs:attribute name="mime-type" type="xs:string" use="optional" />
+    <xs:attribute name="duration" type="xs:int" use="optional" />
+  </xs:complexType>
+  <xs:element name="audio" type="tns:AudioContent" />
+  <xs:complexType name="TranscriptContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="text" type="xs:string" use="required" />
+    <xs:attribute name="language" type="xs:string" use="optional" />
+    <xs:attribute name="confidence" type="xs:float" use="optional" />
+    <xs:attribute name="speaker" type="xs:string" use="optional" />
+  </xs:complexType>
+  <xs:element name="transcript" type="tns:TranscriptContent" />
+  <xs:complexType name="WordTiming">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="word" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="start" type="xs:float" />
+      <xs:element minOccurs="1" maxOccurs="1" name="end" type="xs:float" />
+      <xs:element minOccurs="0" maxOccurs="1" name="confidence" type="xs:float" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="VideoContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="uri" type="xs:string" use="optional" />
+    <xs:attribute name="mime-type" type="xs:string" use="optional" />
+    <xs:attribute name="width" type="xs:int" use="optional" />
+    <xs:attribute name="height" type="xs:int" use="optional" />
+    <xs:attribute name="duration" type="xs:int" use="optional" />
+    <xs:attribute name="frame-rate" type="xs:int" use="optional" />
+  </xs:complexType>
+  <xs:element name="video" type="tns:VideoContent" />
+  <xs:complexType name="FileContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="uri" type="xs:string" use="optional" />
+    <xs:attribute name="filename" type="xs:string" use="optional" />
+    <xs:attribute name="mime-type" type="xs:string" use="optional" />
+    <xs:attribute name="size-bytes" type="xs:long" use="optional" />
+  </xs:complexType>
+  <xs:element name="file" type="tns:FileContent" />
+  <xs:complexType name="SearchResultContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="snippet" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="title" type="xs:string" use="required" />
+    <xs:attribute name="url" type="xs:string" use="required" />
+    <xs:attribute name="score" type="xs:float" use="optional" />
+  </xs:complexType>
+  <xs:element name="search-result" type="tns:SearchResultContent" />
+  <xs:complexType name="DocumentContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="content" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="title" type="xs:string" use="required" />
+    <xs:attribute name="document-id" type="xs:string" use="required" />
+    <xs:attribute name="source" type="xs:string" use="required" />
+    <xs:attribute name="mime-type" type="xs:string" use="optional" />
+  </xs:complexType>
+  <xs:element name="document" type="tns:DocumentContent" />
+  <xs:complexType name="Citation">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="source" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="text" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="start" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" name="end" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" name="score" type="xs:float" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AdaptiveCardContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="card" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="version" type="xs:string" use="optional" />
+    <xs:attribute name="fallback-text" type="xs:string" use="optional" />
+  </xs:complexType>
+  <xs:element name="adaptive-card" type="tns:AdaptiveCardContent" />
+  <xs:complexType name="RefusalContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="reason" type="xs:string" use="required" />
+  </xs:complexType>
+  <xs:element name="refusal" type="tns:RefusalContent" />
+  <xs:complexType name="ContentFilterResultContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="filtered" type="xs:boolean" use="required" />
+    <xs:attribute name="category" type="xs:string" use="required" />
+    <xs:attribute name="severity" type="xs:string" use="required" />
+  </xs:complexType>
+  <xs:element name="content-filter-result" type="tns:ContentFilterResultContent" />
+  <xs:complexType name="UserInputRequestContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="request-id" type="xs:string" use="required" />
+    <xs:attribute name="prompt" type="xs:string" use="required" />
+    <xs:attribute name="input-type" type="xs:string" use="optional" />
+    <xs:attribute name="required" type="xs:boolean" use="optional" />
+  </xs:complexType>
+  <xs:element name="user-input-request" type="tns:UserInputRequestContent" />
+  <xs:complexType name="SuggestedActionsContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="actions" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="suggested-actions" type="tns:SuggestedActionsContent" />
+  <xs:complexType name="SuggestedAction">
+    <xs:sequence />
+    <xs:attribute name="title" type="xs:string" use="required" />
+    <xs:attribute name="action-type" type="xs:string" use="required" />
+    <xs:attribute name="value" type="xs:string" use="optional" />
+    <xs:attribute name="text" type="xs:string" use="optional" />
+  </xs:complexType>
+  <xs:complexType name="EventContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="value" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="timestamp" type="xs:dateTime" use="optional" />
+  </xs:complexType>
+  <xs:element name="event" type="tns:EventContent" />
+  <xs:complexType name="TraceContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="value" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="label" type="xs:string" use="optional" />
+    <xs:attribute name="severity" type="xs:string" use="optional" />
+    <xs:attribute name="timestamp" type="xs:dateTime" use="optional" />
+  </xs:complexType>
+  <xs:element name="trace" type="tns:TraceContent" />
+  <xs:complexType name="ActionContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="value" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="text" type="xs:string" use="optional" />
+    <xs:attribute name="timestamp" type="xs:dateTime" use="optional" />
+  </xs:complexType>
+  <xs:element name="action" type="tns:ActionContent" />
+  <xs:complexType name="TypingIndicatorContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="from" type="xs:string" use="required" />
+    <xs:attribute name="timestamp" type="xs:dateTime" use="optional" />
+  </xs:complexType>
+  <xs:element name="typing-indicator" type="tns:TypingIndicatorContent" />
+  <xs:complexType name="MessageReactionContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="reactions-added" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="reactions-removed" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="referenced-message-id" type="xs:string" use="required" />
+  </xs:complexType>
+  <xs:element name="message-reaction" type="tns:MessageReactionContent" />
+  <xs:complexType name="MessageReaction">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="type" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="user-id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="timestamp" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MessageDeleteContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="message-id" type="xs:string" use="required" />
+    <xs:attribute name="reason" type="xs:string" use="optional" />
+  </xs:complexType>
+  <xs:element name="message-delete" type="tns:MessageDeleteContent" />
+  <xs:complexType name="MessageUpdateContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="message-id" type="xs:string" use="required" />
+    <xs:attribute name="reason" type="xs:string" use="optional" />
+  </xs:complexType>
+  <xs:element name="message-update" type="tns:MessageUpdateContent" />
+  <xs:complexType name="HostedFileContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="file-id" type="xs:string" use="required" />
+    <xs:attribute name="filename" type="xs:string" use="optional" />
+    <xs:attribute name="media-type" type="xs:string" use="optional" />
+    <xs:attribute name="size-bytes" type="xs:long" use="optional" />
+  </xs:complexType>
+  <xs:element name="hosted-file" type="tns:HostedFileContent" />
+  <xs:complexType name="HostedVectorStoreContent">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="vector-store-id" type="xs:string" use="required" />
+    <xs:attribute name="name" type="xs:string" use="optional" />
+    <xs:attribute name="document-count" type="xs:int" use="optional" />
+  </xs:complexType>
+  <xs:element name="hosted-vector-store" type="tns:HostedVectorStoreContent" />
+  <xs:complexType name="AIAnnotation">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="type" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="data" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="ChatRole">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="system" />
+      <xs:enumeration value="developer" />
+      <xs:enumeration value="agent" />
+      <xs:enumeration value="user" />
+      <xs:enumeration value="tool" />
+      <xs:enumeration value="channel" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

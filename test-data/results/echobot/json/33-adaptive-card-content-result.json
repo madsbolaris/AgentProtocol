@@ -1,0 +1,20 @@
+{
+  "runId": "run_ff06044573d64abe",
+  "agentId": "echo-agent",
+  "threadId": "thread_2463ee6c025b413d",
+  "status": "completed",
+  "input": [],
+  "output": [
+    {
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "Received agent message"
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-08T06:29:15Z",
+  "completedAt": "2026-02-08T06:29:15Z"
+}

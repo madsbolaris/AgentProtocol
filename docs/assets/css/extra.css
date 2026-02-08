@@ -1,0 +1,747 @@
+/* ============================================================
+   Agent Framework Docs — Dense Professional (Segoe / Learn-ish)
+   Consolidated, polished, Microsoft Learn-inspired design
+   ============================================================ */
+
+@import url("https://fonts.bunny.net/css?family=inter:400,500,600,700|jetbrains-mono:400,500,600");
+
+/* ----------------------------
+   1) Global tokens + fonts
+   ---------------------------- */
+:root {
+  --md-text-font: "Segoe UI Variable", "Segoe UI", Inter, system-ui, -apple-system,
+    BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --md-code-font: "Cascadia Mono", "Cascadia Code", Consolas, "SF Mono",
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+  /* Density controls (tightened for professional feel) */
+  --ap-body-size: 0.66rem;
+  --ap-body-leading: 1.55;
+
+  /* Spacing scale */
+  --ap-1: 0.20rem;
+  --ap-2: 0.40rem;
+  --ap-3: 0.60rem;
+  --ap-4: 0.80rem;
+  --ap-5: 1.00rem;
+  --ap-6: 1.20rem;
+
+  /* Lines + shape */
+  --ap-border: 1px;
+  --ap-radius: 3px;
+  --ap-radius-lg: 5px;
+
+  /* Layout (tighter for denser content) */
+  --ap-grid-max: 1600px;
+  --ap-content-pad-x: 1.05rem;
+  --ap-content-pad-y: 0.82rem;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: geometricPrecision;
+}
+
+/* ----------------------------
+   2) Palettes (monochrome + MS blue)
+   ---------------------------- */
+
+/* LIGHT */
+[data-md-color-scheme="default"] {
+  --ap-bg: #ffffff;
+  --ap-surface: #f6f7f9;
+  --ap-surface-2: #fbfcfe;
+  --ap-text: #111827;
+  --ap-muted: #374151;
+  --ap-faint: #6b7280;
+  --ap-border-color: #e5e7eb;
+
+  --ap-accent: #0078d4;
+  --ap-link: #0067b8;
+  --ap-link-hover: #004e8c;
+
+  --ap-code-bg: #f3f4f6;
+  --ap-code-border: #d1d5db;
+
+  /* Material variables */
+  --md-default-bg-color: var(--ap-bg);
+  --md-default-fg-color: var(--ap-text);
+  --md-default-fg-color--light: rgba(17, 24, 39, 0.72);
+  --md-default-fg-color--lighter: rgba(17, 24, 39, 0.52);
+  --md-default-fg-color--lightest: rgba(17, 24, 39, 0.30);
+
+  --md-typeset-a-color: var(--ap-link);
+  --md-primary-fg-color: var(--ap-bg);
+  --md-primary-bg-color: var(--ap-text);
+  --md-primary-bg-color--light: rgba(17, 24, 39, 0.72);
+  --md-accent-fg-color: var(--ap-accent);
+
+  --md-code-bg-color: var(--ap-code-bg);
+  --md-code-fg-color: var(--ap-text);
+
+  --md-footer-bg-color: var(--ap-bg);
+  --md-footer-bg-color--dark: var(--ap-bg);
+}
+
+/* DARK */
+[data-md-color-scheme="slate"] {
+  --ap-bg: #0b0c0f;
+  --ap-surface: #12161c;
+  --ap-surface-2: #0f1318;
+  --ap-text: #f3f4f6;
+  --ap-muted: #c7cdd7;
+  --ap-faint: #9aa3b2;
+  --ap-border-color: #242a35;
+
+  --ap-accent: #4aa3ff;
+  --ap-link: #7ab0ff;
+  --ap-link-hover: #a8ccff;
+
+  --ap-code-bg: #0f1318;
+  --ap-code-border: #242a35;
+
+  --md-default-bg-color: var(--ap-bg);
+  --md-default-fg-color: var(--ap-text);
+  --md-default-fg-color--light: rgba(243, 244, 246, 0.72);
+  --md-default-fg-color--lighter: rgba(243, 244, 246, 0.52);
+  --md-default-fg-color--lightest: rgba(243, 244, 246, 0.30);
+
+  --md-typeset-a-color: var(--ap-link);
+  --md-primary-fg-color: var(--ap-bg);
+  --md-accent-fg-color: var(--ap-accent);
+
+  --md-code-bg-color: var(--ap-code-bg);
+  --md-code-fg-color: var(--ap-text);
+
+  --md-footer-bg-color: var(--ap-bg);
+  --md-footer-bg-color--dark: var(--ap-bg);
+}
+
+/* ----------------------------
+   3) Layout + content padding
+   ---------------------------- */
+.md-grid {
+  max-width: var(--ap-grid-max);
+}
+
+.md-content__inner {
+  padding: var(--ap-content-pad-y) var(--ap-content-pad-x);
+}
+
+.md-content__inner > article {
+  margin: 0;
+}
+
+/* ----------------------------
+   4) Header + Tabs
+   ---------------------------- */
+.md-header {
+  background: var(--ap-bg) !important;
+  border-bottom: var(--ap-border) solid var(--ap-border-color);
+  box-shadow: none !important;
+}
+
+/* Light mode header visibility fixes */
+[data-md-color-scheme="default"] .md-header,
+[data-md-color-scheme="default"] .md-tabs {
+  color: var(--ap-text) !important;
+}
+
+[data-md-color-scheme="default"] .md-header__title,
+[data-md-color-scheme="default"] .md-header__topic,
+[data-md-color-scheme="default"] .md-header__button,
+[data-md-color-scheme="default"] .md-header__button.md-icon,
+[data-md-color-scheme="default"] .md-header__source,
+[data-md-color-scheme="default"] .md-header__source a,
+[data-md-color-scheme="default"] .md-search__icon {
+  color: var(--ap-text) !important;
+  fill: currentColor !important;
+}
+
+.md-header__title {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.md-header__button,
+.md-header__button.md-icon {
+  color: var(--ap-text) !important;
+}
+
+/* Tabs with proper spacing */
+.md-tabs {
+  background: var(--ap-bg) !important;
+  border-bottom: var(--ap-border) solid var(--ap-border-color);
+  box-shadow: none !important;
+  padding-top: 0.10rem;
+  padding-bottom: 0.68rem;
+}
+
+/* Align tabs container with sidebar and logo */
+.md-tabs__inner {
+  margin: 0 auto;
+  max-width: var(--ap-grid-max);
+  padding: 0 0.8rem;
+}
+
+.md-tabs__list {
+  padding-bottom: 0.36rem;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.md-tabs__link {
+  font-weight: 600;
+  font-size: 0.74rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  opacity: 0.70;
+  padding: 0.55rem 0.70rem 0.62rem;
+  color: var(--ap-text) !important;
+}
+
+.md-tabs__link--active {
+  opacity: 1;
+  border-bottom: 2px solid var(--ap-accent);
+}
+
+/* ----------------------------
+   5) Breadcrumbs
+   ---------------------------- */
+.md-path {
+  margin: 0 0 var(--ap-3) 0;
+  padding: 0 var(--ap-content-pad-x);
+}
+
+.md-path__list {
+  margin: 0;
+  padding: 0;
+}
+
+.md-path__item,
+.md-path__link {
+  font-size: 0.74rem;
+  line-height: 1.2;
+  color: var(--ap-faint) !important;
+}
+
+.md-path__link:hover {
+  color: var(--ap-link-hover) !important;
+}
+
+/* ----------------------------
+   6) Typography
+   ---------------------------- */
+.md-typeset {
+  font-size: 0.83rem;
+  line-height: var(--ap-body-leading);
+  color: var(--ap-text);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+  font-family: var(--md-text-font);
+  color: var(--ap-text);
+  letter-spacing: -0.01em;
+}
+
+.md-typeset h1 {
+  font-size: 1.60rem;
+  line-height: 1.12;
+  font-weight: 700;
+  margin: 0 0 var(--ap-3) 0;
+  padding-bottom: var(--ap-2);
+  border-bottom: var(--ap-border) solid var(--ap-border-color);
+}
+
+.md-typeset h2 {
+  font-size: 1.22rem;
+  line-height: 1.18;
+  font-weight: 700;
+  margin: 2.50rem 0 var(--ap-2) 0;
+  padding-bottom: var(--ap-1);
+  border-bottom: var(--ap-border) solid var(--ap-border-color);
+}
+
+.md-typeset h3 {
+  font-size: 1.04rem;
+  line-height: 1.22;
+  font-weight: 700;
+  margin: 1.25rem 0 0.55rem 0;
+}
+
+.md-typeset h4 {
+  font-size: 0.94rem;
+  line-height: 1.25;
+  font-weight: 700;
+  margin: var(--ap-4) 0 var(--ap-1) 0;
+}
+
+.md-typeset p {
+  margin: 0.65rem 0 0.55rem 0;
+  color: var(--ap-muted);
+}
+
+.md-typeset h1 + p,
+.md-typeset h2 + p {
+  color: var(--ap-text);
+}
+
+.md-typeset strong,
+.md-typeset b {
+  color: var(--ap-text);
+  font-weight: 600;
+}
+
+.md-typeset a {
+  color: var(--ap-link);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.md-typeset a:hover {
+  color: var(--ap-link-hover);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.12em;
+}
+
+/* ----------------------------
+   7) Lists
+   ---------------------------- */
+.md-typeset ul,
+.md-typeset ol {
+  margin: 0 0 0.60rem 0;
+  padding-left: 1.00rem;
+}
+
+.md-typeset li {
+  margin: 0 0 0.16rem 0;
+  color: var(--ap-muted);
+}
+
+.md-typeset li::marker {
+  color: var(--ap-faint);
+}
+
+.md-typeset li > ul,
+.md-typeset li > ol {
+  margin: var(--ap-2) 0 var(--ap-2) 0;
+  padding-left: 1.00rem;
+}
+
+/* ----------------------------
+   8) Code
+   ---------------------------- */
+.md-typeset :not(pre) > code {
+  font-family: var(--md-code-font);
+  font-size: 0.82em;
+  line-height: 1.15;
+  background: var(--ap-code-bg);
+  border: var(--ap-border) solid var(--ap-code-border);
+  border-radius: var(--ap-radius);
+  padding: 0.06rem 0.26rem;
+  color: var(--ap-text);
+}
+
+.md-typeset pre {
+  margin: 0 0 0.80rem 0;
+}
+
+.md-typeset pre > code {
+  background: var(--ap-code-bg);
+  border: var(--ap-border) solid var(--ap-code-border);
+  border-radius: var(--ap-radius-lg);
+  padding: 0.70rem 0.95rem;
+  font-size: 0.78rem;
+  line-height: 1.50;
+  box-shadow: none;
+}
+
+.md-typeset .highlight {
+  box-shadow: none;
+}
+
+.md-clipboard {
+  border-radius: var(--ap-radius);
+}
+
+.md-clipboard::after {
+  border-radius: var(--ap-radius);
+}
+
+/* ----------------------------
+   9) Tabbed code blocks
+   ---------------------------- */
+.md-typeset .tabbed-labels {
+  margin: 0 0 var(--ap-2) 0;
+  border-bottom: var(--ap-border) solid var(--ap-border-color);
+}
+
+.md-typeset .tabbed-labels > label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 0.35rem 0.50rem;
+  letter-spacing: 0.02em;
+}
+
+.md-typeset .tabbed-set > input:checked + label {
+  color: var(--ap-text);
+  border-bottom: 2px solid var(--ap-accent);
+}
+
+.md-typeset .tabbed-content {
+  padding: 0;
+}
+
+/* Add spacing before output sections in tabs */
+.md-typeset .tabbed-content p strong:first-child {
+  margin-top: var(--ap-5);
+  display: block;
+}
+
+.md-typeset .tabbed-content .highlight + p {
+  margin-top: var(--ap-5);
+}
+
+/* ----------------------------
+   10) Tables
+   ---------------------------- */
+.md-typeset table:not([class]) {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.90rem 0;
+  font-size: 0.80rem;
+  border: var(--ap-border) solid var(--ap-border-color);
+  border-radius: var(--ap-radius-lg);
+  overflow: hidden;
+}
+
+.md-typeset table:not([class]) th {
+  background: var(--ap-surface);
+  color: var(--ap-muted);
+  font-weight: 700;
+  font-size: 0.70rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.42rem 0.55rem;
+  border-bottom: var(--ap-border) solid var(--ap-border-color);
+  text-align: left;
+}
+
+.md-typeset table:not([class]) td {
+  padding: 0.40rem 0.55rem;
+  border-bottom: var(--ap-border) solid var(--ap-border-color);
+}
+
+.md-typeset table:not([class]) tr:last-child td {
+  border-bottom: none;
+}
+
+.md-typeset table:not([class]) tbody tr:hover {
+  background: var(--ap-surface-2);
+}
+
+/* ----------------------------
+   11) Navigation & Sidebars
+   ---------------------------- */
+
+/* Remove shadows, add crisp borders */
+.md-sidebar,
+.md-sidebar__scrollwrap,
+.md-sidebar__inner,
+.md-nav,
+.md-nav__list,
+.md-nav__item {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.md-sidebar__scrollwrap::before,
+.md-sidebar__scrollwrap::after,
+.md-nav::before,
+.md-nav::after {
+  display: none !important;
+  content: none !important;
+}
+
+.md-sidebar--primary {
+  border-right: 1px solid var(--ap-border-color);
+  height: 100%;
+  padding-top: 0;
+}
+
+.md-sidebar--secondary {
+  border-left: 1px solid var(--ap-border-color);
+  width: 15.5rem;
+  height: 100%;
+  padding-top: 0;
+}
+
+.md-sidebar--secondary .md-sidebar__scrollwrap,
+.md-sidebar--secondary .md-sidebar__inner {
+  width: 15.5rem;
+}
+
+.md-sidebar--secondary .md-sidebar__inner {
+  padding-right: 0;
+}
+
+/* Nav typography - ensure consistent left alignment */
+.md-nav__title {
+  font-size: 0.70rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--ap-faint);
+  padding: var(--ap-2) 0 var(--ap-2) var(--ap-3);
+  margin-left: 0;
+}
+
+/* Left nav title alignment */
+.md-sidebar--primary .md-nav__title {
+  text-align: left !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  display: flex !important;
+  padding-left: var(--ap-3) !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.md-sidebar--primary .md-nav__title .md-nav__title-text,
+.md-sidebar--primary .md-nav__title .md-ellipsis {
+  text-align: left !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+.md-nav__title[for="__drawer"] {
+  font-size: 0.72rem !important;
+  letter-spacing: 0.10em !important;
+  text-transform: uppercase !important;
+  color: var(--ap-faint) !important;
+}
+
+/* Remove double active bars */
+.md-nav__link::before {
+  display: none !important;
+  content: none !important;
+}
+
+.md-nav__link,
+.md-nav__title,
+.md-nav__item--active,
+.md-nav__item--nested {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+.md-nav__link {
+  font-size: 0.78rem;
+  line-height: 1.25;
+  padding: 0.35rem 0 0.35rem var(--ap-3);
+  margin: 0;
+  margin-left: 0;
+  color: var(--ap-text) !important;
+}
+
+/* Only apply border to actual clickable links, not containers */
+a.md-nav__link,
+label.md-nav__link {
+  border-left: 2px solid transparent;
+  padding-left: calc(var(--ap-3) - 2px);
+}
+
+.md-nav__item--active > .md-nav__link {
+  font-weight: 600;
+}
+
+a.md-nav__link--active,
+label.md-nav__link--active {
+  font-weight: 700;
+  border-left-color: var(--ap-accent);
+}
+
+.md-nav__link:hover {
+  color: var(--ap-link-hover) !important;
+}
+
+.md-nav__item--nested .md-nav__list {
+  padding-left: 0.35rem;
+}
+
+/* Prevent truncation */
+.md-sidebar--primary .md-nav__link .md-ellipsis,
+.md-sidebar--secondary .md-nav__link .md-ellipsis {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+.md-sidebar--primary a.md-nav__link,
+.md-sidebar--primary label.md-nav__link {
+  padding-left: calc(var(--ap-3) - 2px) !important;
+  padding-right: var(--ap-3) !important;
+}
+
+.md-sidebar--primary .md-nav__link.md-nav__container {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Right TOC */
+.md-nav--secondary .md-nav__link {
+  font-size: 0.73rem;
+  line-height: 1.25;
+  padding: 0.30rem var(--ap-3);
+  color: var(--ap-muted) !important;
+}
+
+.md-nav--secondary .md-nav__link:hover {
+  color: var(--ap-text) !important;
+}
+
+/* ----------------------------
+   12) Admonitions / Callouts
+   ---------------------------- */
+.md-typeset .admonition,
+.md-typeset details {
+  border: 1px solid var(--ap-border-color);
+  border-left: 3px solid var(--ap-accent);
+  background: var(--ap-surface-2);
+  border-radius: var(--ap-radius-lg);
+  box-shadow: none;
+  padding: var(--ap-3) var(--ap-4);
+  margin: var(--ap-4) 0;
+}
+
+.md-typeset .admonition.tip,
+.md-typeset .admonition.note,
+.md-typeset .admonition.info,
+.md-typeset .admonition.success,
+.md-typeset .admonition.warning,
+.md-typeset .admonition.danger {
+  border-left-color: var(--ap-accent);
+}
+
+.md-typeset .admonition-title {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--ap-text);
+  margin-bottom: 0.45rem;
+}
+
+.md-typeset .admonition-title::before {
+  background-color: var(--ap-accent);
+}
+
+.md-typeset .admonition > :last-child {
+  margin-bottom: 0;
+}
+
+.md-typeset .admonition p,
+.md-typeset .admonition li {
+  color: var(--ap-muted);
+}
+
+.md-typeset .admonition ul,
+.md-typeset .admonition ol {
+  margin-bottom: 0.40rem;
+}
+
+/* ----------------------------
+   13) Search
+   ---------------------------- */
+.md-search__input {
+  background: var(--ap-surface);
+  border: var(--ap-border) solid var(--ap-border-color);
+  border-radius: var(--ap-radius);
+  color: var(--ap-text);
+}
+
+[data-md-color-scheme="default"] .md-search__input {
+  background: var(--ap-surface) !important;
+  color: var(--ap-text) !important;
+  border-color: var(--ap-border-color) !important;
+}
+
+.md-search__input:focus {
+  border-color: var(--ap-accent);
+  box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.18);
+}
+
+.md-search__input::placeholder {
+  color: var(--ap-faint);
+}
+
+[data-md-color-scheme="default"] .md-search__input::placeholder {
+  color: var(--ap-faint) !important;
+}
+
+/* ----------------------------
+   14) Footer
+   ---------------------------- */
+.md-footer {
+  border-top: var(--ap-border) solid var(--ap-border-color);
+  background: var(--ap-bg);
+}
+
+.md-footer__inner,
+.md-footer-meta {
+  padding: var(--ap-3) var(--ap-content-pad-x);
+}
+
+/* ----------------------------
+   15) Focus + selection
+   ---------------------------- */
+::selection {
+  background: rgba(0, 120, 212, 0.22);
+  color: var(--ap-text);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--ap-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ----------------------------
+   16) Horizontal rules
+   ---------------------------- */
+.md-typeset hr {
+  margin: 1.25rem 0 1.00rem 0;
+  border: none;
+  border-top: var(--ap-border) solid var(--ap-border-color);
+}
+
+/* ----------------------------
+   17) Responsive
+   ---------------------------- */
+@media screen and (max-width: 76.1875em) {
+  :root {
+    --ap-body-size: 0.84rem;
+    --ap-content-pad-x: 0.95rem;
+  }
+
+  .md-tabs__link {
+    font-size: 0.72rem;
+    padding: 0.52rem 0.55rem 0.62rem;
+  }
+
+  .md-typeset h1 {
+    font-size: 1.45rem;
+  }
+}

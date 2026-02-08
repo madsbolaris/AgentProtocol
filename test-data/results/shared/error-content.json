@@ -1,0 +1,13 @@
+{
+  "testId": "error-content",
+  "timestamp": "2026-02-08T04:58:34.422975+00:00",
+  "output": {
+    "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<agent agentId=\"agent-456\" messageId=\"msg-error-1\">\n  <error code=\"rate_limit_exceeded\" message=\"Rate limit exceeded. Please try again in 60 seconds.\" />\n</agent>",
+    "normalized": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<agent agentId=\"agent-456\" messageId=\"msg-error-1\">\n <error code=\"rate_limit_exceeded\" message=\"Rate limit exceeded. Please try again in 60 seconds.\" />\n</agent>",
+    "hash": "33aaab004b16da50573c871b96515c944e6ac68f69ff8589e55f21023ac89313"
+  },
+  "metadata": {
+    "description": "Error content message",
+    "format": "xml"
+  }
+}

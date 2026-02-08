@@ -1,0 +1,30 @@
+using System;
+using System.Collections.Generic;
+using System.Xml.Serialization;
+using System.Text.Json.Serialization;
+
+namespace Microsoft.Agents
+{
+    /// <summary>/// Image Content/// FROM: Azure Agent API (ImageContent)/// ADDITION: Not in MAF/// Provides three delivery methods: uri, dataUri, or raw data bytes./// M365: Future multi-modal scenarios/// XML: &lt;image uri="..." mime-type="..." width="1920" height="1080" /&gt;/// </summary>
+    [XmlRoot("image")]
+    public partial class ImageContent : AIContentBase
+    {
+        public override string Kind => "image";
+
+        [XmlAttribute("uri")]
+        [JsonPropertyName("uri")]
+        public string Uri { get; set; }
+        [XmlAttribute("alt")]
+        [JsonPropertyName("alt")]
+        public string Alt { get; set; }
+        [XmlAttribute("mime-type")]
+        [JsonPropertyName("mimeType")]
+        public string MimeType { get; set; }
+        [XmlAttribute("width")]
+        [JsonPropertyName("width")]
+        public int Width { get; set; }
+        [XmlAttribute("height")]
+        [JsonPropertyName("height")]
+        public int Height { get; set; }
+    }
+}

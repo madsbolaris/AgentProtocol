@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_interleaved_001" status="active" created-at="2026-02-07T11:40:00Z">
+  <system message-id="msg_001" created-at="2026-02-07T11:40:00Z">
+    <text>You are a helpful assistant in a collaborative workspace.</text>
+  </system>
+  <developer message-id="msg_002" created-at="2026-02-07T11:40:01Z">
+    <text>Debug mode enabled for this session.</text>
+  </developer>
+  <user message-id="msg_003" user-id="user_eve" author-name="Eve" created-at="2026-02-07T11:40:10Z">
+    <text>Hello! Can you help me with something?</text>
+  </user>
+  <channel message-id="msg_004" author-name="System" created-at="2026-02-07T11:40:11Z">
+    <text>User Eve joined the channel</text>
+    <event event-type="user_joined" event-data='{"user_id": "user_eve"}' audience="system"/>
+  </channel>
+  <agent message-id="msg_005" agent-id="agent_assistant" created-at="2026-02-07T11:40:12Z">
+    <text>Of course! I'd be happy to help. What do you need?</text>
+  </agent>
+  <user message-id="msg_006" user-id="user_eve" author-name="Eve" created-at="2026-02-07T11:40:20Z">
+    <text>I need to know how to format dates.</text>
+  </user>
+  <agent message-id="msg_007" agent-id="agent_assistant" created-at="2026-02-07T11:40:21Z">
+    <text>I can help with date formatting! What format do you need?</text>
+  </agent>
+</thread>

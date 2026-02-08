@@ -1,0 +1,6 @@
+<!-- ERROR: User message missing required user-id attribute -->
+<user
+  author-name="Alice"
+  created-at="2026-02-07T10:02:00Z">
+  <text>This message is missing the required user-id attribute.</text>
+</user>

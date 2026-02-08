@@ -1,0 +1,5 @@
+<!-- ERROR: Unknown message role (not system, developer, user, agent, tool, or channel) -->
+<unknown-role
+  created-at="2026-02-07T10:02:00Z">
+  <text>This is an invalid message role.</text>
+</unknown-role>

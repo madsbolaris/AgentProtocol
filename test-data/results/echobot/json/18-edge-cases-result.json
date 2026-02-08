@@ -1,0 +1,20 @@
+{
+  "runId": "run_2f378b83cddd4f66",
+  "agentId": "echo-agent",
+  "threadId": "thread_example_018",
+  "status": "completed",
+  "input": [],
+  "output": [
+    {
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You said: Text with special characters: <>&\"' and unicode: \u4f60\u597d \ud83c\udf0d"
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-07T10:00:00Z",
+  "completedAt": "2026-02-07T10:00:00Z"
+}

@@ -1,0 +1,300 @@
+using System.Text;
+using Microsoft.Agents.CodeGen.TypeSpecParser;
+using Microsoft.Agents.CodeGen.Utilities;
+
+namespace Microsoft.Agents.CodeGen.RoslynGenerator;
+
+/// <summary>
+/// Generates Python content types with inheritance from AIContentBase.
+/// Handles the AIContent union and all 29+ content type variants.
+/// </summary>
+public class PythonContentTypeGenerator
+{
+    private readonly string _rootNamespace;
+
+    public PythonContentTypeGenerator(string rootNamespace = "")
+    {
+        _rootNamespace = rootNamespace;
+    }
+
+    /// <summary>
+    /// Generates AIContent union type and all derived content types.
+    /// </summary>
+    public List<string> GenerateContentTypes(
+        UnionDefinition aiContentUnion,
+        List<ModelDefinition> contentModels,
+        string outputDirectory)
+    {
+        var generatedFiles = new List<string>();
+
+        Directory.CreateDirectory(outputDirectory);
+
+        // Generate base class for content types
+        var baseClassFile = Path.Combine(outputDirectory, "ai_content_base.py");
+        var baseCode = GenerateBaseClass(aiContentUnion);
+        File.WriteAllText(baseClassFile, baseCode);
+        generatedFiles.Add(baseClassFile);
+
+        // Generate each content type class
+        foreach (var contentModel in contentModels)
+        {
+            var fileName = NamingConventions.ToSnakeCase(contentModel.Name);
+            var filePath = Path.Combine(outputDirectory, $"{fileName}.py");
+            var code = GenerateContentTypeClass(contentModel);
+            File.WriteAllText(filePath, code);
+            generatedFiles.Add(filePath);
+        }
+
+        // Generate union type
+        var unionFile = Path.Combine(outputDirectory, $"{NamingConventions.ToSnakeCase(aiContentUnion.Name)}.py");
+        var unionCode = GenerateUnion(aiContentUnion, contentModels);
+        File.WriteAllText(unionFile, unionCode);
+        generatedFiles.Add(unionFile);
+
+        // Update __init__.py
+        var initFile = Path.Combine(outputDirectory, "__init__.py");
+        var initCode = GenerateInitFile(aiContentUnion, contentModels);
+        File.WriteAllText(initFile, initCode);
+        generatedFiles.Add(initFile);
+
+        return generatedFiles;
+    }
+
+    private string GenerateBaseClass(UnionDefinition union)
+    {
+        var sb = new StringBuilder();
+
+        sb.AppendLine("# Copyright (c) Microsoft Corporation. All rights reserved.");
+        sb.AppendLine("# Licensed under the MIT License.");
+        sb.AppendLine();
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine("Generated from TypeSpec definitions.");
+        sb.AppendLine("DO NOT EDIT MANUALLY");
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine();
+        sb.AppendLine("from abc import ABC, abstractmethod");
+        sb.AppendLine("from dataclasses import dataclass");
+        sb.AppendLine("from typing import Optional, Literal");
+        sb.AppendLine();
+        sb.AppendLine();
+        sb.AppendLine("@dataclass");
+        sb.AppendLine("class AIContentBase(ABC):");
+        sb.AppendLine("    \"\"\"");
+        sb.AppendLine("    Base class for all content types.");
+        sb.AppendLine("    Contains the discriminator property 'kind' and optional audience.");
+        sb.AppendLine("    \"\"\"");
+        sb.AppendLine();
+        sb.AppendLine("    # Target audience for this content (user, agent, or both)");
+        sb.AppendLine("    audience: Optional[Literal['user', 'agent']] = None");
+        sb.AppendLine();
+        sb.AppendLine("    @property");
+        sb.AppendLine("    @abstractmethod");
+        sb.AppendLine("    def kind(self) -> str:");
+        sb.AppendLine("        \"\"\"Content type discriminator.\"\"\"");
+        sb.AppendLine("        ...");
+
+        return sb.ToString();
+    }
+
+    private string GenerateContentTypeClass(ModelDefinition contentModel)
+    {
+        var sb = new StringBuilder();
+
+        sb.AppendLine("# Copyright (c) Microsoft Corporation. All rights reserved.");
+        sb.AppendLine("# Licensed under the MIT License.");
+        sb.AppendLine();
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine("Generated from TypeSpec definitions.");
+        sb.AppendLine("DO NOT EDIT MANUALLY");
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine();
+
+        // Imports
+        sb.AppendLine("from dataclasses import dataclass, field");
+        sb.AppendLine("from typing import Optional, List, Dict, Any");
+        sb.AppendLine("from datetime import datetime");
+        sb.AppendLine();
+        sb.AppendLine("from .ai_content_base import AIContentBase");
+
+        // Collect imports for referenced types
+        var imports = CollectImports(contentModel);
+        if (imports.Any())
+        {
+            sb.AppendLine();
+            foreach (var import in imports)
+            {
+                var snakeCaseName = NamingConventions.ToSnakeCase(import);
+                sb.AppendLine($"from .{snakeCaseName} import {import}");
+            }
+        }
+
+        sb.AppendLine();
+        sb.AppendLine();
+
+        // Generate class
+        sb.AppendLine("@dataclass");
+        sb.AppendLine($"class {contentModel.Name}(AIContentBase):");
+
+        if (!string.IsNullOrWhiteSpace(contentModel.Documentation))
+        {
+            sb.AppendLine("    \"\"\"");
+            sb.AppendLine($"    {contentModel.Documentation}");
+            sb.AppendLine("    \"\"\"");
+        }
+
+        // Generate properties (excluding 'kind')
+        var hasProperties = false;
+        foreach (var prop in contentModel.Properties)
+        {
+            // Skip the 'kind' property as it will be a method
+            if (prop.Name.Equals("kind", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            hasProperties = true;
+            var pythonType = PythonModelGenerator.MapTypeSpecTypeToPython(prop.Type, prop.IsArray, prop.IsOptional);
+            var propertyName = NamingConventions.ToSnakeCase(prop.Name);
+
+            if (prop.IsOptional)
+            {
+                sb.AppendLine($"    {propertyName}: {pythonType} = None");
+            }
+            else if (prop.IsArray)
+            {
+                sb.AppendLine($"    {propertyName}: {pythonType} = field(default_factory=list)");
+            }
+            else if (pythonType.Contains("Dict"))
+            {
+                sb.AppendLine($"    {propertyName}: {pythonType} = field(default_factory=dict)");
+            }
+            else
+            {
+                sb.AppendLine($"    {propertyName}: {pythonType}");
+            }
+        }
+
+        if (!hasProperties)
+        {
+            sb.AppendLine("    pass");
+        }
+
+        sb.AppendLine();
+        sb.AppendLine("    @property");
+        sb.AppendLine("    def kind(self) -> str:");
+
+        // Determine the kind value from the class name
+        // e.g., TextContent -> "text", ImageContent -> "image"
+        var kindValue = contentModel.Name.Replace("Content", "");
+        kindValue = NamingConventions.ToCamelCase(kindValue);
+        sb.AppendLine($"        return \"{kindValue}\"");
+
+        return sb.ToString();
+    }
+
+    private string GenerateUnion(UnionDefinition unionDef, List<ModelDefinition> contentModels)
+    {
+        var sb = new StringBuilder();
+
+        sb.AppendLine("# Copyright (c) Microsoft Corporation. All rights reserved.");
+        sb.AppendLine("# Licensed under the MIT License.");
+        sb.AppendLine();
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine("Generated from TypeSpec definitions.");
+        sb.AppendLine("DO NOT EDIT MANUALLY");
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine();
+        sb.AppendLine("from typing import Union");
+        sb.AppendLine();
+
+        // Import all content types
+        foreach (var contentModel in contentModels)
+        {
+            var snakeCaseName = NamingConventions.ToSnakeCase(contentModel.Name);
+            sb.AppendLine($"from .{snakeCaseName} import {contentModel.Name}");
+        }
+
+        sb.AppendLine();
+        sb.AppendLine();
+
+        if (!string.IsNullOrWhiteSpace(unionDef.Documentation))
+        {
+            sb.AppendLine("# " + unionDef.Documentation);
+        }
+
+        // Generate union type
+        var variantsList = string.Join(",\n    ", contentModels.Select(m => m.Name));
+        sb.AppendLine($"{unionDef.Name} = Union[");
+        sb.AppendLine($"    {variantsList}");
+        sb.AppendLine("]");
+
+        return sb.ToString();
+    }
+
+    private string GenerateInitFile(UnionDefinition unionDef, List<ModelDefinition> contentModels)
+    {
+        var sb = new StringBuilder();
+
+        sb.AppendLine("# Copyright (c) Microsoft Corporation. All rights reserved.");
+        sb.AppendLine("# Licensed under the MIT License.");
+        sb.AppendLine();
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine("Generated content models from TypeSpec definitions.");
+        sb.AppendLine("DO NOT EDIT MANUALLY");
+        sb.AppendLine("\"\"\"");
+        sb.AppendLine();
+
+        sb.AppendLine("from .ai_content_base import AIContentBase");
+
+        var allExports = new List<string> { "AIContentBase" };
+
+        foreach (var contentModel in contentModels)
+        {
+            var snakeCaseName = NamingConventions.ToSnakeCase(contentModel.Name);
+            sb.AppendLine($"from .{snakeCaseName} import {contentModel.Name}");
+            allExports.Add(contentModel.Name);
+        }
+
+        var unionSnakeName = NamingConventions.ToSnakeCase(unionDef.Name);
+        sb.AppendLine($"from .{unionSnakeName} import {unionDef.Name}");
+        allExports.Add(unionDef.Name);
+
+        sb.AppendLine();
+        sb.AppendLine("__all__ = [");
+        foreach (var export in allExports)
+        {
+            sb.AppendLine($"    \"{export}\",");
+        }
+        sb.AppendLine("]");
+
+        return sb.ToString();
+    }
+
+    private HashSet<string> CollectImports(ModelDefinition modelDef)
+    {
+        var imports = new HashSet<string>();
+
+        foreach (var prop in modelDef.Properties)
+        {
+            var baseType = prop.Type;
+
+            // Skip primitive types
+            if (TypeMapper.IsSimpleType(baseType))
+                continue;
+
+            // Skip Record<T> types
+            if (baseType.StartsWith("Record<"))
+                continue;
+
+            // Skip literal types
+            if (baseType.StartsWith("\""))
+                continue;
+
+            // Skip 'kind' discriminator
+            if (prop.Name.Equals("kind", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            imports.Add(baseType);
+        }
+
+        return imports;
+    }
+}

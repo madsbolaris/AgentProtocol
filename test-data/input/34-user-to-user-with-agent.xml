@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_collab_001" status="active" created-at="2026-02-07T12:10:00Z">
+  <user message-id="msg_001" user-id="user_grace" author-name="Grace" created-at="2026-02-07T12:10:00Z">
+    <text>Can someone help me with this code issue?</text>
+  </user>
+  <user message-id="msg_002" user-id="user_henry" author-name="Henry" created-at="2026-02-07T12:10:05Z">
+    <text>Sure Grace, I can help! What's the issue?</text>
+  </user>
+  <agent message-id="msg_003" agent-id="agent_assistant" created-at="2026-02-07T12:10:06Z">
+    <text>Great to see collaboration! Let me know if you need any assistance.</text>
+  </agent>
+  <user message-id="msg_004" user-id="user_grace" author-name="Grace" created-at="2026-02-07T12:10:10Z">
+    <text>Thanks Henry! It's a null pointer exception.</text>
+  </user>
+</thread>

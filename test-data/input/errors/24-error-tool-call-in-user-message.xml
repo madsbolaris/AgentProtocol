@@ -1,0 +1,13 @@
+<!-- ERROR: Tool calls should only appear in agent messages, not user messages -->
+<user
+  user-id="user_123"
+  author-name="Alice"
+  created-at="2026-02-07T10:02:00Z">
+  <text>I want to search for something</text>
+  <function-call
+    call-id="call_001"
+    name="search"
+    audience="agent">
+    <arguments>{"query": "test"}</arguments>
+  </function-call>
+</user>

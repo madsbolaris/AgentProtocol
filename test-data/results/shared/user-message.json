@@ -1,0 +1,13 @@
+{
+  "testId": "user-message",
+  "timestamp": "2026-02-08T04:58:34.417806+00:00",
+  "output": {
+    "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<chat role=\"user\" messageId=\"user-123\">\n  <text>What is the weather in Seattle?</text>\n</chat>",
+    "normalized": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<chat role=\"user\" messageId=\"user-123\">\n <text>What is the weather in Seattle?</text>\n</chat>",
+    "hash": "6804fff83b22e75b9c4d80a1baff865dd3f38f7b602996be210dfed869f6b904"
+  },
+  "metadata": {
+    "description": "User input message",
+    "format": "xml"
+  }
+}

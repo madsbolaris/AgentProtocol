@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_example_034" status="active" created-at="2026-02-07T10:00:00Z">
+  <agent>
+    <text>You said: Can someone help me with this code issue?</text>
+  </agent>
+  <agent>
+    <text>You said: Sure Grace, I can help! What's the issue?</text>
+  </agent>
+  <agent>
+    <text>You said: Thanks Henry! It's a null pointer exception.</text>
+  </agent>
+</thread>

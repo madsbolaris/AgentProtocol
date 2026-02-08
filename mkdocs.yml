@@ -1,0 +1,249 @@
+site_name: Agent Framework Documentation
+site_description: A unified protocol for building AI agents across multiple platforms and frameworks
+site_author: Agent Framework Contributors
+
+# Repository
+repo_name: AgentFramework
+repo_url: https://github.com/madsbolaris/AgentFramework
+edit_uri: edit/main/docs/
+
+# Copyright
+copyright: Copyright &copy; 2024 Agent Framework Contributors
+
+# Configuration
+docs_dir: docs
+site_dir: site
+
+# Theme Configuration
+theme:
+  name: material
+  language: en
+
+  # Color scheme - Professional Bloomberg-inspired
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Dark mode - Professional
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue grey
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  # Features
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.tooltips
+    - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+
+  # Icons
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+
+  # Font - Anaheim & JetBrains Mono from Bunny Fonts (loaded via extra.css)
+  font:
+    text: Anaheim
+    code: JetBrains Mono
+
+  # Favicon
+  # favicon: assets/favicon.png
+
+  # Logo
+  # logo: assets/logo.png
+
+# Plugins
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - awesome-pages
+  - section-index
+  - test-examples:
+      snippets_dir: docs/snippets
+      results_dir: test-data/results
+      enable_validation: true
+      show_language_tabs: true
+  # Temporarily disabled - enable after git repository is properly initialized
+  # - git-revision-date-localized:
+  #     enable_creation_date: true
+  #     type: timeago
+  #     fallback_to_build_date: true
+
+# Extensions
+markdown_extensions:
+  # Python Markdown
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+  # Python Markdown Extensions
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Navigation
+nav:
+  - Home: index.md
+
+  - Getting Started:
+    - getting-started/index.md
+    - 5-Minute Quickstart: getting-started/quickstart.md
+    - Tool Execution: getting-started/tools.md
+    - Code Examples: getting-started/examples.md
+    - Advanced Patterns: getting-started/advanced-patterns.md
+    - Troubleshooting: getting-started/troubleshooting.md
+
+  - Integration Guides:
+    - guides/index.md
+    - Security & Compliance: guides/security-compliance.md
+    - Content Guardrails: guides/content-guardrails.md
+    - Error Handling: guides/error-handling.md
+    - Testing Agents: guides/testing-agents.md
+    - Production Deployment: guides/production-deployment.md
+    - Proactive Messaging: guides/proactive-messaging.md
+    - Voice Integration: guides/voice-integration.md
+    - Multi-Agent Systems: guides/multi-agent.md
+    - Human-in-the-Loop: guides/human-in-loop.md
+    - Webhooks: guides/webhooks.md
+
+  - API Reference:
+    - api-reference/index.md
+    - Content Types: api-reference/content-types.md
+    - Models: api-reference/models.md
+    - Tools: api-reference/tools.md
+    - Models:
+      - api-reference/models/index.md
+    - Operations:
+      - api-reference/operations/index.md
+      - Agents: api-reference/operations/agents.md
+      - Runs: api-reference/operations/runs.md
+      - Threads: api-reference/operations/threads.md
+
+  - Contributing: contributing.md
+
+  - Advanced:
+    - Specifications:
+      - specifications/index.md
+      - Run Lifecycle: specifications/run-lifecycle.md
+      - Message Lifecycle: specifications/message-lifecycle.md
+      - Streaming: specifications/streaming.md
+      - Tool Execution: specifications/tool-execution.md
+      - Content Encryption: specifications/content-encryption.md
+      - Authentication: specifications/authentication.md
+      - Validation: specifications/validation.md
+      - Error Handling: specifications/error-handling.md
+      - Hooks: specifications/hooks.md
+      - Remote Endpoints: specifications/remote-endpoints.md
+      - Agent Auto-Response: specifications/agent-auto-response.md
+
+# Extra
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/madsbolaris/AgentFramework
+      name: GitHub Repository
+
+  version:
+    provider: mike
+    default: latest
+
+  analytics:
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thanks for your feedback! Help us improve by
+            <a href="https://github.com/madsbolaris/AgentFramework/issues/new" target="_blank" rel="noopener">opening an issue</a>.
+
+# Extra CSS
+extra_css:
+  - assets/css/extra.css
+
+# Extra JavaScript
+extra_javascript:
+  - assets/js/tabbed-sync.js
+
+# Watch for changes
+watch:
+  - docs
+  - docs/assets
+  - docs/assets/css
+
+# Validation
+validation:
+  nav:
+    omitted_files: info
+    not_found: warn
+    absolute_links: info
+  links:
+    not_found: warn
+    absolute_links: info
+    unrecognized_links: info

@@ -1,0 +1,38 @@
+{
+  "runId": "run_4401534bb7fa41ce",
+  "agentId": "echo-agent",
+  "threadId": "thread_example_034",
+  "status": "completed",
+  "input": [],
+  "output": [
+    {
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You said: Can someone help me with this code issue?"
+        }
+      ]
+    },
+    {
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You said: Sure Grace, I can help! What's the issue?"
+        }
+      ]
+    },
+    {
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You said: Thanks Henry! It's a null pointer exception."
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-07T10:00:00Z",
+  "completedAt": "2026-02-07T10:00:00Z"
+}

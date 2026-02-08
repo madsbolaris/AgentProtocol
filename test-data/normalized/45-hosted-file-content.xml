@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<agent message-id="msg_0027" created-at="2026-02-07T10:00:00Z" agent-id="agent_test_27">
+  <hosted-file file-id="file_abc123"/>
+</agent>

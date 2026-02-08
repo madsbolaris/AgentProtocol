@@ -1,0 +1,9 @@
+<!-- ERROR: Tool result without preceding tool call with matching call-id -->
+<tool
+  call-id="call_002"
+  name="search_database"
+  created-at="2026-02-07T10:03:00Z">
+  <function-result audience="agent">
+    {"results": [{"id": 123, "name": "Example Record"}], "count": 1}
+  </function-result>
+</tool>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_agent_only_001" status="active" created-at="2026-02-07T12:20:00Z">
+  <agent message-id="msg_001" agent-id="agent_assistant" created-at="2026-02-07T12:20:00Z">
+    <text>Analyzing the situation...</text>
+  </agent>
+  <agent message-id="msg_002" agent-id="agent_assistant" created-at="2026-02-07T12:20:05Z">
+    <text>Still processing the data...</text>
+  </agent>
+  <agent message-id="msg_003" agent-id="agent_assistant" created-at="2026-02-07T12:20:10Z">
+    <text>Analysis complete!</text>
+  </agent>
+</thread>

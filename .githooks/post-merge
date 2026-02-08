@@ -1,0 +1,62 @@
+#!/bin/bash
+# Post-merge hook for Agent Protocol
+# Validates tests after pulling changes to catch golden file issues early
+
+set -e
+
+echo ""
+echo "🔄 Post-merge validation..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Check if golden files changed
+GOLDEN_CHANGES=$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -E "test-data/results/.*/.*\.json$" || true)
+
+if [ -n "$GOLDEN_CHANGES" ]; then
+    echo -e "${YELLOW}⚠️  Golden files were updated in this merge:${NC}"
+    echo "$GOLDEN_CHANGES" | sed 's/^/    /'
+    echo ""
+    echo "Running tests to validate against new golden files..."
+    echo ""
+
+    # Run Python tests if golden files changed
+    if echo "$GOLDEN_CHANGES" | grep -q "python"; then
+        echo "🐍 Validating Python tests..."
+        cd python/microsoft-agents-xml
+        if pytest tests/test_doc_examples.py -v --tb=short; then
+            echo -e "${GREEN}✓ Python tests pass with updated golden files${NC}"
+        else
+            echo -e "${RED}✗ Python tests fail with updated golden files${NC}"
+            echo "  You may need to update your code to match the new expected output."
+        fi
+        cd - > /dev/null
+        echo ""
+    fi
+
+    # Run .NET tests if golden files changed
+    if echo "$GOLDEN_CHANGES" | grep -q "dotnet"; then
+        echo "🔷 Validating C# tests..."
+        cd dotnet/tests/Microsoft.Agents.Xml.Tests
+        if dotnet test --verbosity quiet --nologo; then
+            echo -e "${GREEN}✓ C# tests pass with updated golden files${NC}"
+        else
+            echo -e "${RED}✗ C# tests fail with updated golden files${NC}"
+            echo "  You may need to update your code to match the new expected output."
+        fi
+        cd - > /dev/null
+        echo ""
+    fi
+fi
+
+# Check if test files changed
+TEST_CHANGES=$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD | grep -E "tests/.*\.(py|cs)$" || true)
+
+if [ -n "$TEST_CHANGES" ]; then
+    echo -e "${YELLOW}⚠️  Test files were updated - consider running full test suite${NC}"
+fi
+
+echo -e "${GREEN}✓ Post-merge validation complete${NC}"

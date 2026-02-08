@@ -1,0 +1,38 @@
+{
+  "runId": "run_5b0b24267ee54cdd",
+  "agentId": "echo-agent",
+  "threadId": "thread_example_033",
+  "status": "completed",
+  "input": [],
+  "output": [
+    {
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You said: Hello everyone!"
+        }
+      ]
+    },
+    {
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You said: Hi there! I'm Bob."
+        }
+      ]
+    },
+    {
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You said: How's everyone doing today?"
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-07T10:00:00Z",
+  "completedAt": "2026-02-07T10:00:00Z"
+}

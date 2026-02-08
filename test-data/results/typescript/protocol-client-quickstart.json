@@ -1,0 +1,13 @@
+{
+  "testId": "protocol-client-quickstart",
+  "timestamp": "2026-02-08T05:00:00.000000+00:00",
+  "output": {
+    "raw": "Status: Completed\nMessages: 2",
+    "normalized": "Status: Completed\nMessages: 2",
+    "hash": "abcd1234"
+  },
+  "metadata": {
+    "description": "Protocol client quickstart example",
+    "format": "text"
+  }
+}

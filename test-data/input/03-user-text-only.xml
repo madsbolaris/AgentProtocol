@@ -1,0 +1,8 @@
+<user
+  user-id="user_alice_123"
+  author-name="Alice"
+  created-at="2026-02-07T10:02:00Z">
+  <text audience="user,agent">
+    What's the weather like in Seattle?
+  </text>
+</user>

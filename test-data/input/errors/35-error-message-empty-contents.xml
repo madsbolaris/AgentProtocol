@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ERROR: Message with no content.
+
+Validation rule (docs/specifications/validation.md line 88):
+- Each message MUST have non-empty contents
+
+This user message has no content elements, which should be rejected.
+-->
+<user created-at="2026-02-07T10:00:00Z">
+  <!-- No content - should fail validation -->
+</user>

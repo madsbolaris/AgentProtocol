@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<agent message-id="msg_0002" created-at="2026-02-07T10:00:00Z" agent-id="agent_test_2">
+  <content-filter-result filtered="true" category="test_category" severity="medium"/>
+</agent>

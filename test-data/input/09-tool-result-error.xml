@@ -1,0 +1,9 @@
+<tool
+  call-id="call_002"
+  name="search_database"
+  created-at="2026-02-07T10:03:05Z">
+  <error
+    code="DATABASE_TIMEOUT"
+    message="Database query timed out after 30 seconds"
+    audience="agent" />
+</tool>

@@ -1,0 +1,40 @@
+{
+  "$schema": "./agent-config.schema.json",
+  "bots": {
+    "dotnet": {
+      "name": "EchoBot (.NET)",
+      "port": 3978,
+      "baseUrl": "http://localhost"
+    },
+    "python": {
+      "name": "EchoBot (Python)",
+      "port": 3979,
+      "baseUrl": "http://localhost"
+    },
+    "typescript": {
+      "name": "EchoBot (TypeScript)",
+      "port": 3980,
+      "baseUrl": "http://localhost"
+    },
+    "dotnet-basic-m365": {
+      "name": "Basic M365 Agent (.NET)",
+      "port": 3981,
+      "baseUrl": "http://localhost"
+    },
+    "python-basic-m365": {
+      "name": "Basic M365 Agent (Python)",
+      "port": 3982,
+      "baseUrl": "http://localhost"
+    },
+    "typescript-basic-m365": {
+      "name": "Basic M365 Agent (TypeScript)",
+      "port": 3983,
+      "baseUrl": "http://localhost"
+    },
+    "dotnet-emoji-chat": {
+      "name": "EmojiChatBot (.NET)",
+      "port": 3984,
+      "baseUrl": "http://localhost"
+    }
+  }
+}

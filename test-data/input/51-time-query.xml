@@ -1,0 +1,8 @@
+<user
+  user-id="user_bob_456"
+  author-name="Bob"
+  created-at="2026-02-07T10:01:00Z">
+  <text audience="user,agent">
+    What time is it?
+  </text>
+</user>

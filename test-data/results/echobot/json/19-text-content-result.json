@@ -1,0 +1,20 @@
+{
+  "runId": "run_036081330ea04fa0",
+  "agentId": "echo-agent",
+  "threadId": "thread_08555afd094e4397",
+  "status": "completed",
+  "input": [],
+  "output": [
+    {
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You said: Sample text content."
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-08T06:29:15Z",
+  "completedAt": "2026-02-08T06:29:15Z"
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Configuration",
+  "description": "Global configuration for agent sample bots across all language implementations",
+  "type": "object",
+  "properties": {
+    "bots": {
+      "type": "object",
+      "description": "Configuration for each bot implementation",
+      "properties": {
+        "dotnet": {
+          "$ref": "#/definitions/botConfig"
+        },
+        "python": {
+          "$ref": "#/definitions/botConfig"
+        },
+        "typescript": {
+          "$ref": "#/definitions/botConfig"
+        }
+      },
+      "required": ["dotnet", "python", "typescript"]
+    }
+  },
+  "required": ["bots"],
+  "definitions": {
+    "botConfig": {
+      "type": "object",
+      "description": "Configuration for a single bot implementation",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name for the bot"
+        },
+        "port": {
+          "type": "integer",
+          "description": "Port number the bot listens on",
+          "minimum": 1024,
+          "maximum": 65535
+        },
+        "baseUrl": {
+          "type": "string",
+          "description": "Base URL for the bot (usually http://localhost)",
+          "pattern": "^https?://"
+        }
+      },
+      "required": ["name", "port", "baseUrl"]
+    }
+  }
+}

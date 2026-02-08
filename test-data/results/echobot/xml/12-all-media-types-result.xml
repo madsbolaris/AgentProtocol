@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_example_012" status="active" created-at="2026-02-07T10:00:00Z">
+  <agent>
+    <text>You said: Here are some media files for analysis</text>
+  </agent>
+</thread>

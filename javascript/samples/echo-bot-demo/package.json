@@ -1,0 +1,26 @@
+{
+  "name": "echo-bot-demo",
+  "version": "1.0.0",
+  "description": "Sample website demonstrating the Agent Protocol React UI with echo bot backends",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@microsoft/agents-protocol-client": "workspace:*",
+    "@microsoft/agents-protocol-types": "workspace:*",
+    "@microsoft/agents-react-ui": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11"
+  }
+}

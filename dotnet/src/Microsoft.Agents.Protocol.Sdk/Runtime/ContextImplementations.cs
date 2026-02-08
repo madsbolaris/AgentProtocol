@@ -1,0 +1,177 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Agents.Abstractions.Models;
+using Microsoft.Agents.Protocol.Sdk.Core;
+using AgentMessageDelta = Microsoft.Agents.Protocol.Sdk.Core.AgentMessageDelta;
+
+namespace Microsoft.Agents.Protocol.Sdk.Runtime;
+
+/// <summary>
+/// Implementation of IRunContext.
+/// </summary>
+internal class RunContextImpl<TContext> : IRunContext<TContext> where TContext : class
+{
+    private readonly List<ChatMessage> _conversationHistory;
+    private int _eventSeq = 0;
+
+    public RunContextImpl(
+        string runId,
+        string threadId,
+        string? journalId,
+        TContext context,
+        List<ChatMessage> conversationHistory)
+    {
+        RunId = runId;
+        ThreadId = threadId;
+        JournalId = journalId;
+        Context = context;
+        _conversationHistory = conversationHistory;
+    }
+
+    public TContext Context { get; }
+    public string RunId { get; }
+    public string ThreadId { get; }
+    public string? JournalId { get; }
+    public IReadOnlyList<ChatMessage> ConversationHistory => _conversationHistory;
+    public int NextEventSeq => ++_eventSeq;
+
+    // Advanced features - not implemented in this basic version
+    public RunStatus Status => RunStatus.InProgress;
+    public Task<UserMessage> RequestInputAsync(string prompt, CancellationToken cancellationToken = default)
+        => throw new NotImplementedException();
+    public Task<string> RequireAuthAsync(string scope, string? message = null, CancellationToken cancellationToken = default)
+        => throw new NotImplementedException();
+    public Task CancelAsync(string reason, CancellationToken cancellationToken = default)
+        => throw new NotImplementedException();
+    public void SetMetadata(string key, object value) { }
+    public object? GetMetadata(string key) => null;
+}
+
+/// <summary>
+/// Implementation of IMessageContext.
+/// </summary>
+internal class MessageContextImpl<TContext> : IMessageContext<TContext> where TContext : class
+{
+    internal readonly RunContextImpl<TContext> RunContext;
+    internal readonly List<AgentMessage> Responses;
+
+    public MessageContextImpl(
+        RunContextImpl<TContext> runContext,
+        ChatMessage message,
+        List<AgentMessage> responses)
+    {
+        RunContext = runContext;
+        Message = message;
+        Responses = responses;
+    }
+
+    public ChatMessage Message { get; }
+    public TContext Context => RunContext.Context;
+    public string RunId => RunContext.RunId;
+    public string ThreadId => RunContext.ThreadId;
+    public string? JournalId => RunContext.JournalId;
+    public IReadOnlyList<ChatMessage> ConversationHistory => RunContext.ConversationHistory;
+    public int NextEventSeq => RunContext.NextEventSeq;
+
+    public Task SendTextAsync(string text, CancellationToken cancellationToken = default)
+    {
+        var message = new AgentMessage
+        {
+            Content = new List<AIContent>
+            {
+                new TextContent { Text = text }
+            }
+        };
+
+        Responses.Add(message);
+        return Task.CompletedTask;
+    }
+
+    public Task SendContentAsync(AIContent content, CancellationToken cancellationToken = default)
+    {
+        var message = new AgentMessage
+        {
+            Content = new List<AIContent> { content }
+        };
+
+        Responses.Add(message);
+        return Task.CompletedTask;
+    }
+
+    public Task SendMessageAsync(AgentMessage message, CancellationToken cancellationToken = default)
+    {
+        Responses.Add(message);
+        return Task.CompletedTask;
+    }
+
+    public IAsyncEnumerable<AgentMessageDelta> StreamResponseAsync(
+        Func<IAsyncEnumerable<AgentMessageDelta>> streamProvider,
+        CancellationToken cancellationToken = default)
+    {
+        return streamProvider();
+    }
+}
+
+/// <summary>
+/// Implementation of IToolCallContext.
+/// </summary>
+internal class ToolCallContextImpl<TContext> : IToolCallContext<TContext> where TContext : class
+{
+    private readonly RunContextImpl<TContext> _runContext;
+
+    public ToolCallContextImpl(
+        RunContextImpl<TContext> runContext,
+        ChatMessage message,
+        FunctionCallContent toolCall)
+    {
+        _runContext = runContext;
+        Message = message;
+        ToolCall = toolCall;
+    }
+
+    public TContext Context => _runContext.Context;
+    public string RunId => _runContext.RunId;
+    public string ThreadId => _runContext.ThreadId;
+    public string? JournalId => _runContext.JournalId;
+    public IReadOnlyList<ChatMessage> ConversationHistory => _runContext.ConversationHistory;
+    public int NextEventSeq => _runContext.NextEventSeq;
+    public ChatMessage Message { get; }
+    public FunctionCallContent ToolCall { get; }
+
+    // Advanced features - not implemented
+    public Task EmitToolEventAsync(string eventType, object data, CancellationToken cancellationToken = default)
+        => Task.CompletedTask;
+}
+
+/// <summary>
+/// Implementation of IStreamContext.
+/// </summary>
+internal class StreamContextImpl<TContext> : IStreamContext<TContext> where TContext : class
+{
+    private readonly RunContextImpl<TContext> _runContext;
+
+    public StreamContextImpl(
+        RunContextImpl<TContext> runContext,
+        AgentMessageDelta delta)
+    {
+        _runContext = runContext;
+        Delta = delta;
+    }
+
+    public TContext Context => _runContext.Context;
+    public string RunId => _runContext.RunId;
+    public string ThreadId => _runContext.ThreadId;
+    public string? JournalId => _runContext.JournalId;
+    public IReadOnlyList<ChatMessage> ConversationHistory => _runContext.ConversationHistory;
+    public int NextEventSeq => _runContext.NextEventSeq;
+    public AgentMessageDelta Delta { get; }
+
+    // Advanced features - not implemented
+    public Task EmitAsync(string eventType, object data, CancellationToken cancellationToken = default)
+        => Task.CompletedTask;
+    public Task EmitBatchAsync(IEnumerable<(string eventType, object data)> events, CancellationToken cancellationToken = default)
+        => Task.CompletedTask;
+}

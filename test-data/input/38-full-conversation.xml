@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_full_001" status="active" created-at="2026-02-07T11:30:00Z">
+  <system message-id="msg_001" created-at="2026-02-07T11:30:00Z">
+    <text>You are a helpful weather assistant with access to weather data.</text>
+  </system>
+  <user message-id="msg_002" user-id="user_dave" author-name="Dave" created-at="2026-02-07T11:30:10Z">
+    <text>What's the weather like today?</text>
+  </user>
+  <agent message-id="msg_003" agent-id="agent_weather" created-at="2026-02-07T11:30:11Z">
+    <thinking exposed="false" audience="agent">
+      Need to get current weather data for the user's location.
+    </thinking>
+    <function-call call-id="call_001" name="get_current_weather" audience="agent">
+      {"use_user_location": true}
+    </function-call>
+  </agent>
+  <tool message-id="msg_004" parent-message-id="msg_003" created-at="2026-02-07T11:30:12Z">
+    <function-result call-id="call_001" is-error="false" audience="agent">
+      {"temperature": 68, "conditions": "sunny", "location": "San Francisco"}
+    </function-result>
+  </tool>
+  <agent message-id="msg_005" parent-message-id="msg_004" agent-id="agent_weather" created-at="2026-02-07T11:30:13Z">
+    <text audience="user,agent">
+      It's currently 68°F and sunny in San Francisco!
+    </text>
+  </agent>
+  <user message-id="msg_006" user-id="user_dave" author-name="Dave" created-at="2026-02-07T11:30:20Z">
+    <text>What about tomorrow?</text>
+  </user>
+  <agent message-id="msg_007" agent-id="agent_weather" created-at="2026-02-07T11:30:21Z">
+    <function-call call-id="call_002" name="get_forecast" audience="agent">
+      {"location": "San Francisco", "days": 1}
+    </function-call>
+  </agent>
+  <tool message-id="msg_008" parent-message-id="msg_007" created-at="2026-02-07T11:30:22Z">
+    <function-result call-id="call_002" is-error="false" audience="agent">
+      {"high": 72, "low": 58, "conditions": "partly cloudy"}
+    </function-result>
+  </tool>
+  <agent message-id="msg_009" parent-message-id="msg_008" agent-id="agent_weather" created-at="2026-02-07T11:30:23Z">
+    <text audience="user,agent">
+      Tomorrow will be partly cloudy with a high of 72°F and a low of 58°F.
+    </text>
+  </agent>
+</thread>

@@ -1,0 +1,12 @@
+<agent
+  agent-id="agent_claude_v1"
+  created-at="2026-02-07T10:09:00Z">
+  <data
+    data-type="json"
+    data-value='{"temperature": 52, "location": "Seattle"}'
+    audience="agent" />
+  <uri
+    uri="https://api.example.com/weather?location=seattle"
+    description="Weather API endpoint"
+    audience="agent" />
+</agent>

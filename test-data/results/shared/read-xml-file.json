@@ -1,0 +1,10 @@
+{
+  "testId": "read-xml-file",
+  "timestamp": "2026-02-08T04:58:34.413089+00:00",
+  "output": {
+    "raw": "{\n  \"file_count\": 58,\n  \"first_file\": \"03-user-text-only.xml\",\n  \"content_length\": 181,\n  \"starts_with\": \"<user\\n  user-id=\\\"user_alice_123\\\"\\n  author-name=\\\"Al\"\n}",
+    "normalized": "{\n \"file_count\": 58,\n \"first_file\": \"03-user-text-only.xml\",\n \"content_length\": 181,\n \"starts_with\": \"<user\\n user-id=\\\"user_alice_123\\\"\\n author-name=\\\"Al\"\n}",
+    "hash": "a4967892cd9e12738b6ec3ded890c057e7e02cb92217243985828ad4a6a1da92"
+  },
+  "metadata": {}
+}

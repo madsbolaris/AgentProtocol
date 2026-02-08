@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_test_001" status="active" created-at="2026-02-07T10:00:00Z">
+  <system message-id="msg_001" created-at="2026-02-07T10:00:00Z">
+    <text>You are a helpful AI assistant.</text>
+  </system>
+</thread>

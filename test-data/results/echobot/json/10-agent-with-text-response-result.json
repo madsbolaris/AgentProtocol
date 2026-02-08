@@ -1,0 +1,10 @@
+{
+  "runId": "run_185526e5821045da",
+  "agentId": "echo-agent",
+  "threadId": "thread_example_010",
+  "status": "completed",
+  "input": [],
+  "output": [],
+  "createdAt": "2026-02-07T10:00:00Z",
+  "completedAt": "2026-02-07T10:00:00Z"
+}

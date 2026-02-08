@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ERROR: Invalid message role.
+
+Validation rule (docs/specifications/validation.md line 87):
+- Each message MUST have valid role
+
+Valid roles are: user, agent, system, tool, developer
+This message uses "hacker" which is not a valid role.
+-->
+<hacker created-at="2026-02-07T10:00:00Z">
+  <text audience="agent">I'm not a valid role!</text>
+</hacker>

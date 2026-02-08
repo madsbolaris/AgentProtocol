@@ -1,0 +1,14 @@
+<agent
+  agent-id="agent_claude_v1"
+  created-at="2026-02-07T10:10:00Z">
+  <transcript
+    speaker="User"
+    text="What's the weather like?"
+    timestamp="2026-02-07T10:02:00Z"
+    audience="user,agent" />
+  <transcript
+    speaker="Assistant"
+    text="Let me check the weather for you."
+    timestamp="2026-02-07T10:02:02Z"
+    audience="user,agent" />
+</agent>

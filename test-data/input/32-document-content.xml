@@ -1,0 +1,3 @@
+<agent message-id="msg_0014" created-at="2026-02-07T10:00:00Z" agent-id="agent_test_14">
+  <document title="Test title" document-id="documentId_test_123" source="Sample source value"/>
+</agent>

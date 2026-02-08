@@ -1,0 +1,13 @@
+{
+  "testId": "basic-xml-deserialization",
+  "timestamp": "2026-02-08T04:58:34.415733+00:00",
+  "output": {
+    "raw": "{\n  \"role\": \"user\",\n  \"text\": \"Hello, agent!\"\n}",
+    "normalized": "{\n \"role\": \"user\",\n \"text\": \"Hello, agent!\"\n}",
+    "hash": "55ebe76a2f6e2da6e268662fa52dec86d0b29a0606cd4bf0702b41966ed6fa43"
+  },
+  "metadata": {
+    "description": "Deserialized message properties",
+    "format": "json"
+  }
+}

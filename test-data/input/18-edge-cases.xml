@@ -1,0 +1,7 @@
+<user
+  user-id="user_test"
+  created-at="2026-02-07T10:11:00Z">
+  <text>Text with special characters: &lt;&gt;&amp;&quot;&apos; and unicode: 你好 🌍</text>
+  <text audience="user">Text with    multiple   spaces and
+newlines</text>
+</user>

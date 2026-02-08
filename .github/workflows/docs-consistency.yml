@@ -1,0 +1,95 @@
+name: Documentation Consistency
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'specifications/**'
+      - 'api-reference/**'
+      - 'guides/**'
+      - 'typespec/**'
+      - 'doc-validation/scripts/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'specifications/**'
+      - 'api-reference/**'
+      - 'guides/**'
+      - 'typespec/**'
+      - 'doc-validation/scripts/**'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        working-directory: ./doc-validation
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run enum synchronization validation
+        working-directory: ./doc-validation
+        run: |
+          echo "::group::Enum Synchronization"
+          python scripts/validate-enums.py
+          echo "::endgroup::"
+
+      - name: Run internal link validation
+        working-directory: ./doc-validation
+        run: |
+          echo "::group::Internal Link Validation"
+          python scripts/validate-links.py
+          echo "::endgroup::"
+
+      - name: Check for line number references
+        working-directory: ./doc-validation
+        run: |
+          echo "::group::Line Number References"
+          python scripts/check-line-references.py
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "::warning::Found fragile line number references. Please replace with symbolic references."
+          fi
+          exit $EXIT_CODE
+          echo "::endgroup::"
+
+      - name: Run complete validation
+        working-directory: ./doc-validation
+        run: |
+          echo "::group::Complete Validation"
+          python scripts/validate-consistency.py
+          echo "::endgroup::"
+
+      - name: Validation Summary
+        if: success()
+        run: |
+          echo "✅ All documentation consistency checks passed!"
+          echo ""
+          echo "Validated:"
+          echo "  - Enum synchronization between TypeSpec and documentation"
+          echo "  - Internal link integrity"
+          echo "  - No fragile line number references"
+
+      - name: Validation Failed
+        if: failure()
+        run: |
+          echo "::error::Documentation consistency validation failed!"
+          echo ""
+          echo "Please run validation locally before committing:"
+          echo "  cd doc-validation"
+          echo "  make validate"
+          echo ""
+          echo "See CONTRIBUTING.md for details on fixing validation errors."
+          exit 1

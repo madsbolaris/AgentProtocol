@@ -1,0 +1,21 @@
+<!-- ERROR: Thread with tool result that doesn't match preceding function call -->
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_error_001" status="active" created-at="2026-02-07T10:00:00Z">
+  <user message-id="msg_001" user-id="user_bob" created-at="2026-02-07T10:00:00Z">
+    <text>Check the weather in Seattle</text>
+  </user>
+  <agent message-id="msg_002" agent-id="agent_assistant" created-at="2026-02-07T10:00:02Z">
+    <thinking exposed="false" audience="agent">
+      Need to call the weather API for Seattle.
+    </thinking>
+    <function-call call-id="call_123" name="get_weather" audience="agent">
+      {"location": "Seattle, WA"}
+    </function-call>
+  </agent>
+  <!-- ERROR: This tool result has call-id="call_999" which doesn't match any preceding function call -->
+  <tool message-id="msg_003" parent-message-id="msg_002" created-at="2026-02-07T10:00:03Z">
+    <function-result call-id="call_999" is-error="false" audience="agent">
+      {"temperature": 52, "condition": "cloudy"}
+    </function-result>
+  </tool>
+</thread>

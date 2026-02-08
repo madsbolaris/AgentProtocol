@@ -1,0 +1,5 @@
+<agent message-id="msg_0004" created-at="2026-02-07T10:00:00Z" agent-id="agent_test_4">
+  <error>
+    <message>Sample text</message>
+  </error>
+</agent>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ERROR: Function result name does not match function call name.
+
+Validation rule (docs/specifications/validation.md line 329):
+- name MUST match tool call name
+
+The function call invokes "get_weather" but the function result
+claims to be for "get_time". While the call-id matches, the name
+should also match.
+-->
+<thread thread-id="thread_001" created-at="2026-02-07T10:00:00Z">
+  <agent message-id="msg_001" created-at="2026-02-07T10:00:00Z">
+    <function-call call-id="call_123" name="get_weather" audience="tool">
+      {"location": "Seattle"}
+    </function-call>
+  </agent>
+
+  <tool message-id="msg_002" created-at="2026-02-07T10:01:00Z">
+    <function-result call-id="call_123" name="get_time" audience="agent">
+      {"temperature": 52}
+    </function-result>
+  </tool>
+</thread>

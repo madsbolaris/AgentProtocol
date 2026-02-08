@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_example_033" status="active" created-at="2026-02-07T10:00:00Z">
+  <agent>
+    <text>You said: Hello everyone!</text>
+  </agent>
+  <agent>
+    <text>You said: Hi there! I'm Bob.</text>
+  </agent>
+  <agent>
+    <text>You said: How's everyone doing today?</text>
+  </agent>
+</thread>

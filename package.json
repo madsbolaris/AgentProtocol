@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "@typespec/compiler": "^1.8.0"
+  }
+}

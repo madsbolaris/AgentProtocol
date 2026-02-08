@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_non_user_001" status="active" created-at="2026-02-07T12:50:00Z">
+  <system message-id="msg_001" created-at="2026-02-07T12:50:00Z">
+    <text>System initialization complete.</text>
+  </system>
+  <developer message-id="msg_002" created-at="2026-02-07T12:50:01Z">
+    <text>Debug logging enabled.</text>
+  </developer>
+  <agent message-id="msg_003" agent-id="agent_assistant" created-at="2026-02-07T12:50:02Z">
+    <text>Ready to assist users.</text>
+  </agent>
+  <tool message-id="msg_004" created-at="2026-02-07T12:50:03Z">
+    <function-result call-id="call_001" is-error="false" audience="agent">
+      {"initialized": true}
+    </function-result>
+  </tool>
+  <channel message-id="msg_005" author-name="System" created-at="2026-02-07T12:50:04Z">
+    <text>Channel ready for users</text>
+  </channel>
+</thread>

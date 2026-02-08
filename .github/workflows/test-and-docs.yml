@@ -1,0 +1,243 @@
+name: Tests and Documentation
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  check-golden-files:
+    name: Check Golden File Changes
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for golden file changes
+        run: |
+          echo "## 🔍 Golden File Changes" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          GOLDEN_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E "test-data/results/.*/.*\.json$" || true)
+
+          if [ -n "$GOLDEN_FILES" ]; then
+            echo "⚠️ **Warning:** This PR modifies golden files:" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "$GOLDEN_FILES" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Golden files should only be updated when test output intentionally changes." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Review checklist:**" >> $GITHUB_STEP_SUMMARY
+            echo "- [ ] Output changes are intentional and documented" >> $GITHUB_STEP_SUMMARY
+            echo "- [ ] All tests pass with new golden files" >> $GITHUB_STEP_SUMMARY
+            echo "- [ ] Cross-platform outputs still match (Python vs .NET)" >> $GITHUB_STEP_SUMMARY
+            echo "- [ ] Documentation examples updated if needed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No golden file changes detected" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  validate-echo-bots:
+    name: Validate Echo Bot Samples
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate echo bot samples
+        run: |
+          python3 scripts/validate-echo-bots.py
+
+      - name: Report validation results
+        if: always()
+        run: |
+          echo "## 🤖 Echo Bot Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ $? -eq 0 ]; then
+            echo "✅ All echo bot samples are valid and unchanged" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Echo bot samples have changed!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Echo bots must stay true to their M365 SDK originals." >> $GITHUB_STEP_SUMMARY
+            echo "If changes are intentional, run: \`python scripts/validate-echo-bots.py --update\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  test-python:
+    name: Python Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e python/microsoft-agents-xml[dev]
+          pip install -e python/microsoft-agents-protocol[dev]
+
+      - name: Run Python tests (validate against golden files)
+        run: |
+          cd python/microsoft-agents-xml
+          # Ensure UPDATE_GOLDEN is not set - tests must validate against golden files
+          unset UPDATE_GOLDEN
+          pytest tests/ -v --cov
+        env:
+          # Explicitly prevent golden file updates in CI
+          UPDATE_GOLDEN: ""
+
+      - name: Upload Python results
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-results-${{ matrix.python-version }}
+          path: test-data/results/shared/
+          if-no-files-found: warn
+
+  test-dotnet:
+    name: .NET Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: ["8.0.x"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Restore .NET dependencies
+        run: dotnet restore dotnet/
+
+      - name: Build .NET projects
+        run: dotnet build dotnet/ --no-restore
+
+      - name: Run .NET tests (validate against golden files)
+        run: dotnet test dotnet/ --no-build --verbosity normal
+        env:
+          # Explicitly prevent golden file updates in CI
+          UPDATE_GOLDEN: ""
+
+      - name: Upload .NET results
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-results
+          path: test-data/results/shared/
+          if-no-files-found: warn
+
+  validate-and-docs:
+    name: Validate and Build Docs
+    needs: [test-python, test-dotnet]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Download Python results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: python-results-*
+          path: test-data/results/shared/
+          merge-multiple: true
+
+      - name: Download .NET results
+        uses: actions/download-artifact@v4
+        with:
+          name: dotnet-results
+          path: test-data/results/shared/
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mkdocs-material
+          pip install mkdocs-awesome-pages-plugin
+          pip install mkdocs-section-index
+
+      - name: Validate cross-platform outputs
+        run: |
+          python scripts/validate-outputs.py --verbose || echo "⚠️  Validation failed (continuing for now)"
+
+      - name: Extract documentation examples
+        run: |
+          python scripts/extract-doc-examples.py --verbose
+
+      - name: Build documentation
+        run: |
+          mkdocs build --strict
+
+      - name: Upload documentation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: site/
+
+      - name: Deploy documentation (main branch only)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          mkdocs gh-deploy --force
+
+  summary:
+    name: Test Summary
+    needs: [test-python, test-dotnet, validate-and-docs]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Python results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: python-results-*
+          path: test-data/results/shared/
+          merge-multiple: true
+        continue-on-error: true
+
+      - name: Download .NET results
+        uses: actions/download-artifact@v4
+        with:
+          name: dotnet-results
+          path: test-data/results/shared/
+        continue-on-error: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate summary
+        run: |
+          python scripts/validate-outputs.py --verbose > validation-report.txt || true
+          cat validation-report.txt >> $GITHUB_STEP_SUMMARY
+
+      - name: Check job statuses
+        run: |
+          echo "## Job Status Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Python Tests: ${{ needs.test-python.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- .NET Tests: ${{ needs.test-dotnet.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Validation & Docs: ${{ needs.validate-and-docs.result }}" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ERROR: Duplicate call-ids within the same message.
+
+Validation rule (docs/specifications/validation.md line 304):
+- callId MUST be unique within message
+
+This agent message has TWO function calls with the same call-id "call_123".
+This should be rejected during validation.
+-->
+<agent created-at="2026-02-07T10:00:00Z">
+  <function-call call-id="call_123" name="get_weather" audience="tool">
+    {"location": "Seattle"}
+  </function-call>
+  <function-call call-id="call_123" name="get_time" audience="tool">
+    {"timezone": "PST"}
+  </function-call>
+</agent>

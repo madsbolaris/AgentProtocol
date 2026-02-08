@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_tools_between_001" status="active" created-at="2026-02-07T13:40:00Z">
+  <user message-id="msg_001" user-id="user_leo" author-name="Leo" created-at="2026-02-07T13:40:00Z">
+    <text>First question</text>
+  </user>
+  <tool message-id="msg_002" created-at="2026-02-07T13:40:05Z">
+    <function-result call-id="call_001" is-error="false" audience="agent">
+      {"result": "data1"}
+    </function-result>
+  </tool>
+  <tool message-id="msg_003" created-at="2026-02-07T13:40:10Z">
+    <function-result call-id="call_002" is-error="false" audience="agent">
+      {"result": "data2"}
+    </function-result>
+  </tool>
+  <user message-id="msg_004" user-id="user_leo" author-name="Leo" created-at="2026-02-07T13:40:15Z">
+    <text>Second question</text>
+  </user>
+</thread>

@@ -1,0 +1,9 @@
+<agent
+  agent-id="agent_claude_v1"
+  author-name="Claude"
+  completion-id="run_abc124"
+  created-at="2026-02-07T10:02:06Z">
+  <text audience="user,agent">
+    The current weather in Seattle is 52°F and cloudy, with 75% humidity and wind speeds of 8 mph. Tomorrow's forecast shows a high of 55°F and a low of 48°F.
+  </text>
+</agent>

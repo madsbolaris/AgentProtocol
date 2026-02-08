@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<agent message-id="msg_0019" created-at="2026-02-07T10:00:00Z" agent-id="agent_test_19">
+  <suggested-actions>
+    <action>test_actions</action>
+  </suggested-actions>
+</agent>

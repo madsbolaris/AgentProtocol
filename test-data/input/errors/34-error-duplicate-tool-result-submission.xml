@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ERROR: Same call-id submitted multiple times.
+
+Validation rule (docs/specifications/validation.md line 167):
+- REJECT if callId already submitted
+
+The function call with call-id "call_123" receives two different
+function results. A tool call can only be fulfilled once.
+-->
+<thread thread-id="thread_001" created-at="2026-02-07T10:00:00Z">
+  <agent message-id="msg_001" created-at="2026-02-07T10:00:00Z">
+    <function-call call-id="call_123" name="get_weather" audience="tool">
+      {"location": "Seattle"}
+    </function-call>
+  </agent>
+
+  <tool message-id="msg_002" created-at="2026-02-07T10:01:00Z">
+    <function-result call-id="call_123" name="get_weather" audience="agent">
+      {"temperature": 52}
+    </function-result>
+  </tool>
+
+  <!-- Second result for the same call-id - ERROR! -->
+  <tool message-id="msg_003" created-at="2026-02-07T10:02:00Z">
+    <function-result call-id="call_123" name="get_weather" audience="agent">
+      {"temperature": 55}
+    </function-result>
+  </tool>
+</thread>

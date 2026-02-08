@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_conv_001" status="active" created-at="2026-02-07T10:00:00Z">
+  <system message-id="msg_001" created-at="2026-02-07T10:00:00Z">
+    <text>You are a helpful weather assistant.</text>
+  </system>
+  <user message-id="msg_002" user-id="user_alice" author-name="Alice" created-at="2026-02-07T10:01:00Z">
+    <text>What's the weather in Seattle?</text>
+  </user>
+  <agent message-id="msg_003" agent-id="agent_weather" created-at="2026-02-07T10:01:05Z">
+    <text>The weather in Seattle is currently 52°F and cloudy.</text>
+  </agent>
+</thread>

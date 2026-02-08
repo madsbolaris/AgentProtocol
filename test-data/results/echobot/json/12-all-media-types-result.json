@@ -1,0 +1,20 @@
+{
+  "runId": "run_f4218adcfe5d4251",
+  "agentId": "echo-agent",
+  "threadId": "thread_example_012",
+  "status": "completed",
+  "input": [],
+  "output": [
+    {
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You said: Here are some media files for analysis"
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-07T10:00:00Z",
+  "completedAt": "2026-02-07T10:00:00Z"
+}

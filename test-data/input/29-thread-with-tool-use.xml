@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_tool_001" status="active" created-at="2026-02-07T10:00:00Z">
+  <user message-id="msg_001" user-id="user_bob" created-at="2026-02-07T10:00:00Z">
+    <text>Check the weather in Portland</text>
+  </user>
+  <agent message-id="msg_002" agent-id="agent_assistant" created-at="2026-02-07T10:00:02Z">
+    <thinking exposed="false" audience="agent">
+      Need to call the weather API for Portland.
+    </thinking>
+    <function-call call-id="call_123" name="get_weather" audience="agent">
+      {"location": "Portland, OR"}
+    </function-call>
+  </agent>
+  <tool message-id="msg_003" parent-message-id="msg_002" created-at="2026-02-07T10:00:03Z">
+    <function-result call-id="call_123" is-error="false" audience="agent">
+      {"temperature": 58, "condition": "rainy", "humidity": 85}
+    </function-result>
+  </tool>
+  <agent message-id="msg_004" parent-message-id="msg_003" agent-id="agent_assistant" created-at="2026-02-07T10:00:04Z">
+    <text>The weather in Portland is 58°F and rainy with 85% humidity.</text>
+  </agent>
+</thread>

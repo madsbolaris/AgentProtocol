@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T09:21:26.923640Z",
+  "content": {
+    "runId": "run_0e685e9a694548ff",
+    "agentId": "agent",
+    "threadId": "thread_bbcfe76d00854",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T09:21:26.923279Z",
+    "completedAt": "2026-02-08T09:21:26.923279Z"
+  },
+  "hash": "c08e36b17af3976e3470489d4760ae7d883383318a52e3fa447aadffa96cf3a1",
+  "metadata": {
+    "input_file": "43-message-delete-content.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

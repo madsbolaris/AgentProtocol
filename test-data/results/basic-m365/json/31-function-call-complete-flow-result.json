@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T09:21:23.666728Z",
+  "content": {
+    "runId": "run_e5ef07eccc724d26",
+    "agentId": "agent",
+    "threadId": "thread_db11a13e1ea44",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T09:21:23.666364Z",
+    "completedAt": "2026-02-08T09:21:23.666364Z"
+  },
+  "hash": "036c8e253da9836c60f4211482570b39394376a54021fb279f3437c8a2fa4625",
+  "metadata": {
+    "input_file": "31-function-call-complete-flow.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

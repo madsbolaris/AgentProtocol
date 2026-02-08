@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:21:20.420585Z",
+  "hash": "b184011dd9fc4682c352a98f06051e38ad7af510d133ba5d84decb440e390fa3",
+  "metadata": {
+    "input_file": "18-edge-cases.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

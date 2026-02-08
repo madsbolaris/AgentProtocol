@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:21:21.587818Z",
+  "hash": "a80f51b93ceb38cdd8628b4e4c2bf24052ecbbf9a98315368148d1ce8e2392f8",
+  "metadata": {
+    "input_file": "23-message-delete-content.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

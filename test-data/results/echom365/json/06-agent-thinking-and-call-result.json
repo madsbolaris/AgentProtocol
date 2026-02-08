@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T09:17:17.096340Z",
+  "content": {
+    "runId": "run_5427efd2443941bb",
+    "agentId": "agent_claude_v1",
+    "threadId": "thread_dcc6e05bd6f64dbb",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T09:17:17.095967",
+    "completedAt": "2026-02-08T09:17:17.095971"
+  },
+  "hash": "15f2903cee31032dc139ec810f21785d5f758a4913e99cc97cda8ad8f5d004e3",
+  "metadata": {
+    "input_file": "06-agent-thinking-and-call.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

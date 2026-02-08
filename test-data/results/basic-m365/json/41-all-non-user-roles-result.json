@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T09:21:26.282741Z",
+  "content": {
+    "runId": "run_11d5fed558c54a00",
+    "agentId": "agent",
+    "threadId": "thread_d2971fea97534",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T09:21:26.282375Z",
+    "completedAt": "2026-02-08T09:21:26.282375Z"
+  },
+  "hash": "844b5362234886495f2e48572e810ce584c4588ad2d6cf605cabe14b1c751585",
+  "metadata": {
+    "input_file": "41-all-non-user-roles.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

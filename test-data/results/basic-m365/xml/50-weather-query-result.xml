@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<thread thread-id="thread_ef6c9036b4ae4db0" status="active" created-at="2026-02-08T07:24:33.457262">
-  <assistant>
-    <text>Echo: What's the weather like in Seattle?</text>
-  </assistant>
+<thread thread-id="thread_e6e84705b2764" status="active" created-at="2026-02-08T09:21:41Z">
+  <assistant/>
+  <tool/>
+  <assistant/>
 </thread>

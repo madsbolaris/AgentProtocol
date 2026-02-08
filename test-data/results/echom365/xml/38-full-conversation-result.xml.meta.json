@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:23.880599Z",
+  "hash": "797e7250103877759f285f3b924f6c6f31bb8c87ace71811dc9095d2fffa3899",
+  "metadata": {
+    "input_file": "38-full-conversation.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

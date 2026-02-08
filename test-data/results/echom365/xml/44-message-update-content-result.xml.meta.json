@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:25.312429Z",
+  "hash": "5c9bd669d5a602e59f7796aa3a8662018eee53e20f97f0ba0d499e98db62e121",
+  "metadata": {
+    "input_file": "44-message-update-content.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

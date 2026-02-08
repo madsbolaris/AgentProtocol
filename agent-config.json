@@ -2,17 +2,17 @@
   "$schema": "./agent-config.schema.json",
   "bots": {
     "dotnet": {
-      "name": "EchoBot (.NET)",
-      "port": 3978,
-      "baseUrl": "http://localhost"
-    },
-    "python": {
-      "name": "EchoBot (Python)",
+      "name": "EchoM365 (.NET)",
       "port": 3979,
       "baseUrl": "http://localhost"
     },
+    "python": {
+      "name": "EchoM365 (Python)",
+      "port": 3978,
+      "baseUrl": "http://localhost"
+    },
     "typescript": {
-      "name": "EchoBot (TypeScript)",
+      "name": "EchoM365 (TypeScript)",
       "port": 3980,
       "baseUrl": "http://localhost"
     },

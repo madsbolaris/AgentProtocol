@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:25.958665Z",
+  "hash": "3232481eb0be922a198296134fc044475da5e2ab2201cfb7dfa57ea9770ecdaf",
+  "metadata": {
+    "input_file": "50-weather-query.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:17.369359Z",
+  "hash": "7bdbd44c86589f6367288b9462011f235dc50d2b19af468fb15bb1d036957a5c",
+  "metadata": {
+    "input_file": "08-tool-result-simple.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

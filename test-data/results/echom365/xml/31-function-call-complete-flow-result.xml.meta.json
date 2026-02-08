@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:21.931547Z",
+  "hash": "defe0259985da380e7d6fa0977551123c282f8e392eb6934b65f14cb307dfa56",
+  "metadata": {
+    "input_file": "31-function-call-complete-flow.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T08:56:02.662732Z",
+  "content": {
+    "runId": "run_f43ee788add9441b",
+    "agentId": "agent",
+    "threadId": "thread_16c136c862ef428b",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "you said: Text with special characters: <>&\"' and unicode: \u4f60\u597d \ud83c\udf0d"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T08:56:02.662311",
+    "completedAt": "2026-02-08T08:56:02.662315"
+  },
+  "hash": "66414ac244712ab26aba91e84d619e95021cfb29bfed55623ead75beb08aa737",
+  "metadata": {
+    "input_file": "18-edge-cases.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

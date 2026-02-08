@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:24.653050Z",
+  "hash": "0804c4f7fbbd0bcfa1f821605b0906e270bce8f583599eee6ba7b1cad8514db9",
+  "metadata": {
+    "input_file": "41-typing-indicator-content.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

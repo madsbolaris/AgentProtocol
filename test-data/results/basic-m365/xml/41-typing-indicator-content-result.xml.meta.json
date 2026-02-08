@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:21:26.421797Z",
+  "hash": "e2f5ff1b732b3a28dfa89160da84f44dc708344cb535620091b6e7287b9a2f7a",
+  "metadata": {
+    "input_file": "41-typing-indicator-content.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

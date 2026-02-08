@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T09:20:22.569978Z",
+  "content": {
+    "runId": "run_3bebf46735354680",
+    "agentId": "agent_claude_v1",
+    "threadId": "thread_6e5fb59c8c5a4",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T09:20:22.569544Z",
+    "completedAt": "2026-02-08T09:20:22.569544Z"
+  },
+  "hash": "cdc62b367eabed7786397c802f9a4fbc85cc374c084df6bdc84622ac7cbf01af",
+  "metadata": {
+    "input_file": "06-agent-thinking-and-call.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-02-08T09:20:45.458996Z",
+  "content": {
+    "runId": "run_4f02d890ca62492a",
+    "agentId": "agent",
+    "threadId": "thread_ebe7f22f233e4",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "functionCall",
+            "callId": "call_Qh2mvVbI8QmmwgYpv7sIwnCk",
+            "name": "GetCurrentTime",
+            "arguments": "{}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "contents": [
+          {
+            "kind": "functionResult",
+            "callId": "call_Qh2mvVbI8QmmwgYpv7sIwnCk",
+            "result": "\ud83d\udd50 The current UTC time is 2026-02-08 09:20:29."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "The current UTC time is 2026-02-08 09:20:29.\n\nI\u2019m ready to analyze your media, but I don\u2019t yet have the files. Please attach the media files or share links to them. If you can\u2019t attach, you can also paste download links.\n\nTell me what kind of analysis you want. Here are common options I can perform:\n\n- Images\n  - Content description: objects, scenes, activities\n  - Text in the image (OCR) with coordinates and timestamps if available\n  - Color analysis and dominant palettes\n  - Facial counts or detections (no identity)\n  - Logo/brand detection\n  - Metadata extraction (EXIF: camera model, aperture, GPS if present)\n\n- Audio\n  - Speech-to-text transcription\n  - Language detection\n  - Summary or keyword extraction\n  - Time-aligned transcripts (if you provide reasonable segment lengths)\n\n- Video\n  - Scene changes and summarized content\n  - Audio transcription (speech) with timestamps\n  - Visual object/scene detection and summarization\n  - Metadata extraction\n\n- Metadata\n  - EXIF, file creation times, camera info, GPS data (where available)\n\nOutput and preferences\n- Output format: plain text, JSON, or CSV\n- Language: preferred language for transcription/analysis\n- Privacy: any data handling constraints (e.g., no storage beyond this session)\n- Scope: analyze all files at once or one by one (and if so, order)\n\nIf you want, you can start by uploading a single file and I\u2019ll run a quick baseline analysis to show what kind of results you\u2019ll get."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T09:20:45.458209Z",
+    "completedAt": "2026-02-08T09:20:45.458209Z"
+  },
+  "hash": "e7537a705db635aac360fb11e473f70455af7abd2e96e17fa9a8fa5a4aaf5f07",
+  "metadata": {
+    "input_file": "12-all-media-types.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T09:17:20.874361Z",
+  "content": {
+    "runId": "run_05f3e6d97b73460c",
+    "agentId": "agent_test_9",
+    "threadId": "thread_e14ae6157d1b45b1",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T09:17:20.873240",
+    "completedAt": "2026-02-08T09:17:20.873244"
+  },
+  "hash": "26b40ca1fe03ab2cf9737570047f170f8816948570bd03d10952ffeaf78a635f",
+  "metadata": {
+    "input_file": "27-audio-content.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

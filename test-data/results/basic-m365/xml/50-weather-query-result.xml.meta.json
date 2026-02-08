@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:21:41.872868Z",
+  "hash": "aad8de28153f35899a566330f4e1c1367baf01ea93aff3591496513ae516718c",
+  "metadata": {
+    "input_file": "50-weather-query.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

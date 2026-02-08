@@ -8,10 +8,10 @@ from .typespec_parser import parse_typespec, Model, Property, get_content_types
 from .xml_generator import XmlTestGenerator
 from .test_code_generator import generate_csharp_tests, generate_python_tests
 from .compliance_test_generator import (
-    generate_echobot_compliance_tests,
-    generate_python_echobot_compliance_tests,
+    generate_echom365_compliance_tests,
+    generate_python_echom365_compliance_tests,
     generate_run_execution_tests,
-    generate_typescript_echobot_compliance_tests,
+    generate_typescript_echom365_compliance_tests,
     generate_typescript_run_execution_tests
 )
 from .code_utils import to_kebab_case, to_pascal_case, to_camel_case, to_snake_case
@@ -54,10 +54,10 @@ __all__ = [
     'XmlTestGenerator',
     'generate_csharp_tests',
     'generate_python_tests',
-    'generate_echobot_compliance_tests',
-    'generate_python_echobot_compliance_tests',
+    'generate_echom365_compliance_tests',
+    'generate_python_echom365_compliance_tests',
     'generate_run_execution_tests',
-    'generate_typescript_echobot_compliance_tests',
+    'generate_typescript_echom365_compliance_tests',
     'generate_typescript_run_execution_tests',
     'PropertyTestGenerator',
     'generate_csharp_property_tests',

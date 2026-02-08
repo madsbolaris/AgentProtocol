@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:20:23.238630Z",
+  "hash": "ff11f0bf83283a977d9dace9345707afb90ea872ec71a0237fc3d28fe88d34c6",
+  "metadata": {
+    "input_file": "11-channel-message.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

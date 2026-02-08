@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:22.840535Z",
+  "hash": "83854d701b3f840bee24cfc15a2491242ac816d554f0d7ebc922bd58cf930b38",
+  "metadata": {
+    "input_file": "34-user-to-user-with-agent.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

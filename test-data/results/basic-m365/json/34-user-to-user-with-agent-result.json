@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T09:21:24.595720Z",
+  "content": {
+    "runId": "run_3546aa560f684e43",
+    "agentId": "agent",
+    "threadId": "thread_7f2938ecc50e4",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T09:21:24.595336Z",
+    "completedAt": "2026-02-08T09:21:24.595336Z"
+  },
+  "hash": "235e2ea40c3055ba7af5d447e6395aa8e77b9bc58b3c18785580267981ce1e13",
+  "metadata": {
+    "input_file": "34-user-to-user-with-agent.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

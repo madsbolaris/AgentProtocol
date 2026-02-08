@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T09:17:26.339253Z",
+  "content": {
+    "runId": "run_463d392c20824818",
+    "agentId": "agent",
+    "threadId": "thread_42eef4a1bd4e47f2",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "you said: \n    Hello! How are you today?\n  "
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T09:17:26.338879",
+    "completedAt": "2026-02-08T09:17:26.338882"
+  },
+  "hash": "9725a9464be2b25d4befb8f23d9eb945d2dc7baa456050321bf89cb387f46238",
+  "metadata": {
+    "input_file": "53-no-function.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

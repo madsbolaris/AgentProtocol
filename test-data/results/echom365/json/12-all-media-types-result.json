@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T09:17:17.876334Z",
+  "content": {
+    "runId": "run_78e10a288c084818",
+    "agentId": "agent",
+    "threadId": "thread_0772fc558ef246d9",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "you said: Here are some media files for analysis"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T09:17:17.875935",
+    "completedAt": "2026-02-08T09:17:17.875939"
+  },
+  "hash": "610434e5eb321cc90fa12b85a961c24b55a107cc95977b5c85a17618d0f37653",
+  "metadata": {
+    "input_file": "12-all-media-types.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

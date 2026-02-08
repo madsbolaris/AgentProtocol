@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:21:22.618361Z",
+  "hash": "bb0848044149cf19ef9919c5abe0413e2eeaea815c43d25c4b88721b7ebdd0a5",
+  "metadata": {
+    "input_file": "27-audio-content.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

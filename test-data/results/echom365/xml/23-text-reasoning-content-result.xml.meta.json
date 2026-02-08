@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:19.978043Z",
+  "hash": "10e08e930b1d3a75956fa5a6e4637b2a8217c4397d1f84a177dbfb1557fb80c4",
+  "metadata": {
+    "input_file": "23-text-reasoning-content.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

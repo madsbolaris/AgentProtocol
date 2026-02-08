@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T09:20:22.699760Z",
+  "content": {
+    "runId": "run_8a39e6acde694f6f",
+    "agentId": "agent",
+    "threadId": "thread_4ed5bd36d7154",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T09:20:22.699281Z",
+    "completedAt": "2026-02-08T09:20:22.699281Z"
+  },
+  "hash": "5c1117a354fb51d6e5aee473d917a45c67421785fa04fc24bfc8834239377977",
+  "metadata": {
+    "input_file": "07-tool-result-success.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

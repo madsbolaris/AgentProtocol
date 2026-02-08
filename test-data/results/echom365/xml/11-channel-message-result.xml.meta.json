@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:17.758563Z",
+  "hash": "68b0626c0f70b27cf8ad2e8a7c1a39ec988a103c83a241913ac0442cfa5d708a",
+  "metadata": {
+    "input_file": "11-channel-message.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:21.545726Z",
+  "hash": "bfa7853cc83653a8dcbba26ff2bf55f0bf905bfd348a31d0ead7783fb02c57fd",
+  "metadata": {
+    "input_file": "29-video-content.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

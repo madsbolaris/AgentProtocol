@@ -27,9 +27,8 @@ def test_imports():
     print("  ✅ test_helpers imports")
 
     # Mock infrastructure
-    from mocks.llm_recorder import LLMRecorder
     from mocks.mock_llm_client import MockLLMClient
-    from mocks.recording_llm_client import RecordingLLMClient
+    # Note: LLM recording is now done by .NET BasicM365Agent bot
     print("  ✅ mock infrastructure imports")
 
 
@@ -159,8 +158,8 @@ def main():
         print(f"✅ All {len(tests)} smoke tests passed!")
         print()
         print("Infrastructure is ready! Next steps:")
-        print("  1. Generate golden files: ./scripts/generate_function_tools_golden_files.sh")
-        print("  2. Run integration tests: ./scripts/test_function_tools.sh")
+        print("  1. Generate golden files: ./scripts/generate_basic_m365_golden_files.sh")
+        print("  2. Run integration tests: ./scripts/test_basic_m365.sh")
         return 0
 
 

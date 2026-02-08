@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<thread thread-id="thread_cf738b842ffa44cb" status="active" created-at="2026-02-08T07:24:33.486029">
-  <assistant>
-    <text>Echo: What's the weather in Paris and what time is it?</text>
-  </assistant>
+<thread thread-id="thread_42e9ed4827cd4" status="active" created-at="2026-02-08T09:21:41Z">
+  <assistant/>
+  <tool/>
+  <tool/>
+  <assistant/>
 </thread>

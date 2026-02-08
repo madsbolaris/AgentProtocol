@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:21:24.089546Z",
+  "hash": "cf2ec5ae262e4c572be22f105570f71b33cae291044fe70db39132b2ee919a10",
+  "metadata": {
+    "input_file": "32-multiple-function-calls.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

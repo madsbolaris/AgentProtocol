@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T09:17:23.997740Z",
+  "content": {
+    "runId": "run_02935a62ff6d4323",
+    "agentId": "agent",
+    "threadId": "thread_a95b36219d784bfe",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T09:17:23.997319",
+    "completedAt": "2026-02-08T09:17:23.997323"
+  },
+  "hash": "f06654308ced50ae4c044589ad0845a0e3e908ae0559536740dd7103dbdc777a",
+  "metadata": {
+    "input_file": "39-interleaved-roles.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

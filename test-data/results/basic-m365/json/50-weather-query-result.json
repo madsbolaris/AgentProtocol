@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-02-08T09:21:37.595091Z",
+  "content": {
+    "runId": "run_798ae9d046c74b1a",
+    "agentId": "agent",
+    "threadId": "thread_6302783d0d144",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "functionCall",
+            "callId": "call_UYoTcF52ookOaO0nyp3FaRFt",
+            "name": "GetWeatherAsync",
+            "arguments": "{\"location\":\"Seattle\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "contents": [
+          {
+            "kind": "functionResult",
+            "callId": "call_UYoTcF52ookOaO0nyp3FaRFt",
+            "result": "\ud83c\udf24\ufe0f The weather in Seattle is rainy with a temperature of 32\u00b0C."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Right now in Seattle: it\u2019s rainy and about 32\u00b0C.\n\nWould you like more details (humidity, wind, forecast for the next hours) or the current time in Seattle? I can fetch that for you."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T09:21:37.594361Z",
+    "completedAt": "2026-02-08T09:21:37.594361Z"
+  },
+  "hash": "87aa512e1f4d4f981d3d12f56afa08ce5b24de67e21ef5bb79463d681bea633d",
+  "metadata": {
+    "input_file": "50-weather-query.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

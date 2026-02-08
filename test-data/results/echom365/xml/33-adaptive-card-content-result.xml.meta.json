@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:22.451986Z",
+  "hash": "ba095786d065148a7df4483e84d64c13c75606b692ae9e66504331f4b7598a03",
+  "metadata": {
+    "input_file": "33-adaptive-card-content.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

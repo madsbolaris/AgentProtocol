@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T09:20:06.883851Z",
+  "content": {
+    "runId": "run_ad95774cfc904c0f",
+    "agentId": "agent",
+    "threadId": "thread_1a99a14684d44",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Hello! I can help with two things:\n- Get the current weather for a location\n- Tell you the current UTC time (and I can help with local time if you specify a location)\n\nIf you\u2019d like, I can fetch both in parallel. Tell me:\n- The location for the weather (e.g., \"New York\", \"London\", \"Tokyo\")\n- Do you want the UTC time, or the local time for that location?\n\nExamples:\n- Weather for Seattle\n- What\u2019s the current UTC time?\n- Weather for Paris and the current local time there\n\nGo ahead with your location and preferred time format."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T09:20:06.883171Z",
+    "completedAt": "2026-02-08T09:20:06.883171Z"
+  },
+  "hash": "36862573e0a759544b64cecf70d787c1925eaf6ebb793ddc8e1fa4bf0030506f",
+  "metadata": {
+    "input_file": "04-user-simple-text.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

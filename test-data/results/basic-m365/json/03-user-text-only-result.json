@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-02-08T09:19:56.060776Z",
+  "content": {
+    "runId": "run_0e158340c9194c57",
+    "agentId": "agent",
+    "threadId": "thread_215b6813a2d94",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "functionCall",
+            "callId": "call_ZTH3C8dzg6TeFgx6FCKcA9lX",
+            "name": "GetWeatherAsync",
+            "arguments": "{\"location\":\"Seattle\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "contents": [
+          {
+            "kind": "functionResult",
+            "callId": "call_ZTH3C8dzg6TeFgx6FCKcA9lX",
+            "result": "\ud83c\udf24\ufe0f The weather in Seattle is stormy with a temperature of 13\u00b0C."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Seattle right now: stormy with a temperature of about 13\u00b0C (\u224855\u00b0F). Want an hourly forecast or precipitation chances?"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T09:19:56.060029Z",
+    "completedAt": "2026-02-08T09:19:56.060029Z"
+  },
+  "hash": "282c27a0369ba8b2ea9620443fe96a05d48153acfdef1d5c2ed1397b1f740b7e",
+  "metadata": {
+    "input_file": "03-user-text-only.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

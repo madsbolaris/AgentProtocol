@@ -1,0 +1,66 @@
+{
+  "timestamp": "2026-02-08T09:21:30.771200Z",
+  "content": {
+    "runId": "run_36fef60ed76d4d22",
+    "agentId": "agent",
+    "threadId": "thread_9846691947d84",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "functionCall",
+            "callId": "call_WejPpOkVOdPQjSo6zeAbFZfK",
+            "name": "GetWeatherAsync",
+            "arguments": "{\"location\": \"Paris\"}"
+          },
+          {
+            "kind": "functionCall",
+            "callId": "call_TsJQFbYdWggWZorAUrc6h0JW",
+            "name": "GetCurrentTime",
+            "arguments": "{}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "contents": [
+          {
+            "kind": "functionResult",
+            "callId": "call_WejPpOkVOdPQjSo6zeAbFZfK",
+            "result": "\ud83c\udf24\ufe0f The weather in Paris is partly cloudy with a temperature of 11\u00b0C."
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "contents": [
+          {
+            "kind": "functionResult",
+            "callId": "call_TsJQFbYdWggWZorAUrc6h0JW",
+            "result": "\ud83d\udd50 The current UTC time is 2026-02-08 09:21:25."
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "- Weather in Paris: Partly cloudy, 11\u00b0C.\n- Current UTC time: 2026-02-08 09:21:25 UTC.\n- Paris local time (CET, UTC+1): 2026-02-08 10:21:25."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T09:21:30.770234Z",
+    "completedAt": "2026-02-08T09:21:30.770234Z"
+  },
+  "hash": "bc6d13d8efd75d43c4cb3ecafcdd18b502cb9031bdcde12da4ac4c8308e6246e",
+  "metadata": {
+    "input_file": "52-multi-function.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

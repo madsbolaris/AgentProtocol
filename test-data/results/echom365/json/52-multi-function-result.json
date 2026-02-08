@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T09:17:26.210057Z",
+  "content": {
+    "runId": "run_fc13453787cf41a0",
+    "agentId": "agent",
+    "threadId": "thread_5b8ea75fac5c4e33",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "you said: \n    What's the weather in Paris and what time is it?\n  "
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T09:17:26.209652",
+    "completedAt": "2026-02-08T09:17:26.209655"
+  },
+  "hash": "47f107811df6f0f20d1a69634a16f58e8772d46398b7243104dedaaec9030c95",
+  "metadata": {
+    "input_file": "52-multi-function.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

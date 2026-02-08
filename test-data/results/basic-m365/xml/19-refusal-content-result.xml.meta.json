@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:21:20.549067Z",
+  "hash": "b0c1fea221d133cb9caac7a5e0c3397580cb26bb32092259357f97383358e2de",
+  "metadata": {
+    "input_file": "19-refusal-content.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T08:56:06.677442Z",
+  "content": {
+    "runId": "run_81a4b8d0a59647bd",
+    "agentId": "agent_test_16",
+    "threadId": "thread_93642995aa16415f",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T08:56:06.677055",
+    "completedAt": "2026-02-08T08:56:06.677059"
+  },
+  "hash": "634d22f55a96246389c6e3f6300a6ccbe54f9c897bb8f9369b85bbb1420a4c6e",
+  "metadata": {
+    "input_file": "34-refusal-content.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

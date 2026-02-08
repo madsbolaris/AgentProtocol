@@ -42,8 +42,8 @@ jobs:
             echo "✅ No golden file changes detected" >> $GITHUB_STEP_SUMMARY
           fi
 
-  validate-echo-bots:
-    name: Validate Echo Bot Samples
+  validate-echo-m365s:
+    name: Validate Echo M365 Samples
     runs-on: ubuntu-latest
 
     steps:
@@ -56,12 +56,12 @@ jobs:
 
       - name: Validate echo bot samples
         run: |
-          python3 scripts/validate-echo-bots.py
+          python3 scripts/utilities/validate-echo-m365s.py
 
       - name: Report validation results
         if: always()
         run: |
-          echo "## 🤖 Echo Bot Validation" >> $GITHUB_STEP_SUMMARY
+          echo "## 🤖 Echo M365 Validation" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ $? -eq 0 ]; then
             echo "✅ All echo bot samples are valid and unchanged" >> $GITHUB_STEP_SUMMARY
@@ -69,7 +69,7 @@ jobs:
             echo "❌ Echo bot samples have changed!" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "Echo bots must stay true to their M365 SDK originals." >> $GITHUB_STEP_SUMMARY
-            echo "If changes are intentional, run: \`python scripts/validate-echo-bots.py --update\`" >> $GITHUB_STEP_SUMMARY
+            echo "If changes are intentional, run: \`python scripts/validate-echo-m365s.py --update\`" >> $GITHUB_STEP_SUMMARY
           fi
 
   test-python:
@@ -179,7 +179,7 @@ jobs:
 
       - name: Validate cross-platform outputs
         run: |
-          python scripts/validate-outputs.py --verbose || echo "⚠️  Validation failed (continuing for now)"
+          python scripts/.archive/validate-outputs.py --verbose || echo "⚠️  Validation failed (continuing for now)"
 
       - name: Extract documentation examples
         run: |
@@ -231,7 +231,7 @@ jobs:
 
       - name: Generate summary
         run: |
-          python scripts/validate-outputs.py --verbose > validation-report.txt || true
+          python scripts/.archive/validate-outputs.py --verbose > validation-report.txt || true
           cat validation-report.txt >> $GITHUB_STEP_SUMMARY
 
       - name: Check job statuses

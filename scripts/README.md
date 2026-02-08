@@ -1,265 +1,197 @@
-# AgentProtocol Scripts
+# Scripts Directory
 
-This directory contains scripts for API documentation generation and validation.
+Utility scripts for code generation, validation, testing, and bot management.
+
+## Quick Reference
+
+### Golden Dataset Generation
+
+Generate golden files from .NET implementations (canonical source):
+
+```bash
+# Generate for all samples (auto-starts .NET bots)
+python scripts/generate_golden_datasets.py
+
+# Generate for specific sample
+python scripts/generate_golden_datasets.py --sample echom365
+
+# Full documentation: test-data/results/README.md
+```
+
+### Code Generation
+
+Generate code and tests from TypeSpec schemas:
+
+```bash
+# Generate all (TypeSpec → Python, .NET, TypeScript)
+./scripts/generation/generate-all.sh
+
+# Generate specific language
+./scripts/generation/generate-python.sh      # Python bindings
+./scripts/generation/generate-csharp.sh      # .NET bindings
+./scripts/generation/generate-typescript.sh  # TypeScript bindings
+
+# Generate tests
+python scripts/generation/generate-tests.py
+```
+
+### Documentation Validation
+
+Validate documentation against TypeSpec schemas:
+
+```bash
+cd scripts/validation
+
+# Main validations
+python validate-docs-against-typespec.py
+python validate-api-reference.py
+python validate-typespec-docs.py
+
+# Specific checks
+python check-cross-references.py
+python check-typespec-terms.py
+python validate-links.py
+```
 
 ## Directory Structure
 
 ```
 scripts/
-├── generation/              # Documentation generation
-│   ├── generate-api-reference.py    # Generate from TypeSpec
-│   └── merge-api-docs.py            # Merge generated + manual
-├── validation/              # Documentation validation
-│   ├── check-routes.py              # Validate routes exist in TypeSpec
-│   ├── check-typespec-terms.py      # Validate model names
-│   ├── check-old-patterns.py        # Check for deprecated patterns
-│   ├── check-cross-references.py    # Validate cross-references
-│   ├── validate-docs-against-typespec.py
-│   ├── check-line-references.py     # Check line number refs
-│   ├── validate-consistency.py      # Overall consistency
-│   ├── validate-enums.py            # Enum synchronization
-│   └── validate-links.py            # Internal links
-├── Makefile                 # Convenient make targets
-├── requirements.txt         # Python dependencies
-└── README.md               # This file
-```
-
-## Quick Start
-
-### Generate Documentation
-
-```bash
-# From project root
-python3 scripts/generation/generate-api-reference.py
-python3 scripts/generation/merge-api-docs.py
-
-# Or use make (from scripts/ directory)
-cd scripts
-make docs
-```
-
-### Validate Documentation
-
-```bash
-# Run all validation checks
-cd scripts
-make validate
-
-# Or run specific checks
-make enums
-make links
-make line-refs
-```
-
-## Documentation Generation System
-
-### Architecture
-
-```
-TypeSpec Files               Manual Overlays
-    (typespec/*.tsp)        (docs-content/)
-         ↓                       ↓
-         ↓                   - Examples
-         ↓                   - Use cases
-  [generate-api-reference]  - Best practices
-         ↓                   - Troubleshooting
-         ↓                       ↓
-    Generated                   ↓
- (.generated/api-reference/)    ↓
-    - Endpoints              ←──┘
-    - Parameters
-    - Models              [merge-api-docs]
-                                 ↓
-                          Final Documentation
-                          (docs/api-reference/)
-                          Generated + Manual
-```
-
-### How It Works
-
-1. **Generation** (`generate-api-reference.py`):
-   - Parses TypeSpec files in `typespec/`
-   - Extracts endpoints, models, enums
-   - Generates markdown in `.generated/api-reference/`
-   - Filters out TypeSpec metadata (BASE:, SOURCE:, etc.)
-
-2. **Merge** (`merge-api-docs.py`):
-   - Reads generated files from `.generated/api-reference/`
-   - Reads manual overlays from `docs-content/`
-   - Combines using `<!-- GENERATED_START/END -->` and `<!-- MANUAL_START/END -->` markers
-   - Outputs to `docs/api-reference/`
-
-3. **Manual Overlays** (`docs-content/`):
-   - Human-written content (examples, use cases, best practices)
-   - Uses section markers for hybrid merge
-   - Preserved across regenerations
-
-### Example Manual Overlay
-
-```markdown
-# Runs API
-
-Operations for managing runs.
-
-<!-- GENERATED_START -->
-[Auto-generated endpoint documentation]
-<!-- GENERATED_END -->
-
-<!-- MANUAL_START: examples -->
-## Examples
-
-### POST /runs/wait - One-Shot Query
-[Complete HTTP example]
-<!-- MANUAL_END: examples -->
-
-<!-- MANUAL_START: use-cases -->
-## Use Cases
-[When to use each endpoint]
-<!-- MANUAL_END: use-cases -->
+├── README.md                          # This file
+├── generate_golden_datasets.py       # Main golden file generator
+├── cleanup_deprecated_results.sh     # Cleanup old result directories
+├── cleanup_and_organize.sh           # Cleanup scripts directory
+│
+├── generation/                       # Code generation from TypeSpec
+│   ├── generate-all.sh              # Generate all languages
+│   ├── generate-python.sh
+│   ├── generate-csharp.sh
+│   ├── generate-typescript.sh
+│   ├── generate-tests.py            # Generate tests
+│   ├── generate-api-reference.py
+│   └── test_gen/                    # Test generation modules
+│
+├── validation/                       # Documentation validation
+│   ├── validate-*.py                # Validation scripts
+│   └── check-*.py                   # Specific checkers
+│
+├── utilities/                        # General utilities
+│   ├── README.md                    # Utilities documentation
+│   ├── start-all-echo-bots.sh      # Bot management
+│   ├── validate-echo-bots.py        # Bot validation
+│   └── *.sh, *.py                   # Other utilities
+│
+├── typescript/                       # TypeScript-specific utilities
+│   └── *.sh
+│
+└── .archive/                         # Deprecated scripts
+    ├── README.md                    # Why scripts are archived
+    └── [obsolete scripts]
 ```
 
 ## Common Tasks
 
-### Regenerate All Documentation
-
+### Generate Golden Files
 ```bash
-# From scripts/ directory
-make docs
+python scripts/generate_golden_datasets.py --sample echom365
 ```
 
-Or manually:
-
+### Validate Tests
 ```bash
-python3 generation/generate-api-reference.py
-python3 generation/merge-api-docs.py
+SAMPLE_NAME=echom365 pytest python/tests/
+SAMPLE_NAME=echom365 npm test
 ```
 
-### Add Manual Content
-
-1. Create file in `docs-content/` matching structure:
-   ```
-   docs-content/operations/runs.md
-   ```
-
-2. Add content with markers:
-   ```markdown
-   <!-- MANUAL_START: section-name -->
-   Your content here
-   <!-- MANUAL_END: section-name -->
-   ```
-
-3. Run merge:
-   ```bash
-   python3 generation/merge-api-docs.py
-   ```
-
-### Validate Changes
-
+### Generate All Code
 ```bash
-cd scripts
-make validate
+./scripts/generation/generate-all.sh
 ```
 
-## Make Targets
-
-Run from `scripts/` directory:
-
-### Documentation Generation
-- `make generate` - Generate from TypeSpec
-- `make merge` - Merge generated + manual
-- `make docs` - Complete workflow (generate + merge)
-
-### Validation
-- `make validate` - Run all validation checks
-- `make enums` - Check enum synchronization
-- `make links` - Validate internal links
-- `make line-refs` - Check line number references
-
-### Utilities
-- `make install` - Install Python dependencies
-- `make clean` - Remove generated reports
-- `make help` - Show help message
-
-## Workflow
-
-### When TypeSpec Changes
-
+### Start All Bots
 ```bash
-cd scripts
-
-# 1. Regenerate documentation
-make docs
-
-# 2. Validate
-make validate
-
-# 3. Commit (from project root)
-cd ..
-git add api-reference/ docs-content/
-git commit -m "Update API reference from TypeSpec"
+./scripts/utilities/start-all-echo-bots.sh
 ```
 
-### When Adding Manual Content
-
+### Cleanup Old Results
 ```bash
-# 1. Create/edit manual overlay
-vim ../docs-content/operations/runs.md
-
-# 2. Merge
-cd scripts
-make merge
-
-# 3. Review merged output
-ls -la ../api-reference/operations/runs.md
-
-# 4. Commit
-cd ..
-git add docs-content/ api-reference/
-git commit -m "Add examples to runs documentation"
+./scripts/cleanup_deprecated_results.sh
 ```
 
-## Benefits
+## Adding New Scripts
 
-✅ **Always accurate** - Generated from TypeSpec source
-✅ **Complete coverage** - All 41 endpoints, 121 models
-✅ **Rich examples** - Human-written use cases and tutorials
-✅ **Fast updates** - 30 seconds to regenerate
-✅ **No drift** - Always in sync with code
-✅ **Clean separation** - Auto-generated vs manual content
+When adding new scripts:
 
-## Dependencies
+1. **Choose the right directory:**
+   - `generation/` - Code/test generation from schemas
+   - `validation/` - Documentation validation
+   - `utilities/` - General development utilities
+   - Root - Major standalone tools
 
-Install with:
+2. **Follow conventions:**
+   - Add shebang line: `#!/usr/bin/env python3` or `#!/bin/bash`
+   - Include description comment block
+   - Add usage examples
+   - Make executable: `chmod +x script.sh`
 
-```bash
-cd scripts
-make install
-```
+3. **Update documentation:**
+   - Add entry to appropriate README.md
+   - Include usage examples
+   - Document prerequisites
 
-Or manually:
+4. **Test thoroughly:**
+   - Test on clean checkout
+   - Verify all paths work from repo root
+   - Check error messages are helpful
 
-```bash
-pip3 install -r requirements.txt
-```
+## Script Guidelines
 
-## Troubleshooting
+### Python Scripts
+- Use `pathlib.Path` for file paths
+- Include `argparse` for command-line arguments
+- Add `--help` flag
+- Use type hints
+- Include docstrings
 
-### "No such file or directory" errors
+### Shell Scripts
+- Use `set -e` to exit on errors
+- Validate required tools exist
+- Print progress messages
+- Support `--help` flag
+- Quote variable expansions
 
-Make sure you're running from the correct directory:
-- Generation/merge scripts: Run from project root or use `make` from `scripts/`
-- Make commands: Run from `scripts/` directory
+### Naming
+- Python: `snake_case.py`
+- Shell: `kebab-case.sh`
+- Be descriptive: `generate_golden_datasets.py` not `gen.py`
 
-### Manual content not appearing in merged docs
+## Maintenance
 
-1. Check file structure matches: `docs-content/operations/runs.md`
-2. Verify markers are correct: `<!-- MANUAL_START: section-name -->`
-3. Run merge again: `python3 scripts/generation/merge-api-docs.py`
+### Archiving Scripts
 
-### TypeSpec changes not reflected
+If a script becomes obsolete:
+1. Move to `.archive/`
+2. Update `.archive/README.md` explaining why
+3. Update this README.md to remove references
+4. Consider if replacement exists
 
-```bash
-# Regenerate from scratch
-python3 scripts/generation/generate-api-reference.py
-python3 scripts/generation/merge-api-docs.py
-```
+### Updating Scripts
+
+When updating scripts:
+1. Test with current codebase
+2. Update help text and documentation
+3. Check all related README files
+4. Verify examples still work
+
+## Related Documentation
+
+- [Golden Dataset Guide](../.workspace/GOLDEN_DATASET_UPDATES.md)
+- [Test Results Structure](../test-data/results/README.md)
+- [Migration Guide](../.workspace/GOLDEN_DATASET_MIGRATION.md)
+- [Agent Configuration](../agent-config.json)
+
+## Questions or Issues?
+
+- Check script's `--help` output
+- Review script source code (they're well-documented)
+- Check related README.md files
+- Review git history for context

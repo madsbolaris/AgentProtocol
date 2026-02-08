@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T09:21:26.797041Z",
+  "content": {
+    "runId": "run_bf8919b66b21461c",
+    "agentId": "agent",
+    "threadId": "thread_fd488adde1354",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T09:21:26.796707Z",
+    "completedAt": "2026-02-08T09:21:26.796707Z"
+  },
+  "hash": "2864c82602d79b640d55f88f7758b19bb27da8ed31b527d6bae2b3014a2aec13",
+  "metadata": {
+    "input_file": "43-long-conversation.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

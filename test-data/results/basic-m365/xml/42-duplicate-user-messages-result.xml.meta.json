@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:21:26.549009Z",
+  "hash": "f0b086e464ae0a8ef820497e595528486ad60bc1f7eb2bacc37fdb6d5ed76a92",
+  "metadata": {
+    "input_file": "42-duplicate-user-messages.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

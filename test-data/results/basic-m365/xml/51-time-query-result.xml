@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<thread thread-id="thread_4daf86ef083a4c78" status="active" created-at="2026-02-08T07:24:33.472036">
-  <assistant>
-    <text>Echo: What time is it?</text>
-  </assistant>
+<thread thread-id="thread_47778cdaf6d04" status="active" created-at="2026-02-08T09:21:52Z">
+  <assistant/>
+  <tool/>
+  <assistant/>
 </thread>

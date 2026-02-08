@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:24.010173Z",
+  "hash": "811c67a2435a9013c7507b204be847c05f191ad23c684a87af6ab7d95b8c0a2d",
+  "metadata": {
+    "input_file": "39-interleaved-roles.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T08:56:10.026111Z",
+  "content": {
+    "runId": "run_cde5ebe1cf744835",
+    "agentId": "agent",
+    "threadId": "thread_adced94669524f76",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "you said: \n    What time is it?\n  "
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T08:56:10.025762",
+    "completedAt": "2026-02-08T08:56:10.025764"
+  },
+  "hash": "c4334c2155e4359cfb387415e301edbd86877ddbdac30f720022d18a49cc7c1f",
+  "metadata": {
+    "input_file": "51-time-query.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

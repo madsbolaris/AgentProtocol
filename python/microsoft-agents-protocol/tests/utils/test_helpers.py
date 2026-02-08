@@ -42,53 +42,42 @@ def get_test_mode() -> TestMode:
 def create_llm_client(
     recordings_dir: Optional[Path] = None,
     test_mode: Optional[TestMode] = None
-) -> Union["RecordingLLMClient", "MockLLMClient"]:
-    """Create LLM client based on test mode.
+) -> "MockLLMClient":
+    """Create LLM client for test mode.
 
-    In generation mode, creates RecordingLLMClient that wraps real Foundry LLM.
     In test mode, creates MockLLMClient that replays recordings.
 
+    Note: LLM recording (generation mode) is now done by the .NET BasicM365Agent bot.
+    Use: python scripts/generate_golden_datasets.py --sample basic-m365 --record-llm
+
     Args:
-        recordings_dir: Directory for recordings (default: test-data/llm-recordings/function-tools)
+        recordings_dir: Directory for recordings (default: test-data/llm-recordings/basic-m365)
         test_mode: Force specific mode (default: from environment)
 
     Returns:
-        RecordingLLMClient in generate mode, MockLLMClient in test mode
+        MockLLMClient that replays recorded LLM interactions
 
     Raises:
-        ValueError: If Foundry credentials missing in generate mode
+        ValueError: If called in generation mode (use .NET bot instead)
     """
     if test_mode is None:
         test_mode = get_test_mode()
 
     if recordings_dir is None:
-        recordings_dir = get_test_data_dir() / "llm-recordings" / "function-tools"
+        recordings_dir = get_test_data_dir() / "llm-recordings" / "basic-m365"
 
     if test_mode == "generate":
-        # Generation mode: use real LLM + recording
-        from ..mocks import RecordingLLMClient, LLMRecorder
-
-        # Get Foundry credentials from environment
-        endpoint = os.getenv("FOUNDRY_ENDPOINT")
-        api_key = os.getenv("FOUNDRY_API_KEY")
-        model = os.getenv("FOUNDRY_MODEL_DEPLOYMENT", "gpt-5-nano")
-
-        if not endpoint or not api_key:
-            raise ValueError(
-                "FOUNDRY_ENDPOINT and FOUNDRY_API_KEY environment variables "
-                "are required in generation mode.\n"
-                "Set them before running: TEST_MODE=generate pytest ..."
-            )
-
-        # Create real OpenAI client
-        real_client = AsyncOpenAI(
-            api_key=api_key,
-            base_url=f"{endpoint}/openai/v1"
+        # Generation mode: use .NET bot with recording
+        raise ValueError(
+            "LLM recording (generation mode) is now done by the .NET BasicM365Agent bot.\n"
+            "Use: python scripts/generate_golden_datasets.py --sample basic-m365 --record-llm\n"
+            "\n"
+            "The .NET bot will:\n"
+            "1. Generate golden files from .NET (canonical source)\n"
+            "2. Record LLM interactions to test-data/llm-recordings/basic-m365/\n"
+            "\n"
+            "Then run Python tests in test mode to validate against those recordings."
         )
-
-        # Wrap with recorder
-        recorder = LLMRecorder(recordings_dir)
-        return RecordingLLMClient(real_client, recorder)
 
     else:
         # Test mode: use mock LLM

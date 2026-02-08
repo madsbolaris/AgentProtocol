@@ -44,13 +44,19 @@ def output_capture(request):
     # Determine repository root (go up 4 levels from this file)
     repo_root = Path(__file__).parent.parent.parent.parent
 
-    # Create output directory (language-specific)
-    output_dir = repo_root / "test-data" / "results" / "python"
+    # Get sample name from environment or default to 'echom365'
+    sample_name = os.getenv("SAMPLE_NAME", "echom365")
+
+    # Create output directory (sample-specific, language-agnostic)
+    # Golden files are shared across all language implementations
+    output_dir = repo_root / "test-data" / "results" / sample_name / "golden"
 
     # Check if we're in update mode (via flag or environment variable)
     update_mode = request.config.getoption("--update-golden") or os.getenv("UPDATE_GOLDEN") == "1"
 
     if update_mode:
-        print("\n🔄 Running in UPDATE mode - golden files will be updated")
+        print(f"\n🔄 Running in UPDATE mode - golden files will be updated for sample: {sample_name}")
+    else:
+        print(f"\n✅ Validating against golden files for sample: {sample_name}")
 
     return OutputCapture(output_dir, update_mode=update_mode)

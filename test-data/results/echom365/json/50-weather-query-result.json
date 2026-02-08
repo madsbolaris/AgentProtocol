@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T09:17:25.946569Z",
+  "content": {
+    "runId": "run_ea6af47c12274a3e",
+    "agentId": "agent",
+    "threadId": "thread_8507650360024625",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "you said: \n    What's the weather like in Seattle?\n  "
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T09:17:25.946202",
+    "completedAt": "2026-02-08T09:17:25.946208"
+  },
+  "hash": "143ea4ac2937d02c74f42d35bc1db9cc143ebb647ed9e45c540fc4fae7697624",
+  "metadata": {
+    "input_file": "50-weather-query.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

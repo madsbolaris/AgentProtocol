@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T08:56:08.999859Z",
+  "content": {
+    "runId": "run_2b4ec893015d44e6",
+    "agentId": "agent",
+    "threadId": "thread_d77f86601aa047ec",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T08:56:08.999511",
+    "completedAt": "2026-02-08T08:56:08.999514"
+  },
+  "hash": "2f21cd12323e59535884664cb87a16dc1fe6fa3d74aadd718339d53467ab6dc1",
+  "metadata": {
+    "input_file": "43-long-conversation.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

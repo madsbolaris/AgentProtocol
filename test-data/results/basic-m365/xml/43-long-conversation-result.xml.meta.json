@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:21:26.809865Z",
+  "hash": "19245713f588b5aba8c481bdc64de747252a532e434353d9e65c424156c49318",
+  "metadata": {
+    "input_file": "43-long-conversation.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

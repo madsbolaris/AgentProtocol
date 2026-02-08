@@ -204,12 +204,14 @@ def pytest_configure(config):
     pass  # Fixture registration happens via conftest.py
 
 
-def create_output_capture_fixture(output_dir: Optional[Path] = None):
+def create_output_capture_fixture(output_dir: Optional[Path] = None, sample_name: Optional[str] = None):
     """
     Create an output capture fixture for pytest.
 
     Args:
         output_dir: Optional custom output directory
+        sample_name: Optional sample name (e.g., "echom365", "basic-m365")
+                    If provided, uses test-data/results/{sample_name}/golden/
 
     Returns:
         OutputCapture instance
@@ -220,11 +222,23 @@ def create_output_capture_fixture(output_dir: Optional[Path] = None):
 
         @pytest.fixture
         def output_capture():
-            return create_output_capture_fixture()
+            return create_output_capture_fixture(sample_name="echom365")
     """
     if output_dir is None:
-        # Default to test-data/results/shared
         repo_root = Path(__file__).parent.parent
-        output_dir = repo_root / "test-data" / "results" / "shared"
+        if sample_name:
+            # Use sample-specific directory for golden files
+            output_dir = repo_root / "test-data" / "results" / sample_name / "golden"
+        else:
+            # DEPRECATED: Default to shared directory (for backward compatibility)
+            # This will be removed in a future version
+            output_dir = repo_root / "test-data" / "results" / "shared"
+            import warnings
+            warnings.warn(
+                "Using deprecated 'shared' results directory. "
+                "Please specify sample_name parameter (e.g., sample_name='echom365')",
+                DeprecationWarning,
+                stacklevel=2
+            )
 
     return OutputCapture(output_dir)

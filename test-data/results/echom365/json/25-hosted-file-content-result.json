@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T09:17:20.352433Z",
+  "content": {
+    "runId": "run_23a79aa76423442b",
+    "agentId": "agent_test_7",
+    "threadId": "thread_b449993678b1441c",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T09:17:20.352031",
+    "completedAt": "2026-02-08T09:17:20.352034"
+  },
+  "hash": "a36eda11ade7621881adf3cb4faa6c7579d5a73556e399ce65813c6f8c32d7ac",
+  "metadata": {
+    "input_file": "25-hosted-file-content.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

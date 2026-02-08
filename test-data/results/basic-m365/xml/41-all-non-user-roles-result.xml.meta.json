@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:21:26.295543Z",
+  "hash": "5e59ef037a520a876e8d00b91d6673a59f8c6a8b4f166e57ea51f0bd0347a9e7",
+  "metadata": {
+    "input_file": "41-all-non-user-roles.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

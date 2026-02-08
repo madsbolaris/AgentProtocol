@@ -8,7 +8,7 @@ from pathlib import Path
 
 # Add parent directory to path for imports
 import sys
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent / "samples" / "agents" / "function_tools_agent"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent / "samples" / "agents" / "basic_m365_agent"))
 
 
 @pytest.fixture
@@ -27,7 +27,7 @@ def llm_client(test_mode):
 
 @pytest.fixture
 def agent_url():
-    """URL of the running Function Tools Agent."""
+    """URL of the running Basic M365 Agent."""
     # Read from config or use default
     port = os.getenv("AGENT_PORT", "3982")
     return f"http://localhost:{port}"

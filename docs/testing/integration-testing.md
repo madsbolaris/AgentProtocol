@@ -35,11 +35,11 @@ The following production issues were discovered and would have been caught by pr
 
 ### Python: `test_integration_anonymous.py`
 
-**Location:** `python/samples/agents/echo-bot/tests/test_integration_anonymous.py`
+**Location:** `python/samples/agents/echo-m365/tests/test_integration_anonymous.py`
 
 **Run Tests:**
 ```bash
-cd python/samples/agents/echo-bot
+cd python/samples/agents/echo-m365
 pytest tests/test_integration_anonymous.py -v
 ```
 
@@ -55,7 +55,7 @@ pytest tests/test_integration_anonymous.py -v
    - ✅ OPTIONS preflight requests succeed
    - ✅ Access-Control-Allow-Origin is set to `*`
 
-3. **Echo Bot Functionality** - Validates message processing
+3. **Echo M365 Functionality** - Validates message processing
    - ✅ Bot echoes back user messages
    - ✅ Bot responds to special commands (e.g., "hello")
 
@@ -65,11 +65,11 @@ pytest tests/test_integration_anonymous.py -v
 
 ### TypeScript: `Anonymous.test.ts`
 
-**Location:** `typescript/samples/EchoBot/tests/Anonymous.test.ts`
+**Location:** `typescript/samples/EchoM365/tests/Anonymous.test.ts`
 
 **Run Tests:**
 ```bash
-cd typescript/samples/EchoBot
+cd typescript/samples/EchoM365
 npm test -- Anonymous.test.ts
 ```
 
@@ -84,7 +84,7 @@ npm test -- Anonymous.test.ts
    - ✅ All endpoints include CORS headers
    - ✅ OPTIONS preflight handling
 
-3. **Echo Bot Functionality** - Message processing
+3. **Echo M365 Functionality** - Message processing
    - ✅ Messages are echoed correctly
    - ✅ Message count is tracked
 
@@ -100,13 +100,13 @@ npm test -- Anonymous.test.ts
 ### Python
 ```bash
 # Run all integration tests
-pytest python/samples/agents/echo-bot/tests/test_integration_anonymous.py -v
+pytest python/samples/agents/echo-m365/tests/test_integration_anonymous.py -v
 
 # Run with coverage
-pytest python/samples/agents/echo-bot/tests/test_integration_anonymous.py --cov=src --cov-report=html
+pytest python/samples/agents/echo-m365/tests/test_integration_anonymous.py --cov=src --cov-report=html
 
 # Run specific test class
-pytest python/samples/agents/echo-bot/tests/test_integration_anonymous.py::TestAnonymousModeEndpoints -v
+pytest python/samples/agents/echo-m365/tests/test_integration_anonymous.py::TestAnonymousModeEndpoints -v
 ```
 
 ### TypeScript
@@ -139,7 +139,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install -r requirements.txt
-      - run: pytest python/samples/agents/echo-bot/tests/test_integration_anonymous.py -v
+      - run: pytest python/samples/agents/echo-m365/tests/test_integration_anonymous.py -v
 
   test-typescript:
     runs-on: ubuntu-latest

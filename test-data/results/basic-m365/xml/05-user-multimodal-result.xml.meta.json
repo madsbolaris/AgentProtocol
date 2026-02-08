@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:20:22.451458Z",
+  "hash": "a2dd9b3567150cb573a97487be5c3be0afe8ceb9789204f5ac30d5f6ef10231b",
+  "metadata": {
+    "input_file": "05-user-multimodal.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

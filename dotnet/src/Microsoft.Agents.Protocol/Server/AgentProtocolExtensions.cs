@@ -125,6 +125,28 @@ internal class AgentProtocolServer
     /// </summary>
     private Dictionary<string, object> ConvertToMessage(Activity activity)
     {
+        // Check if the activity has Agent Protocol message data in Value field
+        if (activity.Value != null)
+        {
+            try
+            {
+                // Try to deserialize as Agent Protocol message
+                var jsonString = activity.Value is JsonElement jsonElement
+                    ? jsonElement.GetRawText()
+                    : JsonSerializer.Serialize(activity.Value);
+                var message = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString);
+                if (message != null && message.ContainsKey("role") && message.ContainsKey("contents"))
+                {
+                    return message;
+                }
+            }
+            catch
+            {
+                // If parsing fails, fall through to default text handling
+            }
+        }
+
+        // Default: Convert activity text to TextContent
         return new Dictionary<string, object>
         {
             ["role"] = "assistant",
@@ -142,7 +164,7 @@ internal class AgentProtocolServer
     /// <summary>
     /// Processes a message through the agent.
     /// </summary>
-    private async Task<Dictionary<string, object>> ProcessMessage(Dictionary<string, object> inputMessage, IAgent agent, IAgentHttpAdapter adapter)
+    private async Task<List<Dictionary<string, object>>> ProcessMessage(Dictionary<string, object> inputMessage, IAgent agent, IAgentHttpAdapter adapter)
     {
         // Convert to Activity
         var activity = ConvertToActivity(inputMessage);
@@ -153,19 +175,14 @@ internal class AgentProtocolServer
         // Process through the agent
         await agent.OnTurnAsync(turnContext);
 
-        // Convert response back to Agent Protocol format
-        var responseActivity = turnContext.ResponseActivities.FirstOrDefault(a => a.Type == ActivityTypes.Message);
-        if (responseActivity != null)
+        // Convert ALL response activities back to Agent Protocol format
+        var outputMessages = new List<Dictionary<string, object>>();
+        foreach (var responseActivity in turnContext.ResponseActivities.Where(a => a.Type == ActivityTypes.Message))
         {
-            return ConvertToMessage(responseActivity);
+            outputMessages.Add(ConvertToMessage(responseActivity));
         }
 
-        // Fallback empty response
-        return new Dictionary<string, object>
-        {
-            ["role"] = "assistant",
-            ["contents"] = new List<object>()
-        };
+        return outputMessages;
     }
 
     /// <summary>
@@ -223,6 +240,40 @@ internal class AgentProtocolServer
                             writer.WriteString(content.ContainsKey("text") ? content["text"]?.ToString() ?? "" : "");
                             writer.WriteEndElement();
                         }
+                        else if (kind == "functionCall")
+                        {
+                            writer.WriteStartElement("function-call");
+                            if (content.ContainsKey("callId"))
+                            {
+                                writer.WriteAttributeString("call-id", content["callId"]?.ToString());
+                            }
+                            if (content.ContainsKey("name"))
+                            {
+                                writer.WriteAttributeString("name", content["name"]?.ToString());
+                            }
+                            if (content.ContainsKey("arguments"))
+                            {
+                                writer.WriteString(content["arguments"]?.ToString() ?? "");
+                            }
+                            writer.WriteEndElement();
+                        }
+                        else if (kind == "functionResult")
+                        {
+                            writer.WriteStartElement("function-result");
+                            if (content.ContainsKey("callId"))
+                            {
+                                writer.WriteAttributeString("call-id", content["callId"]?.ToString());
+                            }
+                            if (content.ContainsKey("name"))
+                            {
+                                writer.WriteAttributeString("name", content["name"]?.ToString());
+                            }
+                            if (content.ContainsKey("result"))
+                            {
+                                writer.WriteString(content["result"]?.ToString() ?? "");
+                            }
+                            writer.WriteEndElement();
+                        }
                     }
                 }
 
@@ -233,7 +284,9 @@ internal class AgentProtocolServer
             writer.WriteEndDocument();
         }
 
-        return sb.ToString();
+        // Fix encoding declaration (StringBuilder always uses UTF-16, but we want UTF-8)
+        var xmlString = sb.ToString();
+        return xmlString.Replace("encoding=\"utf-16\"", "encoding=\"utf-8\"");
     }
 
     public IResult HealthCheck() => Results.Ok("OK");
@@ -280,11 +333,11 @@ internal class AgentProtocolServer
             var outputMessages = new List<object>();
             foreach (var msg in inputMessages)
             {
-                // Only echo user messages
+                // Only process user messages
                 if (msg.ContainsKey("role") && msg["role"]?.ToString() == "user")
                 {
-                    var output = await ProcessMessage(msg, agent, adapter);
-                    outputMessages.Add(output);
+                    var outputs = await ProcessMessage(msg, agent, adapter);
+                    outputMessages.AddRange(outputs);
                 }
             }
 
@@ -368,11 +421,11 @@ internal class AgentProtocolServer
             var outputMessages = new List<object>();
             foreach (var msg in inputMessages)
             {
-                // Only echo user messages
+                // Only process user messages
                 if (msg.ContainsKey("role") && msg["role"]?.ToString() == "user")
                 {
-                    var output = await ProcessMessage(msg, agent, adapter);
-                    outputMessages.Add(output);
+                    var outputs = await ProcessMessage(msg, agent, adapter);
+                    outputMessages.AddRange(outputs);
                 }
             }
 
@@ -458,9 +511,12 @@ internal class AgentProtocolServer
             var firstUserMessage = inputMessages.OfType<Dictionary<string, object>>()
                 .FirstOrDefault(msg => msg.ContainsKey("role") && msg["role"]?.ToString() == "user");
 
-            var outputMessage = firstUserMessage != null
+            var outputMessages = firstUserMessage != null
                 ? await ProcessMessage(firstUserMessage, agent, adapter)
-                : new Dictionary<string, object> { ["contents"] = new[] { new Dictionary<string, object> { ["text"] = "" } } };
+                : new List<Dictionary<string, object>> { new Dictionary<string, object> { ["contents"] = new[] { new Dictionary<string, object> { ["text"] = "" } } } };
+
+            // Get the last message (final response) for streaming
+            var outputMessage = outputMessages.LastOrDefault() ?? new Dictionary<string, object> { ["contents"] = new[] { new Dictionary<string, object> { ["text"] = "" } } };
 
             var fullOutputText = "";
             if (outputMessage.ContainsKey("contents") && outputMessage["contents"] is List<object> outContents && outContents.Count > 0)
@@ -493,7 +549,6 @@ internal class AgentProtocolServer
 
             // Event: run.completed
             eventSeq++;
-            var outputMessages = new[] { outputMessage };
             await context.Response.WriteAsync($"event: run.completed\n");
             await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new { runId, agentId, status = "completed", output = outputMessages, eventSeq, completedAt = DateTime.UtcNow })}\n\n");
             await context.Response.Body.FlushAsync();

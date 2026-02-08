@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_c2f82e1f31f248fd" status="active" created-at="2026-02-08T09:17:18.665512">
+  <assistant>
+    <text>you said: Text with special characters: &lt;&gt;&amp;"' and unicode: 你好 🌍</text>
+  </assistant>
+</thread>

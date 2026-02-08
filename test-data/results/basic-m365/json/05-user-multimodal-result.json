@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T09:20:15.561326Z",
+  "content": {
+    "runId": "run_519c037674c94a05",
+    "agentId": "agent",
+    "threadId": "thread_def59c690f074",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "I don\u2019t see an image attached yet. Please upload the photo (or share a link), and I\u2019ll help with:\n\n- Describing what\u2019s visible (people, objects, colors, scene, lighting).\n- Guessing where it might have been taken (based on landmarks or signs) and noting it\u2019s just a best guess.\n- If the image has location clues (signs, architecture) or you provide a location, I can pull current weather and local time for that place.\n\nIf you\u2019d like me to check the weather and time for a place you have in mind, tell me the location name and I\u2019ll fetch it."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T09:20:15.560605Z",
+    "completedAt": "2026-02-08T09:20:15.560605Z"
+  },
+  "hash": "936d6ad124a98dd26a7c79d1c684e26cf325f2a7d4eedf676a68501f2e9a0427",
+  "metadata": {
+    "input_file": "05-user-multimodal.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

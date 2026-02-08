@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:17:21.158717Z",
+  "hash": "0e5941d751852e599d6f838563f7b64979361c38ccd173398280083f04a0b481",
+  "metadata": {
+    "input_file": "28-thread-conversation.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

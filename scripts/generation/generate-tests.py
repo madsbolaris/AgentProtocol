@@ -21,7 +21,7 @@ Usage:
     # Generate Phase 1 property and enum tests
     ./generate-tests.py --phase1-only
 
-    # Generate EchoBot compliance tests
+    # Generate EchoM365 compliance tests
     ./generate-tests.py --compliance-only
 
     # Generate protocol validation tests
@@ -48,10 +48,10 @@ from test_gen import (
     XmlTestGenerator,
     generate_csharp_tests,
     generate_python_tests,
-    generate_echobot_compliance_tests,
-    generate_python_echobot_compliance_tests,
+    generate_echom365_compliance_tests,
+    generate_python_echom365_compliance_tests,
     generate_run_execution_tests,
-    generate_typescript_echobot_compliance_tests,
+    generate_typescript_echom365_compliance_tests,
     generate_typescript_run_execution_tests,
     generate_csharp_property_tests,
     generate_python_property_tests,
@@ -116,7 +116,7 @@ def main():
     parser.add_argument(
         "--compliance",
         action="store_true",
-        help="Generate EchoBot compliance tests"
+        help="Generate EchoM365 compliance tests"
     )
     parser.add_argument(
         "--compliance-only",
@@ -176,45 +176,45 @@ def main():
     # Generate compliance tests if requested
     if args.compliance or args.compliance_only:
         print("=" * 70)
-        print("🧪 Generating EchoBot Compliance Tests")
+        print("🧪 Generating EchoM365 Compliance Tests")
         print("=" * 70)
         print()
 
-        # Generate C# EchoBot compliance tests
+        # Generate C# EchoM365 compliance tests
         # NOTE: Following new structure - compliance tests go in Protocol package
-        compliance_test_file = project_root / "dotnet/tests/Microsoft.Agents.Protocol.Tests/Compliance/EchoBotComplianceTests.cs"
+        compliance_test_file = project_root / "dotnet/tests/Microsoft.Agents.Protocol.Tests/Compliance/EchoM365ComplianceTests.cs"
         compliance_test_file.parent.mkdir(parents=True, exist_ok=True)
 
         try:
-            generate_echobot_compliance_tests(models, str(compliance_test_file))
+            generate_echom365_compliance_tests(models, str(compliance_test_file))
             print(f"✅ Generated C# tests: {compliance_test_file.relative_to(project_root)}")
         except Exception as e:
             print(f"❌ Error generating C# compliance tests: {e}")
 
-        # Generate Python EchoBot compliance tests
+        # Generate Python EchoM365 compliance tests
         # NOTE: Following new structure - compliance tests go in Protocol package
-        python_compliance_test_file = project_root / "python/microsoft-agents-protocol/tests/compliance/test_echobot_compliance.py"
+        python_compliance_test_file = project_root / "python/microsoft-agents-protocol/tests/compliance/test_echom365_compliance.py"
         python_compliance_test_file.parent.mkdir(parents=True, exist_ok=True)
 
         try:
-            generate_python_echobot_compliance_tests(models, str(python_compliance_test_file))
+            generate_python_echom365_compliance_tests(models, str(python_compliance_test_file))
             print(f"✅ Generated Python tests: {python_compliance_test_file.relative_to(project_root)}")
         except Exception as e:
             print(f"❌ Error generating Python compliance tests: {e}")
 
-        # Generate TypeScript EchoBot compliance tests
+        # Generate TypeScript EchoM365 compliance tests
         # NOTE: Following new structure - compliance tests go in Protocol package
-        typescript_compliance_test_file = project_root / "javascript/packages/agents-protocol/tests/compliance/echobot.test.ts"
+        typescript_compliance_test_file = project_root / "javascript/packages/agents-protocol/tests/compliance/echom365.test.ts"
         typescript_compliance_test_file.parent.mkdir(parents=True, exist_ok=True)
 
         try:
-            generate_typescript_echobot_compliance_tests(models, str(typescript_compliance_test_file))
+            generate_typescript_echom365_compliance_tests(models, str(typescript_compliance_test_file))
             print(f"✅ Generated TypeScript tests: {typescript_compliance_test_file.relative_to(project_root)}")
         except Exception as e:
             print(f"❌ Error generating TypeScript compliance tests: {e}")
 
         # Generate Run execution tests
-        run_test_file = project_root / "dotnet/tests/Microsoft.Agents.Protocols.Tests/EchoBot.Compliance.Tests/RunExecutionComplianceTests.cs"
+        run_test_file = project_root / "dotnet/tests/Microsoft.Agents.Protocols.Tests/EchoM365.Compliance.Tests/RunExecutionComplianceTests.cs"
         try:
             generate_run_execution_tests(str(run_test_file))
             print(f"✅ Generated C# Run tests: {run_test_file.relative_to(project_root)}")

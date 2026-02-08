@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:21:25.510948Z",
+  "hash": "de67d8e67a162dbdb612d427336a295d28ea21250c6db70629b0bbe814e3fda6",
+  "metadata": {
+    "input_file": "38-event-content.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

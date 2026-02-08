@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T08:56:01.000238Z",
+  "content": {
+    "runId": "run_0a06e7371c6d49b0",
+    "agentId": "agent",
+    "threadId": "thread_c917c444504b4120",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "you said: What's in this image and where was it taken?"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T08:56:00.999833",
+    "completedAt": "2026-02-08T08:56:00.999836"
+  },
+  "hash": "8b1d5e8497b830c0c3b25b4bb5bfbcb9fd13a9510639f70a2ad76c25790fd10d",
+  "metadata": {
+    "input_file": "05-user-multimodal.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

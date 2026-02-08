@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T08:56:00.875343Z",
+  "content": {
+    "runId": "run_d6457c90d3024d93",
+    "agentId": "agent",
+    "threadId": "thread_bbeda0f5013647db",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "you said: "
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T08:56:00.874978",
+    "completedAt": "2026-02-08T08:56:00.874981"
+  },
+  "hash": "a3e29f9ef03e601f74957e3242ff00eefe84d618dbcc754b192d9b346c221825",
+  "metadata": {
+    "input_file": "04-user-simple-text.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "callId": 1,
+  "timestamp": "2026-02-08T19:26:17.95087Z",
+  "hash": "eaa2249beb823cee",
+  "response": {
+    "id": "chatcmpl-D74i76qomAVtQemQpcl0PLARH5jgZ",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-08T19:26:15+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Hi! I can help with weather information and the current time.\n\n- What location would you like the weather for?\n- Do you also want the current UTC time? I can fetch both at once if you\u2019d like."
+      }
+    ],
+    "toolCalls": []
+  }
+}

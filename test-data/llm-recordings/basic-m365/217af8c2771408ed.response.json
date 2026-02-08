@@ -1,0 +1,17 @@
+{
+  "callId": 1,
+  "timestamp": "2026-02-08T19:26:54.132642Z",
+  "hash": "217af8c2771408ed",
+  "response": {
+    "id": "chatcmpl-D74ieVMMr5bfNwWKpfPgcrdD2DFxv",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-08T19:26:48+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Nice test! I can handle text with special characters and Unicode, and I\u2019ll preserve them as-is. For example, your text is preserved as:\nText with special characters: \u003C\u003E\u0026\u0022\u0027 and unicode: \u4F60\u597D \uD83C\uDF0D\n\nWould you like me to fetch the weather for a location or tell the current time? If you give me a city (or a timezone), I\u2019ll respond with the latest weather or the current time."
+      }
+    ],
+    "toolCalls": []
+  }
+}

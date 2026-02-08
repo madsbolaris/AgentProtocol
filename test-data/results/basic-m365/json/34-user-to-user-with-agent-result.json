@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-02-08T10:05:05.427656Z",
+  "timestamp": "2026-02-08T19:26:58.528290Z",
   "content": {
-    "runId": "run_261432b21ef94d20",
+    "runId": "run_6845824d9892491b",
     "agentId": "agent",
-    "threadId": "thread_95c903b979c34",
+    "threadId": "thread_01ddd9c985e74",
     "status": "completed",
     "output": [],
-    "createdAt": "2026-02-08T10:05:05.427358Z",
-    "completedAt": "2026-02-08T10:05:05.427358Z"
+    "createdAt": "2026-02-08T19:26:58.527933Z",
+    "completedAt": "2026-02-08T19:26:58.527933Z"
   },
-  "hash": "829f4990a9e3af085d50bc8a0fcf39502586f543f298f6712815db9c8f489f3a",
+  "hash": "dac8331b79f2d0cc5cffa91866f92e0653e8ca27a6c74ac6c9b4431cd362a0c7",
   "metadata": {
     "input_file": "34-user-to-user-with-agent.xml",
     "sample": "basic-m365",

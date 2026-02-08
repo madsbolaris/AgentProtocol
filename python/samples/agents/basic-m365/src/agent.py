@@ -224,7 +224,7 @@ async def on_message(context: TurnContext, _state: TurnState):
             # Get completion from LLM (either real or replayed)
             if _use_recordings and _recordings_dir:
                 # Test mode: Replay recorded response
-                completion = await _replay_llm_response()
+                completion = await _replay_llm_response(_conversation_history[conversation_id], tools)
             elif _openai_client:
                 # Generation mode: Use real LLM
                 completion = await _openai_client.chat.completions.create(
@@ -383,29 +383,110 @@ def get_current_time() -> str:
     return f"🕐 The current UTC time is {now.strftime('%Y-%m-%d %H:%M:%S')}."
 
 
-async def _replay_llm_response():
-    """Replay recorded LLM response (simplified for now)"""
-    # For now, return a simple response
-    # In a full implementation, this would read from recordings directory
+def _hash_request(model: str, messages: list, tools: list) -> str:
+    """Generate deterministic hash from request parameters (matches .NET implementation)"""
+    import hashlib
+
+    # Normalize messages
+    normalized_messages = []
+    for msg in messages:
+        normalized = {"role": msg["role"]}
+        if "content" in msg and msg["content"]:
+            normalized["content"] = msg["content"]
+        if "tool_calls" in msg:
+            normalized["tool_calls"] = msg["tool_calls"]
+        if "tool_call_id" in msg:
+            normalized["tool_call_id"] = msg["tool_call_id"]
+        normalized_messages.append(normalized)
+
+    # Build request dict
+    request_dict = {
+        "messages": normalized_messages,
+        "model": model,
+        "temperature": 0.0
+    }
+
+    if tools:
+        request_dict["tools"] = tools
+
+    # Serialize to stable JSON (sorted keys)
+    json_str = json.dumps(request_dict, sort_keys=True, separators=(',', ':'))
+
+    # Hash and truncate to match .NET format
+    hash_obj = hashlib.sha256(json_str.encode('utf-8'))
+    return hash_obj.hexdigest()[:16]
+
+
+async def _replay_llm_response(messages: list, tools: list):
+    """Replay recorded LLM response"""
+    global _model, _recordings_dir
+
+    # Generate hash to find recording
+    hash_key = _hash_request(_model, messages, tools)
+
+    # Find response file
+    response_file = _recordings_dir / f"{hash_key}.response.json"
+
+    if not response_file.exists():
+        print(f"⚠️  No recording found for hash: {hash_key}")
+        print(f"   Expected: {response_file}")
+        # Return a default response
+        class MockCompletion:
+            class Choice:
+                class Message:
+                    content = "I can help you with weather and time information!"
+                    tool_calls = None
+                finish_reason = "stop"
+                message = Message()
+            choices = [Choice()]
+        return MockCompletion()
+
+    # Load recording
+    with open(response_file, 'r') as f:
+        recording = json.load(f)
+
+    response_data = recording["response"]
+
+    # Build mock completion object
+    class MockToolCall:
+        def __init__(self, data):
+            self.id = data["id"]
+            self.type = data["type"].lower()
+            self.function = type('obj', (object,), {
+                'name': data["function"]["name"],
+                'arguments': data["function"]["arguments"]
+            })()
+
+    class MockMessage:
+        def __init__(self, data):
+            # Get content
+            if data.get("content") and len(data["content"]) > 0:
+                self.content = data["content"][0].get("text", "")
+            else:
+                self.content = None
+
+            # Get tool calls
+            if data.get("toolCalls") and len(data["toolCalls"]) > 0:
+                self.tool_calls = [MockToolCall(tc) for tc in data["toolCalls"]]
+            else:
+                self.tool_calls = None
+
+    class MockChoice:
+        def __init__(self, data):
+            self.finish_reason = data["finishReason"].lower()
+            self.message = MockMessage(data)
+
     class MockCompletion:
-        class Choice:
-            class Message:
-                content = "I can help you with weather and time information!"
-                tool_calls = None
+        def __init__(self, data):
+            self.choices = [MockChoice(data)]
 
-            finish_reason = "stop"
-            message = Message()
-
-        choices = [Choice()]
-
-    return MockCompletion()
+    return MockCompletion(response_data)
 
 
 async def _record_llm_interaction(messages, tools, completion):
-    """Record LLM interaction for testing (simplified)"""
-    # For now, just log that we would record
-    # In a full implementation, this would save to recordings directory
-    print(f"📹 Would record LLM interaction (not implemented yet)")
+    """Record LLM interaction for testing"""
+    # Recording is handled by .NET implementation
+    pass
 
 
 @AGENT_APP.error

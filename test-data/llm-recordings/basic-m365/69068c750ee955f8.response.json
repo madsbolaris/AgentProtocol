@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-08T19:27:27.719647Z",
+  "hash": "69068c750ee955f8",
+  "response": {
+    "id": "chatcmpl-D74jBrOnWVcL6qLdkyNwZzVOLr0KY",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-08T19:27:21+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "- \uD83C\uDF24 The weather in Paris is stormy with a temperature of 25\u00B0C.\n- \u23F0 The current UTC time is 2026-02-08 19:27:21.\n- Paris local time (CET, UTC\u002B1) is 20:27:21."
+      }
+    ],
+    "toolCalls": []
+  }
+}

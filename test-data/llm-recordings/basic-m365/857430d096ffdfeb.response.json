@@ -1,0 +1,17 @@
+{
+  "callId": 1,
+  "timestamp": "2026-02-08T19:27:42.943902Z",
+  "hash": "857430d096ffdfeb",
+  "response": {
+    "id": "chatcmpl-D74jUnUoNOnN8YIXyNJUOH1vKHrHl",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-08T19:27:40+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Hi there! I\u2019m doing well, thanks for asking. How can I help you today? I can tell you the current time or fetch the weather for a location. If you tell me a city, I\u2019ll get the latest weather for it. Or I can give you the current UTC time. What would you like?"
+      }
+    ],
+    "toolCalls": []
+  }
+}

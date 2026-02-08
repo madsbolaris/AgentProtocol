@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-08T10:04:03.871006Z",
+  "timestamp": "2026-02-08T19:26:08.993195Z",
   "content": {
-    "runId": "run_850443d4127f44aa",
+    "runId": "run_b1d31790bff2426c",
     "agentId": "agent",
-    "threadId": "thread_806d01dac0ff4",
+    "threadId": "thread_831be5965db14",
     "status": "completed",
     "output": [
       {
@@ -11,7 +11,7 @@
         "contents": [
           {
             "kind": "functionCall",
-            "callId": "call_XYyui3OhZa3bID3JbvPtRQpB",
+            "callId": "call_UF87uV7O0Z4N6SbLcEXYbAuW",
             "name": "GetWeatherAsync",
             "arguments": "{\"location\":\"Seattle\"}"
           }
@@ -22,29 +22,8 @@
         "contents": [
           {
             "kind": "functionResult",
-            "callId": "call_XYyui3OhZa3bID3JbvPtRQpB",
-            "result": "\ud83c\udf24\ufe0f The weather in Seattle is stormy with a temperature of 18\u00b0C."
-          }
-        ]
-      },
-      {
-        "role": "assistant",
-        "contents": [
-          {
-            "kind": "functionCall",
-            "callId": "call_MZs21H73zIDDLrw1hGTz4Di8",
-            "name": "GetCurrentTime",
-            "arguments": "{}"
-          }
-        ]
-      },
-      {
-        "role": "tool",
-        "contents": [
-          {
-            "kind": "functionResult",
-            "callId": "call_MZs21H73zIDDLrw1hGTz4Di8",
-            "result": "\ud83d\udd50 The current UTC time is 2026-02-08 10:04:02."
+            "callId": "call_UF87uV7O0Z4N6SbLcEXYbAuW",
+            "result": "\ud83c\udf24\ufe0f The weather in Seattle is rainy with a temperature of 18\u00b0C."
           }
         ]
       },
@@ -53,15 +32,15 @@
         "contents": [
           {
             "kind": "text",
-            "text": "- Weather in Seattle: stormy, 18\u00b0C\n- Current UTC time: 2026-02-08 10:04:02\n\nWould you like a rain alert or the forecast for the next few days?"
+            "text": "- Weather in Seattle: Rainy\n- Temperature: 18\u00b0C\n\nWould you like an hourly forecast or any weather tips for today?"
           }
         ]
       }
     ],
-    "createdAt": "2026-02-08T10:04:03.869716Z",
-    "completedAt": "2026-02-08T10:04:03.869716Z"
+    "createdAt": "2026-02-08T19:26:08.99241Z",
+    "completedAt": "2026-02-08T19:26:08.992411Z"
   },
-  "hash": "09bef44bb2ae55d46758b75f1d67d72523386caa637fb4fbc3c63a34f8926335",
+  "hash": "1f423608f4460044fd1723bf5ec3e751d7e0d5ed02e5d6e0bfc2c42b8559222e",
   "metadata": {
     "input_file": "03-user-text-only.xml",
     "sample": "basic-m365",

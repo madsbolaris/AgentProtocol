@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-08T10:04:52.544623Z",
+  "timestamp": "2026-02-08T19:26:47.997543Z",
   "content": {
-    "runId": "run_e94bfe81c3074835",
+    "runId": "run_399c4bbe2f634c24",
     "agentId": "agent",
-    "threadId": "thread_277cd4e6df444",
+    "threadId": "thread_ad25f88180ab4",
     "status": "completed",
     "output": [
       {
@@ -11,15 +11,15 @@
         "contents": [
           {
             "kind": "text",
-            "text": "I can handle text with special characters and Unicode.\n\nHere it is echoed back exactly as you wrote:\nText with special characters: <>&\"' and unicode: \u4f60\u597d \ud83c\udf0d\n\nWould you like me to do anything else with this text (escape characters, count length, translate, etc.)?"
+            "text": "Got it \u2014 here\u2019s your text echoed back exactly:\n\nText with special characters: <>&\"' and unicode: \u4f60\u597d \ud83c\udf0d\n\nI can help with various things as well. For example:\n- Tell the current time (UTC or in a specific time zone you provide).\n- Check the weather for a location.\n- Do other text tasks you might have (summaries, translations, etc.)\u2014just say what you need.\n\nWhat would you like me to do next?"
           }
         ]
       }
     ],
-    "createdAt": "2026-02-08T10:04:52.544005Z",
-    "completedAt": "2026-02-08T10:04:52.544005Z"
+    "createdAt": "2026-02-08T19:26:47.996902Z",
+    "completedAt": "2026-02-08T19:26:47.996902Z"
   },
-  "hash": "a3fd6e8481ca4ae03ed8ff7ea2d862c9bd03e2750f433994f6c5b33f00d18449",
+  "hash": "0798989552c419a81d3d7ee1ec3073288a45dc1c8c2ede8d2ff20a43e16de682",
   "metadata": {
     "input_file": "18-edge-cases.xml",
     "sample": "basic-m365",

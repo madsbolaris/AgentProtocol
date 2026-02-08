@@ -86,6 +86,9 @@ site/
 test-data/results/python/
 test-data/results/dotnet/
 
+# Claude Code files
+.claudeignore
+
 # Python virtual environments
 venv/
 .venv/

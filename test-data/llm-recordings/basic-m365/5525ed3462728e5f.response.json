@@ -1,0 +1,17 @@
+{
+  "callId": 1,
+  "timestamp": "2026-02-08T19:27:53.983949Z",
+  "hash": "5525ed3462728e5f",
+  "response": {
+    "id": "chatcmpl-D74jcjmDy5vSOsKywGRRwKun1UHKl",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-08T19:27:48+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "I can\u2019t directly modify messages or add reactions from here. But I can help you do it or provide a quick guide or code snippet depending on the platform.\n\nTell me which platform the message is in (Slack, Discord, Teams, etc.), and I\u2019ll give you:\n- Simple manual steps to add a \uD83D\uDC4D reaction, or\n- A ready-to-run API snippet if you\u2019re using a bot or integration."
+      }
+    ],
+    "toolCalls": []
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "callId": 1,
+  "timestamp": "2026-02-08T19:28:03.876941Z",
+  "hash": "d788f234e6cef4a9",
+  "response": {
+    "id": "chatcmpl-D74jntkCcvqu9rrwZzHLEnqZkalpG",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-08T19:27:59+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "That\u2019s wonderful to hear! Here are emoji ideas to match a happy vibe, plus a few ready-to-send combo options.\n\nVibe options\n- Celebration/excitement: \uD83C\uDF89\uD83E\uDD73\u2728\uD83D\uDC4F\n- Bright and sunny: \u2600\uFE0F\uD83C\uDF1E\uD83C\uDF08\uD83D\uDE0A\n- Warmth and friendship: \uD83E\uDD17\uD83D\uDC96\uD83D\uDC9B\n- Accomplishment/energy: \uD83C\uDFAF\uD83C\uDFC6\uD83D\uDD25\n- Playful/cheerful: \uD83D\uDE04\uD83D\uDE06\uD83E\uDD2A\n- Cozy/positive calm: \uD83C\uDF3C\uD83E\uDDE1\uD83C\uDF38\n\nReady-to-send example lines\n- \u201CFeeling amazing today! \uD83D\uDE04\uD83C\uDF89\u201D\n- \u201CGood vibes only. \u2600\uFE0F\uD83D\uDE0A\uD83C\uDF08\u201D\n- \u201CSending you happy thoughts! \uD83E\uDD17\u2728\u201D\n- \u201CCrushing today! \uD83C\uDFC6\uD83D\uDD25\u201D\n- \u201CJust a sunny mood kind of day. \uD83C\uDF1E\uD83D\uDE04\u201D\n\nIf you tell me who you\u2019re texting (a friend, family, coworker, social media caption), I can tailor emoji combos and write a few caption options for you."
+      }
+    ],
+    "toolCalls": []
+  }
+}

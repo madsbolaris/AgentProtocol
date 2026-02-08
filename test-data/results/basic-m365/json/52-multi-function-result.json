@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-08T10:05:35.778480Z",
+  "timestamp": "2026-02-08T19:27:27.720537Z",
   "content": {
-    "runId": "run_98f334a4f3bb4d61",
+    "runId": "run_560bce0f6a0e43cc",
     "agentId": "agent",
-    "threadId": "thread_879847972b2a4",
+    "threadId": "thread_1afed12aebcb4",
     "status": "completed",
     "output": [
       {
@@ -11,13 +11,13 @@
         "contents": [
           {
             "kind": "functionCall",
-            "callId": "call_GDkYcykD3F8FoftN6r3VWtwY",
+            "callId": "call_5SeHAXghjmE4MENlriklZXp9",
             "name": "GetWeatherAsync",
             "arguments": "{\"location\": \"Paris\"}"
           },
           {
             "kind": "functionCall",
-            "callId": "call_6UJBKAYc0sCaUDdj6P3m8GIm",
+            "callId": "call_VQMidicSnzmrW079zHmP07kq",
             "name": "GetCurrentTime",
             "arguments": "{}"
           }
@@ -28,8 +28,8 @@
         "contents": [
           {
             "kind": "functionResult",
-            "callId": "call_GDkYcykD3F8FoftN6r3VWtwY",
-            "result": "\ud83c\udf24\ufe0f The weather in Paris is rainy with a temperature of 34\u00b0C."
+            "callId": "call_5SeHAXghjmE4MENlriklZXp9",
+            "result": "\ud83c\udf24\ufe0f The weather in Paris is stormy with a temperature of 25\u00b0C."
           }
         ]
       },
@@ -38,8 +38,8 @@
         "contents": [
           {
             "kind": "functionResult",
-            "callId": "call_6UJBKAYc0sCaUDdj6P3m8GIm",
-            "result": "\ud83d\udd50 The current UTC time is 2026-02-08 10:05:30."
+            "callId": "call_VQMidicSnzmrW079zHmP07kq",
+            "result": "\ud83d\udd50 The current UTC time is 2026-02-08 19:27:21."
           }
         ]
       },
@@ -48,15 +48,15 @@
         "contents": [
           {
             "kind": "text",
-            "text": "- Weather in Paris: rainy, 34\u00b0C.\n- Current UTC time: 2026-02-08 10:05:30.\n- Paris local time (UTC+1): 11:05:30.\n\nNote: 34\u00b0C in Paris in February is unusually hot for that city and season. I can re-check the weather data if you\u2019d like."
+            "text": "- \ud83c\udf24 The weather in Paris is stormy with a temperature of 25\u00b0C.\n- \u23f0 The current UTC time is 2026-02-08 19:27:21.\n- Paris local time (CET, UTC+1) is 20:27:21."
           }
         ]
       }
     ],
-    "createdAt": "2026-02-08T10:05:35.777844Z",
-    "completedAt": "2026-02-08T10:05:35.777844Z"
+    "createdAt": "2026-02-08T19:27:27.719924Z",
+    "completedAt": "2026-02-08T19:27:27.719924Z"
   },
-  "hash": "70709deab1acdd857f04d204af6541307ef207e222dbec8c6cac9497d98bd34e",
+  "hash": "0f3b694079a35c17a163ea3a97951f8bab7ea5785495f275234062ddc1e83737",
   "metadata": {
     "input_file": "52-multi-function.xml",
     "sample": "basic-m365",

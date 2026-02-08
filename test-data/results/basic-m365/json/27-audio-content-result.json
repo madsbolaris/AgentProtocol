@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-02-08T10:05:03.414139Z",
+  "timestamp": "2026-02-08T19:26:56.441619Z",
   "content": {
-    "runId": "run_5856140dd1af4800",
+    "runId": "run_72604e1588614ead",
     "agentId": "agent_test_9",
-    "threadId": "thread_064628aef92c4",
+    "threadId": "thread_21c10ff9a9374",
     "status": "completed",
     "output": [],
-    "createdAt": "2026-02-08T10:05:03.413797Z",
-    "completedAt": "2026-02-08T10:05:03.413797Z"
+    "createdAt": "2026-02-08T19:26:56.441287Z",
+    "completedAt": "2026-02-08T19:26:56.441287Z"
   },
-  "hash": "a5481a97a5f4d085e4f7b5ab5ba2d6929332304762532b4499440df0fdc1d602",
+  "hash": "ed4e142b36ca9cd72e7f77e24f67d88d5aadf00bcc8b4b7e6897ce4c18222926",
   "metadata": {
     "input_file": "27-audio-content.xml",
     "sample": "basic-m365",

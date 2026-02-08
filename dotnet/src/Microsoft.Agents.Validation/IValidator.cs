@@ -1,4 +1,4 @@
-namespace Microsoft.Agents.Xml.Validation;
+namespace Microsoft.Agents.Validation;
 
 /// <summary>
 /// Interface for validators that can validate objects of type T.

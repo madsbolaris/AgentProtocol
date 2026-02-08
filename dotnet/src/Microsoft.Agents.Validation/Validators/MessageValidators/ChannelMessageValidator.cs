@@ -1,6 +1,6 @@
-using Microsoft.Agents.Xml.Generated.Models;
+using Microsoft.Agents.Abstractions.Models;
 
-namespace Microsoft.Agents.Xml.Validation.Validators.MessageValidators;
+namespace Microsoft.Agents.Validation.Validators.MessageValidators;
 
 /// <summary>
 /// Validator for ChannelMessage.

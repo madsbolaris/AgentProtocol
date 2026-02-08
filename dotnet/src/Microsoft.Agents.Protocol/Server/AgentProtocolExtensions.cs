@@ -222,12 +222,32 @@ internal class AgentProtocolServer
                 }
 
                 // Add contents
-                if (msg.ContainsKey("contents") && msg["contents"] is List<object> contents)
-                {
-                    foreach (var contentObj in contents)
-                    {
-                        if (contentObj is not Dictionary<string, object> content) continue;
+                List<Dictionary<string, object>>? contentsList = null;
 
+                // Handle JsonElement from System.Text.Json deserialization
+                if (msg.ContainsKey("contents") && msg["contents"] is JsonElement contentsElement && contentsElement.ValueKind == JsonValueKind.Array)
+                {
+                    contentsList = new List<Dictionary<string, object>>();
+                    foreach (var item in contentsElement.EnumerateArray())
+                    {
+                        var contentDict = new Dictionary<string, object>();
+                        foreach (var prop in item.EnumerateObject())
+                        {
+                            contentDict[prop.Name] = prop.Value.ValueKind == JsonValueKind.String ? prop.Value.GetString()! : prop.Value;
+                        }
+                        contentsList.Add(contentDict);
+                    }
+                }
+                // Fallback for other list types
+                else if (msg.ContainsKey("contents") && msg["contents"] is List<object> contents)
+                {
+                    contentsList = contents.OfType<Dictionary<string, object>>().ToList();
+                }
+
+                if (contentsList != null)
+                {
+                    foreach (var content in contentsList)
+                    {
                         var kind = content.ContainsKey("kind") ? content["kind"]?.ToString() : "text";
 
                         if (kind == "text")

@@ -56,12 +56,12 @@ internal class RunContextImpl<TContext> : IRunContext<TContext> where TContext :
 internal class MessageContextImpl<TContext> : IMessageContext<TContext> where TContext : class
 {
     internal readonly RunContextImpl<TContext> RunContext;
-    internal readonly List<AgentMessage> Responses;
+    internal readonly List<ChatMessage> Responses;
 
     public MessageContextImpl(
         RunContextImpl<TContext> runContext,
         ChatMessage message,
-        List<AgentMessage> responses)
+        List<ChatMessage> responses)
     {
         RunContext = runContext;
         Message = message;
@@ -80,7 +80,7 @@ internal class MessageContextImpl<TContext> : IMessageContext<TContext> where TC
     {
         var message = new AgentMessage
         {
-            Content = new List<AIContent>
+            Contents = new List<AIContent>
             {
                 new TextContent { Text = text }
             }
@@ -94,7 +94,7 @@ internal class MessageContextImpl<TContext> : IMessageContext<TContext> where TC
     {
         var message = new AgentMessage
         {
-            Content = new List<AIContent> { content }
+            Contents = new List<AIContent> { content }
         };
 
         Responses.Add(message);

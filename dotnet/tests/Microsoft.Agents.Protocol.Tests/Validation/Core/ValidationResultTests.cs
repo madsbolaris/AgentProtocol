@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Microsoft.Agents.Xml.Validation;
+using Microsoft.Agents.Validation;
 using Xunit;
 
 namespace Microsoft.Agents.Protocol.Tests.Validation.Core;

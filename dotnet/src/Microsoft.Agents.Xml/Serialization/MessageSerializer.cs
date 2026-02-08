@@ -6,6 +6,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using Microsoft.Agents;
+using Microsoft.Agents.Abstractions.Models;
 
 namespace Microsoft.Agents.Xml.Serialization;
 

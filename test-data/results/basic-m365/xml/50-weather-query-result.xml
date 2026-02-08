@@ -1,6 +1,20 @@
-<?xml version='1.0' encoding='utf-8'?>
-<thread thread-id="thread_73da76a57eac4" status="active" created-at="2026-02-08T19:27:11Z">
-  <assistant/>
-  <tool/>
-  <assistant/>
+<?xml version="1.0" encoding="utf-8"?>
+<thread thread-id="thread_b9bdd6b66e214" status="active" created-at="2026-02-08T21:13:09Z">
+  <assistant>
+    <function-call call-id="call_AF8cUNSse7N0PdoC77qpI3bl" name="GetWeatherAsync">{"location":"Seattle"}</function-call>
+  </assistant>
+  <tool>
+    <function-result call-id="call_AF8cUNSse7N0PdoC77qpI3bl">🌤️ The weather in Seattle is partly cloudy with a temperature of 17°C.</function-result>
+  </tool>
+  <assistant>
+    <function-call call-id="call_RRXSAHiQEtN8lezN1j9UA9dX" name="GetCurrentTime">{}</function-call>
+  </assistant>
+  <tool>
+    <function-result call-id="call_RRXSAHiQEtN8lezN1j9UA9dX">🕐 The current UTC time is 2026-02-08 21:13:06.</function-result>
+  </tool>
+  <assistant>
+    <text>Seattle is partly cloudy, around 17°C right now. Local time in Seattle is about 1:13 PM PST (Feb 8, 2026). 
+
+Would you like an hourly forecast or a weekly outlook?</text>
+  </assistant>
 </thread>

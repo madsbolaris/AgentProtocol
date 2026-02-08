@@ -1,4 +1,4 @@
-namespace Microsoft.Agents.Xml.Validation;
+namespace Microsoft.Agents.Validation;
 
 /// <summary>
 /// Represents a validation error with structured information.

@@ -24,4 +24,8 @@
     <ProjectReference Include="..\..\..\src\Microsoft.Agents.Abstractions\Microsoft.Agents.Abstractions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\..\Shared\*.cs" Link="Shared\%(Filename)%(Extension)" />
+  </ItemGroup>
+
 </Project>

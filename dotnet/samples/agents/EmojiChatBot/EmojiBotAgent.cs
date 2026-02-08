@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Agents.Abstractions.Models;
@@ -148,12 +149,19 @@ public class EmojiBotAgent : AgentProtocolApplication<ChatContext>
     {
         var reaction = (MessageReactionContent)eventContent;
 
+        // Determine if reaction was added or removed
+        bool isAdded = reaction.ReactionsAdded?.Count > 0;
+        var reactionList = isAdded ? reaction.ReactionsAdded : reaction.ReactionsRemoved;
+        var firstReaction = reactionList?.FirstOrDefault();
+
+        // Get emoji type
+        var emoji = firstReaction?.Type ?? "?";
+
         // Update context to remember the last emoji
-        context.Context.LastEmojiUsed = reaction.Reaction?.Activity ?? "unknown";
+        context.Context.LastEmojiUsed = emoji;
 
         // Count popular reactions and respond
-        var emoji = reaction.Reaction?.Activity ?? "?";
-        var reactionType = reaction.Reaction?.Type ?? "added";
+        var reactionType = isAdded ? "added" : "removed";
 
         if (reactionType == "added")
         {

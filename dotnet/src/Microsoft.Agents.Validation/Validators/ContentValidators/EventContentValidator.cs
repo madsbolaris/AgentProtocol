@@ -1,6 +1,6 @@
-using Microsoft.Agents.Xml.Generated.Models;
+using Microsoft.Agents.Abstractions.Models;
 
-namespace Microsoft.Agents.Xml.Validation.Validators.ContentValidators;
+namespace Microsoft.Agents.Validation.Validators.ContentValidators;
 
 /// <summary>
 /// Validator for EventContent.

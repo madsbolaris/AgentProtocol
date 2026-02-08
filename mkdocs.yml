@@ -87,11 +87,11 @@ plugins:
       separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - awesome-pages
   - section-index
-  - test-examples:
-      snippets_dir: docs/snippets
-      results_dir: test-data/results
-      enable_validation: true
-      show_language_tabs: true
+  # - test-examples:
+  #     snippets_dir: docs/snippets
+  #     results_dir: test-data/results
+  #     enable_validation: true
+  #     show_language_tabs: true
   # Temporarily disabled - enable after git repository is properly initialized
   # - git-revision-date-localized:
   #     enable_creation_date: true
@@ -155,6 +155,9 @@ nav:
 
   - Integration Guides:
     - guides/index.md
+    - XML Serialization: guides/xml-serialization.md
+    - XML Full-Stack Patterns: guides/xml-full-stack-patterns.md
+    - XML Eval Strategy: guides/xml-eval-strategy.md
     - Security & Compliance: guides/security-compliance.md
     - Content Guardrails: guides/content-guardrails.md
     - Error Handling: guides/error-handling.md
@@ -169,6 +172,7 @@ nav:
   - API Reference:
     - api-reference/index.md
     - Content Types: api-reference/content-types.md
+    - XML Schema Reference: api-reference/xml-schema-reference.md
     - Models: api-reference/models.md
     - Tools: api-reference/tools.md
     - Models:

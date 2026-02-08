@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.Agents.Xml.Generated.Models;
-using Microsoft.Agents.Xml.Serialization;
+using System.Linq;
+using Microsoft.Agents.Abstractions.Models;
 using Microsoft.Agents.Testing;
+using Microsoft.Agents.Xml.Serialization;
 using Xunit;
 
 namespace Microsoft.Agents.Xml.Tests
@@ -31,15 +32,14 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestBasicXmlSerialization()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
 
             // Create a simple text message
-            var message = new ChatMessage
+            var message = new UserMessage
             {
-                Role = "user",
                 MessageId = "msg-001",
-                Contents = new List<AIContentBase>
+                Contents = new List<AIContent>
                 {
                     new TextContent { Text = "Hello, how can you help me today?" }
                 }
@@ -69,8 +69,8 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestBasicXmlDeserialization()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
 
             var xmlInput = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <chat role=""user"" messageId=""msg-001"">
@@ -79,7 +79,7 @@ namespace Microsoft.Agents.Xml.Tests
 
             // Deserialize XML to object
             var serializer = new MessageSerializer();
-            var message = serializer.Deserialize<ChatMessage>(xmlInput);
+            var message = serializer.Deserialize(xmlInput);
 
             Console.WriteLine($"Role: {message.Role}");
             Console.WriteLine($"Text: {(message.Contents[0] as TextContent)?.Text}");
@@ -91,7 +91,7 @@ namespace Microsoft.Agents.Xml.Tests
                 text = (message.Contents[0] as TextContent)?.Text
             }, metadata: new { description = "Deserialized message properties", format = "json" });
 
-            Assert.Equal("user", message.Role);
+            Assert.Equal(ChatRole.User, message.Role);
         }
 
         [Fact]
@@ -102,21 +102,20 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestMultimodalMessage()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
 
             // Create a message with text and image
-            var message = new ChatMessage
+            var message = new UserMessage
             {
-                Role = "user",
                 MessageId = "msg-002",
-                Contents = new List<AIContentBase>
+                Contents = new List<AIContent>
                 {
                     new TextContent { Text = "What's in this image?" },
                     new ImageContent
                     {
                         Uri = "https://example.com/image.jpg",
-                        AltText = "A photo of a sunset"
+                        Alt = "A photo of a sunset"
                     }
                 }
             };
@@ -143,13 +142,13 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestSystemMessage()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
 
             // Create system message with instructions
             var message = new SystemMessage
             {
-                Contents = new List<AIContentBase>
+                Contents = new List<AIContent>
                 {
                     new TextContent { Text = "You are a helpful assistant. Be concise and accurate." }
                 }
@@ -177,15 +176,14 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestUserMessage()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
 
             // Create user message
-            var message = new ChatMessage
+            var message = new UserMessage
             {
-                Role = "user",
                 MessageId = "user-123",
-                Contents = new List<AIContentBase>
+                Contents = new List<AIContent>
                 {
                     new TextContent { Text = "What is the weather in Seattle?" }
                 }
@@ -213,15 +211,15 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestAgentMessage()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
 
             // Create agent response
             var message = new AgentMessage
             {
                 AgentId = "agent-456",
                 MessageId = "msg-789",
-                Contents = new List<AIContentBase>
+                Contents = new List<AIContent>
                 {
                     new TextContent { Text = "The current weather in Seattle is 55°F and partly cloudy." }
                 }
@@ -249,15 +247,15 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestToolCallMessage()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
 
             // Create agent message with tool call
             var message = new AgentMessage
             {
                 AgentId = "agent-456",
                 MessageId = "msg-call-1",
-                Contents = new List<AIContentBase>
+                Contents = new List<AIContent>
                 {
                     new FunctionCallContent
                     {
@@ -290,21 +288,20 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestToolResultMessage()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
 
             // Create tool result message
-            var message = new ChatMessage
+            var message = new ToolMessage
             {
-                Role = "tool",
                 MessageId = "msg-result-1",
-                Contents = new List<AIContentBase>
+                Contents = new List<AIContent>
                 {
                     new FunctionResultContent
                     {
                         CallId = "call_abc123",
                         Name = "get_weather",
-                        Content = "{\"temperature\": 55, \"conditions\": \"partly cloudy\"}"
+                        Result = "{\"temperature\": 55, \"conditions\": \"partly cloudy\"}"
                     }
                 }
             };
@@ -331,15 +328,15 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestErrorContent()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
 
             // Create message with error
             var message = new AgentMessage
             {
                 AgentId = "agent-456",
                 MessageId = "msg-error-1",
-                Contents = new List<AIContentBase>
+                Contents = new List<AIContent>
                 {
                     new ErrorContent
                     {
@@ -371,15 +368,15 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestStreamingMessage()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
 
             // Create streaming chunk
             var chunk = new AgentMessage
             {
                 AgentId = "agent-456",
                 MessageId = "msg-stream-1",
-                Contents = new List<AIContentBase>
+                Contents = new List<AIContent>
                 {
                     new TextContent { Text = "The weather " }
                 }
@@ -407,16 +404,15 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestMessageWithMetadata()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
 
             // Create message with metadata
-            var message = new ChatMessage
+            var message = new UserMessage
             {
-                Role = "user",
                 MessageId = "msg-meta-1",
                 CreatedAt = DateTime.Parse("2024-01-15T10:30:00Z").ToUniversalTime(),
-                Contents = new List<AIContentBase>
+                Contents = new List<AIContent>
                 {
                     new TextContent { Text = "Hello!" }
                 }
@@ -444,7 +440,7 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestContentValidation()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Generated.Models;
 
             // Validate required properties
             var content = new TextContent { Text = "Hello, world!" };
@@ -480,15 +476,14 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestRoundTripFidelity()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
 
             // Original message
-            var original = new ChatMessage
+            var original = new UserMessage
             {
-                Role = "user",
                 MessageId = "msg-roundtrip",
-                Contents = new List<AIContentBase>
+                Contents = new List<AIContent>
                 {
                     new TextContent { Text = "Test message" }
                 }
@@ -497,7 +492,7 @@ namespace Microsoft.Agents.Xml.Tests
             // Serialize then deserialize
             var serializer = new MessageSerializer();
             var xml = serializer.Serialize(original);
-            var restored = serializer.Deserialize<ChatMessage>(xml);
+            var restored = serializer.Deserialize(xml);
 
             // Verify fidelity
             Assert.Equal(original.Role, restored.Role);
@@ -530,16 +525,16 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestBatchMessages()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
-            using System.Linq;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
+            // using System.Linq;
 
             // Create batch of messages
             var messages = new List<ChatMessage>
             {
-                new ChatMessage { Role = "user", Contents = new List<AIContentBase> { new TextContent { Text = "Message 1" } } },
-                new ChatMessage { Role = "user", Contents = new List<AIContentBase> { new TextContent { Text = "Message 2" } } },
-                new ChatMessage { Role = "user", Contents = new List<AIContentBase> { new TextContent { Text = "Message 3" } } }
+                new UserMessage { Contents = new List<AIContent> { new TextContent { Text = "Message 1" } } },
+                new UserMessage { Contents = new List<AIContent> { new TextContent { Text = "Message 2" } } },
+                new UserMessage { Contents = new List<AIContent> { new TextContent { Text = "Message 3" } } }
             };
 
             // Process batch
@@ -572,16 +567,16 @@ namespace Microsoft.Agents.Xml.Tests
         public void TestThreadMessages()
         {
             // doc-example-start
-            using Microsoft.Agents.Xml.Generated.Models;
-            using Microsoft.Agents.Xml.Serialization;
-            using System.Linq;
+            // using Microsoft.Agents.Xml.Generated.Models;
+            // using Microsoft.Agents.Xml.Serialization;
+            // using System.Linq;
 
             // Create conversation thread
-            var thread = new List<object>
+            var thread = new List<ChatMessage>
             {
-                new SystemMessage { Contents = new List<AIContentBase> { new TextContent { Text = "You are a helpful assistant." } } },
-                new ChatMessage { Role = "user", Contents = new List<AIContentBase> { new TextContent { Text = "Hello!" } } },
-                new AgentMessage { Contents = new List<AIContentBase> { new TextContent { Text = "Hi! How can I help?" } } }
+                new SystemMessage { Contents = new List<AIContent> { new TextContent { Text = "You are a helpful assistant." } } },
+                new UserMessage { Contents = new List<AIContent> { new TextContent { Text = "Hello!" } } },
+                new AgentMessage { Contents = new List<AIContent> { new TextContent { Text = "Hi! How can I help?" } } }
             };
 
             // Serialize thread

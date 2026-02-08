@@ -1,8 +1,8 @@
-using Microsoft.Agents.Xml.Generated.Models;
-using Microsoft.Agents.Xml.Validation.Validators.MessageValidators;
-using AgentThread = Microsoft.Agents.Xml.Generated.Models.Thread;
+using Microsoft.Agents.Abstractions.Models;
+using Microsoft.Agents.Validation.Validators.MessageValidators;
+using AgentThread = Microsoft.Agents.Abstractions.Models.Thread;
 
-namespace Microsoft.Agents.Xml.Validation.Validators;
+namespace Microsoft.Agents.Validation.Validators;
 
 /// <summary>
 /// Validator for Thread, which orchestrates validation across all messages.
@@ -21,8 +21,8 @@ public class ThreadValidator : IValidator<AgentThread>
         // (Status is enum type, so this is enforced by type system)
 
         // THR-003: Thread created-at must be before or equal to last-message-at
-        if (thread.CreatedAt.HasValue && thread.LastMessageAt.HasValue &&
-            thread.CreatedAt.Value > thread.LastMessageAt.Value)
+        if (thread.LastMessageAt.HasValue &&
+            thread.CreatedAt > thread.LastMessageAt.Value)
         {
             errors.Add(CreateError(
                 ValidationErrorCode.THR_003,

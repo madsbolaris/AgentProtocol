@@ -186,7 +186,7 @@ public class RecordingProtocolLLMClient : IProtocolLLMClient
             TextContent text => new { type = "text", text.Text },
             FunctionCallContent func => new { type = "function_call", func.CallId, func.Name, func.Arguments },
             FunctionResultContent result => new { type = "function_result", result.CallId, result.Result },
-            ImageContent image => new { type = "image", image.ImageUrl },
+            ImageContent image => new { type = "image", image.Uri },
             _ => new { type = content.GetType().Name }
         };
     }

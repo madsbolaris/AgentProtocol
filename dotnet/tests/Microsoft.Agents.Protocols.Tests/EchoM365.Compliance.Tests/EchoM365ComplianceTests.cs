@@ -9,6 +9,7 @@ using Xunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Agents;
+using Microsoft.Agents.Abstractions.Models;
 using Microsoft.Agents.Xml.Serialization;
 using QuickStart;
 

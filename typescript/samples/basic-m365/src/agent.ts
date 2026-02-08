@@ -56,8 +56,12 @@ let model: string = 'gpt-4'
 let useRecordings: boolean = false
 
 function initLLM() {
+  console.log('🔧 Initializing LLM...')
+
   // Check if we should use LLM recordings (test mode)
   useRecordings = process.env.USE_LLM_RECORDINGS?.toLowerCase() === 'true'
+  console.log(`   USE_LLM_RECORDINGS: ${process.env.USE_LLM_RECORDINGS}`)
+  console.log(`   useRecordings: ${useRecordings}`)
 
   if (useRecordings) {
     // Test mode: Use recorded LLM responses
@@ -69,6 +73,9 @@ function initLLM() {
     const endpoint = process.env.FOUNDRY_ENDPOINT
     const apiKey = process.env.FOUNDRY_API_KEY
 
+    console.log(`   FOUNDRY_ENDPOINT: ${endpoint ? endpoint.substring(0, 30) + '...' : 'NOT SET'}`)
+    console.log(`   FOUNDRY_API_KEY: ${apiKey ? '***' + apiKey.substring(apiKey.length - 4) : 'NOT SET'}`)
+
     if (!endpoint || !apiKey) {
       console.log('⚠️  FOUNDRY_ENDPOINT or FOUNDRY_API_KEY not set. LLM features disabled.')
       console.log('   Set these environment variables to enable LLM functionality.')
@@ -76,12 +83,19 @@ function initLLM() {
     }
 
     model = process.env.FOUNDRY_MODEL_DEPLOYMENT || 'gpt-4'
+    console.log(`   Model: ${model}`)
 
     // Create OpenAI client for Foundry
-    openaiClient = new OpenAI({
-      apiKey: apiKey,
-      baseURL: `${endpoint}/openai/v1/`
-    })
+    try {
+      openaiClient = new OpenAI({
+        apiKey: apiKey,
+        baseURL: `${endpoint}/openai/v1/`
+      })
+      console.log('✅ OpenAI client created successfully')
+    } catch (error) {
+      console.error('❌ Error creating OpenAI client:', error)
+      return
+    }
 
     // Check if LLM recording is enabled
     const recordLlm = process.env.RECORD_LLM?.toLowerCase() === 'true'
@@ -298,13 +312,19 @@ agentApp.onActivity(ActivityTypes.Message, async (context: TurnContext, state: A
 
   const userMessage = context.activity.text || ''
 
+  // Debug: Check LLM configuration
+  console.log(`🔍 Message handler - openaiClient: ${openaiClient ? 'EXISTS' : 'NULL'}, useRecordings: ${useRecordings}`)
+
   // If LLM is not configured, just echo
   if (!openaiClient && !useRecordings) {
+    console.log('⚠️ Echoing because LLM not configured')
     await context.sendActivity(
       `Echo: ${userMessage}\n\n(Note: LLM not configured. Set FOUNDRY_ENDPOINT and FOUNDRY_API_KEY to enable LLM features.)`
     )
     return
   }
+
+  console.log('✅ Proceeding with LLM call')
 
   // Initialize conversation history if needed
   if (!state.conversation.messages) {

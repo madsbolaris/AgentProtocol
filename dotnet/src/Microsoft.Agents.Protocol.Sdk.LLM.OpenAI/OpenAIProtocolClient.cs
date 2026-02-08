@@ -4,6 +4,8 @@ using OpenAI;
 using OpenAI.Chat;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using OpenAIChatMessage = OpenAI.Chat.ChatMessage;
+using ProtocolChatMessage = Microsoft.Agents.Abstractions.Models.ChatMessage;
 
 namespace Microsoft.Agents.Protocol.Sdk.LLM.OpenAI;
 
@@ -75,7 +77,7 @@ public class OpenAIProtocolClient : IProtocolLLMClient
     };
 
     public async Task<AgentMessage> GenerateAsync(
-        List<ChatMessage> conversationHistory,
+        List<ProtocolChatMessage> conversationHistory,
         ToolDefinition[]? availableTools = null,
         CancellationToken cancellationToken = default)
     {
@@ -92,10 +94,7 @@ public class OpenAIProtocolClient : IProtocolLLMClient
             }
         }
 
-        if (_options.Temperature.HasValue)
-        {
-            chatOptions.Temperature = (float)_options.Temperature.Value;
-        }
+        chatOptions.Temperature = (float)_options.Temperature;
 
         if (_options.MaxTokens.HasValue)
         {
@@ -123,7 +122,7 @@ public class OpenAIProtocolClient : IProtocolLLMClient
     }
 
     public async IAsyncEnumerable<AgentMessageDelta> StreamAsync(
-        List<ChatMessage> conversationHistory,
+        List<ProtocolChatMessage> conversationHistory,
         ToolDefinition[]? availableTools = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -140,10 +139,7 @@ public class OpenAIProtocolClient : IProtocolLLMClient
             }
         }
 
-        if (_options.Temperature.HasValue)
-        {
-            chatOptions.Temperature = (float)_options.Temperature.Value;
-        }
+        chatOptions.Temperature = (float)_options.Temperature;
 
         if (_options.MaxTokens.HasValue)
         {
@@ -200,7 +196,7 @@ public class OpenAIProtocolClient : IProtocolLLMClient
                 {
                     toolCallBuffers[index] = new ToolCallBuilder
                     {
-                        CallId = toolCallUpdate.Id ?? $"call_{Guid.NewGuid():N}",
+                        CallId = toolCallUpdate.ToolCallId ?? $"call_{Guid.NewGuid():N}",
                         FunctionName = toolCallUpdate.FunctionName ?? ""
                     };
 
@@ -295,9 +291,9 @@ public class OpenAIProtocolClient : IProtocolLLMClient
         };
     }
 
-    private List<ChatMessage> ConvertToOpenAIMessages(List<ChatMessage> protocolMessages)
+    private List<OpenAIChatMessage> ConvertToOpenAIMessages(List<ProtocolChatMessage> protocolMessages)
     {
-        var openAIMessages = new List<ChatMessage>();
+        var openAIMessages = new List<OpenAIChatMessage>();
 
         foreach (var msg in protocolMessages)
         {
@@ -322,9 +318,9 @@ public class OpenAIProtocolClient : IProtocolLLMClient
                         else if (content is ImageContent imageContent)
                         {
                             // Support image URLs
-                            if (!string.IsNullOrEmpty(imageContent.ImageUrl))
+                            if (!string.IsNullOrEmpty(imageContent.Uri))
                             {
-                                userContents.Add(ChatMessageContentPart.CreateImagePart(new Uri(imageContent.ImageUrl)));
+                                userContents.Add(ChatMessageContentPart.CreateImagePart(new Uri(imageContent.Uri)));
                             }
                         }
                     }

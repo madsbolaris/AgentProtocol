@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Agents.Xml.Generated.Models;
+using Microsoft.Agents.Abstractions.Models;
 using Microsoft.Agents.Xml.Serialization;
 
 namespace Microsoft.Agents.Protocol.Tests.Compliance;

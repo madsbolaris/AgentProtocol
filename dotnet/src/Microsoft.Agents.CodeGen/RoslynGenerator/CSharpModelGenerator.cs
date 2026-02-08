@@ -117,11 +117,10 @@ public class CSharpModelGenerator
             )
             .AddMembers(properties);
 
-        // Special case: AIContentBase should be abstract but NOT extend AIContent
-        // (extending AIContent creates a circular reference with XmlInclude)
+        // Special case: AIContentBase should extend AIContent and override Kind
         if (modelDef.Name == "AIContentBase")
         {
-            // Make it abstract but don't add inheritance
+            // Make it abstract and extend AIContent
             classDecl = classDecl.WithModifiers(
                 TokenList(
                     Token(SyntaxKind.PublicKeyword),
@@ -129,13 +128,18 @@ public class CSharpModelGenerator
                     Token(SyntaxKind.PartialKeyword)
                 )
             );
-            // Add abstract Kind property for discriminator
+            // Add base class
+            classDecl = classDecl.AddBaseListTypes(
+                SimpleBaseType(ParseTypeName("AIContent"))
+            );
+            // Add override abstract Kind property for discriminator
             var kindProperty = PropertyDeclaration(
                     ParseTypeName("string"),
                     Identifier("Kind")
                 )
                 .AddModifiers(
                     Token(SyntaxKind.PublicKeyword),
+                    Token(SyntaxKind.OverrideKeyword),
                     Token(SyntaxKind.AbstractKeyword)
                 )
                 .AddAccessorListAccessors(

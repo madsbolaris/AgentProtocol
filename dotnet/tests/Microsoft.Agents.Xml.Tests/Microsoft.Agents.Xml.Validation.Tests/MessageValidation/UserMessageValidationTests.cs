@@ -1,7 +1,8 @@
 using FluentAssertions;
-using Microsoft.Agents.Xml.Generated.Models;
+using Microsoft.Agents.Validation;
+using Microsoft.Agents.Abstractions.Models;
 using Microsoft.Agents.Xml.Validation;
-using Microsoft.Agents.Xml.Validation.Validators.MessageValidators;
+using Microsoft.Agents.Validation.Validators.MessageValidators;
 using Xunit;
 
 namespace Microsoft.Agents.Xml.Validation.Tests.MessageValidation;

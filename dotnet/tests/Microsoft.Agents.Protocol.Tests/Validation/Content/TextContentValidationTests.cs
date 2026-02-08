@@ -1,7 +1,7 @@
 using FluentAssertions;
-using Microsoft.Agents.Xml.Generated.Models;
-using Microsoft.Agents.Xml.Validation;
-using Microsoft.Agents.Xml.Validation.Validators.ContentValidators;
+using Microsoft.Agents.Abstractions.Models;
+using Microsoft.Agents.Validation;
+using Microsoft.Agents.Validation.Validators.ContentValidators;
 using Xunit;
 
 namespace Microsoft.Agents.Protocol.Tests.Validation.ContentValidation;

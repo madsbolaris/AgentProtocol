@@ -1,4 +1,4 @@
-namespace Microsoft.Agents.Xml.Validation;
+namespace Microsoft.Agents.Validation;
 
 /// <summary>
 /// Contains constant error codes for all validation rules.

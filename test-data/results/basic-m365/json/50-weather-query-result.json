@@ -1,71 +1,40 @@
 {
-  "timestamp": "2026-02-08T19:27:07.636621Z",
-  "content": {
-    "runId": "run_6abcea8c935747ae",
-    "agentId": "agent",
-    "threadId": "thread_e5125277b7744",
-    "status": "completed",
-    "output": [
-      {
-        "role": "assistant",
-        "contents": [
-          {
-            "kind": "functionCall",
-            "callId": "call_gzXk5Kvg1gxV2n6OJNj5a7iK",
-            "name": "GetWeatherAsync",
-            "arguments": "{\"location\":\"Seattle\"}"
-          }
-        ]
-      },
-      {
-        "role": "tool",
-        "contents": [
-          {
-            "kind": "functionResult",
-            "callId": "call_gzXk5Kvg1gxV2n6OJNj5a7iK",
-            "result": "\ud83c\udf24\ufe0f The weather in Seattle is sunny with a temperature of 33\u00b0C."
-          }
-        ]
-      },
-      {
-        "role": "assistant",
-        "contents": [
-          {
-            "kind": "functionCall",
-            "callId": "call_hknSwqCyay64S15HQGEHklZ5",
-            "name": "GetCurrentTime",
-            "arguments": "{}"
-          }
-        ]
-      },
-      {
-        "role": "tool",
-        "contents": [
-          {
-            "kind": "functionResult",
-            "callId": "call_hknSwqCyay64S15HQGEHklZ5",
-            "result": "\ud83d\udd50 The current UTC time is 2026-02-08 19:27:06."
-          }
-        ]
-      },
-      {
-        "role": "assistant",
-        "contents": [
-          {
-            "kind": "text",
-            "text": "- Weather in Seattle: sunny with a temperature of 33\u00b0C\n- Current UTC time: 2026-02-08 19:27:06 UTC\n\nWould you like the forecast for the next few days or local time in Seattle?"
-          }
-        ]
-      }
-    ],
-    "createdAt": "2026-02-08T19:27:07.636056Z",
-    "completedAt": "2026-02-08T19:27:07.636056Z"
-  },
-  "hash": "89dbdd97a786d5266a7b13eba5b7e6d0e0a9772634f55f1ef85d768cff488992",
-  "metadata": {
-    "input_file": "50-weather-query.xml",
-    "sample": "basic-m365",
-    "generator": "dotnet",
-    "canonical": true
-  }
+  "runId": "run_4e7ea9fff10d4204",
+  "agentId": "basic-m365-agent",
+  "threadId": "thread_c226341265644",
+  "status": "completed",
+  "output": [
+    {
+      "role": "assistant",
+      "contents": [
+        {
+          "kind": "functionCall",
+          "callId": "call_H93rT6QY6TUFg7t0Tt4JhMWZ",
+          "name": "GetWeatherAsync",
+          "arguments": "{\"location\":\"Seattle\"}"
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "contents": [
+        {
+          "kind": "functionResult",
+          "callId": "call_H93rT6QY6TUFg7t0Tt4JhMWZ",
+          "result": "\ud83c\udf24\ufe0f The weather in Seattle is stormy with a temperature of 20\u00b0C."
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "Seattle right now is stormy with a temperature of 20\u00b0C (about 68\u00b0F).\n\nWould you like the hourly forecast, chance of rain, humidity, or wind details? I can also check the current UTC time if you want."
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-08T21:13:01.332905Z",
+  "completedAt": "2026-02-08T21:13:01.332905Z"
 }

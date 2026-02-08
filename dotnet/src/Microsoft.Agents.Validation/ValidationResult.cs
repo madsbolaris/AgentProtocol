@@ -1,4 +1,4 @@
-namespace Microsoft.Agents.Xml.Validation;
+namespace Microsoft.Agents.Validation;
 
 /// <summary>
 /// Represents the result of a validation operation.

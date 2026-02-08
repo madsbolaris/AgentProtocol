@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-02-08T19:26:58.096758Z",
+  "timestamp": "2026-02-08T20:27:23.946388Z",
   "content": {
-    "runId": "run_fd0ee817201e4035",
+    "runId": "run_ffbca1953c5f42cb",
     "agentId": "agent_test_15",
-    "threadId": "thread_8e11668980004",
+    "threadId": "thread_10b1902d77034",
     "status": "completed",
     "output": [],
-    "createdAt": "2026-02-08T19:26:58.096421Z",
-    "completedAt": "2026-02-08T19:26:58.096421Z"
+    "createdAt": "2026-02-08T20:27:23.946072Z",
+    "completedAt": "2026-02-08T20:27:23.946072Z"
   },
-  "hash": "9f0dcf092d617e50efd1b06dfce519fc5da4f9b746fa5e5282e6126929201c50",
+  "hash": "c0173445852bd2d1c6bd5d694001b0e8f812cc06f823fe87d2ffc058800db9df",
   "metadata": {
     "input_file": "33-adaptive-card-content.xml",
     "sample": "basic-m365",

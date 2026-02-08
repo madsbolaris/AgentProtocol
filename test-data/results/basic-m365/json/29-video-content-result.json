@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-02-08T19:26:57.149728Z",
+  "timestamp": "2026-02-08T20:27:22.992177Z",
   "content": {
-    "runId": "run_0e10cdb29bb34af7",
+    "runId": "run_f1811262cba442b2",
     "agentId": "agent_test_11",
-    "threadId": "thread_6f68e0cc002e4",
+    "threadId": "thread_126b4ea06bad4",
     "status": "completed",
     "output": [],
-    "createdAt": "2026-02-08T19:26:57.149389Z",
-    "completedAt": "2026-02-08T19:26:57.149389Z"
+    "createdAt": "2026-02-08T20:27:22.991866Z",
+    "completedAt": "2026-02-08T20:27:22.991866Z"
   },
-  "hash": "15d9b8706355adb81400527206dec9092ecd0451254b527c2a7d469cf319e49b",
+  "hash": "894c2eb28eebf800dc89e1cd68d5de388923107a0b0b44ce0be9787be02c682f",
   "metadata": {
     "input_file": "29-video-content.xml",
     "sample": "basic-m365",

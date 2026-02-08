@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <!-- Reference generated models -->
-    <ProjectReference Include="..\..\Microsoft.Agents.Abstractions\Microsoft.Agents.Abstractions.csproj" />
+    <ProjectReference Include="..\Microsoft.Agents.Abstractions\Microsoft.Agents.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

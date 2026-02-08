@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using EmojiChatBot;
 
 var builder = WebApplication.CreateBuilder(args);

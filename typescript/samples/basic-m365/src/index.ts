@@ -100,11 +100,20 @@ function buildThreadXml(threadId: string, outputMessages: any[], createdAt: stri
             xml += ` audience="${content.audience}"`
           }
           xml += `>${escapeXml(content.text || '')}</text>\n`
+        } else if (kind === 'functionCall') {
+          xml += `    <function-call call-id="${content.callId}" name="${content.name}">${escapeXml(content.arguments || '')}</function-call>\n`
+        } else if (kind === 'functionResult') {
+          xml += `    <function-result call-id="${content.callId}">${escapeXml(content.result || '')}</function-result>\n`
         }
       }
     }
 
-    xml += `  </${role}>\n`
+    // If no contents or empty contents, make it self-closing
+    if (!msg.contents || msg.contents.length === 0) {
+      xml = xml.slice(0, -1) + '/>\n'
+    } else {
+      xml += `  </${role}>\n`
+    }
   }
 
   xml += `</thread>\n`
@@ -175,14 +184,63 @@ function setupAgentProtocolRoutes(app: express.Application): void {
       const { agentId = 'agent', threadId = generateThreadId(), input = [] } = req.body
       const runId = generateRunId()
 
-      // TODO: Process through agent
-      // Only process user messages
-      const output = input
-        .filter((msg: any) => msg.role === 'user')
-        .map((msg: any) => ({
-          role: 'assistant',
-          contents: [{ kind: 'text', text: `Echo: ${msg?.contents?.[0]?.text || ''}` }]
-        }))
+      // Process through agent - convert each input message to activity and collect responses
+      const output: any[] = []
+
+      for (const msg of input) {
+        if (msg.role === 'user') {
+          const activity = {
+            type: 'message',
+            text: msg?.contents?.[0]?.text || '',
+            from: { id: 'user' },
+            recipient: { id: 'bot' },
+            conversation: { id: threadId },
+            channelId: 'agent-protocol',
+            serviceUrl: 'https://agent-protocol',
+            channelData: { role: 'user' },
+            removeRecipientMention: () => msg?.contents?.[0]?.text || ''
+          }
+
+          // Create a mock turn context to capture responses
+          const mockContext = {
+            activity,
+            sendActivity: async (activityOrText: any) => {
+              const responseActivity = typeof activityOrText === 'string'
+                ? { text: activityOrText, value: null }
+                : activityOrText
+
+              // If there's a value field (Agent Protocol format), use it
+              if (responseActivity.value) {
+                output.push(responseActivity.value)
+              } else if (responseActivity.text) {
+                // Otherwise convert text to Agent Protocol format
+                output.push({
+                  role: 'assistant',
+                  contents: [{ kind: 'text', text: responseActivity.text }]
+                })
+              }
+              return { id: 'mock-id' }
+            },
+            sendActivities: async (activities: any[]) => {
+              for (const act of activities) {
+                const responseActivity = typeof act === 'string' ? { text: act, value: null } : act
+                if (responseActivity.value) {
+                  output.push(responseActivity.value)
+                } else if (responseActivity.text) {
+                  output.push({
+                    role: 'assistant',
+                    contents: [{ kind: 'text', text: responseActivity.text }]
+                  })
+                }
+              }
+              return activities.map(() => ({ id: 'mock-id' }))
+            }
+          }
+
+          // Run the agent with mock context
+          await agentApp.run(mockContext as any)
+        }
+      }
 
       const createdAt = new Date().toISOString()
       const completedAt = new Date().toISOString()

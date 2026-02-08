@@ -1,9 +1,10 @@
 using FluentAssertions;
-using Microsoft.Agents.Xml.Generated.Models;
+using Microsoft.Agents.Validation;
+using Microsoft.Agents.Abstractions.Models;
 using Microsoft.Agents.Xml.Validation;
-using Microsoft.Agents.Xml.Validation.Validators;
+using Microsoft.Agents.Validation.Validators;
 using Xunit;
-using AgentThread = Microsoft.Agents.Xml.Generated.Models.Thread;
+using AgentThread = Microsoft.Agents.Abstractions.Models.Thread;
 
 namespace Microsoft.Agents.Xml.Validation.Tests;
 
@@ -18,7 +19,7 @@ public class ThreadValidationTests
         var thread = new AgentThread
         {
             ThreadId = "thread_001",
-            Status = "active",
+            Status = ThreadStatus.Active,
             CreatedAt = DateTime.UtcNow.AddMinutes(-10),
             LastMessageAt = DateTime.UtcNow.AddMinutes(-1),
             Messages = new List<ChatMessage>

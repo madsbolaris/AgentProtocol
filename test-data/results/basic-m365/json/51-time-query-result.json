@@ -1,50 +1,40 @@
 {
-  "timestamp": "2026-02-08T19:27:14.379948Z",
-  "content": {
-    "runId": "run_7f651858057542d0",
-    "agentId": "agent",
-    "threadId": "thread_9a58e8fe70554",
-    "status": "completed",
-    "output": [
-      {
-        "role": "assistant",
-        "contents": [
-          {
-            "kind": "functionCall",
-            "callId": "call_E9T2NO5NCmT3ZkKM85BG6cYX",
-            "name": "GetCurrentTime",
-            "arguments": "{}"
-          }
-        ]
-      },
-      {
-        "role": "tool",
-        "contents": [
-          {
-            "kind": "functionResult",
-            "callId": "call_E9T2NO5NCmT3ZkKM85BG6cYX",
-            "result": "\ud83d\udd50 The current UTC time is 2026-02-08 19:27:13."
-          }
-        ]
-      },
-      {
-        "role": "assistant",
-        "contents": [
-          {
-            "kind": "text",
-            "text": "- The current UTC time is 2026-02-08 19:27:13.\nIf you'd like time in a different time zone, tell me which one."
-          }
-        ]
-      }
-    ],
-    "createdAt": "2026-02-08T19:27:14.379346Z",
-    "completedAt": "2026-02-08T19:27:14.379346Z"
-  },
-  "hash": "f1ed4537af05f7b700a1d6e27498bb7dd8d5a6a3aeabdda428fcb8ff227d8d90",
-  "metadata": {
-    "input_file": "51-time-query.xml",
-    "sample": "basic-m365",
-    "generator": "dotnet",
-    "canonical": true
-  }
+  "runId": "run_b82dc73349d442fd",
+  "agentId": "basic-m365-agent",
+  "threadId": "thread_279d803df1f34",
+  "status": "completed",
+  "output": [
+    {
+      "role": "assistant",
+      "contents": [
+        {
+          "kind": "functionCall",
+          "callId": "call_OjuRBOh6JMDVGi8mZjeA9LqW",
+          "name": "GetCurrentTime",
+          "arguments": "{}"
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "contents": [
+        {
+          "kind": "functionResult",
+          "callId": "call_OjuRBOh6JMDVGi8mZjeA9LqW",
+          "result": "\ud83d\udd50 The current UTC time is 2026-02-08 21:13:10."
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "The current UTC time is 21:13:10 on 2026-02-08 (9:13 PM UTC).\n\nIf you\u2019d like it in your local time, tell me your time zone or location and I\u2019ll convert it."
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-08T21:13:13.186745Z",
+  "completedAt": "2026-02-08T21:13:13.186745Z"
 }

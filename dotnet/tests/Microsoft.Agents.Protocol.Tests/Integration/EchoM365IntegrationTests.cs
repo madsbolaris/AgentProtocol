@@ -265,7 +265,7 @@ public class EchoM365IntegrationTests
                 "User message should produce non-empty output");
 
             var outputText = actualOutput[0].GetProperty("contents")[0].GetProperty("text").GetString();
-            _output.WriteLine($"   ✓ Output text: {outputText?.Substring(0, Math.Min(50, outputText.Length ?? 0))}...");
+            _output.WriteLine($"   ✓ Output text: {outputText?.Substring(0, Math.Min(50, outputText?.Length ?? 0))}...");
         }
         else
         {

@@ -9,8 +9,12 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
 using Microsoft.Agents.Client;
-using Microsoft.Agents.Client.Models;
+using Microsoft.Agents.Abstractions.Models;
+using Microsoft.Agents.Protocol.Models.Execution;
+using Microsoft.Agents.Protocol.Models.Messages;
 using Xunit;
+using ProtocolChatMessage = Microsoft.Agents.Protocol.Models.Messages.ChatMessage;
+using ProtocolTextContent = Microsoft.Agents.Protocol.Models.Messages.TextContent;
 
 namespace Microsoft.Agents.Client.Tests;
 
@@ -70,7 +74,7 @@ public class EchoM365IntegrationTests : IDisposable
     /// <summary>
     /// Enhanced XML parser that handles multiple content types.
     /// </summary>
-    private ChatMessage? XmlToChatMessage(string xmlContent)
+    private ProtocolChatMessage? XmlToChatMessage(string xmlContent)
     {
         try
         {
@@ -137,35 +141,38 @@ public class EchoM365IntegrationTests : IDisposable
                 return null;
 
             // Determine role from root element
-            var roleMap = new Dictionary<string, string>
-            {
-                { "user", "user" },
-                { "agent", "assistant" },
-                { "system", "system" },
-                { "developer", "developer" },
-                { "tool", "tool" },
-                { "channel", "channel" },
-                { "thread", "user" } // Threads default to user context
-            };
-
-            string role;
+            string roleName;
             if (root.Name.LocalName == "thread" && root.HasElements)
             {
                 // For threads, use first message element
                 var firstMsg = root.Elements().First();
-                role = roleMap.GetValueOrDefault(firstMsg.Name.LocalName, "user");
+                roleName = firstMsg.Name.LocalName;
             }
             else
             {
-                role = roleMap.GetValueOrDefault(root.Name.LocalName, "user");
+                roleName = root.Name.LocalName;
             }
 
-            return new ChatMessage
+            // Map role name to protocol role string
+            string role = roleName.ToLower() switch
+            {
+                "system" => "system",
+                "developer" => "developer",
+                "agent" => "assistant",
+                "assistant" => "assistant",
+                "user" => "user",
+                "tool" => "tool",
+                "channel" => "channel",
+                _ => "user" // Default to user
+            };
+
+            // Create Protocol ChatMessage
+            return new ProtocolChatMessage
             {
                 Role = role,
-                Contents = new List<ContentUnion>
+                Contents = new List<Microsoft.Agents.Protocol.Models.Messages.Content>
                 {
-                    new TextContent { Kind = "text", Text = text }
+                    new ProtocolTextContent { Text = text }
                 }
             };
         }
@@ -222,7 +229,7 @@ public class EchoM365IntegrationTests : IDisposable
                 var run = new Run
                 {
                     AgentId = EchoM365AgentId,
-                    Input = new List<ChatMessage> { message }
+                    Input = new List<ProtocolChatMessage> { message }
                 };
 
                 var response = await _httpClient.PostAsJsonAsync("/runs", run);
@@ -286,7 +293,7 @@ public class EchoM365IntegrationTests : IDisposable
                 var run = new Run
                 {
                     AgentId = EchoM365AgentId,
-                    Input = new List<ChatMessage> { message }
+                    Input = new List<ProtocolChatMessage> { message }
                 };
 
                 var response = await _httpClient.PostAsJsonAsync("/runs/wait", run);
@@ -294,7 +301,7 @@ public class EchoM365IntegrationTests : IDisposable
 
                 var result = await response.Content.ReadFromJsonAsync<RunWaitResponse>();
                 result.Should().NotBeNull();
-                result!.Status.Should().Be("completed");
+                result!.Status.Should().Be(RunStatus.Completed);
 
                 // Save result
                 var resultFileName = Path.GetFileNameWithoutExtension(fileName) + "-result.json";
@@ -329,8 +336,8 @@ public class EchoM365IntegrationTests : IDisposable
         message.Should().NotBeNull();
         message!.Role.Should().Be("system");
         message.Contents.Should().HaveCount(1);
-        message.Contents[0].Should().BeOfType<TextContent>();
-        ((TextContent)message.Contents[0]).Text.Should().Contain("helpful AI assistant");
+        message.Contents[0].Should().BeOfType<ProtocolTextContent>();
+        ((ProtocolTextContent)message.Contents[0]).Text.Should().Contain("helpful AI assistant");
     }
 
     [Fact]
@@ -344,8 +351,8 @@ public class EchoM365IntegrationTests : IDisposable
 
         message.Should().NotBeNull();
         message!.Role.Should().Be("developer");
-        message.Contents[0].Should().BeOfType<TextContent>();
-        ((TextContent)message.Contents[0]).Text.Should().Contain("concise responses");
+        message.Contents[0].Should().BeOfType<ProtocolTextContent>();
+        ((ProtocolTextContent)message.Contents[0]).Text.Should().Contain("concise responses");
     }
 
     [Fact]
@@ -359,8 +366,8 @@ public class EchoM365IntegrationTests : IDisposable
 
         message.Should().NotBeNull();
         message!.Role.Should().Be("user");
-        message.Contents[0].Should().BeOfType<TextContent>();
-        ((TextContent)message.Contents[0]).Text.Should().Be("What's the weather?");
+        message.Contents[0].Should().BeOfType<ProtocolTextContent>();
+        ((ProtocolTextContent)message.Contents[0]).Text.Should().Be("What's the weather?");
     }
 
     [Fact]
@@ -376,8 +383,8 @@ public class EchoM365IntegrationTests : IDisposable
 
         message.Should().NotBeNull();
         message!.Role.Should().Be("assistant");
-        message.Contents[0].Should().BeOfType<TextContent>();
-        ((TextContent)message.Contents[0]).Text.Should().Contain("weather API");
+        message.Contents[0].Should().BeOfType<ProtocolTextContent>();
+        ((ProtocolTextContent)message.Contents[0]).Text.Should().Contain("weather API");
     }
 
     [Fact]
@@ -393,8 +400,8 @@ public class EchoM365IntegrationTests : IDisposable
 
         message.Should().NotBeNull();
         message!.Role.Should().Be("assistant");
-        message.Contents[0].Should().BeOfType<TextContent>();
-        ((TextContent)message.Contents[0]).Text.Should().Contain("Function call: get_weather");
+        message.Contents[0].Should().BeOfType<ProtocolTextContent>();
+        ((ProtocolTextContent)message.Contents[0]).Text.Should().Contain("Function call: get_weather");
     }
 
     [Fact]
@@ -410,9 +417,9 @@ public class EchoM365IntegrationTests : IDisposable
 
         message.Should().NotBeNull();
         message!.Role.Should().Be("tool");
-        message.Contents[0].Should().BeOfType<TextContent>();
-        ((TextContent)message.Contents[0]).Text.Should().Contain("Function result");
-        ((TextContent)message.Contents[0]).Text.Should().Contain("temperature");
+        message.Contents[0].Should().BeOfType<ProtocolTextContent>();
+        ((ProtocolTextContent)message.Contents[0]).Text.Should().Contain("Function result");
+        ((ProtocolTextContent)message.Contents[0]).Text.Should().Contain("temperature");
     }
 
     [Fact]

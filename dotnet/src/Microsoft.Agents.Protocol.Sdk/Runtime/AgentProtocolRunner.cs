@@ -53,7 +53,7 @@ internal class AgentProtocolRunner<TContext> where TContext : class
             await hook(runContext, cancellationToken);
         }
 
-        var responses = new List<AgentMessage>();
+        var responses = new List<ChatMessage>();
 
         try
         {
@@ -104,12 +104,12 @@ internal class AgentProtocolRunner<TContext> where TContext : class
     /// <summary>
     /// Process a single message and return responses.
     /// </summary>
-    private async Task<List<AgentMessage>> ProcessMessageAsync(
+    private async Task<List<ChatMessage>> ProcessMessageAsync(
         RunContextImpl<TContext> runContext,
         ChatMessage message,
         CancellationToken cancellationToken)
     {
-        var responses = new List<AgentMessage>();
+        var responses = new List<ChatMessage>();
         var messageContext = new MessageContextImpl<TContext>(runContext, message, responses);
 
         // Route to appropriate handler based on message role
@@ -165,7 +165,7 @@ internal class AgentProtocolRunner<TContext> where TContext : class
         CancellationToken cancellationToken)
     {
         // Look for FunctionCallContent in message
-        var toolCalls = message.Content
+        var toolCalls = (message as AgentMessage)?.Contents
             ?.OfType<FunctionCallContent>()
             .ToList() ?? new List<FunctionCallContent>();
 
@@ -190,14 +190,14 @@ internal class AgentProtocolRunner<TContext> where TContext : class
             // Tool not found - return error
             var errorResult = new FunctionResultContent
             {
-                CallId = toolCall.Id,
+                CallId = toolCall.CallId,
                 Name = toolName,
                 Result = JsonSerializer.Serialize(new { error = "Tool not found", toolName })
             };
 
             messageContext.Responses.Add(new ToolMessage
             {
-                Content = new List<AIContent> { errorResult }
+                Contents = new List<AIContent> { errorResult }
             });
             return;
         }
@@ -229,14 +229,14 @@ internal class AgentProtocolRunner<TContext> where TContext : class
             // Add result to responses
             var resultContent = new FunctionResultContent
             {
-                CallId = toolCall.Id,
+                CallId = toolCall.CallId,
                 Name = toolName,
                 Result = JsonSerializer.Serialize(result)
             };
 
             messageContext.Responses.Add(new ToolMessage
             {
-                Content = new List<AIContent> { resultContent }
+                Contents = new List<AIContent> { resultContent }
             });
         }
         catch (Exception ex)
@@ -250,14 +250,14 @@ internal class AgentProtocolRunner<TContext> where TContext : class
             // Add error to responses
             var errorResult = new FunctionResultContent
             {
-                CallId = toolCall.Id,
+                CallId = toolCall.CallId,
                 Name = toolName,
                 Result = JsonSerializer.Serialize(new { error = ex.Message })
             };
 
             messageContext.Responses.Add(new ToolMessage
             {
-                Content = new List<AIContent> { errorResult }
+                Contents = new List<AIContent> { errorResult }
             });
         }
     }
@@ -271,7 +271,7 @@ internal class AgentProtocolRunner<TContext> where TContext : class
         CancellationToken cancellationToken)
     {
         // Look for EventContent or MessageReactionContent in message
-        var events = message.Content
+        var events = (message as AgentMessage)?.Contents
             ?.Where(c => c is EventContent or MessageReactionContent)
             .ToList() ?? new List<AIContent>();
 
@@ -310,5 +310,5 @@ public class RunResult
     public required string ThreadId { get; set; }
     public required string Status { get; set; }
     public string? Error { get; set; }
-    public List<AgentMessage> Messages { get; set; } = new();
+    public List<ChatMessage> Messages { get; set; } = new();
 }

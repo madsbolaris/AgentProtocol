@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Agents.Abstractions.Models;
+using System.Linq;
 
 namespace Microsoft.Agents.Protocol.Client;
 
@@ -170,6 +171,204 @@ public class AgentProtocolClient : IDisposable
 
         return await response.Content.ReadFromJsonAsync<List<ChatMessage>>(_jsonOptions, cancellationToken)
             ?? new List<ChatMessage>();
+    }
+
+    /// <summary>
+    /// Sends a message and returns the complete response as text (simple API).
+    /// </summary>
+    /// <param name="message">The message to send</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The agent's text response</returns>
+    public Task<string> CompleteChatAsync(
+        string message,
+        CancellationToken cancellationToken = default)
+    {
+        return CompleteChatAsync(message, options: null, cancellationToken);
+    }
+
+    /// <summary>
+    /// Sends a message with options (including tools) and returns the complete response as text.
+    /// </summary>
+    /// <param name="message">The message to send</param>
+    /// <param name="options">Chat options including tools</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The agent's text response</returns>
+    public async Task<string> CompleteChatAsync(
+        string message,
+        ChatOptions? options,
+        CancellationToken cancellationToken = default)
+    {
+        var request = new RunRequest
+        {
+            AgentId = options?.AgentId,
+            Input = new List<ChatMessage>
+            {
+                new ChatMessage
+                {
+                    Role = "user",
+                    Contents = new List<Content>
+                    {
+                        new TextContent { Text = message }
+                    }
+                }
+            },
+            Metadata = options?.Metadata
+        };
+
+        // If tools are provided, handle tool execution automatically
+        if (options?.Tools != null)
+        {
+            return await CompleteChatWithToolsAsync(request, options, cancellationToken);
+        }
+
+        var response = await RunAsync(request, cancellationToken);
+
+        if (response.Output == null || response.Output.Count == 0)
+            return string.Empty;
+
+        // Extract text from first assistant message
+        var assistantMessage = response.Output.FirstOrDefault(m => m.Role == "assistant");
+        if (assistantMessage == null)
+            return string.Empty;
+
+        var textContent = assistantMessage.Contents.OfType<TextContent>().FirstOrDefault();
+        return textContent?.Text ?? string.Empty;
+    }
+
+    /// <summary>
+    /// Handles tool execution automatically during streaming.
+    /// </summary>
+    private async Task<string> CompleteChatWithToolsAsync(
+        RunRequest request,
+        ChatOptions options,
+        CancellationToken cancellationToken)
+    {
+        var resultText = new StringBuilder();
+
+        await foreach (var evt in StreamAsync(request, cancellationToken))
+        {
+            if (evt.EventType == "message.delta" || evt.EventType == "message.updated")
+            {
+                var messageData = evt.GetData<ChatMessage>();
+                if (messageData != null)
+                {
+                    var textContent = messageData.Contents.OfType<TextContent>().FirstOrDefault();
+                    if (textContent != null)
+                    {
+                        resultText.Clear();
+                        resultText.Append(textContent.Text);
+                    }
+                }
+            }
+            else if (evt.EventType == "run.requires_action")
+            {
+                // Extract run ID and tool calls
+                var runData = evt.GetData<RunResponse>();
+                if (runData != null)
+                {
+                    // TODO: Handle tool execution
+                    // This requires protocol-level support for submitting tool outputs
+                    // For now, tools will need to be handled at a lower level
+                }
+            }
+        }
+
+        return resultText.ToString();
+    }
+
+    /// <summary>
+    /// Sends a multi-modal message and returns the complete response message.
+    /// </summary>
+    /// <param name="message">The message to send (can include images, audio, etc.)</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The agent's response message</returns>
+    public async Task<ChatMessage> CompleteChatAsync(
+        ChatMessage message,
+        CancellationToken cancellationToken = default)
+    {
+        var request = new RunRequest
+        {
+            Input = new List<ChatMessage> { message }
+        };
+
+        var response = await RunAsync(request, cancellationToken);
+
+        if (response.Output == null || response.Output.Count == 0)
+            return new ChatMessage { Role = "assistant", Contents = new List<Content>() };
+
+        return response.Output.FirstOrDefault(m => m.Role == "assistant")
+            ?? new ChatMessage { Role = "assistant", Contents = new List<Content>() };
+    }
+
+    /// <summary>
+    /// Streams a message response with text chunks delivered via callback (simple streaming API).
+    /// </summary>
+    /// <param name="message">The message to send</param>
+    /// <param name="onTextChunk">Callback fired for each text chunk</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    public async Task StreamChatAsync(
+        string message,
+        Action<string> onTextChunk,
+        CancellationToken cancellationToken = default)
+    {
+        var request = new RunRequest
+        {
+            Input = new List<ChatMessage>
+            {
+                new ChatMessage
+                {
+                    Role = "user",
+                    Contents = new List<Content>
+                    {
+                        new TextContent { Text = message }
+                    }
+                }
+            }
+        };
+
+        var accumulatedText = string.Empty;
+
+        await foreach (var evt in StreamAsync(request, cancellationToken))
+        {
+            // Handle different event types for text streaming
+            if (evt.EventType == "message.delta" || evt.EventType == "message.updated")
+            {
+                var messageData = evt.GetData<ChatMessage>();
+                if (messageData != null)
+                {
+                    var textContent = messageData.Contents.OfType<TextContent>().FirstOrDefault();
+                    if (textContent != null)
+                    {
+                        // Calculate new text since last update
+                        var newText = textContent.Text.Substring(accumulatedText.Length);
+                        if (!string.IsNullOrEmpty(newText))
+                        {
+                            onTextChunk(newText);
+                            accumulatedText = textContent.Text;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Creates a new conversation for maintaining state across multiple messages.
+    /// </summary>
+    /// <returns>A conversation instance</returns>
+    public IConversation CreateConversation()
+    {
+        return new Conversation(this, null);
+    }
+
+    /// <summary>
+    /// Resumes an existing conversation using a thread ID.
+    /// </summary>
+    /// <param name="threadId">The thread ID to resume</param>
+    /// <returns>A conversation instance</returns>
+    public IConversation ResumeConversation(string threadId)
+    {
+        return new Conversation(this, threadId);
     }
 
     public void Dispose()

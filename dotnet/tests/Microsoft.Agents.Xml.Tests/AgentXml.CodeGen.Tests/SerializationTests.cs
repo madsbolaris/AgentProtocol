@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using FluentAssertions;
-using Microsoft.Agents.Xml.Generated.Models;
+using Microsoft.Agents.Abstractions.Models;
 using Microsoft.Agents.Xml.Serialization;
 
 namespace Microsoft.Agents.Xml.CodeGen.Tests;

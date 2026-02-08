@@ -2,8 +2,8 @@ using System;
 using System.IO;
 using Xunit;
 using FluentAssertions;
-using Microsoft.Agents.Xml.Generated.Models;
-using Microsoft.Agents.Xml.Core.Serialization;
+using Microsoft.Agents.Abstractions.Models;
+using Microsoft.Agents.Xml.Serialization;
 
 namespace Microsoft.Agents.Xml.CodeGen.Tests;
 

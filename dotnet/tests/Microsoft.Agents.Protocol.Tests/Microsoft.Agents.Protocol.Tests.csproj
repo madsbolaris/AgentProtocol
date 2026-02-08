@@ -16,11 +16,15 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol\Microsoft.Agents.Protocol.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Agents.Abstractions\Microsoft.Agents.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.Agents.Xml\Microsoft.Agents.Xml.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.Agents.Validation\Microsoft.Agents.Validation.csproj" />
+    <ProjectReference Include="..\..\samples\agents\EchoM365\EchoM365.csproj" />
   </ItemGroup>
 
 </Project>

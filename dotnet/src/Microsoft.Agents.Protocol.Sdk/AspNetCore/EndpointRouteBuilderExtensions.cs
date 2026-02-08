@@ -101,20 +101,19 @@ public static class AgentProtocolEndpointRouteBuilderExtensions
                         ? reactionsProp.EnumerateArray()
                             .Select(r => new MessageReaction
                             {
-                                Type = r.TryGetProperty("type", out var t) ? t.GetString() : "emoji",
-                                Activity = r.TryGetProperty("activity", out var a) ? a.GetString() : "👍"
+                                Type = r.TryGetProperty("type", out var t) ? t.GetString() : (r.TryGetProperty("activity", out var a) ? a.GetString() : "👍")
                             })
                             .ToList()
                         : new List<MessageReaction>();
 
                     message = new UserMessage
                     {
-                        Content = new List<AIContent>
+                        Contents = new List<AIContent>
                         {
                             new MessageReactionContent
                             {
-                                ReplyToId = replyToId,
-                                Reaction = reactionsAdded.FirstOrDefault()
+                                ReferencedMessageId = replyToId,
+                                ReactionsAdded = reactionsAdded
                             }
                         }
                     };
@@ -124,7 +123,7 @@ public static class AgentProtocolEndpointRouteBuilderExtensions
                     // Regular text message
                     message = new UserMessage
                     {
-                        Content = new List<AIContent>
+                        Contents = new List<AIContent>
                         {
                             new TextContent { Text = text }
                         }
@@ -144,7 +143,7 @@ public static class AgentProtocolEndpointRouteBuilderExtensions
                 var result = await runner.ExecuteRunAsync(runRequest, cancellationToken);
 
                 // Get first response message
-                var responseText = result.Messages.FirstOrDefault()?.Content
+                var responseText = (result.Messages.FirstOrDefault() as AgentMessage)?.Contents
                     ?.OfType<TextContent>()
                     .FirstOrDefault()?.Text ?? "OK";
 

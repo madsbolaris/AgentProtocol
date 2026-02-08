@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-08T19:26:08.993195Z",
+  "timestamp": "2026-02-08T20:26:39.604388Z",
   "content": {
-    "runId": "run_b1d31790bff2426c",
+    "runId": "run_e5d78cc4e06b48c8",
     "agentId": "agent",
-    "threadId": "thread_831be5965db14",
+    "threadId": "thread_5375e0df404d4",
     "status": "completed",
     "output": [
       {
@@ -11,7 +11,7 @@
         "contents": [
           {
             "kind": "functionCall",
-            "callId": "call_UF87uV7O0Z4N6SbLcEXYbAuW",
+            "callId": "call_DRVze2G3y6UJh7starl7bBBI",
             "name": "GetWeatherAsync",
             "arguments": "{\"location\":\"Seattle\"}"
           }
@@ -22,8 +22,8 @@
         "contents": [
           {
             "kind": "functionResult",
-            "callId": "call_UF87uV7O0Z4N6SbLcEXYbAuW",
-            "result": "\ud83c\udf24\ufe0f The weather in Seattle is rainy with a temperature of 18\u00b0C."
+            "callId": "call_DRVze2G3y6UJh7starl7bBBI",
+            "result": "\ud83c\udf24\ufe0f The weather in Seattle is partly cloudy with a temperature of 26\u00b0C."
           }
         ]
       },
@@ -32,15 +32,15 @@
         "contents": [
           {
             "kind": "text",
-            "text": "- Weather in Seattle: Rainy\n- Temperature: 18\u00b0C\n\nWould you like an hourly forecast or any weather tips for today?"
+            "text": "Right now in Seattle: partly cloudy with a temperature of 26\u00b0C (about 79\u00b0F). Want an hourly forecast or precipitation chances?"
           }
         ]
       }
     ],
-    "createdAt": "2026-02-08T19:26:08.99241Z",
-    "completedAt": "2026-02-08T19:26:08.992411Z"
+    "createdAt": "2026-02-08T20:26:39.603016Z",
+    "completedAt": "2026-02-08T20:26:39.603016Z"
   },
-  "hash": "1f423608f4460044fd1723bf5ec3e751d7e0d5ed02e5d6e0bfc2c42b8559222e",
+  "hash": "8b1312415ebbfaad439bd84b81aec29ac03951dada11c105c9f0546073fcf401",
   "metadata": {
     "input_file": "03-user-text-only.xml",
     "sample": "basic-m365",

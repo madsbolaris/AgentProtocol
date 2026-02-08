@@ -1,7 +1,7 @@
-using Microsoft.Agents.Xml.Generated.Models;
-using AgentThread = Microsoft.Agents.Xml.Generated.Models.Thread;
+using Microsoft.Agents.Abstractions.Models;
+using AgentThread = Microsoft.Agents.Abstractions.Models.Thread;
 
-namespace Microsoft.Agents.Xml.Validation;
+namespace Microsoft.Agents.Validation;
 
 /// <summary>
 /// Provides context for validation operations, enabling cross-message and thread-level validation.

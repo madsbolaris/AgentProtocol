@@ -157,6 +157,25 @@ Send a message and get an agent response in one API call:
 
 That's it! You just made your first agent call. [:octicons-arrow-right-24: See full tutorial](getting-started/index.md)
 
+!!! abstract "🎯 Featured: XML Serialization"
+
+    **Turn agent conversations into inspectable, versionable documents**
+
+    Agent XML transforms conversations from opaque runtime payloads into human-readable artifacts:
+
+    ```xml
+    <user user-id="alice">
+      <text>What's the weather in Seattle?</text>
+    </user>
+    <agent>
+      <function-call name="get_weather">{"city": "Seattle"}</function-call>
+    </agent>
+    ```
+
+    **Use cases**: Debugging, test authoring, evaluations, compliance audits, React integration
+
+    [:octicons-arrow-right-24: Learn about XML Serialization](guides/xml-serialization.md){ .md-button .md-button--primary }
+
 ## Key Features
 
 ### :material-palette: Multi-Modal Content
@@ -175,6 +194,25 @@ Support for 29 content types including text, images, audio, video, files, functi
 ```
 
 [:octicons-arrow-right-24: Content Types](api-reference/content-types.md)
+
+### :material-file-code: XML Serialization
+
+Conversations as inspectable, versionable documents for debugging, testing, and evaluation.
+
+```xml
+<user user-id="alice">
+  <text>What's the weather?</text>
+</user>
+<agent>
+  <function-call call-id="call_1" name="get_weather">
+    {"city": "Seattle"}
+  </function-call>
+</agent>
+```
+
+**Benefits**: Human-readable, Git-diffable, schema-validated, reusable across debugging/testing/UI/compliance
+
+[:octicons-arrow-right-24: XML Serialization Guide](guides/xml-serialization.md) | [:octicons-arrow-right-24: Full-Stack Patterns](guides/xml-full-stack-patterns.md) | [:octicons-arrow-right-24: Eval Strategy](guides/xml-eval-strategy.md)
 
 ### :material-hammer-wrench: Tool Execution
 

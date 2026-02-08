@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Agents;
+using Microsoft.Agents.Abstractions.Models;
 
 namespace Microsoft.Agents.Xml.Serialization;
 

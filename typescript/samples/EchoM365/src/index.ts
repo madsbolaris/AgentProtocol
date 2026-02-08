@@ -147,7 +147,8 @@ function setupAgentProtocolRoutes(app: express.Application): void {
         agentId,
         threadId,
         status: 'completed',
-        input,
+        // NOTE: input field omitted per TypeSpec @visibility("create") rule
+        // input should only appear in request bodies, not responses
         output,
         createdAt,
         completedAt
@@ -191,7 +192,8 @@ function setupAgentProtocolRoutes(app: express.Application): void {
         agentId,
         threadId,
         status: 'completed',
-        input,
+        // NOTE: input field omitted per TypeSpec @visibility("create") rule
+        // input should only appear in request bodies, not responses
         output,
         createdAt,
         completedAt

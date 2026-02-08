@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// Refusal Content/// FROM: Azure Agent API (RefusalContent)/// ADDITION: Not in MAF/// RATIONALE: Model refuses to complete request (safety/policy)/// M365: Compliance and content policy tracking/// XML: &lt;refusal reason="..."&gt;Detailed refusal message&lt;/refusal&gt;/// </summary>
     [XmlRoot("refusal")]

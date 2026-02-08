@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// XML: &lt;user-input-request request-id="..." prompt="..." input-type="choice" required="true" /&gt;/// </summary>
     [XmlRoot("user-input-request")]

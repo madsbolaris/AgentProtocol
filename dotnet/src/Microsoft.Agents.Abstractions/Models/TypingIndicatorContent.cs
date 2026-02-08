@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// XML: &lt;typing-indicator from="user_123" status="typing" timestamp="..." /&gt;/// </summary>
     [XmlRoot("typing-indicator")]

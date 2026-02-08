@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// URI Content/// BASE: Microsoft.Extensions.AI.UriContent/// SOURCE: /extensions/src/Libraries/Microsoft.Extensions.AI.Abstractions/Contents/UriContent.cs/// REPRESENTS: Reference to external content via URI/// XML: &lt;uri&gt;https://example.com&lt;/uri&gt;/// </summary>
     [XmlRoot("uri")]

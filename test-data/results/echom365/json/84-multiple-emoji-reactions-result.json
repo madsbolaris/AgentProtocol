@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T09:39:33.347780Z",
+  "content": {
+    "runId": "run_cdacff976c684221",
+    "agentId": "agent",
+    "threadId": "thread_a385856fb9634e31",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T09:39:33.347354",
+    "completedAt": "2026-02-08T09:39:33.347364"
+  },
+  "hash": "87ecfc81b93aff00f0bc42b303d57621a50507cb4e9bb070a0928535bd49efc7",
+  "metadata": {
+    "input_file": "84-multiple-emoji-reactions.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

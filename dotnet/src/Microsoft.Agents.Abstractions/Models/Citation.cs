@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// Citation/// FROM: LLMProxy + Anthropic (search_result_location pattern)/// ADDITION: Not in MAF or Azure Agent API/// M365: Critical for compliance and attribution/// </summary>
     public partial class Citation

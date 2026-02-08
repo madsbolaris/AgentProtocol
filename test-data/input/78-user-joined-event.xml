@@ -1,0 +1,3 @@
+<channel message-id="msg_emoji_001" created-at="2026-02-07T10:00:00Z">
+  <event name="system.user_joined" timestamp="2026-02-07T10:00:00Z">{"userId": "user123", "userName": "Alice"}</event>
+</channel>

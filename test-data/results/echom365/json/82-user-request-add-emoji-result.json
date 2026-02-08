@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T09:39:33.070488Z",
+  "content": {
+    "runId": "run_64c0fe856eb94535",
+    "agentId": "agent",
+    "threadId": "thread_f9feea95039241cc",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "you said: Add a thumbs up emoji to message msg_12345"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T09:39:33.070012",
+    "completedAt": "2026-02-08T09:39:33.070020"
+  },
+  "hash": "16212bfe14a5d0bda275f1d707568bc17e450674052062122ad81ad3f065afdd",
+  "metadata": {
+    "input_file": "82-user-request-add-emoji.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

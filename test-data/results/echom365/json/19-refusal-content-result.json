@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-02-08T09:17:18.793566Z",
+  "timestamp": "2026-02-08T09:39:24.506156Z",
   "content": {
-    "runId": "run_712a91aa17df4fa7",
+    "runId": "run_9deed720f1b14ad2",
     "agentId": "agent_test_1",
-    "threadId": "thread_7fbf654fa6264691",
+    "threadId": "thread_e10a2d62641d4463",
     "status": "completed",
     "output": [],
-    "createdAt": "2026-02-08T09:17:18.789120",
-    "completedAt": "2026-02-08T09:17:18.789125"
+    "createdAt": "2026-02-08T09:39:24.505630",
+    "completedAt": "2026-02-08T09:39:24.505639"
   },
-  "hash": "4f305add2819b73e250b7a24fd076c72d3256b18b776dd380a248805ea3db5fc",
+  "hash": "65f6a00d2e4444ac0e8063ce40f14d4d027f992e4a403c49f8d224412a8f06e6",
   "metadata": {
     "input_file": "19-refusal-content.xml",
     "sample": "echom365",

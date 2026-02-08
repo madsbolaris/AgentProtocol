@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-02-08T09:17:20.352433Z",
+  "timestamp": "2026-02-08T09:39:26.144085Z",
   "content": {
-    "runId": "run_23a79aa76423442b",
+    "runId": "run_b57edf86421e43a3",
     "agentId": "agent_test_7",
-    "threadId": "thread_b449993678b1441c",
+    "threadId": "thread_63f5bd9b1247417c",
     "status": "completed",
     "output": [],
-    "createdAt": "2026-02-08T09:17:20.352031",
-    "completedAt": "2026-02-08T09:17:20.352034"
+    "createdAt": "2026-02-08T09:39:26.143624",
+    "completedAt": "2026-02-08T09:39:26.143633"
   },
-  "hash": "a36eda11ade7621881adf3cb4faa6c7579d5a73556e399ce65813c6f8c32d7ac",
+  "hash": "4d96509f814827b9a3e9400cd1f4d9d3a2f32eb0707533f7e482b25b26277562",
   "metadata": {
     "input_file": "25-hosted-file-content.xml",
     "sample": "echom365",

@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-02-08T09:17:19.569841Z",
+  "timestamp": "2026-02-08T09:39:25.328956Z",
   "content": {
-    "runId": "run_fe0fd80dbbd84095",
+    "runId": "run_2fa1661866b74e23",
     "agentId": "agent_test_4",
-    "threadId": "thread_6adacde6e18248a4",
+    "threadId": "thread_f3373c85ad674db8",
     "status": "completed",
     "output": [],
-    "createdAt": "2026-02-08T09:17:19.569473",
-    "completedAt": "2026-02-08T09:17:19.569477"
+    "createdAt": "2026-02-08T09:39:25.328451",
+    "completedAt": "2026-02-08T09:39:25.328460"
   },
-  "hash": "ee08f02b65775c02c245424cd8a5f0def807dee538758d16abdf089453744a3d",
+  "hash": "c931c366b0ab40d5455df7fb47b5b5f312d4a26098aaf82dc9970994f0b452fb",
   "metadata": {
     "input_file": "22-error-content.xml",
     "sample": "echom365",

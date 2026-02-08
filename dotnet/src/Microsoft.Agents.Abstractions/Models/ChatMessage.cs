@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     [XmlInclude(typeof(SystemMessage)), XmlInclude(typeof(DeveloperMessage)), XmlInclude(typeof(AgentMessage)), XmlInclude(typeof(UserMessage)), XmlInclude(typeof(ToolMessage)), XmlInclude(typeof(ChannelMessage)), JsonPolymorphic(TypeDiscriminatorPropertyName = "role"), JsonDerivedType(typeof(SystemMessage), "system"), JsonDerivedType(typeof(DeveloperMessage), "developer"), JsonDerivedType(typeof(AgentMessage), "agent"), JsonDerivedType(typeof(UserMessage), "user"), JsonDerivedType(typeof(ToolMessage), "tool"), JsonDerivedType(typeof(ChannelMessage), "channel")]
     public abstract partial class ChatMessage

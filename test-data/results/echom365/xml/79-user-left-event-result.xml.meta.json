@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T09:39:32.679283Z",
+  "hash": "cb2d090fe4170761bc0f0334c20ce5d9a477a385ca94f5493ef1c02763794bbd",
+  "metadata": {
+    "input_file": "79-user-left-event.xml",
+    "sample": "echom365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

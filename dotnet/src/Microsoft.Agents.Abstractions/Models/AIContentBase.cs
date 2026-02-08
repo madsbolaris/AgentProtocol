@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// Base model for all AI content types./// Provides common properties for audience filtering, encryption, and extensibility./// RATIONALE: DRY principle - common properties inherited by all 29+ content types/// PROPERTIES:/// - audience: Content-level audience filtering (e.g., reasoning visible to assistant only)/// - encryption: Content-level encryption metadata/// - additionalProperties: Client-side extensibility (not serialized to XML)/// </summary>
     public abstract partial class AIContentBase

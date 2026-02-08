@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// Function Result Content/// BASE: Microsoft.Extensions.AI.FunctionResultContent/// SOURCE: /extensions/src/Libraries/Microsoft.Extensions.AI.Abstractions/Contents/FunctionResultContent.cs/// REPRESENTS: Result of tool execution/// XML: &lt;function-result call-id="..." name="..."&gt;{"result": "value"}&lt;/function-result&gt;/// </summary>
     [XmlRoot("function-result")]

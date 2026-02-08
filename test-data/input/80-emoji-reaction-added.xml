@@ -1,0 +1,5 @@
+<channel message-id="msg_emoji_003" created-at="2026-02-07T10:10:00Z">
+  <message-reaction referenced-message-id="msg_ref_001">
+    <added type="👍" user-id="user789" timestamp="2026-02-07T10:10:00Z"/>
+  </message-reaction>
+</channel>

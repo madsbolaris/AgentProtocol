@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// Content Filter Result Content/// FROM: Azure Agent API (ContentFilterResultContent)/// ADDITION: Not in MAF/// RATIONALE: Azure content moderation results/// M365: Compliance and audit requirements/// XML: &lt;content-filter-result filtered="true" category="hate" severity="medium" /&gt;/// </summary>
     [XmlRoot("filter-result")]

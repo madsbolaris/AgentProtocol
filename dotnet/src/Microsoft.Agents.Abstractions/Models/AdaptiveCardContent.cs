@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// XML: &lt;adaptive-card version="1.5" fallback-text="..."&gt;{"type":"AdaptiveCard",...}&lt;/adaptive-card&gt;/// </summary>
     [XmlRoot("adaptive-card")]

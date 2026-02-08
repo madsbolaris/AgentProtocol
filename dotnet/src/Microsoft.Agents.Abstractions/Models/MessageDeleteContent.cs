@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// Message Delete Content (Message Removal)/// FROM: Activity Protocol messageDelete activity/// ADDITION: Not in MAF or Azure Agent API/// REPRESENTS: Request to delete an existing message/// MESSAGING APP PATTERN:/// - Like deleting a message in Slack or Teams/// - Message ID references the message to delete/// XML: &lt;message-delete message-id="msg_123" reason="user_requested" /&gt;/// </summary>
     [XmlRoot("message-delete")]

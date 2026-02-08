@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// XML: &lt;file uri="..." filename="..." mime-type="..." size-bytes="1024" /&gt;/// </summary>
     [XmlRoot("file")]

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// XML: &lt;search-result title="..." url="..." score="0.94"&gt;&lt;snippet&gt;...&lt;/snippet&gt;&lt;/search-result&gt;/// </summary>
     [XmlRoot("search-result")]

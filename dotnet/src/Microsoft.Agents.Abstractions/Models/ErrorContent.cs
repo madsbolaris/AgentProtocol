@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// Error Content/// BASE: Microsoft.Extensions.AI.ErrorContent/// SOURCE: /extensions/src/Libraries/Microsoft.Extensions.AI.Abstractions/Contents/ErrorContent.cs/// XML: &lt;error code="..."&gt;&lt;message&gt;...&lt;/message&gt;&lt;stack-trace&gt;...&lt;/stack-trace&gt;&lt;/error&gt;/// </summary>
     [XmlRoot("error")]

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// Video Content/// FROM: Azure Agent API (VideoContent)/// ADDITION: Not in MAF/// Represents video data that can be included in messages./// M365: Multi-modal scenarios (video input, video responses, screen recordings)/// XML: &lt;video uri="..." mime-type="..." width="1920" height="1080" duration="120" frame-rate="30" /&gt;/// </summary>
     [XmlRoot("video")]

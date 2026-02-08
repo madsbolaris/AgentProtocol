@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.Agents
+namespace Microsoft.Agents.Abstractions.Models
 {
     /// <summary>/// Text Reasoning Content/// BASE: Microsoft.Extensions.AI.TextReasoningContent/// SOURCE: /extensions/src/Libraries/Microsoft.Extensions.AI.Abstractions/Contents/TextReasoningContent.cs/// FROM: Extended thinking support (Anthropic, OpenAI o1/o3)/// ADDITION: Added 'exposed' flag from Anthropic/// - exposed = true: Reasoning visible to user/// - exposed = false: Internal reasoning trace/// XML: &lt;thinking exposed="false"&gt;Internal reasoning...&lt;/thinking&gt;/// </summary>
     [XmlRoot("text-reasoning")]

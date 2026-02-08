@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-02-08T09:21:25.767448Z",
+  "timestamp": "2026-02-08T10:05:06.653145Z",
   "content": {
-    "runId": "run_ffa974fdc55f4d01",
+    "runId": "run_f797453f97074074",
     "agentId": "agent",
-    "threadId": "thread_6a351f2d73ae4",
+    "threadId": "thread_5788d6444e424",
     "status": "completed",
     "output": [],
-    "createdAt": "2026-02-08T09:21:25.767087Z",
-    "completedAt": "2026-02-08T09:21:25.767087Z"
+    "createdAt": "2026-02-08T10:05:06.652826Z",
+    "completedAt": "2026-02-08T10:05:06.652826Z"
   },
-  "hash": "397c74144b218b46e02466062844826f44bb163c8b04eac59f74db2f7f386f64",
+  "hash": "3fe2b927876c31fe8a688ff36d98e4f7de16b23c733073cb915860c24dacf081",
   "metadata": {
     "input_file": "39-interleaved-roles.xml",
     "sample": "basic-m365",

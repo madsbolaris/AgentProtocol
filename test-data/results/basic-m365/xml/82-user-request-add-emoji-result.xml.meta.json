@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T10:06:13.542376Z",
+  "hash": "3ff4ec59b6f919488173c1d6e2fad1037ae1413d9678e6a46708173239804126",
+  "metadata": {
+    "input_file": "82-user-request-add-emoji.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

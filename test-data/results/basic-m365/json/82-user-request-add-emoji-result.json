@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T10:06:01.560401Z",
+  "content": {
+    "runId": "run_be548076363c4bca",
+    "agentId": "agent",
+    "threadId": "thread_dea593e81c5f4",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "I don\u2019t have a tool to add reactions to messages in this chat. Here\u2019s the thumbs-up emoji you can use: \ud83d\udc4d\n\nIf you tell me the platform (Slack, Discord, Microsoft Teams, etc.), I can give you exact steps to add a reaction to msg_12345. Or I can help you draft a version of the message content that includes a thumbs-up."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T10:06:01.559837Z",
+    "completedAt": "2026-02-08T10:06:01.559837Z"
+  },
+  "hash": "5acd4f4afbb09e505258b3084dff9e35a07170bdac40ac3bc0c2adbd94bb21c1",
+  "metadata": {
+    "input_file": "82-user-request-add-emoji.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

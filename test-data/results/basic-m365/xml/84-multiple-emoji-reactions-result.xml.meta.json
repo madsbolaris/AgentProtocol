@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-08T10:06:27.091735Z",
+  "hash": "428cb5c0d64832d36ca3a1b8c33aae8b219f74ca36ca6fcfe53fd2cf27be82f5",
+  "metadata": {
+    "input_file": "84-multiple-emoji-reactions.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

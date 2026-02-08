@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-02-08T09:21:20.536940Z",
+  "timestamp": "2026-02-08T10:05:01.249136Z",
   "content": {
-    "runId": "run_2046f3d3a5f84101",
+    "runId": "run_e2430587173c4636",
     "agentId": "agent_test_1",
-    "threadId": "thread_7c18ca68db4d4",
+    "threadId": "thread_70f4991f46bf4",
     "status": "completed",
     "output": [],
-    "createdAt": "2026-02-08T09:21:20.536556Z",
-    "completedAt": "2026-02-08T09:21:20.536556Z"
+    "createdAt": "2026-02-08T10:05:01.24873Z",
+    "completedAt": "2026-02-08T10:05:01.24873Z"
   },
-  "hash": "0c61db43d32bc2c6be11e076ffe71220b55a6ec70ecc75f2148363ce42a25c0f",
+  "hash": "b6640bad0a5fea44a68a2cb1f1f3978ae5fa12240825fc4fe091e456a24fb397",
   "metadata": {
     "input_file": "19-refusal-content.xml",
     "sample": "basic-m365",

@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-08T10:05:53.524241Z",
+  "content": {
+    "runId": "run_a050f157c4094d6a",
+    "agentId": "agent",
+    "threadId": "thread_fa33eaeaf37b4",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-08T10:05:53.523963Z",
+    "completedAt": "2026-02-08T10:05:53.523963Z"
+  },
+  "hash": "25859953fd95ffdfe025de24fb0c879cef9ec13b91116cb60273d139284e4b27",
+  "metadata": {
+    "input_file": "79-user-left-event.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

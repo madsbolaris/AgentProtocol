@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-02-08T09:21:08.525801Z",
+  "timestamp": "2026-02-08T10:04:52.544623Z",
   "content": {
-    "runId": "run_ed8b6a4d510840d8",
+    "runId": "run_e94bfe81c3074835",
     "agentId": "agent",
-    "threadId": "thread_39e6cc5f159e4",
+    "threadId": "thread_277cd4e6df444",
     "status": "completed",
     "output": [
       {
@@ -11,15 +11,15 @@
         "contents": [
           {
             "kind": "text",
-            "text": "Nice test of special characters and Unicode. Your text contains:\n- HTML-significant chars: <, >, &, \"\n- A single quote '\n- Chinese characters: \u4f60\u597d\n- An Earth globe emoji \ud83c\udf0d\n\nHere are a couple of safe encodings you might want:\n\n- HTML escaping: Text with special characters: &lt;&gt;&amp;&quot;&#39; and unicode: \u4f60\u597d \ud83c\udf0d\n  (note: &lt; &gt; &amp; &quot; and &#39; for the single quote)\n\n- JSON string literal (escaping the double quote): \"Text with special characters: <>&'\\\\\\\" and unicode: \u4f60\u597d \ud83c\udf0d\"\n  (the inner double quote is escaped as \\\")\n\nTranslation note:\n- \u4f60\u597d = Hello\n- So you could render: Hello \ud83c\udf0d\n\nWould you like me to perform a specific transformation (HTML escaping, JSON escaping, translation, etc.)? I can also tell you the current time or fetch the weather for a location if you want."
+            "text": "I can handle text with special characters and Unicode.\n\nHere it is echoed back exactly as you wrote:\nText with special characters: <>&\"' and unicode: \u4f60\u597d \ud83c\udf0d\n\nWould you like me to do anything else with this text (escape characters, count length, translate, etc.)?"
           }
         ]
       }
     ],
-    "createdAt": "2026-02-08T09:21:08.525168Z",
-    "completedAt": "2026-02-08T09:21:08.525168Z"
+    "createdAt": "2026-02-08T10:04:52.544005Z",
+    "completedAt": "2026-02-08T10:04:52.544005Z"
   },
-  "hash": "0897debf1dbd7c2d2d788141342c7a6a9c3a1210305e24a8df49087d37bf413b",
+  "hash": "a3fd6e8481ca4ae03ed8ff7ea2d862c9bd03e2750f433994f6c5b33f00d18449",
   "metadata": {
     "input_file": "18-edge-cases.xml",
     "sample": "basic-m365",

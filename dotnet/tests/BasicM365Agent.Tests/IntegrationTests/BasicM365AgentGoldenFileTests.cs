@@ -179,6 +179,22 @@ public class BasicM365AgentGoldenFileTests : IDisposable
     private static string NormalizeXml(string xmlContent)
     {
         var doc = XDocument.Parse(xmlContent);
+
+        // Remove dynamic attributes that change on every run
+        // These include: thread-id, created-at, and any timestamp fields
+        foreach (var element in doc.Descendants())
+        {
+            // Remove thread-id attribute (changes on every run)
+            element.Attribute("thread-id")?.Remove();
+
+            // Remove created-at attribute (timestamp changes on every run)
+            element.Attribute("created-at")?.Remove();
+
+            // Remove other timestamp attributes if present
+            element.Attribute("timestamp")?.Remove();
+            element.Attribute("completed-at")?.Remove();
+        }
+
         return doc.ToString(SaveOptions.None);
     }
 

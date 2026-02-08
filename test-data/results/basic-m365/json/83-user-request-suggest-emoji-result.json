@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-08T10:06:20.659471Z",
+  "content": {
+    "runId": "run_24a6c9363f41470d",
+    "agentId": "agent",
+    "threadId": "thread_74091edccc144",
+    "status": "completed",
+    "output": [
+      {
+        "role": "assistant",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Nice! Here are emoji ideas to match a happy mood. Mix and match or pick a vibe you like.\n\n- Bright & sunny: \ud83d\ude04 \ud83d\ude0a \ud83d\ude01 \ud83d\ude03 \ud83d\ude42 \u2600\ufe0f \ud83c\udf1e \u2728 \ud83c\udf1f\n- Festive & celebratory: \ud83c\udf89 \ud83e\udd73 \ud83c\udf8a \ud83c\udf88 \ud83e\udd42 \ud83c\udf7e\n- Cute & playful: \ud83d\ude3a \ud83d\ude38 \ud83d\udc36 \ud83d\ude3b \ud83d\udc96 \ud83e\udd17\n- Energetic & uplifting: \ud83d\udc83 \ud83d\udd7a \u26a1 \ud83d\ude80 \u2728\n- Love & good vibes: \u2764\ufe0f \ud83d\udc97 \ud83e\udd17 \ud83d\ude4c \ud83d\ude4f\n\nSome quick caption ideas:\n- \u201cToday is a good day! \ud83d\ude04\u2600\ufe0f\u2728\u201d\n- \u201cFeeling happy and grateful! \ud83c\udf89\ud83d\ude01\ud83c\udf1f\u201d\n- \u201cSending good vibes only! \ud83e\udd17\u2764\ufe0f\u201d\n- \u201cHappy thoughts, big smiles! \ud83d\ude03\ud83c\udf88\ud83c\udf8a\u201d\n\nIf you tell me where you\u2019ll post (text, Instagram, story, Twitter, etc.) I can tailor a caption or pick the perfect emoji combo for that format."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-08T10:06:20.65884Z",
+    "completedAt": "2026-02-08T10:06:20.65884Z"
+  },
+  "hash": "fd9212b53b3e4d7a4aa93d529dd09218b4efed5ee3aad71e784f59280d648915",
+  "metadata": {
+    "input_file": "83-user-request-suggest-emoji.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

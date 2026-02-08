@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-02-08T09:21:20.927456Z",
+  "timestamp": "2026-02-08T10:05:01.654551Z",
   "content": {
-    "runId": "run_cd1b4b07be7b46e2",
+    "runId": "run_38385f5e50024178",
     "agentId": "agent_test_2",
-    "threadId": "thread_e9443643f0ca4",
+    "threadId": "thread_54dec9a142d04",
     "status": "completed",
     "output": [],
-    "createdAt": "2026-02-08T09:21:20.927149Z",
-    "completedAt": "2026-02-08T09:21:20.927149Z"
+    "createdAt": "2026-02-08T10:05:01.65417Z",
+    "completedAt": "2026-02-08T10:05:01.65417Z"
   },
-  "hash": "2d51b9c61aaa946ce83b26e08d0de46e8887fd2ab9d22d500c58a1d66b0fb257",
+  "hash": "b89b1e7f6a488d00be98395a97c8d8c28a9fe4209752ee890c2f2fa1cb93e1cd",
   "metadata": {
     "input_file": "20-function-call-content.xml",
     "sample": "basic-m365",

@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-02-08T09:21:23.666728Z",
+  "timestamp": "2026-02-08T10:05:04.493494Z",
   "content": {
-    "runId": "run_e5ef07eccc724d26",
+    "runId": "run_ff9832c311834aa8",
     "agentId": "agent",
-    "threadId": "thread_db11a13e1ea44",
+    "threadId": "thread_b537dce9924c4",
     "status": "completed",
     "output": [],
-    "createdAt": "2026-02-08T09:21:23.666364Z",
-    "completedAt": "2026-02-08T09:21:23.666364Z"
+    "createdAt": "2026-02-08T10:05:04.493169Z",
+    "completedAt": "2026-02-08T10:05:04.493169Z"
   },
-  "hash": "036c8e253da9836c60f4211482570b39394376a54021fb279f3437c8a2fa4625",
+  "hash": "aa4d9c4484cff298f6f86dad4d7887973460658ac239c33a826ec238c2f43e42",
   "metadata": {
     "input_file": "31-function-call-complete-flow.xml",
     "sample": "basic-m365",

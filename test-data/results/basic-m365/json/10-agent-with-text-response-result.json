@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-02-08T09:20:23.096226Z",
+  "timestamp": "2026-02-08T10:04:29.541473Z",
   "content": {
-    "runId": "run_f6ccf9de820d4fb4",
+    "runId": "run_3bec1f8dd23a4a70",
     "agentId": "agent_claude_v1",
-    "threadId": "thread_00cc146a9aac4",
+    "threadId": "thread_07082c7ca5ee4",
     "status": "completed",
     "output": [],
-    "createdAt": "2026-02-08T09:20:23.095824Z",
-    "completedAt": "2026-02-08T09:20:23.095824Z"
+    "createdAt": "2026-02-08T10:04:29.541086Z",
+    "completedAt": "2026-02-08T10:04:29.541086Z"
   },
-  "hash": "01ce413977428424a5800fdc5e93e7e93a45c55992e097bd03c12f1db1f04c54",
+  "hash": "93b4b7247c9890ab7f441f8288f8809ba4fbbf196ffc177f4c4c2f803e0ba84e",
   "metadata": {
     "input_file": "10-agent-with-text-response.xml",
     "sample": "basic-m365",

@@ -1,0 +1,23 @@
+/* Table of Contents indentation fixes */
+
+/* Ensure nested TOC items are properly indented */
+.sidebar-sidecar-layout_tocContent__XYZ789 .sidebar_navList__4Rg4g ul.sidebar_navList__4Rg4g {
+  padding-left: 16px;
+  margin-left: 0;
+}
+
+/* Add indentation for deeply nested items */
+.sidebar-sidecar-layout_tocContent__XYZ789 .sidebar_navList__4Rg4g ul.sidebar_navList__4Rg4g ul.sidebar_navList__4Rg4g {
+  padding-left: 16px;
+}
+
+/* Ensure proper spacing */
+.sidebar-sidecar-layout_tocContent__XYZ789 .outline-nav_listRoot__Sm1fr li {
+  margin: 0;
+}
+
+/* Visual hierarchy for nested items */
+.sidebar-sidecar-layout_tocContent__XYZ789 .sidebar_navList__4Rg4g > li > ul {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}

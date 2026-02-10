@@ -1,7 +1,7 @@
 using System;
 using System.Xml;
 using System.Xml.Serialization;
-using Microsoft.Agents.Abstractions.Models;
+using Microsoft.Agents.Xml.Generated.Models;
 using Xunit;
 
 namespace Microsoft.Agents.Xml.Tests;

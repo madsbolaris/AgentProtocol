@@ -1,0 +1,17 @@
+{
+  "callId": 13,
+  "timestamp": "2026-02-09T19:16:32.540063+00:00",
+  "hash": "d72c6922f0984d62",
+  "response": {
+    "id": "chatcmpl-D7R2DZ5GIaVdBdi4UsXNFOSugQPvl",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664589,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.1,\n  \"reasoning\": \"The reference states the ability to help with various tasks, while the actual indicates it is a mock agent response. They do not convey the same meaning or intent.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

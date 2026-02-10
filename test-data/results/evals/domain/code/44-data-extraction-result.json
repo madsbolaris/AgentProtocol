@@ -1,0 +1,72 @@
+{
+  "timestamp": "2026-02-09T19:17:30.331858Z",
+  "content": {
+    "threadId": "eval-044",
+    "description": "Test structured data extraction",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "extracted-data",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "contains_name",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'John Doe', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains_email",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'john@example.com', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "contains_name.passed &amp;&amp; contains_email.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 0
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 0.0,
+    "timestamp": "2026-02-09T19:17:30.331775Z",
+    "totalDurationMs": 0
+  },
+  "hash": "9e21a6d10b23af772e38a721525d5108d87cd6e567e8531a0f1fa1e9d48a80c3",
+  "metadata": {
+    "input_file": "44-data-extraction.xml",
+    "thread_id": "eval-044",
+    "description": "Test structured data extraction",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

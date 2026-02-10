@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="CEL Edge Cases - Boundary conditions and special cases" thread-id="eval-060" created-at="2026-02-09T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-09T00:00:00Z">
+    <text>Edge case testing</text>
+  </user>
+
+  <expect name="test-exact-boundary">
+    <agent message-id="ref-001" created-at="2026-02-09T00:00:01Z" agent-id="test-agent">
+      <text>Exact threshold</text>
+    </agent>
+    <judge agent="semantic_similarity" as="exact" />
+    <!-- Test exact equality at boundary -->
+    <assert>exact.score == 0.75 || exact.score >= 0.75</assert>
+  </expect>
+
+  <expect name="test-zero-score">
+    <agent message-id="ref-002" created-at="2026-02-09T00:00:02Z" agent-id="test-agent">
+      <text>Zero or positive</text>
+    </agent>
+    <judge agent="semantic_similarity" as="score" />
+    <!-- Test zero handling -->
+    <assert>score.score >= 0.0</assert>
+  </expect>
+
+  <expect name="test-perfect-score">
+    <agent message-id="ref-003" created-at="2026-02-09T00:00:03Z" agent-id="test-agent">
+      <text>Perfect match</text>
+    </agent>
+    <judge agent="text_exact_match" as="perfect" />
+    <!-- Test perfect score -->
+    <assert>perfect.score == 1.0 || perfect.score >= 0.99</assert>
+  </expect>
+
+  <expect name="test-not-equals">
+    <agent message-id="ref-004" created-at="2026-02-09T00:00:04Z" agent-id="test-agent">
+      <text>Not zero</text>
+    </agent>
+    <judge agent="semantic_similarity" as="nonzero" />
+    <!-- Test not equals -->
+    <assert>nonzero.score != 0.0</assert>
+  </expect>
+
+  <expect name="test-double-negation">
+    <agent message-id="ref-005" created-at="2026-02-09T00:00:05Z" agent-id="test-agent">
+      <text>Double negative</text>
+    </agent>
+    <judge agent="text_contains" as="check" />
+    <!-- Test double negation (equivalent to positive) -->
+    <assert>!!check.passed</assert>
+  </expect>
+</thread>

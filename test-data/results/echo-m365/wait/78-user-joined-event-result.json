@@ -1,0 +1,56 @@
+{
+  "runId": "run_0c0ae29cab0f4ffea0fd88b8f00ecac6",
+  "agentId": "echo-agent",
+  "threadId": "thread_2359c30a971749d6a961dae6d17dc035",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "channel",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "{\u0022userId\u0022: \u0022user123\u0022, \u0022userName\u0022: \u0022Alice\u0022}",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_0e8a05c7d45a4c5ea6bab3be32375b25",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \n{\u0022userId\u0022: \u0022user123\u0022, \u0022userName\u0022: \u0022Alice\u0022}",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.407895Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.407895Z",
+  "completedAt": null
+}

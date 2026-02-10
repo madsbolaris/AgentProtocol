@@ -1,0 +1,142 @@
+{
+  "timestamp": "2026-02-09T19:19:07.525573Z",
+  "content": {
+    "threadId": "eval-059",
+    "description": "CEL Conditional Logic - If-then-else patterns",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "test-if-high-then-strict",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "quality",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference discusses high quality requiring strict checking, while the actual output states it is a mock agent response. They convey unrelated ideas with no semantic overlap."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "keywords",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "quality.score < 0.8 || (quality.score >= 0.8 && keywords.passed)",
+                "passed": false,
+                "value": false
+              }
+            ]
+          },
+          {
+            "name": "test-tiered-requirements",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference discusses tier-specific requirements, whereas the actual output merely states it is a mock agent response; they convey different meanings and information."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "basic",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "text_regex",
+                "as": "advanced",
+                "passed": false,
+                "score": 0.0,
+                "details": {}
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.score < 0.7 || (sem.score >= 0.7 && basic.passed) || (sem.score >= 0.9 && basic.passed && advanced.passed)",
+                "passed": false,
+                "value": false
+              }
+            ]
+          },
+          {
+            "name": "test-either-or-requirement",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "path1",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference states that both options are acceptable ('Either path works'), while the actual response states 'This is a mock agent response' which conveys an unrelated meta-message and does not reflect the same meaning."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "path2",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "(path1.score >= 0.95) || (path2.passed && path1.score >= 0.5)",
+                "passed": false,
+                "value": null,
+                "error": "Judge result '(path1' not found"
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 10962
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 3,
+    "passedAsserts": 0,
+    "failedAsserts": 3,
+    "avgDurationMs": 10962.0,
+    "timestamp": "2026-02-09T19:18:56.562761Z",
+    "totalDurationMs": 10962
+  },
+  "hash": "2853f5f5b15f2dc8084fb47675a4c24106b870ab6a19cd6b456df6b057a3098f",
+  "metadata": {
+    "input_file": "59-cel-conditional-logic.xml",
+    "thread_id": "eval-059",
+    "description": "CEL Conditional Logic - If-then-else patterns",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

@@ -1,0 +1,112 @@
+/* ============================================================================
+   HASHICORP-STYLE TABLE OF CONTENTS - NO MATERIAL CLASSES
+   ============================================================================ */
+
+/* TOC sidebar - right side */
+.hc-toc {
+  width: 16rem; /* 256px */
+  flex-shrink: 0;
+  position: sticky;
+  top: 6.75rem; /* Header + Tabs = 108px */
+  height: calc(100vh - 6.75rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2rem 1.5rem;
+  border-left: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.hc-toc__inner {
+  /* Inner wrapper if needed */
+}
+
+.hc-toc__title {
+  margin: 0 0 1rem 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--md-default-fg-color--light);
+}
+
+/* TOC navigation */
+.hc-toc-nav {
+  font-size: 0.8125rem;
+}
+
+.hc-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hc-toc-item {
+  margin-bottom: 0.5rem;
+}
+
+.hc-toc-link {
+  display: block;
+  padding: 0.25rem 0;
+  color: var(--md-default-fg-color);
+  text-decoration: none;
+  transition: color 0.2s;
+  line-height: 1.4;
+}
+
+.hc-toc-link:hover {
+  color: var(--md-accent-fg-color);
+}
+
+/* Nested TOC items */
+.hc-toc-sublist {
+  list-style: none;
+  margin: 0.25rem 0 0.5rem 0;
+  padding-left: 1rem;
+  border-left: 2px solid var(--md-default-fg-color--lightest);
+}
+
+.hc-toc-subitem {
+  margin-bottom: 0.25rem;
+}
+
+.hc-toc-sublink {
+  display: block;
+  padding: 0.125rem 0;
+  color: var(--md-default-fg-color--light);
+  text-decoration: none;
+  font-size: 0.75rem;
+  transition: color 0.2s;
+  line-height: 1.4;
+}
+
+.hc-toc-sublink:hover {
+  color: var(--md-default-fg-color);
+}
+
+/* Active TOC item (Material will add this via JS) */
+.hc-toc-link--active,
+.hc-toc-sublink--active {
+  color: var(--md-accent-fg-color);
+  font-weight: 600;
+}
+
+/* Third level nesting */
+.hc-toc-sublist--level3 {
+  margin-top: 0.125rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Mobile - hide TOC */
+@media screen and (max-width: 76.1875em) {
+  .hc-toc {
+    display: none;
+  }
+}
+
+/* Dark mode */
+[data-md-color-scheme="slate"] .hc-toc {
+  border-left-color: var(--md-default-fg-color--lightest);
+}
+
+[data-md-color-scheme="slate"] .hc-toc-sublist {
+  border-left-color: var(--md-default-fg-color--lightest);
+}

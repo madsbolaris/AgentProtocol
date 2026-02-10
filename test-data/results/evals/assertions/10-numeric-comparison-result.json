@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-02-09T19:15:51.271801Z",
+  "content": {
+    "threadId": "eval-010",
+    "description": "Numeric comparison assertions",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "week-days",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_exact_match",
+                "as": "match",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "reason": "Text does not match"
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [
+                    "7"
+                  ],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "match.passed",
+                "passed": false,
+                "value": false
+              },
+              {
+                "expression": "contains.passed",
+                "passed": true,
+                "value": true
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 0
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 2,
+    "passedAsserts": 1,
+    "failedAsserts": 1,
+    "avgDurationMs": 0.0,
+    "timestamp": "2026-02-09T19:15:51.271723Z",
+    "totalDurationMs": 0
+  },
+  "hash": "e7b4e23cddd7107f3f38961c9837ffb660fd2e350e2f67287bf8c50d72b2f678",
+  "metadata": {
+    "input_file": "10-numeric-comparison.xml",
+    "thread_id": "eval-010",
+    "description": "Numeric comparison assertions",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

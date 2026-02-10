@@ -1,0 +1,17 @@
+{
+  "callId": 14,
+  "timestamp": "2026-02-09T19:16:38.745085+00:00",
+  "hash": "3f7b170b1a9e075e",
+  "response": {
+    "id": "chatcmpl-D7R2KGr31htRk38CWLwpU1beR1cyI",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664596,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The reference asks for a list of programming languages (Python, JavaScript, Java, C++, Go). The actual output is unrelated generic text and does not contain any of the languages or answer the same question.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "callId": 38,
+  "timestamp": "2026-02-09T19:18:04.650089+00:00",
+  "hash": "e648c0d82839e0b6",
+  "response": {
+    "id": "chatcmpl-D7R3hQc1DJK0CWrScix1cZ0Ewmbpr",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664681,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.1,\n  \"reasoning\": \"The reference asks for a comprehensive answer with technical details, whereas the actual output is merely a placeholder stating it's a mock agent response. They do not convey the same meaning or content.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

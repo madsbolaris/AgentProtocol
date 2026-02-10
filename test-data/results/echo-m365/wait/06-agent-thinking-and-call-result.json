@@ -1,0 +1,56 @@
+{
+  "runId": "run_33d7431e4cb44089b9cd20648bda608f",
+  "agentId": "echo-agent",
+  "threadId": "thread_a5e05ca2fece4825af4c3ef0383477f7",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "\n    User is asking about weather in Seattle. I need to call the get_weather tool with location parameter set to \u0022Seattle, WA\u0022.\n  ",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_c681198bc717405cab1309d32774a1b3",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \n\n    User is asking about weather in Seattle. I need to call the get_weather tool with location parameter set to \u0022Seattle, WA\u0022.\n  ",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.083181Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.083183Z",
+  "completedAt": null
+}

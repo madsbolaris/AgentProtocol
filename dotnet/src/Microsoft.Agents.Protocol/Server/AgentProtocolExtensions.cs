@@ -495,7 +495,17 @@ internal class AgentProtocolServer
             var data = await JsonSerializer.DeserializeAsync<Dictionary<string, object>>(context.Request.Body);
             var runId = CreateRunId();
             var agentId = data?.ContainsKey("agentId") == true ? data["agentId"]?.ToString() : "agent";
-            var inputMessages = data?.ContainsKey("input") == true ? data["input"] as List<object> : new List<object>();
+
+            // Parse input - when deserializing with JsonSerializer, arrays become JsonElement
+            var inputMessages = new List<Dictionary<string, object>>();
+            if (data?.ContainsKey("input") == true && data["input"] is JsonElement inputElement && inputElement.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var item in inputElement.EnumerateArray())
+                {
+                    var msg = JsonSerializer.Deserialize<Dictionary<string, object>>(item.GetRawText());
+                    if (msg != null) inputMessages.Add(msg);
+                }
+            }
 
             // Get agent and adapter from DI
             var agent = context.RequestServices.GetService(typeof(IAgent)) as IAgent;
@@ -516,20 +526,25 @@ internal class AgentProtocolServer
             // Event 1: run.started
             eventSeq++;
             await context.Response.WriteAsync($"event: run.started\n");
-            await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new { runId, agentId, status = "in_progress", eventSeq, startedAt = DateTime.UtcNow })}\n\n");
+            await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new {
+                @event = "run.started",
+                data = new { runId, agentId, status = "in_progress", eventSeq, startedAt = DateTime.UtcNow }
+            })}\n\n");
             await context.Response.Body.FlushAsync();
             await Task.Delay(50);
 
             // Event 2: message.created
             eventSeq++;
             await context.Response.WriteAsync($"event: message.created\n");
-            await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new { runId, agentId, eventSeq, message = new { messageId, role = "assistant", contents = new[] { new { kind = "text", text = "" } } }, createdAt = DateTime.UtcNow })}\n\n");
+            await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new {
+                @event = "message.created",
+                data = new { runId, agentId, eventSeq, message = new { messageId, role = "assistant", contents = new[] { new { kind = "text", text = "" } } }, createdAt = DateTime.UtcNow }
+            })}\n\n");
             await context.Response.Body.FlushAsync();
             await Task.Delay(50);
 
             // Process the first user message through the agent
-            var firstUserMessage = inputMessages.OfType<Dictionary<string, object>>()
-                .FirstOrDefault(msg => msg.ContainsKey("role") && msg["role"]?.ToString() == "user");
+            var firstUserMessage = inputMessages.FirstOrDefault(msg => msg.ContainsKey("role") && msg["role"]?.ToString() == "user");
 
             var outputMessages = firstUserMessage != null
                 ? await ProcessMessage(firstUserMessage, agent, adapter)
@@ -539,23 +554,51 @@ internal class AgentProtocolServer
             var outputMessage = outputMessages.LastOrDefault() ?? new Dictionary<string, object> { ["contents"] = new[] { new Dictionary<string, object> { ["text"] = "" } } };
 
             var fullOutputText = "";
-            if (outputMessage.ContainsKey("contents") && outputMessage["contents"] is List<object> outContents && outContents.Count > 0)
+
+            if (outputMessage.ContainsKey("contents"))
             {
-                var firstOutContent = outContents[0] as Dictionary<string, object>;
-                fullOutputText = firstOutContent?.ContainsKey("text") == true ? firstOutContent["text"]?.ToString() ?? "" : "";
+                var contentsObj = outputMessage["contents"];
+
+                // Handle JsonElement from System.Text.Json deserialization
+                if (contentsObj is JsonElement contentsElement && contentsElement.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var item in contentsElement.EnumerateArray())
+                    {
+                        if (item.TryGetProperty("kind", out var kindProp) && kindProp.GetString() == "text" &&
+                            item.TryGetProperty("text", out var textProp))
+                        {
+                            fullOutputText = textProp.GetString() ?? "";
+                            break;
+                        }
+                    }
+                }
+                // Handle List<object> for directly constructed messages
+                else if (contentsObj is List<object> outContents && outContents.Count > 0)
+                {
+                    var firstOutContent = outContents[0] as Dictionary<string, object>;
+                    fullOutputText = firstOutContent?.ContainsKey("text") == true ? firstOutContent["text"]?.ToString() ?? "" : "";
+                }
             }
 
-            // Stream the output text in chunks (split by words)
+            // Stream the output text in chunks (split by words) - send incremental chunks
             var words = fullOutputText.Split(' ');
-            var accumulatedText = "";
 
             for (var i = 0; i < words.Length; i++)
             {
-                if (i > 0) accumulatedText += " ";
-                accumulatedText += words[i];
+                // Send incremental chunk (just the current word, with space prefix if not first)
+                var chunk = i == 0 ? words[i] : " " + words[i];
                 eventSeq++;
-                await context.Response.WriteAsync($"event: message.updated\n");
-                await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new { runId, agentId, messageId, eventSeq, message = new { contents = new[] { new { kind = "text", text = accumulatedText } } } })}\n\n");
+                await context.Response.WriteAsync($"event: message.delta\n");
+                await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new {
+                    @event = "message.delta",
+                    data = new {
+                        runId,
+                        agentId,
+                        messageId,
+                        eventSeq,
+                        delta = new { contents = new[] { new { kind = "text", text = chunk } } }
+                    }
+                })}\n\n");
                 await context.Response.Body.FlushAsync();
                 await Task.Delay(50);
             }
@@ -563,14 +606,20 @@ internal class AgentProtocolServer
             // Event: message.completed
             eventSeq++;
             await context.Response.WriteAsync($"event: message.completed\n");
-            await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new { runId, agentId, messageId, eventSeq, completedAt = DateTime.UtcNow })}\n\n");
+            await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new {
+                @event = "message.completed",
+                data = new { runId, agentId, messageId, eventSeq, completedAt = DateTime.UtcNow }
+            })}\n\n");
             await context.Response.Body.FlushAsync();
             await Task.Delay(50);
 
             // Event: run.completed
             eventSeq++;
             await context.Response.WriteAsync($"event: run.completed\n");
-            await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new { runId, agentId, status = "completed", output = outputMessages, eventSeq, completedAt = DateTime.UtcNow })}\n\n");
+            await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new {
+                @event = "run.completed",
+                data = new { runId, agentId, status = "completed", output = outputMessages, eventSeq, completedAt = DateTime.UtcNow }
+            })}\n\n");
             await context.Response.Body.FlushAsync();
 
             return Results.Empty;

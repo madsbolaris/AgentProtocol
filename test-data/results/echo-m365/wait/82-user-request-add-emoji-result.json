@@ -1,0 +1,56 @@
+{
+  "runId": "run_2ccc8327e3c84db093466e93005109e2",
+  "agentId": "echo-agent",
+  "threadId": "thread_914e91d18164411da98d99a576031fc2",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "user",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "Add a thumbs up emoji to message msg_12345",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_35c539b4249c4d149707f4c503fe7474",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nAdd a thumbs up emoji to message msg_12345",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.418911Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.418912Z",
+  "completedAt": null
+}

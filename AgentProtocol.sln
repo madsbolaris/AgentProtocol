@@ -11,19 +11,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Client.Tes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D90AB541-7400-80B1-A0B4-F58D0D439F55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol", "dotnet\src\Microsoft.Agents.Protocol\Microsoft.Agents.Protocol.csproj", "{139829D4-7C10-6727-8B80-CE14E353FDF5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.Agents.Protocol.Xml.Tests", "Microsoft.Agents.Protocol.Xml.Tests", "{6F533397-BBD9-0336-3CAE-F495370BE38B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.Agents.Xml.Tests", "Microsoft.Agents.Xml.Tests", "{6F533397-BBD9-0336-3CAE-F495370BE38B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Xml.Validation.Tests", "dotnet\tests\Microsoft.Agents.Xml.Tests\Microsoft.Agents.Xml.Validation.Tests\Microsoft.Agents.Xml.Validation.Tests.csproj", "{13F86938-B80C-7DF0-AF6E-9A6948745582}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Xml.Validation.Tests", "dotnet\tests\Microsoft.Agents.Protocol.Xml.Tests\Microsoft.Agents.Protocol.Xml.Validation.Tests\Microsoft.Agents.Protocol.Xml.Validation.Tests.csproj", "{13F86938-B80C-7DF0-AF6E-9A6948745582}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AgentXml.CodeGen.Tests", "AgentXml.CodeGen.Tests", "{C1D486EE-EA64-90EF-7B05-C1DDFCF4D57D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Xml.Tests", "dotnet\tests\Microsoft.Agents.Xml.Tests\AgentXml.CodeGen.Tests\Microsoft.Agents.Xml.Tests.csproj", "{FD71D200-A606-42CC-59F0-431FE2BCED15}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Xml.Tests", "dotnet\tests\Microsoft.Agents.Protocol.Xml.Tests\AgentXml.CodeGen.Tests\Microsoft.Agents.Protocol.Xml.Tests.csproj", "{FD71D200-A606-42CC-59F0-431FE2BCED15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Sdk", "dotnet\src\Microsoft.Agents.Protocol.Sdk\Microsoft.Agents.Protocol.Sdk.csproj", "{445544B8-5396-45F6-A7A8-8C4D8BF49682}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Hosting", "dotnet\src\Microsoft.Agents.Protocol.Hosting\Microsoft.Agents.Protocol.Hosting.csproj", "{445544B8-5396-45F6-A7A8-8C4D8BF49682}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Abstractions", "dotnet\src\Microsoft.Agents.Abstractions\Microsoft.Agents.Abstractions.csproj", "{7CFDFA9C-4378-4619-9744-5AA25D6B44DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Abstractions", "dotnet\src\Microsoft.Agents.Protocol.Abstractions\Microsoft.Agents.Protocol.Abstractions.csproj", "{7CFDFA9C-4378-4619-9744-5AA25D6B44DC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{D4940822-8CCD-A00D-B363-AA1F29BDEDF4}"
 EndProject
@@ -39,15 +37,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.CodeGen", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Client", "dotnet\src\Microsoft.Agents.Protocol.Client\Microsoft.Agents.Protocol.Client.csproj", "{F88C5406-48EA-4892-B43E-F39400467EBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Sdk.LLM", "dotnet\src\Microsoft.Agents.Protocol.Sdk.LLM\Microsoft.Agents.Protocol.Sdk.LLM.csproj", "{5594A121-F023-4842-AA08-368D0A62FA1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Model", "dotnet\src\Microsoft.Agents.Protocol.Model\Microsoft.Agents.Protocol.Model.csproj", "{5594A121-F023-4842-AA08-368D0A62FA1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Sdk.LLM.OpenAI", "dotnet\src\Microsoft.Agents.Protocol.Sdk.LLM.OpenAI\Microsoft.Agents.Protocol.Sdk.LLM.OpenAI.csproj", "{7858DE67-8F36-49FF-972D-FC82D1FE11D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Model.OpenAI", "dotnet\src\Microsoft.Agents.Protocol.Model.OpenAI\Microsoft.Agents.Protocol.Model.OpenAI.csproj", "{7858DE67-8F36-49FF-972D-FC82D1FE11D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Sdk.LLM.Testing", "dotnet\src\Microsoft.Agents.Protocol.Sdk.LLM.Testing\Microsoft.Agents.Protocol.Sdk.LLM.Testing.csproj", "{7C57BCE4-D4AD-48B2-9E1B-C863120AA7C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Model.Testing", "dotnet\src\Microsoft.Agents.Protocol.Model.Testing\Microsoft.Agents.Protocol.Model.Testing.csproj", "{7C57BCE4-D4AD-48B2-9E1B-C863120AA7C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Validation", "dotnet\src\Microsoft.Agents.Validation\Microsoft.Agents.Validation.csproj", "{8956F27A-C2A2-4992-89FE-C47C90414CE4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Validation", "dotnet\src\Microsoft.Agents.Protocol.Validation\Microsoft.Agents.Protocol.Validation.csproj", "{8956F27A-C2A2-4992-89FE-C47C90414CE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Xml", "dotnet\src\Microsoft.Agents.Xml\Microsoft.Agents.Xml.csproj", "{6F2D1F1E-F4E8-4701-A9BF-CFF87293D79E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Agents.Protocol.Xml", "dotnet\src\Microsoft.Agents.Protocol.Xml\Microsoft.Agents.Protocol.Xml.csproj", "{6F2D1F1E-F4E8-4701-A9BF-CFF87293D79E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicM365Agent.Tests", "dotnet\tests\BasicM365Agent.Tests\BasicM365Agent.Tests.csproj", "{A1743287-C39F-4A92-92FD-077CF5A8541C}"
 EndProject
@@ -75,18 +73,6 @@ Global
 		{8342BE25-E796-38F2-CB7B-0DB5AE423C10}.Release|x64.Build.0 = Release|Any CPU
 		{8342BE25-E796-38F2-CB7B-0DB5AE423C10}.Release|x86.ActiveCfg = Release|Any CPU
 		{8342BE25-E796-38F2-CB7B-0DB5AE423C10}.Release|x86.Build.0 = Release|Any CPU
-		{139829D4-7C10-6727-8B80-CE14E353FDF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{139829D4-7C10-6727-8B80-CE14E353FDF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{139829D4-7C10-6727-8B80-CE14E353FDF5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{139829D4-7C10-6727-8B80-CE14E353FDF5}.Debug|x64.Build.0 = Debug|Any CPU
-		{139829D4-7C10-6727-8B80-CE14E353FDF5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{139829D4-7C10-6727-8B80-CE14E353FDF5}.Debug|x86.Build.0 = Debug|Any CPU
-		{139829D4-7C10-6727-8B80-CE14E353FDF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{139829D4-7C10-6727-8B80-CE14E353FDF5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{139829D4-7C10-6727-8B80-CE14E353FDF5}.Release|x64.ActiveCfg = Release|Any CPU
-		{139829D4-7C10-6727-8B80-CE14E353FDF5}.Release|x64.Build.0 = Release|Any CPU
-		{139829D4-7C10-6727-8B80-CE14E353FDF5}.Release|x86.ActiveCfg = Release|Any CPU
-		{139829D4-7C10-6727-8B80-CE14E353FDF5}.Release|x86.Build.0 = Release|Any CPU
 		{13F86938-B80C-7DF0-AF6E-9A6948745582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{13F86938-B80C-7DF0-AF6E-9A6948745582}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13F86938-B80C-7DF0-AF6E-9A6948745582}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -287,7 +273,6 @@ Global
 		{13AACEBB-5F00-79C1-2D14-6EA8B5DDD1FE} = {71E6E750-85FD-B5BC-4321-E01377EC6231}
 		{8342BE25-E796-38F2-CB7B-0DB5AE423C10} = {13AACEBB-5F00-79C1-2D14-6EA8B5DDD1FE}
 		{D90AB541-7400-80B1-A0B4-F58D0D439F55} = {71E6E750-85FD-B5BC-4321-E01377EC6231}
-		{139829D4-7C10-6727-8B80-CE14E353FDF5} = {D90AB541-7400-80B1-A0B4-F58D0D439F55}
 		{6F533397-BBD9-0336-3CAE-F495370BE38B} = {13AACEBB-5F00-79C1-2D14-6EA8B5DDD1FE}
 		{13F86938-B80C-7DF0-AF6E-9A6948745582} = {6F533397-BBD9-0336-3CAE-F495370BE38B}
 		{C1D486EE-EA64-90EF-7B05-C1DDFCF4D57D} = {6F533397-BBD9-0336-3CAE-F495370BE38B}

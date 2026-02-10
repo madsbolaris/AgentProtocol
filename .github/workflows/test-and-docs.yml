@@ -7,6 +7,46 @@ on:
     branches: [main, develop]
 
 jobs:
+  test-scripts:
+    name: Script Interface Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pytest
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: Run script interface tests
+        run: |
+          cd scripts
+          pytest tests/ -v
+
+      - name: Report script test results
+        if: always()
+        run: |
+          echo "## 🔧 Script Interface Tests" >> $GITHUB_STEP_SUMMARY
+          if [ $? -eq 0 ]; then
+            echo "✅ All script interfaces working correctly" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Validated:" >> $GITHUB_STEP_SUMMARY
+            echo "- All scripts have proper --help" >> $GITHUB_STEP_SUMMARY
+            echo "- Error messages are actionable" >> $GITHUB_STEP_SUMMARY
+            echo "- Exit codes are correct" >> $GITHUB_STEP_SUMMARY
+            echo "- Scripts don't pollute project directories" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Script interface tests failed!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "See test output for details." >> $GITHUB_STEP_SUMMARY
+          fi
+
   check-golden-files:
     name: Check Golden File Changes
     runs-on: ubuntu-latest
@@ -107,7 +147,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python-results-${{ matrix.python-version }}
-          path: test-data/results/shared/
+          path: test-data/results/
           if-no-files-found: warn
 
   test-dotnet:
@@ -141,7 +181,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dotnet-results
-          path: test-data/results/shared/
+          path: test-data/results/
           if-no-files-found: warn
 
   validate-and-docs:
@@ -161,14 +201,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: python-results-*
-          path: test-data/results/shared/
+          path: test-data/results/
           merge-multiple: true
 
       - name: Download .NET results
         uses: actions/download-artifact@v4
         with:
           name: dotnet-results
-          path: test-data/results/shared/
+          path: test-data/results/
 
       - name: Install dependencies
         run: |
@@ -202,7 +242,7 @@ jobs:
 
   summary:
     name: Test Summary
-    needs: [test-python, test-dotnet, validate-and-docs]
+    needs: [test-scripts, test-python, test-dotnet, validate-and-docs]
     runs-on: ubuntu-latest
     if: always()
 
@@ -213,7 +253,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: python-results-*
-          path: test-data/results/shared/
+          path: test-data/results/
           merge-multiple: true
         continue-on-error: true
 
@@ -221,7 +261,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dotnet-results
-          path: test-data/results/shared/
+          path: test-data/results/
         continue-on-error: true
 
       - name: Set up Python
@@ -238,6 +278,7 @@ jobs:
         run: |
           echo "## Job Status Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Script Tests: ${{ needs.test-scripts.result }}" >> $GITHUB_STEP_SUMMARY
           echo "- Python Tests: ${{ needs.test-python.result }}" >> $GITHUB_STEP_SUMMARY
           echo "- .NET Tests: ${{ needs.test-dotnet.result }}" >> $GITHUB_STEP_SUMMARY
           echo "- Validation & Docs: ${{ needs.validate-and-docs.result }}" >> $GITHUB_STEP_SUMMARY

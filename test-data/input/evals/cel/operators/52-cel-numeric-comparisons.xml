@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="CEL Numeric Comparisons - Score thresholds" thread-id="eval-052" created-at="2026-02-09T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-09T00:00:00Z">
+    <text>Write a haiku about code</text>
+  </user>
+
+  <expect name="test-greater-than">
+    <agent message-id="ref-001" created-at="2026-02-09T00:00:01Z" agent-id="test-agent">
+      <text>Code flows like water
+Through circuits bright and gleaming
+Logic finds its way</text>
+    </agent>
+    <judge agent="semantic_similarity" as="quality" />
+    <!-- Test greater than -->
+    <assert>quality.score > 0.5</assert>
+  </expect>
+
+  <expect name="test-greater-equal">
+    <agent message-id="ref-002" created-at="2026-02-09T00:00:02Z" agent-id="test-agent">
+      <text>Good quality response</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <!-- Test greater than or equal -->
+    <assert>sem.score >= 0.7</assert>
+  </expect>
+
+  <expect name="test-less-than">
+    <agent message-id="ref-003" created-at="2026-02-09T00:00:03Z" agent-id="test-agent">
+      <text>Bad response</text>
+    </agent>
+    <judge agent="semantic_similarity" as="bad" />
+    <!-- Test less than -->
+    <assert>bad.score < 1.0</assert>
+  </expect>
+
+  <expect name="test-equals">
+    <agent message-id="ref-004" created-at="2026-02-09T00:00:04Z" agent-id="test-agent">
+      <text>Perfect match</text>
+    </agent>
+    <judge agent="text_exact_match" as="exact" />
+    <!-- Test equality -->
+    <assert>exact.score == 1.0</assert>
+  </expect>
+</thread>

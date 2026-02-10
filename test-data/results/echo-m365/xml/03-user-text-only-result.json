@@ -1,0 +1,65 @@
+{
+  "runId": "run_e9026b19099d45eeb17b06a83558765e",
+  "agentId": "echo-agent",
+  "threadId": "thread_5b9dd75db7a74a059df5ac0818c7fd34",
+  "journalId": null,
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "user",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "\n    What\u0027s the weather like in Seattle?\n  ",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "agent": null,
+  "output": [
+    {
+      "messageId": "msg_e2b78c4c93c046a98a5e4d02647ddb3a",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \n\n    What\u0027s the weather like in Seattle?\n  ",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:33.446509Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "createdAt": "2026-02-09T18:38:33.44651Z",
+  "updatedAt": null,
+  "completedAt": "2026-02-09T18:38:33.446511Z",
+  "cancelledAt": null,
+  "cancellationReason": null,
+  "error": null,
+  "userId": null,
+  "threadCleanup": null,
+  "webhook": null,
+  "metadata": null
+}

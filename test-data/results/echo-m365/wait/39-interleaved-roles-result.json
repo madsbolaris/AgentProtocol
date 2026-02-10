@@ -1,0 +1,56 @@
+{
+  "runId": "run_1d2de4f6c63445a9861008af0a190bba",
+  "agentId": "echo-agent",
+  "threadId": "thread_e3b2496453794a869f6e79cb530564e0",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "system",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You are a helpful assistant in a collaborative workspace.",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_0059f9d0758d48b0be3f9a0547db6a40",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nYou are a helpful assistant in a collaborative workspace.",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.273161Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.273162Z",
+  "completedAt": null
+}

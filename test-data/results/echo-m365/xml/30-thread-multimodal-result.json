@@ -1,0 +1,65 @@
+{
+  "runId": "run_e4259865272548c397100c1f6ec67039",
+  "agentId": "echo-agent",
+  "threadId": "thread_7091d6d92d5e4d40979f87d004637e9e",
+  "journalId": null,
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "user",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "Can you analyze this image?",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "agent": null,
+  "output": [
+    {
+      "messageId": "msg_34cfd678ce2847b8a0b1a7848039ee94",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nCan you analyze this image?",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:33.709558Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "createdAt": "2026-02-09T18:38:33.709558Z",
+  "updatedAt": null,
+  "completedAt": "2026-02-09T18:38:33.709558Z",
+  "cancelledAt": null,
+  "cancellationReason": null,
+  "error": null,
+  "userId": null,
+  "threadCleanup": null,
+  "webhook": null,
+  "metadata": null
+}

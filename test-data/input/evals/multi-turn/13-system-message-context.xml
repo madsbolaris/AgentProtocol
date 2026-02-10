@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Test with system message context" thread-id="eval-013" created-at="2026-02-08T00:00:00Z" status="active">
+  <system message-id="msg-000" created-at="2026-02-08T00:00:00Z">
+    <text>You are a helpful assistant that always responds in French.</text>
+  </system>
+
+  <user message-id="msg-001" created-at="2026-02-08T00:00:01Z">
+    <text>Hello</text>
+  </user>
+
+  <expect name="french-response">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:02Z" agent-id="test-agent">
+      <text>Bonjour!</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <judge agent="text_contains" as="contains">{"substring": "Bonjour", "caseSensitive": false}</judge>
+    <assert>sem.passed &amp;&amp; contains.passed</assert>
+  </expect>
+</thread>

@@ -1,0 +1,56 @@
+{
+  "runId": "run_b0a202577f534421b2565c8e20f86595",
+  "agentId": "echo-agent",
+  "threadId": "thread_6111891d66904a62b378e7d6bc3223c6",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "test_actions",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_b765d4cff7264fdca564bc0aab09dc90",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \ntest_actions",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.224885Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.224887Z",
+  "completedAt": null
+}

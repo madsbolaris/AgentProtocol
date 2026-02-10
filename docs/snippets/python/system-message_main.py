@@ -1,10 +1,14 @@
-# Example: Creating a system message
-# This shows how to create system instruction messages
-
-# Simulated output for demonstration
-xml_output = """<?xml version="1.0" encoding="utf-8"?>
-<system>
-  <text>You are a helpful assistant.</text>
-</system>"""
-
-print(xml_output)
+# from microsoft.agents.xml.models import SystemMessage, TextContent
+# from microsoft.agents.xml.serialization import MessageSerializer
+#
+# # Create system message with instructions
+# message = SystemMessage(
+#     role="system",
+#     contents=[
+#         TextContent(text="You are a helpful assistant. Be concise and accurate.")
+#     ]
+# )
+#
+# serializer = MessageSerializer()
+# xml_output = serializer.serialize(message)
+# print(xml_output)

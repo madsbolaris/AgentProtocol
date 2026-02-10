@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Test translation capability" thread-id="eval-048" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>Translate to Spanish: The weather is beautiful today</text>
+  </user>
+
+  <expect name="spanish-translation">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>El clima está hermoso hoy</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <assert>sem.passed &amp;&amp; sem.score > 0.8</assert>
+  </expect>
+</thread>

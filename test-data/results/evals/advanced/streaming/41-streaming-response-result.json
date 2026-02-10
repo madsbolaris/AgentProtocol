@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-02-09T19:17:21.986515Z",
+  "content": {
+    "threadId": "eval-041",
+    "description": "Test streaming response handling",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "complete-story",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The actual output is a generic placeholder and shares no meaningful content with the reference, which describes a brave knight and adventures. There is no overlap in meaning or key information."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; sem.text.size() >= 50",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 3150
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 3150.0,
+    "timestamp": "2026-02-09T19:17:18.836435Z",
+    "totalDurationMs": 3150
+  },
+  "hash": "e522344788d6b1b88c8ad46ba9bb762f5e592d6140540cd7e986cd985a4c263a",
+  "metadata": {
+    "input_file": "41-streaming-response.xml",
+    "thread_id": "eval-041",
+    "description": "Test streaming response handling",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

@@ -2,7 +2,7 @@ using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Agents.Abstractions.Models;
+using Microsoft.Agents;
 using System.Linq;
 
 namespace Microsoft.Agents.Protocol.Client;
@@ -16,16 +16,22 @@ public class AgentProtocolClient : IDisposable
     private readonly HttpClient _httpClient;
     private readonly string _baseUrl;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly bool _enableLogging;
+    private readonly string _logDirectory;
 
     /// <summary>
     /// Creates a new Agent Protocol client.
     /// </summary>
     /// <param name="baseUrl">Base URL of the agent service (e.g., "http://localhost:5000")</param>
     /// <param name="httpClient">Optional HttpClient to use (will create one if not provided)</param>
-    public AgentProtocolClient(string baseUrl, HttpClient? httpClient = null)
+    /// <param name="enableLogging">Enable automatic conversation logging to XML files</param>
+    /// <param name="logDirectory">Directory path for saving conversation logs</param>
+    public AgentProtocolClient(string baseUrl, HttpClient? httpClient = null, bool enableLogging = false, string logDirectory = "logs/conversations")
     {
         _baseUrl = baseUrl.TrimEnd('/');
         _httpClient = httpClient ?? new HttpClient();
+        _enableLogging = enableLogging;
+        _logDirectory = logDirectory;
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -96,7 +102,8 @@ public class AgentProtocolClient : IDisposable
             {
                 currentEvent = new StreamEvent
                 {
-                    EventType = line.Substring(6).Trim()
+                    EventType = line.Substring(6).Trim(),
+                    JsonOptions = _jsonOptions
                 };
             }
             else if (line.StartsWith("data:"))
@@ -203,10 +210,9 @@ public class AgentProtocolClient : IDisposable
             AgentId = options?.AgentId,
             Input = new List<ChatMessage>
             {
-                new ChatMessage
+                new UserMessage
                 {
-                    Role = "user",
-                    Contents = new List<Content>
+                    Contents = new List<AIContent>
                     {
                         new TextContent { Text = message }
                     }
@@ -227,11 +233,11 @@ public class AgentProtocolClient : IDisposable
             return string.Empty;
 
         // Extract text from first assistant message
-        var assistantMessage = response.Output.FirstOrDefault(m => m.Role == "assistant");
+        var assistantMessage = response.Output.FirstOrDefault(m => m.Role == ChatRole.Agent);
         if (assistantMessage == null)
             return string.Empty;
 
-        var textContent = assistantMessage.Contents.OfType<TextContent>().FirstOrDefault();
+        var textContent = assistantMessage.Contents?.OfType<TextContent>().FirstOrDefault();
         return textContent?.Text ?? string.Empty;
     }
 
@@ -252,7 +258,7 @@ public class AgentProtocolClient : IDisposable
                 var messageData = evt.GetData<ChatMessage>();
                 if (messageData != null)
                 {
-                    var textContent = messageData.Contents.OfType<TextContent>().FirstOrDefault();
+                    var textContent = messageData.Contents?.OfType<TextContent>().FirstOrDefault();
                     if (textContent != null)
                     {
                         resultText.Clear();
@@ -294,10 +300,10 @@ public class AgentProtocolClient : IDisposable
         var response = await RunAsync(request, cancellationToken);
 
         if (response.Output == null || response.Output.Count == 0)
-            return new ChatMessage { Role = "assistant", Contents = new List<Content>() };
+            return new AgentMessage { Contents = new List<AIContent>() };
 
-        return response.Output.FirstOrDefault(m => m.Role == "assistant")
-            ?? new ChatMessage { Role = "assistant", Contents = new List<Content>() };
+        return response.Output.FirstOrDefault(m => m.Role == ChatRole.Agent)
+            ?? new AgentMessage { Contents = new List<AIContent>() };
     }
 
     /// <summary>
@@ -315,10 +321,9 @@ public class AgentProtocolClient : IDisposable
         {
             Input = new List<ChatMessage>
             {
-                new ChatMessage
+                new UserMessage
                 {
-                    Role = "user",
-                    Contents = new List<Content>
+                    Contents = new List<AIContent>
                     {
                         new TextContent { Text = message }
                     }
@@ -336,7 +341,7 @@ public class AgentProtocolClient : IDisposable
                 var messageData = evt.GetData<ChatMessage>();
                 if (messageData != null)
                 {
-                    var textContent = messageData.Contents.OfType<TextContent>().FirstOrDefault();
+                    var textContent = messageData.Contents?.OfType<TextContent>().FirstOrDefault();
                     if (textContent != null)
                     {
                         // Calculate new text since last update
@@ -358,7 +363,7 @@ public class AgentProtocolClient : IDisposable
     /// <returns>A conversation instance</returns>
     public IConversation CreateConversation()
     {
-        return new Conversation(this, null);
+        return new Conversation(this, null, _enableLogging, _logDirectory);
     }
 
     /// <summary>
@@ -368,7 +373,7 @@ public class AgentProtocolClient : IDisposable
     /// <returns>A conversation instance</returns>
     public IConversation ResumeConversation(string threadId)
     {
-        return new Conversation(this, threadId);
+        return new Conversation(this, threadId, _enableLogging, _logDirectory);
     }
 
     public void Dispose()
@@ -470,10 +475,25 @@ public class StreamEvent
     public JsonElement Data { get; set; }
 
     /// <summary>
+    /// JSON serializer options to use for deserialization
+    /// </summary>
+    internal JsonSerializerOptions? JsonOptions { get; set; }
+
+    /// <summary>
     /// Extracts typed data from the event.
     /// </summary>
     public T? GetData<T>()
     {
-        return JsonSerializer.Deserialize<T>(Data.GetRawText());
+        // Try deserializing with custom options first, fall back to default if it fails
+        // The default serializer should pick up JsonPolymorphic attributes automatically
+        try
+        {
+            return JsonSerializer.Deserialize<T>(Data.GetRawText(), JsonOptions);
+        }
+        catch (NotSupportedException)
+        {
+            // Fall back to default options which should handle polymorphic types
+            return JsonSerializer.Deserialize<T>(Data.GetRawText());
+        }
     }
 }

@@ -1,0 +1,65 @@
+{
+  "runId": "run_9d77e4d28ed844a69467307ad3536408",
+  "agentId": "echo-agent",
+  "threadId": "thread_323033af7aef48efb064c6b411e7c2fa",
+  "journalId": null,
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "Analyzing the situation...",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "agent": null,
+  "output": [
+    {
+      "messageId": "msg_520a2598c7184552a88d5c54b833abc1",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nAnalyzing the situation...",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:33.814639Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "createdAt": "2026-02-09T18:38:33.81464Z",
+  "updatedAt": null,
+  "completedAt": "2026-02-09T18:38:33.81464Z",
+  "cancelledAt": null,
+  "cancellationReason": null,
+  "error": null,
+  "userId": null,
+  "threadCleanup": null,
+  "webhook": null,
+  "metadata": null
+}

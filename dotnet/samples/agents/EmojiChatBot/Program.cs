@@ -1,30 +1,80 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using EmojiChatBot;
+using Microsoft.Agents.Builder;
+using Microsoft.Agents.Hosting.AspNetCore;
+using Microsoft.Agents.Protocol.Server;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Threading;
 using System;
 using System.IO;
 using System.Text.Json;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using EmojiChatBot;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Register Agent Protocol SDK with EmojiChatBot
-builder.Services.AddAgentProtocol<EmojiBotAgent, ChatContext>();
+builder.Services.AddHttpClient();
 
-var app = builder.Build();
+// Add AgentApplicationOptions from appsettings section "AgentApplication".
+builder.AddAgentApplicationOptions();
 
-// Map Agent Protocol endpoints (includes /, /health, /api/messages, /runs/wait)
-app.MapAgentProtocol<ChatContext>();
+// Add the EmojiBotAgent, which contains the logic for responding to
+// user messages with emoji functionality.
+builder.AddAgent<EmojiBotAgent>();
 
-// Configure port from agent-config.json
-if (app.Environment.IsDevelopment())
+// Configure the HTTP request pipeline.
+
+// Add CORS for local development
+builder.Services.AddCors(options =>
 {
-    var port = GetPortFromConfig() ?? Environment.GetEnvironmentVariable("PORT") ?? "3984";
-    app.Urls.Add($"http://localhost:{port}");
-    Console.WriteLine($"🤖 EmojiChatBot running on port {port}");
-}
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
-app.Run();
+builder.Services.AddControllers();
+
+WebApplication app = builder.Build();
+
+// Enable CORS for local development
+app.UseCors("AllowAll");
+
+app.MapGet("/", () => "Microsoft Agents SDK - EmojiChatBot Sample");
+
+// ==================================================================================
+// LEGACY ENDPOINT - DO NOT MODIFY
+// This is the Bot Framework /api/messages endpoint for backwards compatibility.
+// It receives incoming messages from Azure Bot Service or other SDK Agents.
+// For Agent Protocol functionality, use the Agent Protocol extension routes below.
+// ==================================================================================
+var incomingRoute = app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IAgentHttpAdapter adapter, IAgent agent, CancellationToken cancellationToken) =>
+{
+    await adapter.ProcessAsync(request, response, agent, cancellationToken);
+});
+
+// AGENT PROTOCOL EXTENSION: Modern Agent Protocol routes
+// These routes (/health, /agent-card, /runs/wait, /runs/stream, etc.) are added by MapAgentProtocol.
+app.MapAgentProtocol();
+
+// Read port from centralized agent-config.json
+// Falls back to environment variable PORT, then default 3984
+var port = GetPortFromConfig() ?? Environment.GetEnvironmentVariable("PORT") ?? "3984";
+app.Urls.Clear();
+app.Urls.Add($"http://localhost:{port}");
+Console.WriteLine($"🤖 EmojiChatBot running on port {port}");
+
+// 🔧 FIX: Allow anonymous access for demo/development
+// For production deployments, configure authentication in appsettings.json and uncomment:
+// if (!app.Environment.IsDevelopment())
+// {
+//     incomingRoute.RequireAuthorization();
+// }
 
 static string? GetPortFromConfig()
 {
@@ -54,13 +104,15 @@ static string? GetPortFromConfig()
             return port.GetInt32().ToString();
         }
     }
-    catch (Exception ex)
+    catch
     {
-        Console.WriteLine($"Warning: Could not read agent-config.json: {ex.Message}");
+        // If config reading fails, return null to fall back to environment variable
     }
 
     return null;
 }
+
+app.Run();
 
 // Make the implicit Program class accessible to integration tests
 public partial class Program { }

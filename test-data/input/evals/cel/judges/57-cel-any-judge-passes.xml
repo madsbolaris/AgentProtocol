@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="CEL Any Judge Passes - At least one succeeds" thread-id="eval-057" created-at="2026-02-09T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-09T00:00:00Z">
+    <text>Flexible answer format</text>
+  </user>
+
+  <expect name="test-any-passes">
+    <agent message-id="ref-001" created-at="2026-02-09T00:00:01Z" agent-id="test-agent">
+      <text>Response in any acceptable format</text>
+    </agent>
+    <judge agent="text_contains" as="format1" />
+    <judge agent="text_contains" as="format2" />
+    <judge agent="text_regex" as="format3" />
+    <!-- At least one judge must pass -->
+    <assert>format1.passed || format2.passed || format3.passed</assert>
+  </expect>
+
+  <expect name="test-any-high-score">
+    <agent message-id="ref-002" created-at="2026-02-09T00:00:02Z" agent-id="test-agent">
+      <text>Quality from any dimension</text>
+    </agent>
+    <judge agent="semantic_similarity" as="semantic" />
+    <judge agent="text_contains" as="keywords" />
+    <!-- At least one judge scores high -->
+    <assert>semantic.score >= 0.9 || keywords.score >= 0.9</assert>
+  </expect>
+</thread>

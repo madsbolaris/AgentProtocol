@@ -1,0 +1,65 @@
+{
+  "runId": "run_55474a87019c4ba380ca5485ae34c418",
+  "agentId": "echo-agent",
+  "threadId": "thread_b01eb4fc9055415dac3f653b502938f8",
+  "journalId": null,
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "user",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "Text with special characters: \u003C\u003E\u0026\u0022\u0027 and unicode: \u4F60\u597D \uD83C\uDF0D",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "agent": null,
+  "output": [
+    {
+      "messageId": "msg_67e6ebbbdcf14debb5b82fbdc5c0a322",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nText with special characters: \u003C\u003E\u0026\u0022\u0027 and unicode: \u4F60\u597D \uD83C\uDF0D",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:33.554323Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "createdAt": "2026-02-09T18:38:33.554335Z",
+  "updatedAt": null,
+  "completedAt": "2026-02-09T18:38:33.554335Z",
+  "cancelledAt": null,
+  "cancellationReason": null,
+  "error": null,
+  "userId": null,
+  "threadCleanup": null,
+  "webhook": null,
+  "metadata": null
+}

@@ -14,7 +14,37 @@ from lxml import etree
 
 class MockAgentApp:
     """Mock agent application for testing."""
-    pass
+
+    async def on_turn(self, turn_context):
+        """Handle agent turn - echo back input."""
+        # Echo the input as agent response
+        from microsoft_agents.activity import Activity, ActivityTypes
+
+        activity = turn_context.activity
+        text_content = "Hello from agent"
+
+        # Try to extract text from activity value if available
+        if hasattr(activity, 'value') and activity.value:
+            if 'message' in activity.value:
+                msg = activity.value['message']
+                if 'contents' in msg and msg['contents']:
+                    for content in msg['contents']:
+                        if content.get('kind') == 'text':
+                            text_content = f"Echo: {content.get('text', '')}"
+                            break
+
+        # Send response as properly formatted Activity
+        response_activity = Activity(
+            type=ActivityTypes.message,
+            text=text_content,
+            value={
+                "role": "assistant",
+                "contents": [
+                    {"kind": "text", "text": text_content}
+                ]
+            }
+        )
+        await turn_context.send_activity(response_activity)
 
 
 @pytest_asyncio.fixture

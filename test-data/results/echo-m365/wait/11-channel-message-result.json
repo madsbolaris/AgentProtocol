@@ -1,0 +1,56 @@
+{
+  "runId": "run_c23c7ef94972464abfafd897247c0c7b",
+  "agentId": "echo-agent",
+  "threadId": "thread_062da6e2cddf4b1ba7c31e1167d9cefa",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "channel",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "Thread started by Alice",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_4e71aa4074e44e63bf23968e0a97752b",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nThread started by Alice",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.10466Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.104661Z",
+  "completedAt": null
+}

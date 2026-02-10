@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-02-09T19:15:42.992686Z",
+  "content": {
+    "threadId": "eval-001",
+    "description": "Simple text expectation test",
+    "passed": true,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": true,
+        "expects": [
+          {
+            "name": "correct-answer",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "text_exact_match",
+                "as": "match",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "reason": "Exact match"
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "match.passed",
+                "passed": true,
+                "value": true
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 0
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 1,
+    "failedRuns": 0,
+    "totalAsserts": 1,
+    "passedAsserts": 1,
+    "failedAsserts": 0,
+    "avgDurationMs": 0.0,
+    "timestamp": "2026-02-09T19:15:42.991487Z",
+    "totalDurationMs": 0
+  },
+  "hash": "cef8c71cac4a8fa559fcf462b21317098d74265c1f234e7a7e435999e86c771a",
+  "metadata": {
+    "input_file": "01-simple-text-expect.xml",
+    "thread_id": "eval-001",
+    "description": "Simple text expectation test",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "runId": "run_6b544bb3889e4d6f865a7d138891e711",
+  "agentId": "echo-agent",
+  "threadId": "thread_1d261b682d4546a1acd636f428f9cbfc",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "Analyzing the situation...",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_ad8e8ad01c3245e0944df712b3266a6e",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nAnalyzing the situation...",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.219334Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.219335Z",
+  "completedAt": null
+}

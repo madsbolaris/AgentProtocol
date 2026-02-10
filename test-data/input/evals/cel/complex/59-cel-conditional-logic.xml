@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="CEL Conditional Logic - If-then-else patterns" thread-id="eval-059" created-at="2026-02-09T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-09T00:00:00Z">
+    <text>Conditional evaluation</text>
+  </user>
+
+  <expect name="test-if-high-then-strict">
+    <agent message-id="ref-001" created-at="2026-02-09T00:00:01Z" agent-id="test-agent">
+      <text>High quality needs strict checking</text>
+    </agent>
+    <judge agent="semantic_similarity" as="quality" />
+    <judge agent="text_contains" as="keywords" />
+    <!-- If quality is high, keywords must also pass -->
+    <assert>quality.score < 0.8 || (quality.score >= 0.8 && keywords.passed)</assert>
+  </expect>
+
+  <expect name="test-tiered-requirements">
+    <agent message-id="ref-002" created-at="2026-02-09T00:00:02Z" agent-id="test-agent">
+      <text>Different requirements per tier</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <judge agent="text_contains" as="basic" />
+    <judge agent="text_regex" as="advanced" />
+    <!-- Tiered: high quality needs basic, very high needs basic+advanced -->
+    <assert>sem.score < 0.7 || (sem.score >= 0.7 && basic.passed) || (sem.score >= 0.9 && basic.passed && advanced.passed)</assert>
+  </expect>
+
+  <expect name="test-either-or-requirement">
+    <agent message-id="ref-003" created-at="2026-02-09T00:00:03Z" agent-id="test-agent">
+      <text>Either path works</text>
+    </agent>
+    <judge agent="semantic_similarity" as="path1" />
+    <judge agent="text_contains" as="path2" />
+    <!-- Either path1 is excellent OR path2 passes -->
+    <assert>(path1.score >= 0.95) || (path2.passed && path1.score >= 0.5)</assert>
+  </expect>
+</thread>

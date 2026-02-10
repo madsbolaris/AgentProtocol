@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Test fact checking capability" thread-id="eval-037" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>Is it true that the Earth is flat?</text>
+  </user>
+
+  <expect name="fact-check">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>No, that is not true. The Earth is approximately spherical.</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <judge agent="text_contains" as="contains_no">{"substring": "No", "caseSensitive": false}</judge>
+    <judge agent="text_contains" as="contains_spherical">{"substring": "spherical", "caseSensitive": false}</judge>
+    <assert>sem.passed &amp;&amp; contains_no.passed &amp;&amp; contains_spherical.passed</assert>
+  </expect>
+</thread>

@@ -82,10 +82,6 @@ Generated
 site/
 .cache/
 
-# Test results - only shared/ folder should be used
-test-data/results/python/
-test-data/results/dotnet/
-
 # Claude Code files
 .claudeignore
 

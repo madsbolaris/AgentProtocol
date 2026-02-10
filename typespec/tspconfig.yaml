@@ -1,0 +1,3 @@
+# TypeSpec configuration for Agent Runtime API
+# Note: SDK generation happens via custom code generator (Microsoft.Agents.CodeGen)
+# Not using OpenAPI emit - types generated directly from TypeSpec

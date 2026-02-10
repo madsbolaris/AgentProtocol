@@ -7,6 +7,7 @@ using Microsoft.Agents.Protocol.Models.Execution;
 using Microsoft.Agents.Protocol.Models.Messages;
 using Microsoft.Agents.Protocol.Models.Threads;
 using Xunit;
+using XunitAssert = Xunit.Assert;
 
 namespace Microsoft.Agents.Client.Tests;
 

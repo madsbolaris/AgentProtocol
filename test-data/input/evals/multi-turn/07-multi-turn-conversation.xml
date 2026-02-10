@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Multi-turn conversation with context" thread-id="eval-007" created-at="2026-02-08T00:00:00Z" status="active">
+  <run maxSteps="10" />
+
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>My name is Alice</text>
+  </user>
+
+  <expect name="acknowledgment">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>Nice to meet you, Alice!</text>
+    </agent>
+    <judge agent="text_contains" as="contains">["Alice"]</judge>
+    <assert>contains.passed</assert>
+  </expect>
+
+  <user message-id="msg-002" created-at="2026-02-08T00:00:02Z">
+    <text>What's my name?</text>
+  </user>
+
+  <expect name="name-recall">
+    <agent message-id="ref-002" created-at="2026-02-08T00:00:03Z" agent-id="test-agent">
+      <text>Your name is Alice.</text>
+    </agent>
+    <judge agent="text_contains" as="contains">["Alice"]</judge>
+    <assert>contains.passed</assert>
+  </expect>
+</thread>

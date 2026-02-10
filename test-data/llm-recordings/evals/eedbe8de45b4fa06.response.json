@@ -1,0 +1,17 @@
+{
+  "callId": 26,
+  "timestamp": "2026-02-09T19:17:21.985353+00:00",
+  "hash": "eedbe8de45b4fa06",
+  "response": {
+    "id": "chatcmpl-D7R31LvarWY7xZ2dbKYML2nYivJYY",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664639,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The actual output is a generic placeholder and shares no meaningful content with the reference, which describes a brave knight and adventures. There is no overlap in meaning or key information.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

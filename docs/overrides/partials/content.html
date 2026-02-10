@@ -1,0 +1,22 @@
+<div class="dev-dot-content_root__UJDct">
+  <div class="docs-view_docsPageHeading___xkrK">
+    {% if not "\x3ch1" in page.content %}
+      <h1 class="mdx-headings_h1__6ezZ4 mdx-headings_heading__M6qPe hds-typography-display-500 hds-font-weight-bold">{{ page.title | d(config.site_name, true)}}</h1>
+    {% endif %}
+  </div>
+
+  <div class="g-type-body">
+    {{ page.content }}
+  </div>
+
+  {% if page.edit_url %}
+    <div class="edit-on-github-link_editLink__AsG8Z">
+      <a href="{{ page.edit_url }}" class="inline-link_root__iIql6 inline-link_primary__kGJLJ g-focus-ring-from-box-shadow">
+        <svg class="edit-on-github-link_editLinkIcon__wMtY9" viewBox="0 0 24 24" width="16" height="16">
+          <path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/>
+        </svg>
+        <span class="text_root__r0DFB hds-typography-body-200">Edit this page</span>
+      </a>
+    </div>
+  {% endif %}
+</div>

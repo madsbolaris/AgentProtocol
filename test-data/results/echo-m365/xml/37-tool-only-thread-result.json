@@ -1,0 +1,65 @@
+{
+  "runId": "run_09c00355934b4051a6612455909c59b6",
+  "agentId": "echo-agent",
+  "threadId": "thread_5e9af50f994a4c9caff2bca8c0b98418",
+  "journalId": null,
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "tool",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "[Function result: \n      {\u0022status\u0022: \u0022success\u0022, \u0022data\u0022: [1, 2, 3]}\n    ]",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "agent": null,
+  "output": [
+    {
+      "messageId": "msg_c05ec9b4f1ac4271aa2e296d05a78c08",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \n[Function result: \n      {\u0022status\u0022: \u0022success\u0022, \u0022data\u0022: [1, 2, 3]}\n    ]",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:33.837668Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "createdAt": "2026-02-09T18:38:33.837669Z",
+  "updatedAt": null,
+  "completedAt": "2026-02-09T18:38:33.837669Z",
+  "cancelledAt": null,
+  "cancellationReason": null,
+  "error": null,
+  "userId": null,
+  "threadCleanup": null,
+  "webhook": null,
+  "metadata": null
+}

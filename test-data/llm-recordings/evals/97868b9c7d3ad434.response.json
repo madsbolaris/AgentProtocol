@@ -1,0 +1,17 @@
+{
+  "callId": 24,
+  "timestamp": "2026-02-09T19:17:13.405558+00:00",
+  "hash": "97868b9c7d3ad434",
+  "response": {
+    "id": "chatcmpl-D7R2t2ilYgYnt1j7wjrp6PYY62WOE",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664631,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.1,\n  \"reasoning\": \"The reference asks a disambiguation question about 'Apple' (fruit vs. company), while the actual output is a generic placeholder statement unrelated to the question. They do not convey the same meaning or address the same issue.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

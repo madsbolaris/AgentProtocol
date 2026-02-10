@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Test streaming response handling" thread-id="eval-041" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>Write a short story</text>
+  </user>
+
+  <expect name="complete-story">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>Once upon a time, in a land far away, there lived a brave knight who went on adventures.</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <assert>sem.passed &amp;&amp; sem.text.size() >= 50</assert>
+  </expect>
+</thread>

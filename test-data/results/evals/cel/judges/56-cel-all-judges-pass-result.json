@@ -1,0 +1,118 @@
+{
+  "timestamp": "2026-02-09T19:18:39.949811Z",
+  "content": {
+    "threadId": "eval-056",
+    "description": "CEL All Judges Pass - Require all to succeed",
+    "passed": true,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": true,
+        "expects": [
+          {
+            "name": "test-all-must-pass",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "keywords",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "semantic_similarity",
+                "as": "quality",
+                "passed": false,
+                "score": 0.15,
+                "details": {
+                  "similarity_score": 0.15,
+                  "llm_reasoning": "The reference emphasizes attributes like keywords, quality, and proper format of an answer, while the actual output is a generic statement ('This is a mock agent response.') and does not reflect those criteria."
+                }
+              },
+              {
+                "agent": "text_regex",
+                "as": "format",
+                "passed": false,
+                "score": 0.0,
+                "details": {}
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "keywords.passed && quality.passed && format.passed",
+                "passed": true,
+                "value": true
+              }
+            ]
+          },
+          {
+            "name": "test-all-with-scores",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "j1",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "semantic_similarity",
+                "as": "j2",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference conveys a high-quality, comprehensive response, while the actual output claims to be a mock agent response. They differ in meaning and content, and do not answer the same premise."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "j3",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "j1.passed && j2.passed && j3.passed && j1.score >= 0.8 && j2.score >= 0.8 && j3.score >= 0.8",
+                "passed": true,
+                "value": true
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 9547
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 1,
+    "failedRuns": 0,
+    "totalAsserts": 2,
+    "passedAsserts": 2,
+    "failedAsserts": 0,
+    "avgDurationMs": 9547.0,
+    "timestamp": "2026-02-09T19:18:30.402463Z",
+    "totalDurationMs": 9547
+  },
+  "hash": "ad736ad64393fbde605f90846457f8bb521f52491fe46e74b955688568607555",
+  "metadata": {
+    "input_file": "56-cel-all-judges-pass.xml",
+    "thread_id": "eval-056",
+    "description": "CEL All Judges Pass - Require all to succeed",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

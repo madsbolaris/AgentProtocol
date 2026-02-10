@@ -1,9 +1,17 @@
-# Example: Basic XML serialization
-# Simulated Python implementation
-
-xml_output = """<?xml version="1.0" encoding="utf-8"?>
-<message role="user" messageId="msg-001">
-  <text>Hello, how can you help me today?</text>
-</message>"""
-
-print(xml_output)
+# from microsoft.agents.xml import MessageSerializer
+# from microsoft.agents.xml.models import ChatMessage, TextContent
+#
+# # Create a simple text message
+# message = ChatMessage(
+#     role="user",
+#     message_id="msg-001",
+#     contents=[
+#         TextContent(text="Hello, how can you help me today?")
+#     ]
+# )
+#
+# # Serialize to XML
+# serializer = MessageSerializer()
+# xml_output = serializer.serialize(message)
+#
+# print(xml_output)

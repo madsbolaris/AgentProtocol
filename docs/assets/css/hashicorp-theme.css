@@ -1,0 +1,473 @@
+/* ============================================================================
+   HASHICORP COMPLETE THEME
+   Extracted from https://developer.hashicorp.com
+   ============================================================================ */
+
+/* ===== GLOBAL VARIABLES & COLORS ===== */
+:root {
+  /* HashiCorp Design System Colors */
+  --mds-color-foreground-action: #1060ff;
+  --mds-color-foreground-action-hover: #0c56e9;
+  --mds-color-foreground-action-active: #0046d1;
+  --mds-color-surface-action: #f2f8ff;
+  --mds-color-foreground-faint: #656a76;
+  --mds-color-foreground-strong: #3b3d45;
+  --mds-color-foreground-primary: #3b3d45;
+  --mds-color-foreground-disabled: #8c909c;
+  --mds-color-foreground-high-contrast: #0c0c0e;
+
+  /* Surfaces */
+  --mds-color-surface-primary: #fff;
+  --mds-color-surface-faint: #fafafa;
+  --mds-color-surface-strong: #f1f2f3;
+
+  /* Borders */
+  --mds-color-border-primary: rgba(101, 106, 118, 0.2);
+  --mds-color-border-strong: rgba(59, 61, 69, 0.4);
+  --mds-color-border-faint: rgba(101, 106, 118, 0.1);
+
+  /* Page */
+  --mds-color-page-primary: #fff;
+  --mds-color-page-faint: #fafafa;
+
+  /* Palette */
+  --mds-color-palette-neutral-0: #fff;
+  --mds-color-palette-neutral-50: #fafafa;
+  --mds-color-palette-neutral-100: #f1f2f3;
+  --mds-color-palette-neutral-200: #dedfe3;
+  --mds-color-palette-neutral-300: #c2c5cb;
+  --mds-color-palette-neutral-400: #8c909c;
+  --mds-color-palette-neutral-500: #656a76;
+  --mds-color-palette-neutral-600: #3b3d45;
+  --mds-color-palette-neutral-700: #0c0c0e;
+
+  --mds-color-palette-blue-50: #f2f8ff;
+  --mds-color-palette-blue-100: #cce3fe;
+  --mds-color-palette-blue-200: #1060ff;
+  --mds-color-palette-blue-300: #0c56e9;
+  --mds-color-palette-blue-400: #0046d1;
+
+  /* Typography */
+  --token-typography-font-weight-regular: 400;
+  --token-typography-font-weight-medium: 500;
+  --token-typography-font-weight-semibold: 600;
+
+  /* Code blocks - dark theme */
+  --code-block-color-blue: #2d8eff;
+  --code-block-color-cyan: #32fff7;
+  --code-block-color-green: #86ff13;
+  --code-block-color-orange: #ffa800;
+  --code-block-color-purple: #c76cff;
+  --code-block-color-red: #ff3b20;
+  --code-block-color-keyword: #86ff13;
+  --code-block-color-string: #ffa800;
+  --code-block-color-function: #2d8eff;
+  --code-block-color-comment: #b2b6bd;
+  --code-block-color-foreground-primary: #d5d7db;
+  --code-block-color-foreground-faint: #b2b6bd;
+  --code-block-color-surface-primary: #0d0e12;
+  --code-block-color-surface-faint: #15181e;
+  --code-block-color-border-strong: rgba(181, 186, 189, 0.4);
+  --code-block-code-padding: 16px;
+
+  /* Layout */
+  --navigation-header-height: 68px;
+  --sidebar-width: 320px;
+}
+
+/* ===== GLOBAL TYPOGRAPHY ===== */
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: var(--token-typography-font-weight-regular);
+  line-height: 1.625;
+  color: var(--mds-color-foreground-primary);
+  background-color: var(--mds-color-page-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== NAVIGATION HEADER ===== */
+.md-header {
+  background-color: var(--mds-color-surface-faint);
+  box-shadow: none;
+  border-bottom: 1px solid var(--mds-color-border-primary);
+  min-height: var(--navigation-header-height);
+  padding: 14px 24px;
+}
+
+.md-header__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 100%;
+}
+
+.md-header__button {
+  background-color: transparent;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  color: var(--mds-color-foreground-strong);
+  padding: 5px;
+}
+
+.md-header__button:hover {
+  border: 1px solid var(--mds-color-border-strong);
+}
+
+/* ===== SIDEBAR / LEFT NAVIGATION ===== */
+.md-sidebar--primary {
+  background-color: var(--mds-color-surface-primary);
+  border-right: 1px solid var(--mds-color-border-primary);
+  width: var(--sidebar-width);
+}
+
+.md-sidebar__scrollwrap {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Sidebar navigation links - HashiCorp style */
+.md-nav__link {
+  align-items: center;
+  background-color: var(--mds-color-surface-primary);
+  border-radius: 5px;
+  border: none;
+  color: var(--mds-color-foreground-faint);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+  padding: 8px;
+  position: relative;
+  width: 100%;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: var(--token-typography-font-weight-regular);
+}
+
+.md-nav__link:hover,
+.md-nav__link:focus {
+  color: var(--mds-color-foreground-strong);
+  background-color: var(--mds-color-palette-neutral-100);
+  text-decoration: none;
+}
+
+.md-nav__link--active,
+.md-nav__link[data-md-state="active"] {
+  color: var(--mds-color-foreground-strong);
+  background-color: var(--mds-color-palette-neutral-200);
+  font-weight: var(--token-typography-font-weight-medium);
+}
+
+/* ===== MAIN CONTENT / ARTICLE ===== */
+.md-content {
+  background-color: var(--mds-color-page-primary);
+}
+
+.md-typeset {
+  font-size: 1rem;
+  line-height: 1.625;
+  color: var(--mds-color-foreground-primary);
+}
+
+.md-typeset h1 {
+  font-size: 2rem;
+  font-weight: var(--token-typography-font-weight-semibold);
+  line-height: 1.25;
+  margin: 0 0 1.5rem;
+  color: var(--mds-color-foreground-strong);
+}
+
+.md-typeset h2 {
+  font-size: 1.5rem;
+  font-weight: var(--token-typography-font-weight-semibold);
+  line-height: 1.3;
+  margin: 2rem 0 1rem;
+  color: var(--mds-color-foreground-strong);
+}
+
+.md-typeset h3 {
+  font-size: 1.25rem;
+  font-weight: var(--token-typography-font-weight-semibold);
+  line-height: 1.4;
+  margin: 1.5rem 0 0.75rem;
+  color: var(--mds-color-foreground-strong);
+}
+
+.md-typeset h4 {
+  font-size: 1.125rem;
+  font-weight: var(--token-typography-font-weight-semibold);
+  line-height: 1.4;
+  margin: 1.25rem 0 0.5rem;
+  color: var(--mds-color-foreground-strong);
+}
+
+.md-typeset p {
+  margin: 0 0 1rem;
+  line-height: 1.625;
+}
+
+.md-typeset a {
+  color: var(--mds-color-foreground-action);
+  text-decoration: none;
+}
+
+.md-typeset a:hover {
+  color: var(--mds-color-foreground-action-hover);
+  text-decoration: underline;
+}
+
+.md-typeset a:active {
+  color: var(--mds-color-foreground-action-active);
+}
+
+.md-typeset ul,
+.md-typeset ol {
+  margin: 0 0 1rem;
+  padding-left: 1.5rem;
+}
+
+.md-typeset li {
+  margin: 0.25rem 0;
+}
+
+/* ===== CODE BLOCKS (GENERAL) ===== */
+.md-typeset code {
+  background-color: var(--code-block-color-surface-primary);
+  color: var(--code-block-color-foreground-primary);
+  padding: 0.125rem 0.25rem;
+  border-radius: 3px;
+  font-family: "SF Mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 0.8125rem;
+}
+
+.md-typeset pre {
+  position: relative;
+  background-color: var(--code-block-color-surface-primary);
+  color: var(--code-block-color-foreground-primary);
+  border: 1px solid var(--code-block-color-border-strong);
+  border-radius: 5px;
+  padding: var(--code-block-code-padding);
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.md-typeset pre code {
+  background: none;
+  padding: 0;
+  line-height: 1.4286;
+  white-space: pre;
+  text-align: left;
+  word-wrap: normal;
+  word-break: normal;
+  word-spacing: normal;
+  tab-size: 4;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+
+/* Syntax highlighting - HashiCorp colors */
+.md-typeset .highlight .k,
+.md-typeset .highlight .kd,
+.md-typeset .highlight .kn {
+  color: var(--code-block-color-keyword);
+}
+
+.md-typeset .highlight .s,
+.md-typeset .highlight .s1,
+.md-typeset .highlight .s2 {
+  color: var(--code-block-color-string);
+}
+
+.md-typeset .highlight .nf,
+.md-typeset .highlight .fm {
+  color: var(--code-block-color-function);
+}
+
+.md-typeset .highlight .c,
+.md-typeset .highlight .c1,
+.md-typeset .highlight .cm {
+  color: var(--code-block-color-comment);
+}
+
+.md-typeset .highlight .mi,
+.md-typeset .highlight .mf {
+  color: var(--code-block-color-purple);
+}
+
+.md-typeset .highlight .o,
+.md-typeset .highlight .ow {
+  color: var(--code-block-color-cyan);
+}
+
+/* ===== TABLE OF CONTENTS (RIGHT SIDEBAR) ===== */
+.md-sidebar--secondary {
+  background-color: var(--mds-color-surface-primary);
+}
+
+.md-nav--secondary .md-nav__link {
+  color: var(--mds-color-foreground-faint);
+  font-size: 0.8125rem;
+  padding: 0.25rem 0;
+  margin: 0;
+  background: none;
+}
+
+.md-nav--secondary .md-nav__link:hover {
+  color: var(--mds-color-foreground-action);
+  background: none;
+}
+
+.md-nav--secondary .md-nav__link--active {
+  color: var(--mds-color-foreground-action);
+  font-weight: var(--token-typography-font-weight-medium);
+  background: none;
+}
+
+/* ===== FOOTER ===== */
+.md-footer {
+  background-color: var(--mds-color-surface-faint);
+  border-top: 1px solid var(--mds-color-border-primary);
+  color: var(--mds-color-foreground-primary);
+}
+
+.md-footer-meta {
+  background-color: var(--mds-color-surface-faint);
+}
+
+/* ===== ADMONITIONS ===== */
+.md-typeset .admonition {
+  border-left: 4px solid var(--mds-color-border-primary);
+  border-radius: 5px;
+  background-color: var(--mds-color-surface-faint);
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.md-typeset .admonition-title {
+  font-weight: var(--token-typography-font-weight-semibold);
+  margin: 0 0 0.5rem;
+  color: var(--mds-color-foreground-strong);
+}
+
+/* ===== TABLES ===== */
+.md-typeset table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  border: 1px solid var(--mds-color-border-primary);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.md-typeset th {
+  background-color: var(--mds-color-surface-faint);
+  color: var(--mds-color-foreground-strong);
+  font-weight: var(--token-typography-font-weight-semibold);
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--mds-color-border-primary);
+}
+
+.md-typeset td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--mds-color-border-faint);
+  color: var(--mds-color-foreground-primary);
+}
+
+.md-typeset tr:last-child td {
+  border-bottom: none;
+}
+
+.md-typeset tr:nth-child(even) {
+  background-color: var(--mds-color-surface-faint);
+}
+
+/* ===== BUTTONS ===== */
+.md-button {
+  background-color: transparent;
+  border: 1px solid var(--mds-color-border-strong);
+  border-radius: 5px;
+  color: var(--mds-color-foreground-strong);
+  padding: 8px 16px;
+  font-weight: var(--token-typography-font-weight-medium);
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.md-button:hover {
+  border-color: var(--mds-color-foreground-action);
+  color: var(--mds-color-foreground-action);
+  background-color: var(--mds-color-surface-action);
+}
+
+.md-button--primary {
+  background-color: var(--mds-color-foreground-action);
+  color: #fff;
+  border-color: var(--mds-color-foreground-action);
+}
+
+.md-button--primary:hover {
+  background-color: var(--mds-color-foreground-action-hover);
+  border-color: var(--mds-color-foreground-action-hover);
+}
+
+/* ===== SEARCH ===== */
+.md-search__input {
+  background-color: var(--mds-color-surface-primary);
+  border: 1px solid var(--mds-color-border-primary);
+  border-radius: 5px;
+  color: var(--mds-color-foreground-primary);
+  padding: 8px 12px;
+}
+
+.md-search__input:focus {
+  border-color: var(--mds-color-foreground-action);
+}
+
+/* ===== HORIZONTAL RULES ===== */
+.md-typeset hr {
+  background-color: var(--mds-color-border-primary);
+  border: none;
+  height: 1px;
+  margin: 2rem 0;
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--mds-color-palette-neutral-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--mds-color-palette-neutral-400);
+}
+
+/* ===== RESPONSIVE / MOBILE ===== */
+@media screen and (max-width: 76.1875em) {
+  :root {
+    --sidebar-width: 280px;
+  }
+}
+
+@media screen and (max-width: 60em) {
+  :root {
+    --sidebar-width: 100%;
+    --navigation-header-height: 60px;
+  }
+
+  .md-header {
+    padding: 10px 16px;
+  }
+}

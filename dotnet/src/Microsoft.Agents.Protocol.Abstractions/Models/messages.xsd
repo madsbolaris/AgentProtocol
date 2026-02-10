@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.agent.ai/messages/v1" elementFormDefault="qualified" targetNamespace="http://schemas.agent.ai/messages/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ThreadBase">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="metadata" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="thread-id" type="xs:string" use="required" />
+    <xs:attribute name="status" type="xs:string" use="optional" />
+    <xs:attribute name="created-at" type="xs:dateTime" use="required" />
+  </xs:complexType>
+  <xs:complexType name="Thread">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="channel-info" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="participants" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="messages" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="last-message-at" type="xs:dateTime" use="optional" />
+    <xs:attribute name="last-activity-at" type="xs:dateTime" use="optional" />
+    <xs:attribute name="unread-count" type="xs:int" use="optional" />
+  </xs:complexType>
+  <xs:element name="thread" type="tns:Thread" />
+  <xs:complexType name="ThreadCopyRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="include-history" type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" name="metadata" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ChannelInfo">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="channel-id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="external-conversation-id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="external-tenant-id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="service-url" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="metadata" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ThreadWatch">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="watch-id" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="thread-id" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="agent-id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="active" type="xs:boolean" />
+      <xs:element minOccurs="1" maxOccurs="1" name="created-at" type="xs:dateTime" />
+      <xs:element minOccurs="0" maxOccurs="1" name="last-activated-at" type="xs:dateTime" />
+      <xs:element minOccurs="0" maxOccurs="1" name="activation-count" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" name="metadata" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="ThreadStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="active" />
+      <xs:enumeration value="closed" />
+      <xs:enumeration value="archived" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ThreadCleanup">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="keep" />
+      <xs:enumeration value="delete" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

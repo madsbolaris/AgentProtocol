@@ -1,0 +1,65 @@
+{
+  "runId": "run_bda04c1fc6f445a0ae3eb61ba753b309",
+  "agentId": "echo-agent",
+  "threadId": "thread_0e648e859390420bb252be932cc6bcf7",
+  "journalId": null,
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "tool",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "{\u0022results\u0022: [{\u0022id\u0022: 123, \u0022name\u0022: \u0022Example Record\u0022}], \u0022count\u0022: 1}",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "agent": null,
+  "output": [
+    {
+      "messageId": "msg_0df87c031a674590aabe49a96a3545a8",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \n{\u0022results\u0022: [{\u0022id\u0022: 123, \u0022name\u0022: \u0022Example Record\u0022}], \u0022count\u0022: 1}",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:33.488999Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "createdAt": "2026-02-09T18:38:33.489001Z",
+  "updatedAt": null,
+  "completedAt": "2026-02-09T18:38:33.489001Z",
+  "cancelledAt": null,
+  "cancellationReason": null,
+  "error": null,
+  "userId": null,
+  "threadCleanup": null,
+  "webhook": null,
+  "metadata": null
+}

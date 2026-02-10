@@ -1,0 +1,32 @@
+{
+  "runId": "run_1h8ybfjc2nx",
+  "agentId": "echo-agent",
+  "threadId": "thread_5ngwmrwxv9e",
+  "status": "completed",
+  "input": [
+    {
+      "messageId": "msg_6wv3f0vmqvq",
+      "role": "system",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You are a helpful AI assistant with access to various tools and capabilities."
+        }
+      ]
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_7afvmpz01xo",
+      "role": "agent",
+      "createdAt": "2026-02-09T18:38:53.124Z",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nYou are a helpful AI assistant with access to various tools and capabilities."
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-09T18:38:53.124Z"
+}

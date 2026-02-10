@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Test structured data extraction" thread-id="eval-044" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>Extract name, email, and phone from: John Doe, john@example.com, 555-1234</text>
+  </user>
+
+  <expect name="extracted-data">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>{"name": "John Doe", "email": "john@example.com", "phone": "555-1234"}</text>
+    </agent>
+    <judge agent="text_contains" as="contains_name">{"substring": "John Doe", "caseSensitive": false}</judge>
+    <judge agent="text_contains" as="contains_email">{"substring": "john@example.com", "caseSensitive": false}</judge>
+    <assert>contains_name.passed &amp;&amp; contains_email.passed</assert>
+  </expect>
+</thread>

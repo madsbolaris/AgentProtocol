@@ -1,0 +1,56 @@
+{
+  "runId": "run_3aba7de98d0a4dcbb5362a4f8f510552",
+  "agentId": "echo-agent",
+  "threadId": "thread_c7cffff744944c3b89fb28b1754e40a0",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "system",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You are a helpful AI assistant.",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_6c321dc480fa4f529a47f670d9ab091c",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nYou are a helpful AI assistant.",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.15932Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.159322Z",
+  "completedAt": null
+}

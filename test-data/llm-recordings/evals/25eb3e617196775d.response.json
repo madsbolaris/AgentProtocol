@@ -1,0 +1,17 @@
+{
+  "callId": 30,
+  "timestamp": "2026-02-09T19:17:36.843184+00:00",
+  "hash": "25eb3e617196775d",
+  "response": {
+    "id": "chatcmpl-D7R3G69rjAB371XbAbZFLzR2cluGV",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664654,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The reference lists specific information about a person and a place (Steve Jobs; Cupertino, California). The actual output is a generic mock statement with no such content, thus it does not convey the same meaning or answer the same prompt.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

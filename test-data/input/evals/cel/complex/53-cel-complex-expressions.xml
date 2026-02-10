@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="CEL Complex Expressions - Nested conditions" thread-id="eval-053" created-at="2026-02-09T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-09T00:00:00Z">
+    <text>Explain quantum computing</text>
+  </user>
+
+  <expect name="test-nested-and-or">
+    <agent message-id="ref-001" created-at="2026-02-09T00:00:01Z" agent-id="test-agent">
+      <text>Quantum computing uses qubits and superposition to perform calculations</text>
+    </agent>
+    <judge agent="text_contains" as="has_quantum" />
+    <judge agent="text_contains" as="has_qubit" />
+    <judge agent="text_contains" as="has_superposition" />
+    <judge agent="semantic_similarity" as="quality" />
+    <!-- Test (A && B) || (C && D) -->
+    <assert>(has_quantum.passed && has_qubit.passed) || (has_superposition.passed && quality.score > 0.8)</assert>
+  </expect>
+
+  <expect name="test-multiple-conditions">
+    <agent message-id="ref-002" created-at="2026-02-09T00:00:02Z" agent-id="test-agent">
+      <text>Comprehensive answer with technical details</text>
+    </agent>
+    <judge agent="text_contains" as="technical" />
+    <judge agent="semantic_similarity" as="sem" />
+    <judge agent="text_regex" as="pattern" />
+    <!-- Test A && B && (C || D) -->
+    <assert>technical.passed && sem.score >= 0.7 && (pattern.passed || sem.score >= 0.9)</assert>
+  </expect>
+
+  <expect name="test-parentheses-grouping">
+    <agent message-id="ref-003" created-at="2026-02-09T00:00:03Z" agent-id="test-agent">
+      <text>Result</text>
+    </agent>
+    <judge agent="text_contains" as="a" />
+    <judge agent="text_contains" as="b" />
+    <judge agent="text_contains" as="c" />
+    <!-- Test !(A && B) || C -->
+    <assert>!(a.passed && b.passed) || c.passed</assert>
+  </expect>
+</thread>

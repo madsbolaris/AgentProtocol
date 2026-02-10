@@ -1,17 +1,10 @@
-using Microsoft.Agents.Xml.Generated.Models;
-using Microsoft.Agents.Xml.Serialization;
-using System.Linq;
+// using Microsoft.Agents.Xml.Generated.Models;
 
-// Create conversation thread
-var thread = new List<object>
-{
-    new SystemMessage { Contents = new List<AIContentBase> { new TextContent { Text = "You are a helpful assistant." } } },
-    new ChatMessage { Role = "user", Contents = new List<AIContentBase> { new TextContent { Text = "Hello!" } } },
-    new AgentMessage { Contents = new List<AIContentBase> { new TextContent { Text = "Hi! How can I help?" } } }
-};
+// Validate required properties
+var content = new TextContent { Text = "Hello, world!" };
 
-// Serialize thread
-var serializer = new MessageSerializer();
-var threadXml = thread.Select(msg => serializer.Serialize(msg)).ToList();
+Assert.NotNull(content.Text); // Text content must have text
+Assert.True(content.Text.Length > 0); // Text cannot be empty
+Assert.Equal("text", content.Kind); // Kind must match content type
 
-Console.WriteLine($"Thread length: {threadXml.Count} messages");
+Console.WriteLine($"✓ Content validated: {content.Text}");

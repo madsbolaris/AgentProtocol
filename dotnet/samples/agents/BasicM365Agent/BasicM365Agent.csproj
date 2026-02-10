@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../../../src/Microsoft.Agents.Protocol.Client/Microsoft.Agents.Protocol.Client.csproj" />
     <ProjectReference Include="../../../src/Microsoft.Agents.Protocol/Microsoft.Agents.Protocol.csproj" />
   </ItemGroup>
 

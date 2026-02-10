@@ -1,17 +1,17 @@
-using Microsoft.Agents.Xml.Generated.Models;
-using Microsoft.Agents.Xml.Serialization;
-using System.Linq;
+// using Microsoft.Agents.Xml.Generated.Models;
+// using Microsoft.Agents.Protocol.Xml;
+// using System.Linq;
 
-// Create conversation thread
-var thread = new List<object>
+// Create batch of messages
+var messages = new List<ChatMessage>
 {
-    new SystemMessage { Contents = new List<AIContentBase> { new TextContent { Text = "You are a helpful assistant." } } },
-    new ChatMessage { Role = "user", Contents = new List<AIContentBase> { new TextContent { Text = "Hello!" } } },
-    new AgentMessage { Contents = new List<AIContentBase> { new TextContent { Text = "Hi! How can I help?" } } }
+    new UserMessage { Contents = new List<AIContent> { new TextContent { Text = "Message 1" } } },
+    new UserMessage { Contents = new List<AIContent> { new TextContent { Text = "Message 2" } } },
+    new UserMessage { Contents = new List<AIContent> { new TextContent { Text = "Message 3" } } }
 };
 
-// Serialize thread
+// Process batch
 var serializer = new MessageSerializer();
-var threadXml = thread.Select(msg => serializer.Serialize(msg)).ToList();
+var xmlOutputs = messages.Select(msg => serializer.Serialize(msg)).ToList();
 
-Console.WriteLine($"Thread length: {threadXml.Count} messages");
+Console.WriteLine($"Processed {xmlOutputs.Count} messages");

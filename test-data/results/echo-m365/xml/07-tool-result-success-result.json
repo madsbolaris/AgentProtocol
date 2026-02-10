@@ -1,0 +1,65 @@
+{
+  "runId": "run_fae647efb90b43729f61994ea0ff896d",
+  "agentId": "echo-agent",
+  "threadId": "thread_404353958fad4bd08979c903c84fc74e",
+  "journalId": null,
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "tool",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "[Function result: \n    {\u0022temperature\u0022: 52, \u0022conditions\u0022: \u0022cloudy\u0022, \u0022humidity\u0022: 75, \u0022wind_speed\u0022: 8, \u0022forecast\u0022: [{\u0022day\u0022: \u0022tomorrow\u0022, \u0022high\u0022: 55, \u0022low\u0022: 48}]}\n  ]",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "agent": null,
+  "output": [
+    {
+      "messageId": "msg_1466e5775a9e47188f674f6248a0cec2",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \n[Function result: \n    {\u0022temperature\u0022: 52, \u0022conditions\u0022: \u0022cloudy\u0022, \u0022humidity\u0022: 75, \u0022wind_speed\u0022: 8, \u0022forecast\u0022: [{\u0022day\u0022: \u0022tomorrow\u0022, \u0022high\u0022: 55, \u0022low\u0022: 48}]}\n  ]",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:33.480744Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "createdAt": "2026-02-09T18:38:33.480745Z",
+  "updatedAt": null,
+  "completedAt": "2026-02-09T18:38:33.480745Z",
+  "cancelledAt": null,
+  "cancellationReason": null,
+  "error": null,
+  "userId": null,
+  "threadCleanup": null,
+  "webhook": null,
+  "metadata": null
+}

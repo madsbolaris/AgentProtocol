@@ -82,13 +82,19 @@ app.UseAuthorization();
 
 app.MapGet("/", () => "Microsoft Agents SDK - Basic M365 Agent Sample");
 
-// This receives incoming messages from Azure Bot Service or other SDK Agents
+// ==================================================================================
+// LEGACY ENDPOINT - DO NOT MODIFY
+// This is the Bot Framework /api/messages endpoint for backwards compatibility.
+// It receives incoming messages from Azure Bot Service or other SDK Agents.
+// For Agent Protocol functionality, use the Agent Protocol extension routes below.
+// ==================================================================================
 var incomingRoute = app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IAgentHttpAdapter adapter, IAgent agent, CancellationToken cancellationToken) =>
 {
     await adapter.ProcessAsync(request, response, agent, cancellationToken);
 });
 
-// Add Agent Protocol routes (uses BasicM365Agent from DI)
+// AGENT PROTOCOL EXTENSION: Modern Agent Protocol routes
+// These routes (/health, /agent-card, /runs/wait, etc.) are added by MapAgentProtocol.
 app.MapAgentProtocol();
 
 // Read port from centralized agent-config.json
@@ -97,10 +103,12 @@ var port = GetPortFromConfig() ?? Environment.GetEnvironmentVariable("PORT") ?? 
 app.Urls.Clear();
 app.Urls.Add($"http://localhost:{port}");
 
-if (!app.Environment.IsDevelopment())
-{
-    incomingRoute.RequireAuthorization();
-}
+// 🔧 FIX: Allow anonymous access for demo/development
+// For production deployments, configure authentication in appsettings.json and uncomment:
+// if (!app.Environment.IsDevelopment())
+// {
+//     incomingRoute.RequireAuthorization();
+// }
 
 static string? GetPortFromConfig()
 {

@@ -1,0 +1,56 @@
+{
+  "runId": "run_06a8a30fb44247d3bd4f875239898073",
+  "agentId": "echo-agent",
+  "threadId": "thread_7ec16afb7ad742919544b8e692f3d2ed",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "tool",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "[Function result: \n      {\u0022status\u0022: \u0022success\u0022, \u0022data\u0022: [1, 2, 3]}\n    ]",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_50f3b4ee2c0841669f5b5170d80f1a13",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \n[Function result: \n      {\u0022status\u0022: \u0022success\u0022, \u0022data\u0022: [1, 2, 3]}\n    ]",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.230216Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.230219Z",
+  "completedAt": null
+}

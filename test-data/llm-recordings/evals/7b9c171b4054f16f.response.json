@@ -1,0 +1,17 @@
+{
+  "callId": 46,
+  "timestamp": "2026-02-09T19:18:42.678974+00:00",
+  "hash": "7b9c171b4054f16f",
+  "response": {
+    "id": "chatcmpl-D7R4KWi1bQYuZWlN6VUnSUGEHDU7D",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664720,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The reference conveys a concept 'Quality from any dimension', whereas the actual states 'This is a mock agent response.' They do not share meaning or content.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

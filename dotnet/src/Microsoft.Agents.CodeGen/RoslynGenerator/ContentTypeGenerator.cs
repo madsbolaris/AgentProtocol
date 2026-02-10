@@ -145,24 +145,19 @@ public class ContentTypeGenerator
             );
         }
 
+        // NOTE: For JSON serialization, we must use [JsonIgnore] on the Kind property!
+        // The JsonPolymorphic(TypeDiscriminatorPropertyName = "kind") attribute on the class
+        // automatically handles the "kind" discriminator property in JSON serialization.
+        // We must add [JsonIgnore] to prevent the Kind property from being serialized as a regular property,
+        // which would conflict with the polymorphic discriminator metadata property.
         if (_serializationMode.HasFlag(SerializationMode.Json))
         {
             kindPropertyAttrs.Add(
-                Attribute(
-                    ParseName("JsonPropertyName"),
-                    AttributeArgumentList(
-                        SingletonSeparatedList(
-                            AttributeArgument(
-                                LiteralExpression(
-                                    SyntaxKind.StringLiteralExpression,
-                                    Literal("kind")
-                                )
-                            )
-                        )
-                    )
-                )
+                Attribute(ParseName("JsonIgnore"))
             );
         }
+
+        var kindDocumentation = CodeGenerationUtilities.CreateXmlComment("Gets the content type discriminator.");
 
         var kindProperty = PropertyDeclaration(
                 ParseTypeName("string"),
@@ -179,9 +174,15 @@ public class ContentTypeGenerator
 
         if (kindPropertyAttrs.Any())
         {
-            kindProperty = kindProperty.AddAttributeLists(
-                AttributeList(SeparatedList(kindPropertyAttrs))
-            );
+            // Add XML documentation as leading trivia to the first attribute list
+            var attributeList = AttributeList(SeparatedList(kindPropertyAttrs))
+                .WithLeadingTrivia(kindDocumentation);
+            kindProperty = kindProperty.AddAttributeLists(attributeList);
+        }
+        else
+        {
+            // No attributes, add documentation to property directly
+            kindProperty = kindProperty.WithLeadingTrivia(kindDocumentation);
         }
 
         var classDecl = ClassDeclaration("AIContent")
@@ -274,6 +275,8 @@ public class ContentTypeGenerator
         }
 
         // Add Kind property override
+        // Note: Documentation inherited from base class, suppress CS1591
+        // IMPORTANT: Add [JsonIgnore] since attributes don't inherit in C#
         var kindOverride = PropertyDeclaration(
                 ParseTypeName("string"),
                 Identifier("Kind")
@@ -290,7 +293,43 @@ public class ContentTypeGenerator
                     )
                 )
             )
-            .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+            .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(
+                Trivia(
+                    PragmaWarningDirectiveTrivia(
+                        Token(SyntaxKind.DisableKeyword),
+                        SeparatedList<ExpressionSyntax>(new[] {
+                            (ExpressionSyntax)IdentifierName("CS1591"),
+                            (ExpressionSyntax)IdentifierName("CS1587")
+                        }),
+                        true
+                    )
+                ),
+                CarriageReturnLineFeed
+            )
+            .WithTrailingTrivia(
+                CarriageReturnLineFeed,
+                Trivia(
+                    PragmaWarningDirectiveTrivia(
+                        Token(SyntaxKind.RestoreKeyword),
+                        SeparatedList<ExpressionSyntax>(new[] {
+                            (ExpressionSyntax)IdentifierName("CS1591"),
+                            (ExpressionSyntax)IdentifierName("CS1587")
+                        }),
+                        true
+                    )
+                ),
+                CarriageReturnLineFeed
+            );
+
+        // Add [JsonIgnore] if JSON serialization is enabled
+        // Attributes don't inherit in C#, so we must add it to every override
+        if (_serializationMode.HasFlag(SerializationMode.Json))
+        {
+            kindOverride = kindOverride.AddAttributeLists(
+                AttributeList(SingletonSeparatedList(Attribute(ParseName("JsonIgnore"))))
+            );
+        }
 
         classDecl = classDecl.AddMembers(kindOverride);
 
@@ -301,11 +340,12 @@ public class ContentTypeGenerator
             classDecl = classDecl.AddMembers(property);
         }
 
-        // Add documentation
-        if (!string.IsNullOrWhiteSpace(model.Documentation))
-        {
-            classDecl = classDecl.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(model.Documentation));
-        }
+        // Add documentation (always generate one for public classes)
+        var classDocumentation = !string.IsNullOrWhiteSpace(model.Documentation)
+            ? model.Documentation
+            : $"Represents {NamingConventions.ToKebabCase(model.Name)} content.";
+
+        classDecl = classDecl.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(classDocumentation));
 
         // Build usings based on serialization mode
         var usings = new List<UsingDirectiveSyntax>
@@ -345,6 +385,12 @@ public class ContentTypeGenerator
         var strategy = willUseXmlAttribute ? NullableStrategy.ForceNonNullable : NullableStrategy.Default;
         var csharpType = TypeMapper.MapTypeSpecTypeToCSharp(propDef.Type, propDef.IsArray, makeNullable, strategy);
 
+        // Generate XML documentation
+        var documentation = !string.IsNullOrWhiteSpace(propDef.Documentation)
+            ? propDef.Documentation
+            : $"Gets or sets the {NamingConventions.ToKebabCase(propDef.Name)}.";
+        var xmlDoc = CodeGenerationUtilities.CreateXmlComment(documentation);
+
         var property = PropertyDeclaration(
                 ParseTypeName(csharpType),
                 Identifier(NamingConventions.ToPascalCase(propDef.Name))
@@ -357,15 +403,22 @@ public class ContentTypeGenerator
                     .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
             );
 
+        var hasAttributes = false;
+
         // Add serialization attributes based on mode
         if (_serializationMode.HasFlag(SerializationMode.Xml))
         {
             var xmlAttribute = DetermineXmlAttribute(propDef, parentModel);
             if (xmlAttribute != null)
             {
-                property = property.AddAttributeLists(
-                    AttributeList(SingletonSeparatedList(xmlAttribute))
-                );
+                var attributeList = AttributeList(SingletonSeparatedList(xmlAttribute));
+                if (!hasAttributes)
+                {
+                    // First attribute list gets the XML documentation
+                    attributeList = attributeList.WithLeadingTrivia(xmlDoc);
+                    hasAttributes = true;
+                }
+                property = property.AddAttributeLists(attributeList);
             }
         }
 
@@ -373,6 +426,12 @@ public class ContentTypeGenerator
         if (_serializationMode.HasFlag(SerializationMode.Json) && !propDef.IsXmlIgnore)
         {
             property = _jsonAttributeGenerator.AddPropertyJsonAttributes(property, propDef);
+        }
+
+        // If no attributes were added, add documentation directly to property
+        if (!hasAttributes)
+        {
+            property = property.WithLeadingTrivia(xmlDoc);
         }
 
         // Add default initializer for certain properties

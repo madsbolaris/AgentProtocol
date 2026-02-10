@@ -303,5 +303,15 @@
   "tests/test_model_instantiation.py::TestMessageModels::test_message_reaction_content": true,
   "tests/test_model_instantiation.py::TestMessageModels::test_message_update_content": true,
   "tests/test_additional_coverage.py::TestEvalXmlPreprocessorAdditionalCoverage::test_preprocess_with_nested_raw_in_nested_raw": true,
-  "tests/test_additional_coverage.py::TestEvalXmlPreprocessorAdditionalCoverage::test_preprocess_empty_args": true
+  "tests/test_additional_coverage.py::TestEvalXmlPreprocessorAdditionalCoverage::test_preprocess_empty_args": true,
+  "tests/test_additional_coverage.py::TestValidatorAdditionalCoverage": true,
+  "tests/test_additional_coverage.py::TestEvalXmlPreprocessorAdditionalCoverage": true,
+  "tests/test_additional_coverage.py::TestSerializerAdditionalCoverage": true,
+  "tests/test_eval_xml_preprocessor.py::TestEvalXmlPreprocessor": true,
+  "tests/test_generated_roundtrip.py::TestGeneratedRoundTrip": true,
+  "tests/test_model_instantiation.py::TestContentModels": true,
+  "tests/test_model_instantiation.py::TestMessageModels": true,
+  "tests/test_validation_result_coverage.py::TestValidationErrorCoverage": true,
+  "tests/test_validation_result_coverage.py::TestValidationResultCoverage": true,
+  "tests/test_validator_coverage.py::TestThreadValidatorCoverage": true
 }

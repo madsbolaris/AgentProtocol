@@ -1,0 +1,64 @@
+<nav aria-labelledby="sidebar-label" class="sidebar_nav__IworY" id="sidebar-nav">
+  {# Screen reader label #}
+  <div class="g-screen-reader-only">
+    <h2 class="sidebar-headings_root__tGfxC" id="sidebar-label">{{ config.site_name }}</h2>
+  </div>
+
+  <ul class="sidebar_navList__4Rg4g">
+    {% for nav_item in nav %}
+      {% if nav_item.active %}
+        {# Show active tab's children (or the tab itself if it's a single page) #}
+        {% if nav_item.children %}
+          {% for child in nav_item.children %}
+            <li>
+              <a href="{{ child.url | url }}" class="sidebar-nav-menu-item_sidebarNavMenuItem__PiyI8 g-focus-ring-from-box-shadow{% if child.active %} sidebar-nav-item--active{% endif %}">
+                <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular sidebar-nav-menu-item_navMenuItemLabel__tJHwX">{{ child.title }}</span>
+              </a>
+              {% if child.active and child.children %}
+                <ul class="sidebar_navList__4Rg4g">
+                  {% for subchild in child.children %}
+                    <li>
+                      <a href="{{ subchild.url | url }}" class="sidebar-nav-menu-item_sidebarNavMenuItem__PiyI8 g-focus-ring-from-box-shadow{% if subchild.active %} sidebar-nav-item--active{% endif %}">
+                        <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular sidebar-nav-menu-item_navMenuItemLabel__tJHwX">{{ subchild.title }}</span>
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+          {% endfor %}
+
+          {# Add horizontal rule separator #}
+          <hr class="sidebar-horizontal-rule_root__UY7oh">
+
+          {# Resources section #}
+          <li>
+            <h3 class="sidebar-headings_root__tGfxC">Resources</h3>
+          </li>
+          {% if config.repo_url %}
+            <li>
+              <a class="sidebar-nav-menu-item_sidebarNavMenuItem__PiyI8 g-focus-ring-from-box-shadow" target="_blank" rel="noreferrer noopener" href="{{ config.repo_url }}">
+                <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular sidebar-nav-menu-item_navMenuItemLabel__tJHwX">GitHub</span>
+                <div class="sidebar-nav-menu-item_rightIconsContainer__hynke">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16" aria-hidden="true">
+                    <g fill="currentColor">
+                      <path d="M9 .75A.75.75 0 019.75 0h4.5c.206 0 .393.083.529.218l.001.002.002.001A.748.748 0 0115 .75v4.5a.75.75 0 01-1.5 0V2.56L7.28 8.78a.75.75 0 01-1.06-1.06l6.22-6.22H9.75A.75.75 0 019 .75z"/>
+                      <path d="M3.25 3.5a.75.75 0 00-.75.75v7.5c0 .414.336.75.75.75h7.5a.75.75 0 00.75-.75v-4a.75.75 0 011.5 0v4A2.25 2.25 0 0110.75 14h-7.5A2.25 2.25 0 011 11.75v-7.5A2.25 2.25 0 013.25 2h4a.75.75 0 010 1.5h-4z"/>
+                    </g>
+                  </svg>
+                </div>
+              </a>
+            </li>
+          {% endif %}
+        {% else %}
+          {# Single page section - show the section itself #}
+          <li>
+            <a href="{{ nav_item.url | url }}" class="sidebar-nav-menu-item_sidebarNavMenuItem__PiyI8 g-focus-ring-from-box-shadow sidebar-nav-item--active">
+              <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular sidebar-nav-menu-item_navMenuItemLabel__tJHwX">{{ nav_item.title }}</span>
+            </a>
+          </li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </ul>
+</nav>

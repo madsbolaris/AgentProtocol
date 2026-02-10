@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Test chain of thought reasoning" thread-id="eval-043" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>If all roses are flowers and some flowers fade quickly, can we conclude that some roses fade quickly?</text>
+  </user>
+
+  <expect name="logical-reasoning">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <thinking>Let me think through this step by step:
+1. All roses are flowers (given)
+2. Some flowers fade quickly (given)
+3. We cannot conclude that some roses fade quickly because we don't know if roses are part of the "some flowers" that fade quickly</thinking>
+      <text>No, we cannot make that conclusion based on the given information.</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <assert>sem.passed && has(sem.message.reasoning)</assert>
+  </expect>
+</thread>

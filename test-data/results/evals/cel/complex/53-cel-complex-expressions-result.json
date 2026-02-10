@@ -1,0 +1,173 @@
+{
+  "timestamp": "2026-02-09T19:18:04.651507Z",
+  "content": {
+    "threadId": "eval-053",
+    "description": "CEL Complex Expressions - Nested conditions",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "test-nested-and-or",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "has_quantum",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "has_qubit",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "has_superposition",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "semantic_similarity",
+                "as": "quality",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference discusses quantum computing concepts (qubits and superposition) and their use in calculations, while the actual output is a generic placeholder sentence unrelated to quantum computing. There is no semantic overlap."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "(has_quantum.passed && has_qubit.passed) || (has_superposition.passed && quality.score > 0.8)",
+                "passed": false,
+                "value": null,
+                "error": "Judge result '(has_quantum' not found"
+              }
+            ]
+          },
+          {
+            "name": "test-multiple-conditions",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "technical",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.1,
+                "details": {
+                  "similarity_score": 0.1,
+                  "llm_reasoning": "The reference asks for a comprehensive answer with technical details, whereas the actual output is merely a placeholder stating it's a mock agent response. They do not convey the same meaning or content."
+                }
+              },
+              {
+                "agent": "text_regex",
+                "as": "pattern",
+                "passed": false,
+                "score": 0.0,
+                "details": {}
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "technical.passed && sem.score >= 0.7 && (pattern.passed || sem.score >= 0.9)",
+                "passed": true,
+                "value": true
+              }
+            ]
+          },
+          {
+            "name": "test-parentheses-grouping",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "a",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "b",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "c",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "!(a.passed && b.passed) || c.passed",
+                "passed": false,
+                "value": null,
+                "error": "Judge result '!(a' not found"
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 6702
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 3,
+    "passedAsserts": 1,
+    "failedAsserts": 2,
+    "avgDurationMs": 6702.0,
+    "timestamp": "2026-02-09T19:17:57.948981Z",
+    "totalDurationMs": 6702
+  },
+  "hash": "c60004d2a7301016a6b500fdfb4ffc6d9f940374941d8d758525eea38a103f68",
+  "metadata": {
+    "input_file": "53-cel-complex-expressions.xml",
+    "thread_id": "eval-053",
+    "description": "CEL Complex Expressions - Nested conditions",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

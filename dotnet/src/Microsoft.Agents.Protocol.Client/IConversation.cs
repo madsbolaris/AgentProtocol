@@ -1,4 +1,5 @@
-using Microsoft.Agents.Abstractions.Models;
+using Microsoft.Agents;
+using Microsoft.Agents.Protocol.Xml;
 
 namespace Microsoft.Agents.Protocol.Client;
 
@@ -11,6 +12,12 @@ public interface IConversation
     /// Gets the thread ID for this conversation (null until first message sent).
     /// </summary>
     string? ThreadId { get; }
+
+    /// <summary>
+    /// Gets all messages in this conversation (cached locally).
+    /// Messages are automatically added as the conversation progresses.
+    /// </summary>
+    IReadOnlyList<ChatMessage> Messages { get; }
 
     /// <summary>
     /// Sends a message and returns the complete response as text.
@@ -47,6 +54,20 @@ public interface IConversation
     IAsyncEnumerable<StreamEvent> StreamEventsAsync(
         string message,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets all messages from this conversation's thread.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of messages in chronological order</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when no thread ID is available. Send a message first to create a thread.
+    /// </exception>
+    /// <remarks>
+    /// This is a convenience method that retrieves the full message history for this conversation's thread.
+    /// It delegates to <see cref="AgentProtocolClient.GetThreadMessagesAsync(string, CancellationToken)"/>.
+    /// </remarks>
+    Task<List<ChatMessage>> GetMessagesAsync(CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -56,31 +77,36 @@ internal class Conversation : IConversation
 {
     private readonly AgentProtocolClient _client;
     private string? _threadId;
+    private readonly List<ChatMessage> _messages = new();
+    private readonly bool _enableLogging;
+    private readonly string _logDirectory;
 
-    public Conversation(AgentProtocolClient client, string? threadId)
+    public Conversation(AgentProtocolClient client, string? threadId, bool enableLogging, string logDirectory)
     {
         _client = client;
         _threadId = threadId;
+        _enableLogging = enableLogging;
+        _logDirectory = logDirectory;
     }
 
     public string? ThreadId => _threadId;
 
+    public IReadOnlyList<ChatMessage> Messages => _messages.AsReadOnly();
+
     public async Task<string> SendAsync(string message, CancellationToken cancellationToken = default)
     {
+        var userMessage = new UserMessage
+        {
+            Contents = new List<AIContent>
+            {
+                new TextContent { Text = message }
+            }
+        };
+
         var request = new RunRequest
         {
             ThreadId = _threadId,
-            Input = new List<ChatMessage>
-            {
-                new ChatMessage
-                {
-                    Role = "user",
-                    Contents = new List<Content>
-                    {
-                        new TextContent { Text = message }
-                    }
-                }
-            }
+            Input = new List<ChatMessage> { userMessage }
         };
 
         var response = await _client.RunAsync(request, cancellationToken);
@@ -91,15 +117,30 @@ internal class Conversation : IConversation
             _threadId = response.ThreadId;
         }
 
+        // Add user message to cache
+        _messages.Add(userMessage);
+
+        // Add agent response to cache
+        if (response.Output != null && response.Output.Count > 0)
+        {
+            foreach (var outputMessage in response.Output)
+            {
+                _messages.Add(outputMessage);
+            }
+        }
+
+        // Auto-save if logging is enabled
+        AutoSaveConversation();
+
         if (response.Output == null || response.Output.Count == 0)
             return string.Empty;
 
         // Extract text from first assistant message
-        var assistantMessage = response.Output.FirstOrDefault(m => m.Role == "assistant");
+        var assistantMessage = response.Output.FirstOrDefault(m => m.Role == ChatRole.Agent);
         if (assistantMessage == null)
             return string.Empty;
 
-        var textContent = assistantMessage.Contents.OfType<TextContent>().FirstOrDefault();
+        var textContent = assistantMessage.Contents?.OfType<TextContent>().FirstOrDefault();
         return textContent?.Text ?? string.Empty;
     }
 
@@ -119,11 +160,26 @@ internal class Conversation : IConversation
             _threadId = response.ThreadId;
         }
 
-        if (response.Output == null || response.Output.Count == 0)
-            return new ChatMessage { Role = "assistant", Contents = new List<Content>() };
+        // Add user message to cache
+        _messages.Add(message);
 
-        return response.Output.FirstOrDefault(m => m.Role == "assistant")
-            ?? new ChatMessage { Role = "assistant", Contents = new List<Content>() };
+        // Add agent response to cache
+        if (response.Output != null && response.Output.Count > 0)
+        {
+            foreach (var outputMessage in response.Output)
+            {
+                _messages.Add(outputMessage);
+            }
+        }
+
+        // Auto-save if logging is enabled
+        AutoSaveConversation();
+
+        if (response.Output == null || response.Output.Count == 0)
+            return new AgentMessage { Contents = new List<AIContent>() };
+
+        return response.Output.FirstOrDefault(m => m.Role == ChatRole.Agent)
+            ?? new AgentMessage { Contents = new List<AIContent>() };
     }
 
     public async IAsyncEnumerable<ChatMessage> StreamMessagesAsync(
@@ -135,10 +191,9 @@ internal class Conversation : IConversation
             ThreadId = _threadId,
             Input = new List<ChatMessage>
             {
-                new ChatMessage
+                new UserMessage
                 {
-                    Role = "user",
-                    Contents = new List<Content>
+                    Contents = new List<AIContent>
                     {
                         new TextContent { Text = message }
                     }
@@ -192,10 +247,9 @@ internal class Conversation : IConversation
             ThreadId = _threadId,
             Input = new List<ChatMessage>
             {
-                new ChatMessage
+                new UserMessage
                 {
-                    Role = "user",
-                    Contents = new List<Content>
+                    Contents = new List<AIContent>
                     {
                         new TextContent { Text = message }
                     }
@@ -217,5 +271,58 @@ internal class Conversation : IConversation
 
             yield return evt;
         }
+    }
+
+    public async Task<List<ChatMessage>> GetMessagesAsync(CancellationToken cancellationToken = default)
+    {
+        if (ThreadId == null)
+        {
+            throw new InvalidOperationException(
+                "No thread ID available. Send a message to this conversation first to create a thread.");
+        }
+
+        return await _client.GetThreadMessagesAsync(ThreadId, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Automatically saves the conversation to XML if logging is enabled.
+    /// </summary>
+    private void AutoSaveConversation()
+    {
+        if (!_enableLogging || _threadId == null)
+            return;
+
+        try
+        {
+            // Ensure log directory exists
+            if (!Directory.Exists(_logDirectory))
+            {
+                Directory.CreateDirectory(_logDirectory);
+            }
+
+            // Save conversation to file
+            var filePath = Path.Combine(_logDirectory, $"{_threadId}.xml");
+            File.WriteAllText(filePath, ToString());
+        }
+        catch
+        {
+            // Silently ignore logging errors to avoid breaking the main flow
+        }
+    }
+
+    /// <summary>
+    /// Returns the XML representation of all messages in this conversation.
+    /// </summary>
+    /// <returns>XML string with all messages wrapped in a thread element</returns>
+    public override string ToString()
+    {
+        if (_messages.Count == 0)
+        {
+            return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<thread />";
+        }
+
+        var serializer = new MessageSerializer();
+        return serializer.SerializeMany(_messages, rootElement: "thread");
     }
 }

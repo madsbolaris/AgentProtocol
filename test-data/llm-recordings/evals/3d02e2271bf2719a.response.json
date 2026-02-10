@@ -1,0 +1,17 @@
+{
+  "callId": 22,
+  "timestamp": "2026-02-09T19:17:05.964439+00:00",
+  "hash": "3d02e2271bf2719a",
+  "response": {
+    "id": "chatcmpl-D7R2lbMjCGoyvenllhj2QnU3adqn6",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664623,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The reference conveys a specific factual statement (Tokyo is the capital of Japan), whereas the actual output is a generic placeholder with no substantive content. They do not share meaning or address the same content.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

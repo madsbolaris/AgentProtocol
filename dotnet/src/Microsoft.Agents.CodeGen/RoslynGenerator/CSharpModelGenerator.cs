@@ -75,11 +75,12 @@ public class CSharpModelGenerator
             .AddModifiers(Token(SyntaxKind.PublicKeyword))
             .AddMembers(members);
 
-        // Add XML comment if available
-        if (!string.IsNullOrWhiteSpace(enumDef.Documentation))
-        {
-            enumDecl = enumDecl.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(enumDef.Documentation));
-        }
+        // Add XML comment (always generate one for public enums)
+        var enumDocumentation = !string.IsNullOrWhiteSpace(enumDef.Documentation)
+            ? enumDef.Documentation
+            : $"{enumDef.Name} enumeration.";
+
+        enumDecl = enumDecl.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(enumDocumentation));
 
         // Create compilation unit with appropriate usings
         var usings = new List<UsingDirectiveSyntax> { UsingDirective(ParseName("System")) };
@@ -133,6 +134,30 @@ public class CSharpModelGenerator
                 SimpleBaseType(ParseTypeName("AIContent"))
             );
             // Add override abstract Kind property for discriminator
+            // NOTE: Add [JsonIgnore] to prevent conflict with JsonPolymorphic discriminator
+            var kindAttributes = new List<AttributeSyntax>
+            {
+                Attribute(
+                    ParseName("XmlAttribute"),
+                    AttributeArgumentList(
+                        SingletonSeparatedList(
+                            AttributeArgument(
+                                LiteralExpression(
+                                    SyntaxKind.StringLiteralExpression,
+                                    Literal("kind")
+                                )
+                            )
+                        )
+                    )
+                )
+            };
+
+            // Add JsonIgnore to prevent conflict with polymorphic discriminator
+            if (_serializationMode.HasFlag(SerializationMode.Json))
+            {
+                kindAttributes.Add(Attribute(ParseName("JsonIgnore")));
+            }
+
             var kindProperty = PropertyDeclaration(
                     ParseTypeName("string"),
                     Identifier("Kind")
@@ -147,23 +172,7 @@ public class CSharpModelGenerator
                         .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
                 )
                 .AddAttributeLists(
-                    AttributeList(
-                        SingletonSeparatedList(
-                            Attribute(
-                                ParseName("XmlAttribute"),
-                                AttributeArgumentList(
-                                    SingletonSeparatedList(
-                                        AttributeArgument(
-                                            LiteralExpression(
-                                                SyntaxKind.StringLiteralExpression,
-                                                Literal("kind")
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
+                    kindAttributes.Select(attr => AttributeList(SingletonSeparatedList(attr))).ToArray()
                 );
             classDecl = classDecl.AddMembers(kindProperty);
         }
@@ -174,11 +183,12 @@ public class CSharpModelGenerator
             classDecl = _xmlAttributeGenerator.AddXmlAttributes(classDecl, modelDef);
         }
 
-        // Add XML comment if available
-        if (!string.IsNullOrWhiteSpace(modelDef.Documentation))
-        {
-            classDecl = classDecl.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(modelDef.Documentation));
-        }
+        // Add XML comment (always generate one for public classes)
+        var classDocumentation = !string.IsNullOrWhiteSpace(modelDef.Documentation)
+            ? modelDef.Documentation
+            : $"Represents a {NamingConventions.ToKebabCase(modelDef.Name)}.";
+
+        classDecl = classDecl.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(classDocumentation));
 
         // Create compilation unit with appropriate usings
         var usings = new List<UsingDirectiveSyntax>
@@ -236,11 +246,12 @@ public class CSharpModelGenerator
             property = _jsonAttributeGenerator.AddPropertyJsonAttributes(property, propDef);
         }
 
-        // Add XML comment if available
-        if (!string.IsNullOrWhiteSpace(propDef.Documentation))
-        {
-            property = property.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(propDef.Documentation));
-        }
+        // Add XML comment (always generate one for public properties)
+        var documentation = !string.IsNullOrWhiteSpace(propDef.Documentation)
+            ? propDef.Documentation
+            : $"Gets or sets the {NamingConventions.ToKebabCase(propDef.Name)}.";
+
+        property = property.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(documentation));
 
         return property;
     }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="CEL Boolean Operators - AND, OR, NOT" thread-id="eval-051" created-at="2026-02-09T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-09T00:00:00Z">
+    <text>What is 10 + 5?</text>
+  </user>
+
+  <expect name="test-boolean-and">
+    <agent message-id="ref-001" created-at="2026-02-09T00:00:01Z" agent-id="test-agent">
+      <text>The answer is 15</text>
+    </agent>
+    <judge agent="text_contains" as="has_answer" />
+    <judge agent="text_contains" as="has_number" />
+    <!-- Test AND operator -->
+    <assert>has_answer.passed && has_number.passed</assert>
+  </expect>
+
+  <expect name="test-boolean-or">
+    <agent message-id="ref-002" created-at="2026-02-09T00:00:02Z" agent-id="test-agent">
+      <text>15 or fifteen</text>
+    </agent>
+    <judge agent="text_contains" as="has_digit" />
+    <judge agent="text_contains" as="has_word" />
+    <!-- Test OR operator -->
+    <assert>has_digit.passed || has_word.passed</assert>
+  </expect>
+
+  <expect name="test-boolean-not">
+    <agent message-id="ref-003" created-at="2026-02-09T00:00:03Z" agent-id="test-agent">
+      <text>Correct!</text>
+    </agent>
+    <judge agent="text_contains" as="has_error" />
+    <!-- Test NOT operator -->
+    <assert>!has_error.passed</assert>
+  </expect>
+</thread>

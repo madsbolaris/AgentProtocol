@@ -1,0 +1,86 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "microsoft-agents-hosting"
+version = "0.1.0"
+description = "Microsoft Agents Protocol Hosting SDK - Build production-ready AI agents with LLM function calling"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Microsoft Corporation"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "microsoft-agents-abstractions>=0.1.0",
+    "aiohttp>=3.8.0",
+    "typing-extensions>=4.5.0",
+    "pydantic>=2.0.0",
+    "psutil>=5.9.0",
+]
+
+[project.optional-dependencies]
+sql = [
+    "sqlalchemy[asyncio]>=2.0.0",
+    "asyncpg>=0.28.0",
+]
+redis = [
+    "redis[hiredis]>=5.0.0",
+]
+observability = [
+    "opentelemetry-api>=1.20.0",
+    "opentelemetry-sdk>=1.20.0",
+    "opentelemetry-exporter-otlp>=1.20.0",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.7.0",
+    "mypy>=1.5.0",
+    "ruff>=0.0.287",
+]
+all = [
+    "microsoft-agents-hosting[sql,redis,observability]",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+namespaces = true
+include = ["microsoft*"]
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: Integration tests that test full end-to-end scenarios",
+    "unit: Unit tests that test individual components in isolation",
+]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

@@ -1,0 +1,56 @@
+{
+  "runId": "run_5dc607fcd7664a76a5fed4babd02c675",
+  "agentId": "echo-agent",
+  "threadId": "thread_c1b0b2aaae174d50beaf7bc4c852d4b4",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "[Function call: Test name({\u0022status\u0022: \u0022success\u0022})]",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_d03f4b02c4ea48deaffdc45ea2f6532d",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \n[Function call: Test name({\u0022status\u0022: \u0022success\u0022})]",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.128954Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.128956Z",
+  "completedAt": null
+}

@@ -7,7 +7,7 @@ Agent Protocol Server
 This module provides the main function to add all Agent Protocol routes to an aiohttp Application.
 """
 
-from aiohttp.web import Application, Request, Response, json_response
+from aiohttp.web import Application, Request, Response, StreamResponse, json_response
 from typing import TYPE_CHECKING, Dict, Any, List
 import json
 import uuid
@@ -16,6 +16,24 @@ from lxml import etree
 
 if TYPE_CHECKING:
     from microsoft.agents.hosting.core import AgentApplication
+
+
+def _create_sse_response() -> StreamResponse:
+    """Create a Server-Sent Events response with CORS headers."""
+    response = StreamResponse(
+        status=200,
+        headers={
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+        }
+    )
+    # Add CORS headers for browser access
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = '*'
+    response.headers['Access-Control-Expose-Headers'] = '*'
+    return response
 
 
 def add_agent_protocol_routes(
@@ -194,9 +212,10 @@ def add_agent_protocol_routes(
             # Create message element based on role
             msg_elem = etree.SubElement(thread_elem, role)
 
-            # Add message-id if present
-            if "messageId" in msg:
-                msg_elem.set("message-id", msg["messageId"])
+            # Note: message-id attribute omitted for consistency with .NET and TypeScript echo bots
+            # Even if messageId exists in the message dictionary, we don't serialize it to XML
+            # if "messageId" in msg:
+            #     msg_elem.set("message-id", msg["messageId"])
 
             # Add contents if present
             if has_contents:
@@ -266,14 +285,33 @@ def add_agent_protocol_routes(
             # Capture responses sent by the agent
             output_messages = []
             async def capture_send(context, activities):
+                from datetime import datetime
                 for act in activities:
                     # Check if activity has Agent Protocol formatted value
                     if hasattr(act, 'value') and act.value:
-                        output_messages.append(act.value)
+                        message = act.value
+                        # Ensure message has required fields
+                        # Note: messageId omitted for consistency with .NET and TypeScript echo bots
+                        # if "messageId" not in message:
+                        #     message["messageId"] = f"msg_{uuid.uuid4().hex[:12]}"
+                        if "createdAt" not in message:
+                            message["createdAt"] = datetime.utcnow().isoformat() + "Z"
+                        # CRITICAL: Ensure role is "agent" not "assistant"
+                        # Agent Protocol uses "agent" role, NOT "assistant"
+                        # DO NOT CHANGE THIS TO "assistant" - see TypeSpec ChatRole enum
+                        if message.get("role") == "assistant":
+                            message["role"] = "agent"
+                        output_messages.append(message)
                     elif hasattr(act, 'text') and act.text:
                         # Fallback to text-only response
+                        # CRITICAL: Role must be "agent" not "assistant"
+                        # Agent Protocol uses "agent" role, NOT "assistant"
+                        # DO NOT CHANGE THIS TO "assistant" - see TypeSpec ChatRole enum
                         output_messages.append({
-                            "role": "assistant",
+                            # Note: messageId omitted for consistency with .NET and TypeScript echo bots
+                            # "messageId": f"msg_{uuid.uuid4().hex[:12]}",
+                            "role": "agent",
+                            "createdAt": datetime.utcnow().isoformat() + "Z",
                             "contents": [{"kind": "text", "text": act.text}]
                         })
                 return [{"id": f"mock-{i}"} for i in range(len(activities))]
@@ -297,6 +335,18 @@ def add_agent_protocol_routes(
     async def health_check(request: Request) -> Response:
         """Health check endpoint to verify the service is running."""
         return json_response({"status": "healthy", "version": "0.1.0"})
+
+    async def get_agent_card(request: Request) -> Response:
+        """Get agent card with capabilities."""
+        agent_card = {
+            "agentId": "basic-m365",
+            "name": "Basic M365 Agent",
+            "description": "A basic agent that can check weather and tell time",
+            "version": "1.0.0",
+            "outputModes": ["text"],
+            "inputModes": ["text"]
+        }
+        return json_response(agent_card)
 
     # Create run endpoint
     async def create_run(request: Request) -> Response:
@@ -359,10 +409,10 @@ def add_agent_protocol_routes(
                 return Response(
                     body=xml_str,
                     content_type="application/xml",
-                    status=200
+                    status=201
                 )
             else:
-                return json_response(run, status=200)
+                return json_response(run, status=201)
         except Exception as e:
             return json_response({"error": str(e)}, status=400)
 
@@ -435,7 +485,7 @@ def add_agent_protocol_routes(
             return json_response({"error": str(e)}, status=400)
 
     # Create and stream endpoint
-    async def create_and_stream(request: Request) -> Response:
+    async def create_and_stream(request: Request) -> StreamResponse:
         """Create a run and stream results."""
         agent_app: AgentApplication = request.app["agent_app"]
 
@@ -443,94 +493,84 @@ def add_agent_protocol_routes(
             data = await request.json()
             run_id = create_run_id()
             agent_id = data.get("agentId", "agent")
+            thread_id = data.get("threadId", f"thread_{uuid.uuid4().hex[:16]}")
             input_messages: List[Dict[str, Any]] = data.get("input", [])
 
-            # Set up streaming response
-            response = Response(
-                status=200,
-                headers={
-                    'Content-Type': 'text/event-stream',
-                    'Cache-Control': 'no-cache',
-                    'Connection': 'keep-alive',
-                }
-            )
+            # Set up streaming response with CORS headers
+            response = _create_sse_response()
             await response.prepare(request)
 
-            # Event 1: run.started
-            event_seq = 1
-            event = {
+            created_at = datetime.utcnow().isoformat()
+
+            # Helper to send SSE event
+            async def send_event(event_name: str, event_data: dict):
+                event_payload = {"event": event_name, "data": event_data}
+                await response.write(f'event: {event_name}\ndata: {json.dumps(event_payload)}\n\n'.encode())
+                await response.drain()  # Flush the data to the client
+
+            # Event: run.started
+            await send_event('run.started', {
                 "runId": run_id,
                 "agentId": agent_id,
+                "threadId": thread_id,
                 "status": "in_progress",
-                "eventSeq": event_seq,
-                "startedAt": datetime.utcnow().isoformat()
-            }
-            await response.write(f'event: run.started\ndata: {json.dumps(event)}\n\n'.encode())
+                "createdAt": created_at
+            })
 
-            # Process first user message
-            first_user_message = next((msg for msg in input_messages if isinstance(msg, dict) and msg.get("role") == "user"), None)
-            if first_user_message:
-                output = await process_message_through_agent(first_user_message, agent_app)
+            # Process each message through the agent (only user messages)
+            output_messages = []
+            for msg in input_messages:
+                if isinstance(msg, dict) and msg.get("role") == "user":
+                    agent_responses = await process_message_through_agent(msg, agent_app)
+                    output_messages.extend(agent_responses)
 
-                # Event 2: message.created
-                event_seq += 1
-                message_id = f"msg_{uuid.uuid4().hex[:16]}"
-                event = {
-                    "runId": run_id,
-                    "agentId": agent_id,
-                    "messageId": message_id,
-                    "eventSeq": event_seq,
-                    "message": {"role": "assistant", "contents": [{"kind": "text", "text": ""}]},
-                    "createdAt": datetime.utcnow().isoformat()
-                }
-                await response.write(f'event: message.created\ndata: {json.dumps(event)}\n\n'.encode())
+            # Get the response text for streaming
+            full_output_text = ""
+            if output_messages:
+                last_message = output_messages[-1]
+                if isinstance(last_message, dict):
+                    for content in last_message.get("contents", []):
+                        if content.get("kind") == "text":
+                            full_output_text = content.get("text", "")
+                            break
 
-                # Stream the output text in chunks
-                text = ""
-                for content in output.get("contents", []):
-                    if content.get("kind") == "text":
-                        text = content.get("text", "")
-                        break
+            # Stream the output text in chunks (word-by-word for visual effect)
+            if full_output_text:
+                words = full_output_text.split()
 
-                # Split by words and stream
-                words = text.split()
-                accumulated_text = ""
-                for word in words:
-                    if accumulated_text:
-                        accumulated_text += " "
-                    accumulated_text += word
+                for i, word in enumerate(words):
+                    chunk = word if i == 0 else " " + word
 
-                    event_seq += 1
-                    event = {
+                    # Event: message.delta with delta containing the text chunk
+                    # CRITICAL: Role must be "agent" not "assistant"
+                    # Agent Protocol uses "agent" role, NOT "assistant"
+                    # DO NOT CHANGE THIS TO "assistant" - see TypeSpec ChatRole enum
+                    await send_event('message.delta', {
                         "runId": run_id,
                         "agentId": agent_id,
-                        "messageId": message_id,
-                        "eventSeq": event_seq,
-                        "message": {"contents": [{"kind": "text", "text": accumulated_text}]}
-                    }
-                    await response.write(f'event: message.updated\ndata: {json.dumps(event)}\n\n'.encode())
+                        "threadId": thread_id,
+                        "delta": {
+                            "role": "agent",
+                            "contents": [{"kind": "text", "text": chunk}]
+                        }
+                    })
 
-                # Event: message.completed
-                event_seq += 1
-                event = {
-                    "runId": run_id,
-                    "agentId": agent_id,
-                    "messageId": message_id,
-                    "eventSeq": event_seq,
-                    "completedAt": datetime.utcnow().isoformat()
-                }
-                await response.write(f'event: message.completed\ndata: {json.dumps(event)}\n\n'.encode())
+                    # Small delay to simulate streaming effect
+                    import asyncio
+                    await asyncio.sleep(0.03)
+
+            completed_at = datetime.utcnow().isoformat()
 
             # Event: run.completed
-            event_seq += 1
-            event = {
+            await send_event('run.completed', {
                 "runId": run_id,
                 "agentId": agent_id,
+                "threadId": thread_id,
                 "status": "completed",
-                "eventSeq": event_seq,
-                "completedAt": datetime.utcnow().isoformat()
-            }
-            await response.write(f'event: run.completed\ndata: {json.dumps(event)}\n\n'.encode())
+                "output": output_messages,
+                "createdAt": created_at,
+                "completedAt": completed_at
+            })
 
             await response.write_eof()
             return response
@@ -538,7 +578,7 @@ def add_agent_protocol_routes(
             return json_response({"error": str(e)}, status=400)
 
     # Stream specific run endpoint
-    async def stream_run(request: Request) -> Response:
+    async def stream_run(request: Request) -> StreamResponse:
         """Stream a specific run by ID."""
         runs_db: Dict[str, Any] = request.app["runs_db"]
         run_id = request.match_info['runId']
@@ -549,15 +589,8 @@ def add_agent_protocol_routes(
         run = runs_db[run_id]
 
         try:
-            # Set up streaming response
-            response = Response(
-                status=200,
-                headers={
-                    'Content-Type': 'text/event-stream',
-                    'Cache-Control': 'no-cache',
-                    'Connection': 'keep-alive',
-                }
-            )
+            # Set up streaming response with CORS headers
+            response = _create_sse_response()
             await response.prepare(request)
 
             # Event 1: run.started
@@ -596,6 +629,7 @@ def add_agent_protocol_routes(
 
     # Register all routes
     app.router.add_get(health_path, health_check)
+    app.router.add_get("/agent-card", get_agent_card)
     app.router.add_post(runs_path, create_run)
     app.router.add_post(f"{runs_path}/wait", create_and_wait)
     app.router.add_post(f"{runs_path}/stream", create_and_stream)

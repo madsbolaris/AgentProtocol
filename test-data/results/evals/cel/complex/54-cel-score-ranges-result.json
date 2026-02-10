@@ -1,0 +1,115 @@
+{
+  "timestamp": "2026-02-09T19:18:20.265690Z",
+  "content": {
+    "threadId": "eval-054",
+    "description": "CEL Score Ranges - Between thresholds",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "test-score-in-range",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "quality",
+                "passed": false,
+                "score": 0.15,
+                "details": {
+                  "similarity_score": 0.15,
+                  "llm_reasoning": "The reference asserts that the response is of good quality, while the actual output merely states that it is a mock agent response. They convey different meanings and do not share the same premise or evaluation."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "quality.score >= 0.7 && quality.score <= 0.9",
+                "passed": false,
+                "value": 0.15
+              }
+            ]
+          },
+          {
+            "name": "test-score-outside-range",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.1,
+                "details": {
+                  "similarity_score": 0.1,
+                  "llm_reasoning": "The reference asks to classify quality as 'Excellent or poor', while the actual states 'This is a mock agent response.' They convey unrelated meanings and do not address the same content."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.score < 0.5 || sem.score > 0.9",
+                "passed": false,
+                "value": 0.1
+              }
+            ]
+          },
+          {
+            "name": "test-multiple-thresholds",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "high",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference output is 'Multi-level quality' while the actual output is 'This is a mock agent response.' They do not convey the same meaning or content."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "medium",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "(high.score >= 0.9) || (high.score >= 0.7 && medium.passed) || (high.score >= 0.5 && medium.passed && high.passed)",
+                "passed": false,
+                "value": null,
+                "error": "Judge result '(high' not found"
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 15555
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 3,
+    "passedAsserts": 0,
+    "failedAsserts": 3,
+    "avgDurationMs": 15555.0,
+    "timestamp": "2026-02-09T19:18:04.709655Z",
+    "totalDurationMs": 15555
+  },
+  "hash": "bbaab094c94473f34ada832bd234d81d878c2e7e15522a7afa1e743ad588581f",
+  "metadata": {
+    "input_file": "54-cel-score-ranges.xml",
+    "thread_id": "eval-054",
+    "description": "CEL Score Ranges - Between thresholds",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

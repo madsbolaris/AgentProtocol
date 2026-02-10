@@ -9,10 +9,13 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
 using Microsoft.Agents.Client;
-using Microsoft.Agents.Abstractions.Models;
+using Microsoft.Agents;
+using Microsoft.Agents.Client.Tests.TestHelpers;
 using Microsoft.Agents.Protocol.Models.Execution;
 using Microsoft.Agents.Protocol.Models.Messages;
+using RichardSzalay.MockHttp;
 using Xunit;
+using XunitAssert = Xunit.Assert;
 using ProtocolChatMessage = Microsoft.Agents.Protocol.Models.Messages.ChatMessage;
 using ProtocolTextContent = Microsoft.Agents.Protocol.Models.Messages.TextContent;
 
@@ -21,7 +24,7 @@ namespace Microsoft.Agents.Client.Tests;
 /// <summary>
 /// Integration tests for Agent Protocol client with echo bot.
 ///
-/// Tests XML input files from test-data/input and saves results to test-data/results/echom365.
+/// Tests XML input files from test-data/input and saves results to test-data/results/echo-m365.
 /// Covers three API patterns: XML, Wait, and Streaming.
 /// </summary>
 public class EchoM365IntegrationTests : IDisposable
@@ -41,10 +44,10 @@ public class EchoM365IntegrationTests : IDisposable
         var currentDir = Directory.GetCurrentDirectory();
         var repoRoot = FindRepositoryRoot(currentDir);
         _testDataDir = Path.Combine(repoRoot, "test-data");
-        _inputDir = Path.Combine(_testDataDir, "input");
+        _inputDir = Path.Combine(_testDataDir, "input", "threads");
 
         // Use shared results directory (language-agnostic)
-        var resultsBase = Path.Combine(_testDataDir, "results", "echom365");
+        var resultsBase = Path.Combine(_testDataDir, "results", "echo-m365");
         _xmlResultsDir = Path.Combine(resultsBase, "xml");
         _waitResultsDir = Path.Combine(resultsBase, "wait");
         _streamingResultsDir = Path.Combine(resultsBase, "streaming");
@@ -54,7 +57,10 @@ public class EchoM365IntegrationTests : IDisposable
         Directory.CreateDirectory(_waitResultsDir);
         Directory.CreateDirectory(_streamingResultsDir);
 
-        _httpClient = new HttpClient { BaseAddress = new Uri(EchoM365Url) };
+        // Set up mock HTTP server
+        var mockHandler = MockHttpClientFactory.CreateMockHandler();
+        MockEchoM365Server.SetupMockServer(mockHandler);
+        _httpClient = MockHttpClientFactory.CreateMockHttpClient(mockHandler, EchoM365Url);
     }
 
     private static string FindRepositoryRoot(string startPath)
@@ -195,18 +201,12 @@ public class EchoM365IntegrationTests : IDisposable
             .ToList();
     }
 
-    [SkippableFact(Skip = "Mock server not implemented yet")]
+    [Fact]
     public async Task EchoM365_XmlPattern_ProcessesAllInputFiles()
     {
-        // Check if echo bot is running
-        try
-        {
-            await _httpClient.GetAsync("/health");
-        }
-        catch
-        {
-            throw new SkipException("Echo bot not running");
-        }
+        // Verify mock server is responding
+        var healthResponse = await _httpClient.GetAsync("/health");
+        healthResponse.EnsureSuccessStatusCode();
 
         var inputFiles = GetInputFiles();
         var processedCount = 0;
@@ -259,18 +259,12 @@ public class EchoM365IntegrationTests : IDisposable
         processedCount.Should().BeGreaterThan(0, "Should process at least some files");
     }
 
-    [SkippableFact(Skip = "Mock server not implemented yet")]
+    [Fact]
     public async Task EchoM365_WaitPattern_ProcessesAllInputFiles()
     {
-        // Check if echo bot is running
-        try
-        {
-            await _httpClient.GetAsync("/health");
-        }
-        catch
-        {
-            throw new SkipException("Echo bot not running");
-        }
+        // Verify mock server is responding
+        var healthResponse = await _httpClient.GetAsync("/health");
+        healthResponse.EnsureSuccessStatusCode();
 
         var inputFiles = GetInputFiles();
         var processedCount = 0;
@@ -460,13 +454,13 @@ public class EchoM365IntegrationTests : IDisposable
                     if (line.TrimStart().StartsWith("<?xml"))
                         continue;
 
-                    if (line.TrimStart().StartsWith("<thread"))
+                    if (line.TrimStart().StartsWith("<thread") ||
+                        line.TrimStart().StartsWith("</thread"))
                     {
-                        line.Should().StartWith("<thread",
-                            $"<thread> tag should have no indentation in {Path.GetFileName(xmlFile)}");
+                        line.Should().StartWith(line.TrimStart().StartsWith("</thread") ? "</thread" : "<thread",
+                            $"<thread> and </thread> tags should have no indentation in {Path.GetFileName(xmlFile)}");
                     }
-                    else if (line.TrimStart().StartsWith("<agent") ||
-                             line.TrimStart().StartsWith("</thread"))
+                    else if (line.TrimStart().StartsWith("<agent"))
                     {
                         line.Should().StartWith("  ",
                             $"Direct children of <thread> should be indented with 2 spaces in {Path.GetFileName(xmlFile)}\nLine: {line}");

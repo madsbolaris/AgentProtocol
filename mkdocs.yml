@@ -18,6 +18,7 @@ site_dir: site
 theme:
   name: material
   language: en
+  custom_dir: docs/overrides  # Custom template overrides for search positioning
 
   # Color scheme - Professional Bloomberg-inspired
   palette:
@@ -49,7 +50,7 @@ theme:
     - content.tooltips
     - navigation.expand
     - navigation.footer
-    - navigation.indexes
+    # - navigation.indexes  # Temporarily disabled to test tabs
     - navigation.instant
     - navigation.instant.prefetch
     - navigation.instant.progress
@@ -143,62 +144,39 @@ markdown_extensions:
 
 # Navigation
 nav:
-  - Home: index.md
+  - Home:
+    - index.md
 
-  - Getting Started:
-    - getting-started/index.md
-    - 5-Minute Quickstart: getting-started/quickstart.md
-    - Tool Execution: getting-started/tools.md
-    - Code Examples: getting-started/examples.md
-    - Advanced Patterns: getting-started/advanced-patterns.md
-    - Troubleshooting: getting-started/troubleshooting.md
+  - Concepts:
+    - concepts/index.md
+    - concepts/agents.md
+    - concepts/messages.md
+    - concepts/runs.md
+    - concepts/threads.md
+    - concepts/tools.md
+    - concepts/events.md
+    - concepts/streaming.md
 
-  - Integration Guides:
-    - guides/index.md
-    - XML Serialization: guides/xml-serialization.md
-    - XML Full-Stack Patterns: guides/xml-full-stack-patterns.md
-    - XML Eval Strategy: guides/xml-eval-strategy.md
-    - Security & Compliance: guides/security-compliance.md
-    - Content Guardrails: guides/content-guardrails.md
-    - Error Handling: guides/error-handling.md
-    - Testing Agents: guides/testing-agents.md
-    - Production Deployment: guides/production-deployment.md
-    - Proactive Messaging: guides/proactive-messaging.md
-    - Voice Integration: guides/voice-integration.md
-    - Multi-Agent Systems: guides/multi-agent.md
-    - Human-in-the-Loop: guides/human-in-loop.md
-    - Webhooks: guides/webhooks.md
+  - Client SDK:
+    - products/client-sdk/index.md
 
-  - API Reference:
-    - api-reference/index.md
-    - Content Types: api-reference/content-types.md
-    - XML Schema Reference: api-reference/xml-schema-reference.md
-    - Models: api-reference/models.md
-    - Tools: api-reference/tools.md
-    - Models:
-      - api-reference/models/index.md
-    - Operations:
-      - api-reference/operations/index.md
-      - Agents: api-reference/operations/agents.md
-      - Runs: api-reference/operations/runs.md
-      - Threads: api-reference/operations/threads.md
+  - Hosting SDK:
+    - products/hosting-sdk/index.md
 
-  - Contributing: contributing.md
+  - UX React:
+    - products/ux-react/index.md
 
-  - Advanced:
-    - Specifications:
-      - specifications/index.md
-      - Run Lifecycle: specifications/run-lifecycle.md
-      - Message Lifecycle: specifications/message-lifecycle.md
-      - Streaming: specifications/streaming.md
-      - Tool Execution: specifications/tool-execution.md
-      - Content Encryption: specifications/content-encryption.md
-      - Authentication: specifications/authentication.md
-      - Validation: specifications/validation.md
-      - Error Handling: specifications/error-handling.md
-      - Hooks: specifications/hooks.md
-      - Remote Endpoints: specifications/remote-endpoints.md
-      - Agent Auto-Response: specifications/agent-auto-response.md
+  - XML:
+    - products/xml/index.md
+
+  - Operations SDK:
+    - products/operations-sdk/index.md
+
+  - Reference:
+    - reference/index.md
+
+  - Community:
+    - community/index.md
 
 # Extra
 extra:
@@ -229,11 +207,14 @@ extra:
 
 # Extra CSS
 extra_css:
-  - assets/css/extra.css
+  - assets/css/hashicorp-variables.css      # CSS variables - must load FIRST
+  - assets/css/hashicorp-extracted.css      # CSS rules extracted from live HashiCorp site
+  - assets/css/hashicorp-inline-styles.css  # Inline styles from HashiCorp HTML
 
 # Extra JavaScript
 extra_javascript:
   - assets/js/tabbed-sync.js
+  - assets/js/scroll-scrims.js  # HashiCorp scroll fade effects
 
 # Watch for changes
 watch:

@@ -1,0 +1,65 @@
+{
+  "runId": "run_4e6313c055dd400c9a694325b1aab6e6",
+  "agentId": "echo-agent",
+  "threadId": "thread_c76536283cfc47a1a67f9fffaea4e57a",
+  "journalId": null,
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "\n    The current weather in Seattle is 52\u00B0F and cloudy, with 75% humidity and wind speeds of 8 mph. Tomorrow\u0027s forecast shows a high of 55\u00B0F and a low of 48\u00B0F.\n  ",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "agent": null,
+  "output": [
+    {
+      "messageId": "msg_ab2b23d35bfb4b0fa3882d4374f77f6b",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \n\n    The current weather in Seattle is 52\u00B0F and cloudy, with 75% humidity and wind speeds of 8 mph. Tomorrow\u0027s forecast shows a high of 55\u00B0F and a low of 48\u00B0F.\n  ",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:33.500149Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "createdAt": "2026-02-09T18:38:33.50015Z",
+  "updatedAt": null,
+  "completedAt": "2026-02-09T18:38:33.50015Z",
+  "cancelledAt": null,
+  "cancellationReason": null,
+  "error": null,
+  "userId": null,
+  "threadCleanup": null,
+  "webhook": null,
+  "metadata": null
+}

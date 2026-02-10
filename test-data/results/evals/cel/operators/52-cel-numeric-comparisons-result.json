@@ -1,0 +1,126 @@
+{
+  "timestamp": "2026-02-09T19:17:57.890864Z",
+  "content": {
+    "threadId": "eval-052",
+    "description": "CEL Numeric Comparisons - Score thresholds",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "test-greater-than",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "quality",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference output is a three-line poem about code and logic, while the actual output is a generic statement; they do not share meaning, content, or the same intent."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "quality.score > 0.5",
+                "passed": false,
+                "value": 0.0
+              }
+            ]
+          },
+          {
+            "name": "test-greater-equal",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference asserts 'Good quality response', whereas the actual states 'This is a mock agent response.' They convey different meanings and do not answer the same question."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.score >= 0.7",
+                "passed": false,
+                "value": 0.0
+              }
+            ]
+          },
+          {
+            "name": "test-less-than",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "bad",
+                "passed": false,
+                "score": 0.15,
+                "details": {
+                  "similarity_score": 0.15,
+                  "llm_reasoning": "The reference output is a negative evaluation ('Bad response'), while the actual output merely states that it is a mock agent response. They do not convey the same meaning or assessment."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "bad.score < 1.0",
+                "passed": false,
+                "value": 0.15
+              }
+            ]
+          },
+          {
+            "name": "test-equals",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_exact_match",
+                "as": "exact",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "reason": "Text does not match"
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "exact.score == 1.0",
+                "passed": false,
+                "value": 0.0
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 10801
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 4,
+    "passedAsserts": 0,
+    "failedAsserts": 4,
+    "avgDurationMs": 10801.0,
+    "timestamp": "2026-02-09T19:17:47.089677Z",
+    "totalDurationMs": 10801
+  },
+  "hash": "567aa440f066a16b282ac86a57309bc60b6a4ccc9d6fd0377c2b35e4974c0f64",
+  "metadata": {
+    "input_file": "52-cel-numeric-comparisons.xml",
+    "thread_id": "eval-052",
+    "description": "CEL Numeric Comparisons - Score thresholds",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

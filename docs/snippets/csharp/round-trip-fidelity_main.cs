@@ -1,17 +1,24 @@
-using Microsoft.Agents.Xml.Generated.Models;
-using Microsoft.Agents.Xml.Serialization;
-using System.Linq;
+// using Microsoft.Agents.Xml.Generated.Models;
+// using Microsoft.Agents.Protocol.Xml;
 
-// Create conversation thread
-var thread = new List<object>
+// Original message
+var original = new UserMessage
 {
-    new SystemMessage { Contents = new List<AIContentBase> { new TextContent { Text = "You are a helpful assistant." } } },
-    new ChatMessage { Role = "user", Contents = new List<AIContentBase> { new TextContent { Text = "Hello!" } } },
-    new AgentMessage { Contents = new List<AIContentBase> { new TextContent { Text = "Hi! How can I help?" } } }
+    MessageId = "msg-roundtrip",
+    Contents = new List<AIContent>
+    {
+        new TextContent { Text = "Test message" }
+    }
 };
 
-// Serialize thread
+// Serialize then deserialize
 var serializer = new MessageSerializer();
-var threadXml = thread.Select(msg => serializer.Serialize(msg)).ToList();
+var xml = serializer.Serialize(original);
+var restored = serializer.Deserialize(xml);
 
-Console.WriteLine($"Thread length: {threadXml.Count} messages");
+// Verify fidelity
+Assert.Equal(original.Role, restored.Role);
+Assert.Equal(original.MessageId, restored.MessageId);
+Assert.Equal((original.Contents[0] as TextContent)?.Text, (restored.Contents[0] as TextContent)?.Text);
+
+Console.WriteLine("✓ Round-trip successful");

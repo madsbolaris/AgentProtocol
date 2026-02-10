@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Test context switching between topics" thread-id="eval-035" created-at="2026-02-08T00:00:00Z" status="active">
+  <run maxSteps="15" />
+
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>Tell me about Paris</text>
+  </user>
+
+  <expect name="paris-info">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>Paris is the capital of France...</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <judge agent="text_contains" as="contains">{"substring": "Paris", "caseSensitive": false}</judge>
+    <assert>sem.passed &amp;&amp; contains.passed</assert>
+  </expect>
+
+  <user message-id="msg-002" created-at="2026-02-08T00:00:02Z">
+    <text>Now tell me about Tokyo</text>
+  </user>
+
+  <expect name="tokyo-info">
+    <agent message-id="ref-002" created-at="2026-02-08T00:00:03Z" agent-id="test-agent">
+      <text>Tokyo is the capital of Japan...</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <judge agent="text_contains" as="contains_tokyo">{"substring": "Tokyo", "caseSensitive": false}</judge>
+    <judge agent="text_contains" as="not_contains_paris">{"substring": "Paris", "caseSensitive": false}</judge>
+    <assert>sem.passed &amp;&amp; contains_tokyo.passed &amp;&amp; !not_contains_paris.passed</assert>
+  </expect>
+</thread>

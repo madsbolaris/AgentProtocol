@@ -1,224 +1,117 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using Microsoft.Agents.Builder;
+using Microsoft.Agents.Builder.App;
+using Microsoft.Agents.Builder.State;
+using Microsoft.Agents.Core.Models;
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Agents.Abstractions.Models;
-using Microsoft.Agents.Protocol.Sdk;
-using Microsoft.Agents.Protocol.Sdk.Attributes;
-using Microsoft.Agents.Protocol.Sdk.Core;
+using System.Threading;
 
 namespace EmojiChatBot;
 
 /// <summary>
-/// Simple context to track conversation state
-/// </summary>
-public class ChatContext
-{
-    public int MessageCount { get; set; }
-    public string? LastEmojiUsed { get; set; }
-}
-
-/// <summary>
 /// Emoji Chat Bot demonstrating:
-/// 1. Tool calling with [Tool] attribute
-/// 2. System event handling
-/// 3. Emoji reaction handling
+/// 1. Message handling with emoji responses
+/// 2. Conversation member events (welcome messages)
+/// 3. Emoji reaction suggestions
 /// </summary>
-public class EmojiBotAgent : AgentProtocolApplication<ChatContext>
+public class EmojiBotAgent : AgentApplication
 {
-    public EmojiBotAgent(AgentProtocolOptions options) : base(options)
+    public EmojiBotAgent(AgentApplicationOptions options) : base(options)
     {
-        // Register event handlers
+        // Handle when new members are added to the conversation
+        OnConversationUpdate(ConversationUpdateEvents.MembersAdded, WelcomeMessageAsync);
 
-        // Handle system events (e.g., user joined, user left)
-        OnEvent<EventContent>("system.user_joined", HandleUserJoinedAsync);
-        OnEvent<EventContent>("system.user_left", HandleUserLeftAsync);
-
-        // Handle emoji reactions
-        OnEvent<MessageReactionContent>(HandleEmojiReactionAsync);
-    }
-
-    #region Tool Methods (Attribute-Based)
-
-    /// <summary>
-    /// Tool that adds an emoji to a message.
-    /// The LLM can call this tool when users ask to add reactions or emojis.
-    /// </summary>
-    [Tool("Add an emoji reaction to a specific message. Use this when the user wants to react to a message with an emoji.")]
-    public async Task<AddEmojiResult> AddEmojiToMessage(
-        [Description("The ID of the message to add emoji to")] string messageId,
-        [Description("The emoji to add (e.g., '👍', '❤️', '😊')")] string emoji)
-    {
-        // In a real implementation, this would call an API to add the reaction
-        // For this demo, we'll just return a success message
-
-        return new AddEmojiResult
-        {
-            Success = true,
-            MessageId = messageId,
-            Emoji = emoji,
-            Message = $"Added {emoji} reaction to message {messageId}"
-        };
+        // Handle regular messages with emoji responses
+        OnActivity(ActivityTypes.Message, OnMessageAsync, rank: RouteRank.Last);
     }
 
     /// <summary>
-    /// Tool that suggests emojis based on message sentiment.
+    /// Send welcome message when user joins
     /// </summary>
-    [Tool("Suggest appropriate emojis based on the sentiment or content of a message.")]
-    public async Task<EmojiSuggestion> SuggestEmoji(
-        [Description("The message text to analyze")] string messageText)
+    private async Task WelcomeMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
     {
-        // Simple sentiment-based emoji suggestion
-        var lowerText = messageText.ToLower();
-        var suggestedEmojis = new System.Collections.Generic.List<string>();
+        foreach (ChannelAccount member in turnContext.Activity.MembersAdded)
+        {
+            if (member.Id != turnContext.Activity.Recipient.Id)
+            {
+                await turnContext.SendActivityAsync(
+                    MessageFactory.Text("👋 Welcome! I'm an emoji bot. I'll respond to your messages with fun emoji suggestions!"),
+                    cancellationToken);
+            }
+        }
+    }
 
-        if (lowerText.Contains("happy") || lowerText.Contains("great") || lowerText.Contains("awesome"))
+    /// <summary>
+    /// Handle user messages and respond with emoji-enhanced replies
+    /// </summary>
+    private async Task OnMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
+    {
+        // Extract role from Activity.Properties (default to "user" if not present)
+        var role = "user";
+        if (turnContext.Activity.Properties != null &&
+            turnContext.Activity.Properties.TryGetValue("agentProtocol.role", out var roleValue))
         {
-            suggestedEmojis.AddRange(new[] { "😊", "🎉", "👍" });
+            // Properties stores JsonElement, so get string value
+            if (roleValue is System.Text.Json.JsonElement jsonElement &&
+                jsonElement.ValueKind == System.Text.Json.JsonValueKind.String)
+            {
+                role = jsonElement.GetString() ?? "user";
+            }
         }
-        else if (lowerText.Contains("sad") || lowerText.Contains("sorry"))
+
+        // Only respond to user messages
+        if (role != "user")
         {
-            suggestedEmojis.AddRange(new[] { "😢", "💔", "🤗" });
+            return;
         }
-        else if (lowerText.Contains("love"))
+
+        var userMessage = turnContext.Activity.Text ?? "";
+        var lowerMessage = userMessage.ToLower();
+
+        // Analyze message sentiment and suggest emojis
+        string emoji;
+        string response;
+
+        if (lowerMessage.Contains("happy") || lowerMessage.Contains("great") || lowerMessage.Contains("awesome") || lowerMessage.Contains("wonderful"))
         {
-            suggestedEmojis.AddRange(new[] { "❤️", "💕", "😍" });
+            emoji = "😊🎉";
+            response = $"You said: {userMessage}\n\nThat sounds great! {emoji} Here are some happy emojis: 😊 🎉 👍 ✨";
         }
-        else if (lowerText.Contains("thank"))
+        else if (lowerMessage.Contains("sad") || lowerMessage.Contains("sorry") || lowerMessage.Contains("bad"))
         {
-            suggestedEmojis.AddRange(new[] { "🙏", "😊", "👍" });
+            emoji = "🤗💙";
+            response = $"You said: {userMessage}\n\nI hope things get better! {emoji} Some comforting emojis: 🤗 💙 😢 🌟";
+        }
+        else if (lowerMessage.Contains("love") || lowerMessage.Contains("heart"))
+        {
+            emoji = "❤️💕";
+            response = $"You said: {userMessage}\n\nLove is in the air! {emoji} Some loving emojis: ❤️ 💕 😍 💖";
+        }
+        else if (lowerMessage.Contains("thank"))
+        {
+            emoji = "🙏";
+            response = $"You said: {userMessage}\n\nYou're welcome! {emoji} Some grateful emojis: 🙏 😊 👍 ✨";
+        }
+        else if (lowerMessage.Contains("hello") || lowerMessage.Contains("hi"))
+        {
+            emoji = "👋";
+            response = $"{emoji} Hello! You said: {userMessage}\n\nGreeting emojis: 👋 😊 👍 ✨";
+        }
+        else if (lowerMessage.Contains("emoji"))
+        {
+            emoji = "😀";
+            response = $"You mentioned emojis! {emoji}\n\nHere are some popular ones: 😀 😊 👍 ❤️ 🎉 ✨ 🔥 💯";
         }
         else
         {
-            suggestedEmojis.AddRange(new[] { "👍", "😊", "✨" });
+            emoji = "✨";
+            response = $"You said: {userMessage}\n\n{emoji} Some general emojis: 👍 😊 ✨ 🌟";
         }
 
-        return new EmojiSuggestion
-        {
-            MessageText = messageText,
-            SuggestedEmojis = suggestedEmojis.ToArray()
-        };
+        await turnContext.SendActivityAsync(response, cancellationToken: cancellationToken);
     }
-
-    #endregion
-
-    #region Event Handlers
-
-    /// <summary>
-    /// Handle system event: user joined the conversation.
-    /// This augments the LLM with knowledge about system events it wasn't trained on.
-    /// </summary>
-    private async Task HandleUserJoinedAsync(
-        IMessageContext<ChatContext> context,
-        AIContent eventContent,
-        CancellationToken cancellationToken)
-    {
-        // Extract user info from event
-        var eventData = (EventContent)eventContent;
-        var userName = eventData.Name ?? "Someone";
-
-        // Send welcome message
-        await context.SendTextAsync(
-            $"👋 Welcome {userName}! I'm an emoji bot. I can help you add emojis to messages and react with emojis!",
-            cancellationToken);
-    }
-
-    /// <summary>
-    /// Handle system event: user left the conversation.
-    /// </summary>
-    private async Task HandleUserLeftAsync(
-        IMessageContext<ChatContext> context,
-        AIContent eventContent,
-        CancellationToken cancellationToken)
-    {
-        var eventData = (EventContent)eventContent;
-        var userName = eventData.Name ?? "Someone";
-
-        // Log the departure (in real app, might update context or send notification)
-        Console.WriteLine($"User {userName} left the conversation");
-    }
-
-    /// <summary>
-    /// Handle incoming emoji reactions.
-    /// This teaches the LLM about emoji reactions, which are domain-specific events.
-    /// </summary>
-    private async Task HandleEmojiReactionAsync(
-        IMessageContext<ChatContext> context,
-        AIContent eventContent,
-        CancellationToken cancellationToken)
-    {
-        var reaction = (MessageReactionContent)eventContent;
-
-        // Determine if reaction was added or removed
-        bool isAdded = reaction.ReactionsAdded?.Count > 0;
-        var reactionList = isAdded ? reaction.ReactionsAdded : reaction.ReactionsRemoved;
-        var firstReaction = reactionList?.FirstOrDefault();
-
-        // Get emoji type
-        var emoji = firstReaction?.Type ?? "?";
-
-        // Update context to remember the last emoji
-        context.Context.LastEmojiUsed = emoji;
-
-        // Count popular reactions and respond
-        var reactionType = isAdded ? "added" : "removed";
-
-        if (reactionType == "added")
-        {
-            await context.SendTextAsync(
-                $"I see you reacted with {emoji}! That's a great choice! 😊",
-                cancellationToken);
-        }
-        else if (reactionType == "removed")
-        {
-            await context.SendTextAsync(
-                $"You removed the {emoji} reaction. No problem!",
-                cancellationToken);
-        }
-    }
-
-    #endregion
-
-    #region Custom Context Creation
-
-    /// <summary>
-    /// Create custom context for each conversation run.
-    /// </summary>
-    public override Task<ChatContext> CreateContextAsync(
-        string runId,
-        string threadId,
-        CancellationToken cancellationToken = default)
-    {
-        return Task.FromResult(new ChatContext
-        {
-            MessageCount = 0,
-            LastEmojiUsed = null
-        });
-    }
-
-    #endregion
 }
-
-#region Result Types
-
-/// <summary>
-/// Result returned by AddEmojiToMessage tool.
-/// </summary>
-public class AddEmojiResult
-{
-    public bool Success { get; set; }
-    public string MessageId { get; set; } = string.Empty;
-    public string Emoji { get; set; } = string.Empty;
-    public string Message { get; set; } = string.Empty;
-}
-
-/// <summary>
-/// Result returned by SuggestEmoji tool.
-/// </summary>
-public class EmojiSuggestion
-{
-    public string MessageText { get; set; } = string.Empty;
-    public string[] SuggestedEmojis { get; set; } = Array.Empty<string>();
-}
-
-#endregion

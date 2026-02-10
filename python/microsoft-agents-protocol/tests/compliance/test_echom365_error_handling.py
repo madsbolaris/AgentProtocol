@@ -8,7 +8,7 @@ import pytest
 from pathlib import Path
 
 # Get path to error test data
-ERROR_TEST_DATA_PATH = Path(__file__).parent.parent.parent.parent.parent / "test-data" / "input" / "errors"
+ERROR_TEST_DATA_PATH = Path(__file__).parent.parent.parent.parent.parent / "test-data" / "input" / "threads" / "invalid"
 
 
 @pytest.fixture
@@ -44,16 +44,16 @@ async def test_echom365_rejects_invalid_message(client, xml_file: Path):
     - Appropriate error code
 
     Error test cases:
-    - 20-error-missing-user-id.xml - Missing required user-id attribute
-    - 21-error-malformed-xml.xml - Malformed XML structure
-    - 22-error-invalid-timestamp.xml - Invalid timestamp format
-    - 23-error-empty-text-content.xml - Empty text content
-    - 24-error-tool-call-in-user-message.xml - Invalid role/content combination
-    - 25-error-missing-message-content.xml - No content elements
-    - 26-error-invalid-url.xml - Invalid URL format
-    - 27-error-missing-function-name.xml - Missing function name
-    - 28-error-invalid-json-arguments.xml - Invalid JSON in arguments
-    - 29-error-unknown-role.xml - Unknown message role
+    - missing-user-id.xml - Missing required user-id attribute
+    - malformed-xml.xml - Malformed XML structure
+    - invalid-timestamp.xml - Invalid timestamp format
+    - empty-text-content.xml - Empty text content
+    - tool-call-in-user-message.xml - Invalid role/content combination
+    - missing-message-content.xml - No content elements
+    - invalid-url.xml - Invalid URL format
+    - missing-function-name.xml - Missing function name
+    - invalid-json-arguments.xml - Invalid JSON in arguments
+    - unknown-role.xml - Unknown message role
     """
     # Arrange
     xml_content = xml_file.read_text(encoding="utf-8")
@@ -89,7 +89,7 @@ async def test_echom365_error_response_format(client):
     - Optional: error code for programmatic handling
     """
     # Arrange: Use a known error case
-    xml_file = ERROR_TEST_DATA_PATH / "20-error-missing-user-id.xml"
+    xml_file = ERROR_TEST_DATA_PATH / "missing-user-id.xml"
     xml_content = xml_file.read_text(encoding="utf-8")
 
     # Act
@@ -111,11 +111,11 @@ async def test_echom365_error_response_format(client):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("test_case", [
-    ("20-error-missing-user-id.xml", "user-id", "Missing required attribute"),
-    ("21-error-malformed-xml.xml", "xml", "XML parsing error"),
-    ("22-error-invalid-timestamp.xml", "timestamp", "Invalid timestamp format"),
-    ("23-error-empty-text-content.xml", "empty", "Content cannot be empty"),
-    ("29-error-unknown-role.xml", "role", "Unknown message role"),
+    ("missing-user-id.xml", "user-id", "Missing required attribute"),
+    ("malformed-xml.xml", "xml", "XML parsing error"),
+    ("invalid-timestamp.xml", "timestamp", "Invalid timestamp format"),
+    ("empty-text-content.xml", "empty", "Content cannot be empty"),
+    ("unknown-role.xml", "role", "Unknown message role"),
 ])
 async def test_echom365_error_messages_are_meaningful(client, test_case):
     """
@@ -152,7 +152,7 @@ async def test_echom365_accepts_valid_after_rejecting_invalid(client):
     This ensures error handling doesn't break the server state.
     """
     # Arrange: First send invalid message
-    invalid_xml = (ERROR_TEST_DATA_PATH / "20-error-missing-user-id.xml").read_text()
+    invalid_xml = (ERROR_TEST_DATA_PATH / "missing-user-id.xml").read_text()
 
     # Act: Send invalid message
     response1 = await client.post(

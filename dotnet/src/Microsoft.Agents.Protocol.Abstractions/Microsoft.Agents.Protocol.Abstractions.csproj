@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>Microsoft.Agents.Protocol.Abstractions</PackageId>
+    <RootNamespace>Microsoft.Agents.Protocol.Abstractions</RootNamespace>
+    <Description>Core abstractions for Microsoft Agents Protocol - message types and models</Description>
+    <Version>0.1.0</Version>
+    <!-- Suppress warnings for generated code -->
+    <!-- CS0109: Unnecessary new keyword (added for consistency in generated code) -->
+    <!-- CS1591/CS1587: XML documentation (provided where needed, inherited for overrides) -->
+    <!-- CS8618: Non-nullable property initialization (DTOs/models are initialized via serialization) -->
+    <NoWarn>$(NoWarn);CS0109;CS1591;CS1587;CS8618</NoWarn>
+  </PropertyGroup>
+
+  <!-- Temporarily disabled to avoid circular dependency during development
+  <Target Name="GenerateFromTypeSpec" BeforeTargets="BeforeBuild">
+    <Exec Command="/usr/local/share/dotnet/dotnet run - -project ../Microsoft.Agents.CodeGen/Microsoft.Agents.CodeGen.csproj - - - -typespec ../../../typespec/messages.tsp - -output ./Models - -namespace Microsoft.Agents"
+          WorkingDirectory="$(ProjectDir)"
+          Condition="Exists('../../../typespec/messages.tsp')" />
+  </Target>
+  -->
+
+</Project>

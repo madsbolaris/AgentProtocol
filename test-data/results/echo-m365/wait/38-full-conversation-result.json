@@ -1,0 +1,56 @@
+{
+  "runId": "run_e03504be5bf54d59a0425d7e5b7ffb81",
+  "agentId": "echo-agent",
+  "threadId": "thread_d78772959b524b13a89b1ee3cdadfd4d",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "system",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You are a helpful weather assistant with access to weather data.",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_4e704852aa5049569a21dd4e78c74a78",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nYou are a helpful weather assistant with access to weather data.",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.249987Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.249989Z",
+  "completedAt": null
+}

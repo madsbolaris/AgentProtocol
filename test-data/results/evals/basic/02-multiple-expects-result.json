@@ -1,0 +1,98 @@
+{
+  "timestamp": "2026-02-09T19:15:47.624806Z",
+  "content": {
+    "threadId": "eval-002",
+    "description": "Multiple expectations in sequence",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "capital-answer",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "contains.passed",
+                "passed": true,
+                "value": true
+              }
+            ]
+          },
+          {
+            "name": "population-answer",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference expresses a population figure (approximately 2.2 million people), whereas the actual output states a geographic fact about France's location in Western Europe. They convey entirely different information and do not answer the same question."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "million"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.score &gt;= 0.7",
+                "passed": false,
+                "value": 0.0
+              },
+              {
+                "expression": "contains.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 4578
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 3,
+    "passedAsserts": 1,
+    "failedAsserts": 2,
+    "avgDurationMs": 4578.0,
+    "timestamp": "2026-02-09T19:15:43.046310Z",
+    "totalDurationMs": 4578
+  },
+  "hash": "54466dda1711e99f3c0418e24d92c3125a8962b7ebde5bab5e179280fd7115db",
+  "metadata": {
+    "input_file": "02-multiple-expects.xml",
+    "thread_id": "eval-002",
+    "description": "Multiple expectations in sequence",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

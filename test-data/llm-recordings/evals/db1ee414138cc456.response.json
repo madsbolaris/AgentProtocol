@@ -1,0 +1,17 @@
+{
+  "callId": 42,
+  "timestamp": "2026-02-09T19:18:26.082016+00:00",
+  "hash": "db1ee414138cc456",
+  "response": {
+    "id": "chatcmpl-D7R41hSLYYSOpibbRFERe82J8ceIy",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664701,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.2,\n  \"reasoning\": \"The reference asserts a 'detailed response' whereas the actual describes a 'mock agent response'. They convey different meanings and contents, not semantically equivalent.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

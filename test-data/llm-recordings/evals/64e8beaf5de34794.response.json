@@ -1,0 +1,17 @@
+{
+  "callId": 20,
+  "timestamp": "2026-02-09T19:16:59.547088+00:00",
+  "hash": "64e8beaf5de34794",
+  "response": {
+    "id": "chatcmpl-D7R2fG16R3IaY2yE9B1Gv2zCkr8Ux",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664617,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The actual output provides no information about Alexander Graham Bell or the invention of the telephone and acts as a generic mock response, failing to match the content and meaning of the reference.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

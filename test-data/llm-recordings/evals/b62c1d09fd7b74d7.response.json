@@ -1,0 +1,17 @@
+{
+  "callId": 49,
+  "timestamp": "2026-02-09T19:18:53.335388+00:00",
+  "hash": "b62c1d09fd7b74d7",
+  "response": {
+    "id": "chatcmpl-D7R4Uz0oNytNEaU64m5g1DCr5yCNI",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664730,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.1,\n  \"reasoning\": \"The reference says 'Average quality check', a label or concept; the actual says 'This is a mock agent response.', a statement about the nature of the response. They do not convey the same meaning or answer the same question.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

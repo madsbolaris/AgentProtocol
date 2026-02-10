@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Multiple expectations in sequence" thread-id="eval-002" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>What is the capital of France?</text>
+  </user>
+
+  <expect name="capital-answer">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>Paris</text>
+    </agent>
+    <judge agent="text_contains" as="contains" />
+    <assert>contains.passed</assert>
+  </expect>
+
+  <user message-id="msg-002" created-at="2026-02-08T00:00:02Z">
+    <text>What is its population?</text>
+  </user>
+
+  <expect name="population-answer">
+    <agent message-id="ref-002" created-at="2026-02-08T00:00:03Z" agent-id="test-agent">
+      <text>Approximately 2.2 million people</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <judge agent="text_contains" as="contains">["million"]</judge>
+    <assert>sem.score &gt;= 0.7</assert>
+    <assert>contains.passed</assert>
+  </expect>
+</thread>

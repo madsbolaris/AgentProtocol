@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-02-09T19:16:42.446071Z",
+  "content": {
+    "threadId": "eval-029",
+    "description": "Test URL extraction and validation",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "url-present",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_regex",
+                "as": "regex",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "pattern": "https?://[^\\s]+",
+                  "matched": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "regex.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 0
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 0.0,
+    "timestamp": "2026-02-09T19:16:42.445783Z",
+    "totalDurationMs": 0
+  },
+  "hash": "537fba815b43c9a43c10ef4a2dc15f012f3ad74972e2e32d737deff40358b539",
+  "metadata": {
+    "input_file": "29-url-extraction.xml",
+    "thread_id": "eval-029",
+    "description": "Test URL extraction and validation",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

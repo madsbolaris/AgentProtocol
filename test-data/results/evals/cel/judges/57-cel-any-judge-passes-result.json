@@ -1,0 +1,108 @@
+{
+  "timestamp": "2026-02-09T19:18:42.680148Z",
+  "content": {
+    "threadId": "eval-057",
+    "description": "CEL Any Judge Passes - At least one succeeds",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "test-any-passes",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "format1",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "format2",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "text_regex",
+                "as": "format3",
+                "passed": false,
+                "score": 0.0,
+                "details": {}
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "format1.passed || format2.passed || format3.passed",
+                "passed": true,
+                "value": true
+              }
+            ]
+          },
+          {
+            "name": "test-any-high-score",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "semantic",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference conveys a concept 'Quality from any dimension', whereas the actual states 'This is a mock agent response.' They do not share meaning or content."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "keywords",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "semantic.score >= 0.9 || keywords.score >= 0.9",
+                "passed": false,
+                "value": 0.0
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 2668
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 2,
+    "passedAsserts": 1,
+    "failedAsserts": 1,
+    "avgDurationMs": 2668.0,
+    "timestamp": "2026-02-09T19:18:40.011760Z",
+    "totalDurationMs": 2668
+  },
+  "hash": "1087829871e7a87663a029dccf08689956b6dce2fbb7331d4e8395db82c324f5",
+  "metadata": {
+    "input_file": "57-cel-any-judge-passes.xml",
+    "thread_id": "eval-057",
+    "description": "CEL Any Judge Passes - At least one succeeds",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

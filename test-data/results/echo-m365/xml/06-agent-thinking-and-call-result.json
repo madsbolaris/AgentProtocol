@@ -1,0 +1,65 @@
+{
+  "runId": "run_5558e0f5c66645438cb209c07456b187",
+  "agentId": "echo-agent",
+  "threadId": "thread_e3ac430699c5442e80f49683e0fdbddf",
+  "journalId": null,
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "\n    User is asking about weather in Seattle. I need to call the get_weather tool with location parameter set to \u0022Seattle, WA\u0022.\n  ",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "agent": null,
+  "output": [
+    {
+      "messageId": "msg_c5581b000cd7431582d3794537016151",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \n\n    User is asking about weather in Seattle. I need to call the get_weather tool with location parameter set to \u0022Seattle, WA\u0022.\n  ",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:33.471795Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "createdAt": "2026-02-09T18:38:33.471797Z",
+  "updatedAt": null,
+  "completedAt": "2026-02-09T18:38:33.471797Z",
+  "cancelledAt": null,
+  "cancellationReason": null,
+  "error": null,
+  "userId": null,
+  "threadCleanup": null,
+  "webhook": null,
+  "metadata": null
+}

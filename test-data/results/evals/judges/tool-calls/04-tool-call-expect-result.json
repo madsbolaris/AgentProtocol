@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-02-09T19:15:47.738331Z",
+  "content": {
+    "threadId": "eval-004",
+    "description": "Expectation with tool call",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "weather-tool-call",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "tool_call_match",
+                "as": "tool",
+                "passed": true,
+                "score": 1.0,
+                "details": {}
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "tool.passed",
+                "passed": true,
+                "value": true
+              }
+            ]
+          },
+          {
+            "name": "weather-response",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "65",
+                    "sunny"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "contains.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 0
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 2,
+    "passedAsserts": 1,
+    "failedAsserts": 1,
+    "avgDurationMs": 0.0,
+    "timestamp": "2026-02-09T19:15:47.738235Z",
+    "totalDurationMs": 0
+  },
+  "hash": "379f27a1e7befe8e6bb38a2035ed2e07e68a351e4b0ccb2b7dd0d7801b16509e",
+  "metadata": {
+    "input_file": "04-tool-call-expect.xml",
+    "thread_id": "eval-004",
+    "description": "Expectation with tool call",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

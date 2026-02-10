@@ -1,14 +1,16 @@
-# Example: Message with custom metadata
-# Simulated Python implementation
-
-xml_output = """<?xml version="1.0" encoding="utf-8"?>
-<message role="user" messageId="msg-001">
-  <metadata>
-    <userId>user_123</userId>
-    <sessionId>session_456</sessionId>
-    <timestamp>2026-02-07T22:15:00Z</timestamp>
-  </metadata>
-  <text>What's the weather today?</text>
-</message>"""
-
-print(xml_output)
+# from microsoft.agents.xml.models import ChatMessage, TextContent
+# from microsoft.agents.xml.serialization import MessageSerializer
+#
+# # Create message with metadata
+# message = ChatMessage(
+#     role="user",
+#     message_id="msg-meta-1",
+#     timestamp="2024-01-15T10:30:00Z",
+#     contents=[
+#         TextContent(text="Hello!")
+#     ]
+# )
+#
+# serializer = MessageSerializer()
+# xml_output = serializer.serialize(message)
+# print(xml_output)

@@ -1,0 +1,68 @@
+/* ============================================================================
+   CLEAN SITE LAYOUT
+   Custom layout with no Material for MkDocs class dependencies
+   ============================================================================ */
+
+/* ===== SCROLLING - HashiCorp style (body scrolls, not HTML) ===== */
+html {
+  overflow: hidden; /* HTML doesn't scroll */
+  height: 100%; /* Viewport height */
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: auto; /* Body is the scroll container */
+  height: 100%; /* Fill viewport, scroll internally */
+  margin: 0;
+  padding: 0;
+}
+
+/* Material's main container - no special height constraints */
+.md-container {
+  overflow: visible;
+}
+
+.md-main {
+  overflow: visible;
+}
+
+.md-main__inner {
+  display: flex;
+}
+
+/* Sidebars: normal layout, no forced height */
+.md-sidebar {
+  overflow: visible;
+}
+
+/* Content: normal layout */
+.md-content {
+  overflow: visible;
+  flex: 1;
+}
+
+/* Custom scrollbar styling for better aesthetics */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--md-default-fg-color--lightest);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--md-default-fg-color--lighter);
+}
+
+/* ===== MOBILE ===== */
+@media screen and (max-width: 60em) {
+  /* Mobile-specific adjustments if needed */
+}

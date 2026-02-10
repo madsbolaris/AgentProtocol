@@ -1,0 +1,17 @@
+{
+  "callId": 40,
+  "timestamp": "2026-02-09T19:18:13.215272+00:00",
+  "hash": "09b62e78bb82e32d",
+  "response": {
+    "id": "chatcmpl-D7R3p899XzBYPTPywVy9AMFvIWM7h",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664689,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.1,\n  \"reasoning\": \"The reference asks to classify quality as 'Excellent or poor', while the actual states 'This is a mock agent response.' They convey unrelated meanings and do not address the same content.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

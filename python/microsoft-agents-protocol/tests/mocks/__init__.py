@@ -3,13 +3,16 @@ Mock implementations for testing LLM-powered agents.
 
 This package provides:
 - MockLLMClient: Replays recorded LLM responses
+- LLMRecorder: Records and replays LLM API interactions
 
-Note: LLM recording is now done by the .NET BasicM365Agent bot.
-Use the generate_golden_datasets.py script with --record-llm flag.
+Use the generate_golden_datasets.py or generate_eval_datasets.py scripts
+with --record-llm flag to generate recordings.
 """
 
 from .mock_llm_client import MockLLMClient
+from .llm_recorder import LLMRecorder
 
 __all__ = [
     "MockLLMClient",
+    "LLMRecorder",
 ]

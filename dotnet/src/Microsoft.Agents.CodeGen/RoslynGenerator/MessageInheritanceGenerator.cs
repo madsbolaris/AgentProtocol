@@ -141,6 +141,7 @@ public class MessageInheritanceGenerator
             .ToArray();
 
         // Add abstract Role property with appropriate serialization attributes
+        // NOTE: For JSON, use [JsonIgnore] to prevent conflict with JsonPolymorphic discriminator
         var rolePropertyAttrs = new List<AttributeSyntax>();
         if (_serializationMode.HasFlag(SerializationMode.Xml))
         {
@@ -148,21 +149,9 @@ public class MessageInheritanceGenerator
         }
         if (_serializationMode.HasFlag(SerializationMode.Json))
         {
-            rolePropertyAttrs.Add(
-                Attribute(
-                    ParseName("JsonPropertyName"),
-                    AttributeArgumentList(
-                        SingletonSeparatedList(
-                            AttributeArgument(
-                                LiteralExpression(
-                                    SyntaxKind.StringLiteralExpression,
-                                    Literal("role")
-                                )
-                            )
-                        )
-                    )
-                )
-            );
+            // Add [JsonIgnore] instead of [JsonPropertyName] to prevent conflict
+            // with the JsonPolymorphic(TypeDiscriminatorPropertyName = "role") discriminator
+            rolePropertyAttrs.Add(Attribute(ParseName("JsonIgnore")));
         }
 
         var roleProperty = PropertyDeclaration(
@@ -283,7 +272,7 @@ public class MessageInheritanceGenerator
             );
         }
 
-        // Add Role property override
+        // Add Role property override (documentation inherited from base class)
         var roleProperty = PropertyDeclaration(
                 ParseTypeName(roleEnumName),
                 Identifier("Role")
@@ -301,7 +290,41 @@ public class MessageInheritanceGenerator
                     )
                 )
             )
-            .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+            .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+            .WithLeadingTrivia(
+                Trivia(
+                    PragmaWarningDirectiveTrivia(
+                        Token(SyntaxKind.DisableKeyword),
+                        SeparatedList<ExpressionSyntax>(new[] {
+                            (ExpressionSyntax)IdentifierName("CS1591")
+                        }),
+                        true
+                    )
+                ),
+                CarriageReturnLineFeed
+            )
+            .WithTrailingTrivia(
+                CarriageReturnLineFeed,
+                Trivia(
+                    PragmaWarningDirectiveTrivia(
+                        Token(SyntaxKind.RestoreKeyword),
+                        SeparatedList<ExpressionSyntax>(new[] {
+                            (ExpressionSyntax)IdentifierName("CS1591")
+                        }),
+                        true
+                    )
+                ),
+                CarriageReturnLineFeed
+            );
+
+        // Add [JsonIgnore] if JSON serialization is enabled
+        // Attributes don't inherit in C#, so we must add it to every override
+        if (_serializationMode.HasFlag(SerializationMode.Json))
+        {
+            roleProperty = roleProperty.AddAttributeLists(
+                AttributeList(SingletonSeparatedList(Attribute(ParseName("JsonIgnore"))))
+            );
+        }
 
         classDecl = classDecl.AddMembers(roleProperty);
 
@@ -408,11 +431,14 @@ public class MessageInheritanceGenerator
     {
         var type = nullable ? $"{typeName}?" : typeName;
 
-        return PropertyDeclaration(
+        var property = PropertyDeclaration(
                 ParseTypeName(type),
                 Identifier(propertyName)
             )
-            .AddModifiers(Token(SyntaxKind.PublicKeyword))
+            .AddModifiers(
+                Token(SyntaxKind.PublicKeyword),
+                Token(SyntaxKind.NewKeyword)
+            )
             .AddAccessorListAccessors(
                 AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
                     .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
@@ -438,6 +464,12 @@ public class MessageInheritanceGenerator
                     )
                 )
             );
+
+        // Add XML documentation
+        var documentation = $"Gets or sets the {xmlName}.";
+        property = property.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(documentation));
+
+        return property;
     }
 
     private bool NeedsSimpleTextContent(string roleName)
@@ -471,11 +503,14 @@ public class MessageInheritanceGenerator
                 )
             ).ToList();
 
-        return PropertyDeclaration(
+        var property = PropertyDeclaration(
                 ParseTypeName("List<AIContent>"),
                 Identifier("Contents")
             )
-            .AddModifiers(Token(SyntaxKind.PublicKeyword))
+            .AddModifiers(
+                Token(SyntaxKind.PublicKeyword),
+                Token(SyntaxKind.NewKeyword)
+            )
             .AddAccessorListAccessors(
                 AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
                     .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
@@ -492,6 +527,12 @@ public class MessageInheritanceGenerator
             .AddAttributeLists(
                 AttributeList(SeparatedList(attributes))
             );
+
+        // Add XML documentation
+        var documentation = $"Gets or sets the content items for this {roleName} message.";
+        property = property.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(documentation));
+
+        return property;
     }
 
     private List<(string XmlName, string TypeName)> GetContentTypesForRole(string roleName)
@@ -629,6 +670,13 @@ public class MessageInheritanceGenerator
         {
             property = _jsonAttributeGenerator.AddPropertyJsonAttributes(property, propDef);
         }
+
+        // Add XML documentation
+        var documentation = !string.IsNullOrWhiteSpace(propDef.Documentation)
+            ? propDef.Documentation
+            : $"Gets or sets the {NamingConventions.ToKebabCase(propDef.Name)}.";
+
+        property = property.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(documentation));
 
         return property;
     }

@@ -1,0 +1,150 @@
+{
+  "timestamp": "2026-02-09T19:19:19.089443Z",
+  "content": {
+    "threadId": "eval-060",
+    "description": "CEL Edge Cases - Boundary conditions and special cases",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "test-exact-boundary",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "exact",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference output conveys a concept related to an 'exact threshold', while the actual output is a generic placeholder phrase. They do not share meaning, content, or intended purpose."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "exact.score == 0.75 || exact.score >= 0.75",
+                "passed": false,
+                "value": 0.0
+              }
+            ]
+          },
+          {
+            "name": "test-zero-score",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "score",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference conveys a numeric condition 'zero or positive' (non-negative), whereas the actual is a generic statement announcing a mock agent response; they do not share meaning or content."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "score.score >= 0.0",
+                "passed": true,
+                "value": 0.0
+              }
+            ]
+          },
+          {
+            "name": "test-perfect-score",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_exact_match",
+                "as": "perfect",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "reason": "Text does not match"
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "perfect.score == 1.0 || perfect.score >= 0.99",
+                "passed": false,
+                "value": 0.0
+              }
+            ]
+          },
+          {
+            "name": "test-not-equals",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "nonzero",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference output conveys a nonzero value, whereas the actual output is a generic statement about being a mock agent response; they do not share meaning or the same information."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "nonzero.score != 0.0",
+                "passed": false,
+                "value": 0.0
+              }
+            ]
+          },
+          {
+            "name": "test-double-negation",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "check",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "!!check.passed",
+                "passed": false,
+                "value": null,
+                "error": "Judge result '!!check' not found"
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 11510
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 5,
+    "passedAsserts": 1,
+    "failedAsserts": 4,
+    "avgDurationMs": 11510.0,
+    "timestamp": "2026-02-09T19:19:07.578620Z",
+    "totalDurationMs": 11510
+  },
+  "hash": "9e62aa747d03028395325dbf9fe6b2bbaf3bf2cbd401c0d9dab3528f6027bc59",
+  "metadata": {
+    "input_file": "60-cel-edge-cases.xml",
+    "thread_id": "eval-060",
+    "description": "CEL Edge Cases - Boundary conditions and special cases",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

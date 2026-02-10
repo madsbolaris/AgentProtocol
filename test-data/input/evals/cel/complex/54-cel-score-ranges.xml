@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="CEL Score Ranges - Between thresholds" thread-id="eval-054" created-at="2026-02-09T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-09T00:00:00Z">
+    <text>Rate this quality</text>
+  </user>
+
+  <expect name="test-score-in-range">
+    <agent message-id="ref-001" created-at="2026-02-09T00:00:01Z" agent-id="test-agent">
+      <text>Good quality response</text>
+    </agent>
+    <judge agent="semantic_similarity" as="quality" />
+    <!-- Test score is between 0.7 and 0.9 -->
+    <assert>quality.score >= 0.7 && quality.score <= 0.9</assert>
+  </expect>
+
+  <expect name="test-score-outside-range">
+    <agent message-id="ref-002" created-at="2026-02-09T00:00:02Z" agent-id="test-agent">
+      <text>Excellent or poor</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <!-- Test score is NOT in middle range (either high or low) -->
+    <assert>sem.score < 0.5 || sem.score > 0.9</assert>
+  </expect>
+
+  <expect name="test-multiple-thresholds">
+    <agent message-id="ref-003" created-at="2026-02-09T00:00:03Z" agent-id="test-agent">
+      <text>Multi-level quality</text>
+    </agent>
+    <judge agent="semantic_similarity" as="high" />
+    <judge agent="text_contains" as="medium" />
+    <!-- Test tiered scoring -->
+    <assert>(high.score >= 0.9) || (high.score >= 0.7 && medium.passed) || (high.score >= 0.5 && medium.passed && high.passed)</assert>
+  </expect>
+</thread>

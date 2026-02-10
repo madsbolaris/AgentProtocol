@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="CEL Score Math - Arithmetic operations on scores" thread-id="eval-058" created-at="2026-02-09T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-09T00:00:00Z">
+    <text>Evaluated response</text>
+  </user>
+
+  <expect name="test-score-addition">
+    <agent message-id="ref-001" created-at="2026-02-09T00:00:01Z" agent-id="test-agent">
+      <text>Combined score evaluation</text>
+    </agent>
+    <judge agent="semantic_similarity" as="quality" />
+    <judge agent="text_contains" as="content" />
+    <!-- Test score addition - combined score > 1.5 -->
+    <assert>quality.score + content.score > 1.5</assert>
+  </expect>
+
+  <expect name="test-score-average">
+    <agent message-id="ref-002" created-at="2026-02-09T00:00:02Z" agent-id="test-agent">
+      <text>Average quality check</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem1" />
+    <judge agent="semantic_similarity" as="sem2" />
+    <!-- Test score averaging -->
+    <assert>(sem1.score + sem2.score) / 2.0 >= 0.75</assert>
+  </expect>
+
+  <expect name="test-score-multiplication">
+    <agent message-id="ref-003" created-at="2026-02-09T00:00:03Z" agent-id="test-agent">
+      <text>Weighted scoring</text>
+    </agent>
+    <judge agent="semantic_similarity" as="quality" />
+    <!-- Test score multiplication (weight of 1.2) -->
+    <assert>quality.score * 1.2 >= 0.84</assert>
+  </expect>
+</thread>

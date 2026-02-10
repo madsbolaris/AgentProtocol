@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <thread thread-id="thread_example_003" status="active" created-at="2026-02-07T10:00:00Z">
   <agent>
-    <text>You said: What's the weather like in Seattle?</text>
+    <text>you said: What's the weather like in Seattle?</text>
   </agent>
 </thread>

@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-02-09T19:16:42.388804Z",
+  "content": {
+    "threadId": "eval-028",
+    "description": "Test sentiment of response",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "positive-sentiment",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference expresses positive emotion and happiness, while the actual output is a neutral meta-statement about being a mock agent. They do not convey the same meaning, intent, or sentiment."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; sem.score > 0.8",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 3418
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 3418.0,
+    "timestamp": "2026-02-09T19:16:38.970105Z",
+    "totalDurationMs": 3418
+  },
+  "hash": "b931625e7343d29312e7ed9bbeb9075bc43d54e735b6241486a456774c12122e",
+  "metadata": {
+    "input_file": "28-sentiment-check.xml",
+    "thread_id": "eval-028",
+    "description": "Test sentiment of response",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

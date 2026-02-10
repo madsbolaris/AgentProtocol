@@ -1,11 +1,20 @@
-# Example: Tool/Function call message
-# Simulated Python implementation
-
-xml_output = """<?xml version="1.0" encoding="utf-8"?>
-<tool>
-  <functionCall name="get_weather" callId="call_001">
-    <arguments>{"location": "San Francisco", "unit": "celsius"}</arguments>
-  </functionCall>
-</tool>"""
-
-print(xml_output)
+# from microsoft.agents.xml.models import AgentMessage, FunctionCallContent
+# from microsoft.agents.xml.serialization import MessageSerializer
+#
+# # Create agent message with tool call
+# message = AgentMessage(
+#     role="assistant",
+#     agent_id="agent-456",
+#     message_id="msg-call-1",
+#     contents=[
+#         FunctionCallContent(
+#             call_id="call_abc123",
+#             name="get_weather",
+#             arguments='{"location": "Seattle", "unit": "fahrenheit"}'
+#         )
+#     ]
+# )
+#
+# serializer = MessageSerializer()
+# xml_output = serializer.serialize(message)
+# print(xml_output)

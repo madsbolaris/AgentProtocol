@@ -1,0 +1,76 @@
+{
+  "timestamp": "2026-02-09T19:15:51.211412Z",
+  "content": {
+    "threadId": "eval-009",
+    "description": "Expecting JSON formatted output",
+    "passed": true,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": true,
+        "expects": [
+          {
+            "name": "json-structure",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "text_regex",
+                "as": "json",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "pattern": "\\{.*\"name\".*\"John\".*\"age\".*30.*\\}",
+                  "matched": true
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [
+                    "John",
+                    "30"
+                  ],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "json.passed",
+                "passed": true,
+                "value": true
+              },
+              {
+                "expression": "contains.passed",
+                "passed": true,
+                "value": true
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 0
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 1,
+    "failedRuns": 0,
+    "totalAsserts": 2,
+    "passedAsserts": 2,
+    "failedAsserts": 0,
+    "avgDurationMs": 0.0,
+    "timestamp": "2026-02-09T19:15:51.211274Z",
+    "totalDurationMs": 0
+  },
+  "hash": "9f6559e297766068df21ac917f329b244a6287d78f3deaa2ffd896607489eca9",
+  "metadata": {
+    "input_file": "09-json-output-expect.xml",
+    "thread_id": "eval-009",
+    "description": "Expecting JSON formatted output",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

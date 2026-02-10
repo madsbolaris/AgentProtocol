@@ -1,11 +1,19 @@
-# Example: Error handling content
-# Simulated Python implementation
-
-xml_output = """<?xml version="1.0" encoding="utf-8"?>
-<agent>
-  <error code="TOOL_ERROR" message="Failed to execute function: API timeout">
-    <details>The weather API did not respond within 5 seconds</details>
-  </error>
-</agent>"""
-
-print(xml_output)
+# from microsoft.agents.xml.models import AgentMessage, ErrorContent
+# from microsoft.agents.xml.serialization import MessageSerializer
+#
+# # Create message with error
+# message = AgentMessage(
+#     role="assistant",
+#     agent_id="agent-456",
+#     message_id="msg-error-1",
+#     contents=[
+#         ErrorContent(
+#             code="rate_limit_exceeded",
+#             message="Rate limit exceeded. Please try again in 60 seconds."
+#         )
+#     ]
+# )
+#
+# serializer = MessageSerializer()
+# xml_output = serializer.serialize(message)
+# print(xml_output)

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="CEL All Judges Pass - Require all to succeed" thread-id="eval-056" created-at="2026-02-09T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-09T00:00:00Z">
+    <text>Provide comprehensive answer</text>
+  </user>
+
+  <expect name="test-all-must-pass">
+    <agent message-id="ref-001" created-at="2026-02-09T00:00:01Z" agent-id="test-agent">
+      <text>The answer includes keywords, good quality, and proper format</text>
+    </agent>
+    <judge agent="text_contains" as="keywords" />
+    <judge agent="semantic_similarity" as="quality" />
+    <judge agent="text_regex" as="format" />
+    <!-- All judges must pass -->
+    <assert>keywords.passed && quality.passed && format.passed</assert>
+  </expect>
+
+  <expect name="test-all-with-scores">
+    <agent message-id="ref-002" created-at="2026-02-09T00:00:02Z" agent-id="test-agent">
+      <text>High quality comprehensive response</text>
+    </agent>
+    <judge agent="text_contains" as="j1" />
+    <judge agent="semantic_similarity" as="j2" />
+    <judge agent="text_contains" as="j3" />
+    <!-- All judges pass AND all scores above threshold -->
+    <assert>j1.passed && j2.passed && j3.passed && j1.score >= 0.8 && j2.score >= 0.8 && j3.score >= 0.8</assert>
+  </expect>
+</thread>

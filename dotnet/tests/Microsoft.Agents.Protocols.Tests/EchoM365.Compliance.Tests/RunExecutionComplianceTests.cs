@@ -2,19 +2,19 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Agents.Abstractions.Models;
-using Microsoft.Agents.Xml.Serialization;
+using Microsoft.Agents.Xml.Generated.Models;
+using Microsoft.Agents.Xml.Core.Serialization;
 
-using QuickStart;
 namespace Microsoft.Agents.Protocol.Tests.EchoM365.Compliance;
 
 /// <summary>
 /// AUTO-GENERATED: Run execution compliance tests.
-/// Generated from: specs/typespec/execution.tsp
+/// Generated from: typespec/execution.tsp
 ///
 /// Verifies Run model per Agent Framework Protocol specification.
 ///
@@ -40,6 +40,41 @@ public class RunExecutionComplianceTests : IClassFixture<WebApplicationFactory<P
         // - Run creation with input messages
         // - Synchronous execution via POST /runs/wait
         // - Output validation
+        await Task.CompletedTask;
+    }
+
+    [Fact(Skip = "Run type not yet implemented")]
+    public async Task RunWaitResponse_DoesNotIncludeInputField()
+    {
+        // CRITICAL: Per TypeSpec, input has @visibility("create") which means
+        // it should ONLY appear in request bodies, NOT in response bodies.
+        //
+        // This test verifies that the /runs/wait endpoint response does NOT
+        // include the input field, as that would violate the visibility spec.
+
+        // TODO: Implement this test after Run endpoint is added
+        // Arrange: Create request with input messages
+        // var request = new
+        // {
+        //     agentId = "echo-agent",
+        //     threadId = "thread_test",
+        //     input = new[]
+        //     {
+        //         new { role = "user", contents = new[] { new { kind = "text", text = "Test" } } }
+        //     }
+        // };
+        //
+        // // Act: POST to /runs/wait
+        // var response = await _client.PostAsJsonAsync("/runs/wait", request);
+        // response.StatusCode.Should().Be(HttpStatusCode.OK);
+        //
+        // var responseJson = await response.Content.ReadAsStringAsync();
+        // var jsonDoc = JsonDocument.Parse(responseJson);
+        //
+        // // Assert: Response must NOT contain "input" field
+        // jsonDoc.RootElement.TryGetProperty("input", out _).Should().BeFalse(
+        //     "input field has @visibility('create') and should not appear in responses");
+
         await Task.CompletedTask;
     }
 

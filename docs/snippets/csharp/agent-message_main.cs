@@ -1,17 +1,17 @@
-using Microsoft.Agents.Xml.Generated.Models;
-using Microsoft.Agents.Xml.Serialization;
-using System.Linq;
+// using Microsoft.Agents.Xml.Generated.Models;
+// using Microsoft.Agents.Protocol.Xml;
 
-// Create conversation thread
-var thread = new List<object>
+// Create agent response
+var message = new AgentMessage
 {
-    new SystemMessage { Contents = new List<AIContentBase> { new TextContent { Text = "You are a helpful assistant." } } },
-    new ChatMessage { Role = "user", Contents = new List<AIContentBase> { new TextContent { Text = "Hello!" } } },
-    new AgentMessage { Contents = new List<AIContentBase> { new TextContent { Text = "Hi! How can I help?" } } }
+    AgentId = "agent-456",
+    MessageId = "msg-789",
+    Contents = new List<AIContent>
+    {
+        new TextContent { Text = "The current weather in Seattle is 55°F and partly cloudy." }
+    }
 };
 
-// Serialize thread
 var serializer = new MessageSerializer();
-var threadXml = thread.Select(msg => serializer.Serialize(msg)).ToList();
-
-Console.WriteLine($"Thread length: {threadXml.Count} messages");
+var xmlOutput = serializer.Serialize(message);
+Console.WriteLine(xmlOutput);

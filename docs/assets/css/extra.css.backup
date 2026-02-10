@@ -1,0 +1,1164 @@
+/* ============================================================
+   Agent Framework Docs — HashiCorp Helios Inspired
+   Clean, spacious, professional documentation design
+   ============================================================ */
+
+@import url("https://fonts.bunny.net/css?family=inter:400,500,600,700|jetbrains-mono:400,500,600");
+
+/* ----------------------------
+   1) Global tokens + fonts
+   ---------------------------- */
+:root {
+  --md-text-font: Inter, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --md-code-font: "JetBrains Mono", "SF Mono", Consolas,
+    ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+  /* Spacing scale - tighter for better density */
+  --ap-1: 0.25rem;
+  --ap-2: 0.5rem;
+  --ap-3: 0.75rem;
+  --ap-4: 1rem;
+  --ap-5: 1.25rem;
+  --ap-6: 1.5rem;
+  --ap-7: 2rem;
+  --ap-8: 2.5rem;
+
+  /* Typography - HashiCorp sizing (13px base) */
+  --ap-body-size: 0.8125rem; /* 13px */
+  --ap-body-leading: 1.38; /* 18px / 13px */
+
+  /* Border and shape */
+  --ap-border: 1px;
+  --ap-radius: 4px;
+  --ap-radius-lg: 6px;
+
+  /* Layout */
+  --ap-grid-max: 1440px;
+  --ap-content-pad-x: 2rem;
+  --ap-content-pad-y: 1rem;
+  --ap-sidebar-width: 260px;
+}
+
+html {
+  font-size: 16px !important; /* Reset Material's 22px to standard 16px */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-size: var(--ap-body-size); /* Now 0.8125rem × 16px = 13px */
+}
+
+/* ----------------------------
+   2) Palettes (HashiCorp purple theme)
+   ---------------------------- */
+
+/* LIGHT */
+[data-md-color-scheme="default"] {
+  --ap-bg: #ffffff;
+  --ap-surface: #fafafa;
+  --ap-surface-2: #f7f7f8;
+  --ap-text: #1d1d1f;
+  --ap-muted: #3d3d42;
+  --ap-faint: #737378;
+  --ap-border-color: #e5e5e8;
+
+  /* HashiCorp purple accent */
+  --ap-accent: #8b5cf6;
+  --ap-accent-light: #a78bfa;
+  --ap-link: #7c3aed;
+  --ap-link-hover: #6d28d9;
+
+  --ap-code-bg: #1a1a1d;
+  --ap-code-text: #e5e5e8;
+  --ap-code-border: #2a2a2f;
+
+  /* Material variables */
+  --md-default-bg-color: var(--ap-bg);
+  --md-default-fg-color: var(--ap-text);
+  --md-default-fg-color--light: rgba(29, 29, 31, 0.75);
+  --md-default-fg-color--lighter: rgba(29, 29, 31, 0.55);
+  --md-default-fg-color--lightest: rgba(29, 29, 31, 0.35);
+
+  --md-typeset-a-color: var(--ap-link);
+  --md-primary-fg-color: var(--ap-bg);
+  --md-primary-bg-color: var(--ap-text);
+  --md-primary-bg-color--light: rgba(29, 29, 31, 0.75);
+  --md-accent-fg-color: var(--ap-accent);
+
+  --md-code-bg-color: var(--ap-code-bg);
+  --md-code-fg-color: var(--ap-code-text);
+
+  --md-footer-bg-color: var(--ap-surface);
+  --md-footer-bg-color--dark: var(--ap-surface);
+}
+
+/* DARK */
+[data-md-color-scheme="slate"] {
+  --ap-bg: #0f0f11;
+  --ap-surface: #1a1a1d;
+  --ap-surface-2: #141416;
+  --ap-text: #e5e5e8;
+  --ap-muted: #b8b8bd;
+  --ap-faint: #8a8a8f;
+  --ap-border-color: #2a2a2f;
+
+  /* HashiCorp purple accent (brighter for dark mode) */
+  --ap-accent: #a78bfa;
+  --ap-accent-light: #c4b5fd;
+  --ap-link: #a78bfa;
+  --ap-link-hover: #c4b5fd;
+
+  --ap-code-bg: #0a0a0c;
+  --ap-code-text: #e5e5e8;
+  --ap-code-border: #2a2a2f;
+
+  --md-default-bg-color: var(--ap-bg);
+  --md-default-fg-color: var(--ap-text);
+  --md-default-fg-color--light: rgba(229, 229, 232, 0.75);
+  --md-default-fg-color--lighter: rgba(229, 229, 232, 0.55);
+  --md-default-fg-color--lightest: rgba(229, 229, 232, 0.35);
+
+  --md-typeset-a-color: var(--ap-link);
+  --md-primary-fg-color: var(--ap-bg);
+  --md-accent-fg-color: var(--ap-accent);
+
+  --md-code-bg-color: var(--ap-code-bg);
+  --md-code-fg-color: var(--ap-code-text);
+
+  --md-footer-bg-color: var(--ap-surface);
+  --md-footer-bg-color--dark: var(--ap-surface);
+}
+
+/* ----------------------------
+   3) Layout + content padding
+   ---------------------------- */
+
+/* Full-width container for edge-to-edge sidebars */
+.md-container {
+  max-width: none !important;
+}
+
+.md-grid {
+  max-width: var(--ap-grid-max);
+  margin: 0 auto;
+}
+
+/* Full-bleed grid pattern for edge-to-edge sidebars */
+@media screen and (min-width: 76.25em) {
+  /* Transform main container into 3-column full-bleed grid */
+  .md-main__inner.md-grid {
+    display: grid !important;
+    grid-template-columns: minmax(var(--ap-sidebar-width), 1fr) minmax(auto, 1000px) minmax(240px, 1fr);
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0;
+  }
+
+  /* Left sidebar: spans from left edge into grid */
+  .md-sidebar--primary {
+    grid-column: 1 / 2 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    padding-right: 0 !important;
+    border-right: var(--ap-border) solid var(--ap-border-color);
+    position: relative;
+  }
+
+  /* Constrain sidebar content to readable width */
+  .md-sidebar--primary .md-sidebar__inner {
+    width: var(--ap-sidebar-width);
+    max-width: var(--ap-sidebar-width);
+    padding-right: var(--ap-4);
+  }
+
+  /* Extend left sidebar background to left edge */
+  .md-sidebar--primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 100%;
+    width: 100vw;
+    background: inherit;
+    z-index: -1;
+  }
+
+  /* Main content: stays in center column */
+  .md-content {
+    grid-column: 2 / 3;
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* Right sidebar: spans from grid to right edge */
+  .md-sidebar--secondary {
+    grid-column: 3 / 4 !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    padding-left: 0 !important;
+    border-left: var(--ap-border) solid var(--ap-border-color);
+    position: relative;
+  }
+
+  /* Constrain sidebar content to readable width */
+  .md-sidebar--secondary .md-sidebar__inner {
+    width: 240px;
+    max-width: 240px;
+    padding-left: var(--ap-4);
+  }
+
+  /* Extend right sidebar background to right edge */
+  .md-sidebar--secondary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 100%;
+    width: 100vw;
+    background: inherit;
+    z-index: -1;
+  }
+}
+
+/* Responsive: restore Material's flex layout on smaller screens */
+@media screen and (max-width: 76.1875em) {
+  .md-main__inner {
+    display: flex !important;
+    flex-direction: row;
+    max-width: var(--ap-grid-max);
+    margin: 0 auto;
+    width: auto;
+  }
+}
+
+.md-content__inner {
+  padding: var(--ap-content-pad-y) var(--ap-content-pad-x);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.md-content__inner > article {
+  margin: 0;
+}
+
+/* ----------------------------
+   4) Header + Tabs
+   ---------------------------- */
+.md-header {
+  background: var(--ap-bg) !important;
+  border-bottom: var(--ap-border) solid var(--ap-border-color);
+  box-shadow: none !important;
+  height: 68px;
+  min-height: 68px;
+  font-size: 16px;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  font-family: -apple-system, "system-ui", "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-weight: 400;
+  line-height: 26px;
+}
+
+/* Header inner container for proper flex layout */
+.md-header__inner {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  gap: 16px;
+}
+
+/* Light mode header visibility fixes */
+[data-md-color-scheme="default"] .md-header,
+[data-md-color-scheme="default"] .md-tabs {
+  color: var(--ap-text) !important;
+}
+
+[data-md-color-scheme="default"] .md-header__title,
+[data-md-color-scheme="default"] .md-header__topic,
+[data-md-color-scheme="default"] .md-header__button,
+[data-md-color-scheme="default"] .md-header__button.md-icon,
+[data-md-color-scheme="default"] .md-header__source,
+[data-md-color-scheme="default"] .md-header__source a,
+[data-md-color-scheme="default"] .md-search__icon {
+  color: var(--ap-text) !important;
+  fill: currentColor !important;
+}
+
+/* Logo / Brand */
+.md-header__title {
+  font-weight: 400;
+  letter-spacing: normal;
+  font-size: 16px;
+  line-height: 26px;
+  padding: 8px 12px;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.md-header__title:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-md-color-scheme="slate"] .md-header__title:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Header buttons (search, menu, etc.) */
+.md-header__button,
+.md-header__button.md-icon {
+  color: var(--ap-text) !important;
+  padding: 8px;
+  margin: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.md-header__button:hover,
+.md-header__button.md-icon:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+[data-md-color-scheme="slate"] .md-header__button:hover,
+[data-md-color-scheme="slate"] .md-header__button.md-icon:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Tabs with proper spacing */
+.md-tabs {
+  background: var(--ap-bg) !important;
+  border-bottom: var(--ap-border) solid var(--ap-border-color);
+  box-shadow: none !important;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Align tabs container with sidebar and logo */
+.md-tabs__inner {
+  margin: 0 auto;
+  max-width: var(--ap-grid-max);
+  padding: 0 var(--ap-4);
+}
+
+.md-tabs__list {
+  padding-bottom: 0;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.md-tabs__link {
+  font-weight: 500;
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0.75;
+  padding: 0.75rem var(--ap-4);
+  color: var(--ap-text) !important;
+  transition: all 0.2s ease;
+}
+
+.md-tabs__link:hover {
+  opacity: 1;
+}
+
+.md-tabs__link--active {
+  opacity: 1;
+  color: var(--ap-accent) !important;
+  border-bottom: 2px solid var(--ap-accent);
+}
+
+/* ----------------------------
+   5) Breadcrumbs
+   ---------------------------- */
+.md-path {
+  margin: 0 0 16px 0; /* HashiCorp: consistent 16px spacing */
+  padding: 0;
+}
+
+.md-path__list {
+  margin: 0;
+  padding: 0;
+}
+
+.md-path__item,
+.md-path__link {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--ap-faint) !important;
+}
+
+.md-path__link:hover {
+  color: var(--ap-link) !important;
+}
+
+/* ----------------------------
+   6) Typography
+   ---------------------------- */
+.md-typeset {
+  font-size: var(--ap-body-size); /* 13px */
+  line-height: var(--ap-body-leading); /* 1.38 */
+  color: var(--ap-text);
+  font-weight: 400;
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+  font-family: var(--md-text-font);
+  color: var(--ap-text);
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+.md-typeset h1 {
+  font-size: 2.125rem; /* 34px */
+  line-height: 1.18; /* 40px */
+  font-weight: 700;
+  margin: 0 0 16px 0; /* HashiCorp: 0 0 16px */
+  padding: 0;
+  border-bottom: none;
+}
+
+.md-typeset h2 {
+  font-size: 0.8125rem; /* 13px - same as body */
+  line-height: 1.38;
+  font-weight: 600;
+  margin: 16px 0 12px 0; /* HashiCorp: 16px 0 12px */
+  padding: 0 8px; /* HashiCorp: 0 8px */
+  border-bottom: none;
+}
+
+.md-typeset h3 {
+  font-size: 0.8125rem; /* 13px - same as body */
+  line-height: 1.38;
+  font-weight: 600;
+  margin: 16px 0 12px 0; /* HashiCorp: 16px 0 12px */
+  padding: 0 8px; /* HashiCorp: 0 8px */
+}
+
+.md-typeset h4 {
+  font-size: 0.8125rem; /* 13px */
+  line-height: 1.38;
+  font-weight: 600;
+  margin: 16px 0 8px 0; /* Tighter spacing */
+  padding: 0;
+}
+
+.md-typeset p {
+  font-size: var(--ap-body-size); /* 13px */
+  margin: 0 0 12px 0; /* HashiCorp: tighter 12px bottom margin */
+  color: var(--ap-muted);
+  line-height: 1.38;
+}
+
+.md-typeset h1 + p,
+.md-typeset h2 + p,
+.md-typeset h3 + p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ap-muted);
+  margin-bottom: 16px; /* Consistent with H1 bottom margin */
+}
+
+.md-typeset strong,
+.md-typeset b {
+  color: var(--ap-text);
+  font-weight: 600;
+}
+
+.md-typeset a {
+  color: var(--ap-link);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.md-typeset a:hover {
+  color: var(--ap-link-hover);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.15em;
+}
+
+/* ----------------------------
+   7) Lists
+   ---------------------------- */
+.md-typeset ul,
+.md-typeset ol {
+  margin: 0 0 12px 0; /* HashiCorp: tighter 12px bottom margin */
+  padding-left: 20px; /* HashiCorp: reduced left padding */
+}
+
+.md-typeset li {
+  margin: 0 0 4px 0; /* HashiCorp: tighter item spacing */
+  color: var(--ap-muted);
+  line-height: 1.6;
+}
+
+.md-typeset li::marker {
+  color: var(--ap-accent);
+}
+
+.md-typeset li > ul,
+.md-typeset li > ol {
+  margin: 4px 0 4px 0; /* HashiCorp: tighter nested list spacing */
+  padding-left: 20px; /* HashiCorp: consistent left padding */
+}
+
+/* ----------------------------
+   8) Code
+   ---------------------------- */
+.md-typeset :not(pre) > code {
+  font-family: var(--md-code-font);
+  font-size: 0.8125rem; /* 13px - same as body */
+  line-height: 1.38;
+  background: var(--ap-surface);
+  border: var(--ap-border) solid var(--ap-border-color);
+  border-radius: var(--ap-radius);
+  padding: 0.1rem 0.35rem;
+  color: var(--ap-accent);
+  font-weight: 500;
+}
+
+.md-typeset pre {
+  margin: 0 0 16px 0; /* HashiCorp: consistent 16px spacing */
+  border-radius: var(--ap-radius-lg);
+  overflow: hidden;
+  background: var(--ap-code-bg);
+}
+
+.md-typeset pre > code {
+  background: var(--ap-code-bg) !important;
+  border: none;
+  border-radius: var(--ap-radius-lg);
+  padding: 16px; /* HashiCorp: consistent spacing */
+  font-size: 0.8125rem; /* 13px */
+  line-height: 1.43; /* 18.5px */
+  box-shadow: none;
+  display: block;
+  color: var(--ap-code-text) !important;
+}
+
+.md-typeset .highlight {
+  box-shadow: none;
+  margin: 0 0 16px 0; /* HashiCorp: consistent 16px spacing */
+  background: var(--ap-code-bg) !important;
+  border-radius: var(--ap-radius-lg);
+}
+
+.md-clipboard {
+  border-radius: var(--ap-radius);
+  color: var(--ap-code-text);
+}
+
+.md-clipboard::after {
+  border-radius: var(--ap-radius);
+}
+
+/* ----------------------------
+   9) Tabbed code blocks
+   ---------------------------- */
+.md-typeset .tabbed-set {
+  margin: 16px 0; /* HashiCorp: consistent spacing */
+}
+
+.md-typeset .tabbed-labels {
+  margin: 0;
+  border-bottom: var(--ap-border) solid var(--ap-border-color);
+  background: var(--ap-code-bg);
+  border-radius: var(--ap-radius-lg) var(--ap-radius-lg) 0 0;
+}
+
+.md-typeset .tabbed-labels > label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.5rem var(--ap-4);
+  letter-spacing: 0;
+  color: var(--ap-code-text);
+  opacity: 0.6;
+  transition: all 0.2s ease;
+}
+
+.md-typeset .tabbed-labels > label:hover {
+  opacity: 1;
+}
+
+.md-typeset .tabbed-set > input:checked + label {
+  color: var(--ap-code-text);
+  opacity: 1;
+  border-bottom: 2px solid var(--ap-accent);
+}
+
+.md-typeset .tabbed-content {
+  padding: 0;
+  background: var(--ap-code-bg);
+  border-radius: 0 0 var(--ap-radius-lg) var(--ap-radius-lg);
+}
+
+.md-typeset .tabbed-content > .highlight {
+  margin: 0;
+  border-radius: 0 0 var(--ap-radius-lg) var(--ap-radius-lg);
+}
+
+/* Add spacing before output sections in tabs */
+.md-typeset .tabbed-content p strong:first-child {
+  margin-top: var(--ap-4);
+  display: block;
+}
+
+.md-typeset .tabbed-content .highlight + p {
+  margin-top: var(--ap-4);
+}
+
+/* ----------------------------
+   10) Tables
+   ---------------------------- */
+.md-typeset table:not([class]) {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0; /* HashiCorp: consistent spacing */
+  font-size: 0.875rem;
+  border: var(--ap-border) solid var(--ap-border-color);
+  border-radius: var(--ap-radius-lg);
+  overflow: hidden;
+}
+
+.md-typeset table:not([class]) th {
+  background: var(--ap-surface);
+  color: var(--ap-text);
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: var(--ap-3) var(--ap-4);
+  border-bottom: var(--ap-border) solid var(--ap-border-color);
+  text-align: left;
+}
+
+.md-typeset table:not([class]) td {
+  padding: var(--ap-3) var(--ap-4);
+  border-bottom: var(--ap-border) solid var(--ap-border-color);
+  color: var(--ap-muted);
+}
+
+.md-typeset table:not([class]) tr:last-child td {
+  border-bottom: none;
+}
+
+.md-typeset table:not([class]) tbody tr:hover {
+  background: var(--ap-surface-2);
+}
+
+/* ----------------------------
+   11) Navigation & Sidebars
+   ---------------------------- */
+
+/* Remove shadows, add crisp borders */
+.md-sidebar,
+.md-sidebar__scrollwrap,
+.md-sidebar__inner,
+.md-nav,
+.md-nav__list,
+.md-nav__item {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.md-sidebar__scrollwrap::before,
+.md-sidebar__scrollwrap::after,
+.md-nav::before,
+.md-nav::after {
+  display: none !important;
+  content: none !important;
+}
+
+.md-sidebar--primary {
+  border-right: var(--ap-border) solid var(--ap-border-color);
+}
+
+.md-sidebar--secondary {
+  border-left: var(--ap-border) solid var(--ap-border-color);
+}
+
+.md-sidebar--secondary .md-sidebar__inner {
+  padding-right: 0;
+}
+
+/* Nav typography */
+.md-nav__title {
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--ap-faint);
+  padding: var(--ap-2) var(--ap-4);
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Left nav title alignment */
+.md-sidebar--primary .md-nav__title {
+  text-align: left !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  display: flex !important;
+  padding-left: var(--ap-4) !important;
+  padding-right: var(--ap-4) !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.md-sidebar--primary .md-nav__title .md-nav__title-text,
+.md-sidebar--primary .md-nav__title .md-ellipsis {
+  text-align: left !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+.md-nav__title[for="__drawer"] {
+  font-size: 0.6875rem !important;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+  color: var(--ap-faint) !important;
+}
+
+/* Remove double active bars */
+.md-nav__link::before {
+  display: none !important;
+  content: none !important;
+}
+
+.md-nav__link,
+.md-nav__title,
+.md-nav__item--active,
+.md-nav__item--nested {
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+/* HashiCorp-style navigation links */
+.md-nav__link {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.625;
+  padding: 8px;
+  margin: 0 0 2px 0;
+  color: rgb(59, 61, 69) !important;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  border-radius: 5px;
+}
+
+.md-nav__link:hover {
+  color: rgb(12, 12, 14) !important;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* Only apply accent to active links */
+a.md-nav__link--active,
+label.md-nav__link--active {
+  font-weight: 400;
+  color: rgb(59, 61, 69) !important;
+  background: rgb(255, 255, 255);
+  box-shadow: rgb(251, 215, 216) 0px 0px 0px 1px inset;
+}
+
+/* Parent of active item gets normal weight */
+.md-nav__item--active > .md-nav__link {
+  font-weight: 400;
+}
+
+/* Nested navigation indentation */
+.md-nav__item--nested .md-nav__list {
+  padding-left: 12px;
+}
+
+/* Nested items have more compact padding */
+.md-nav__item--nested .md-nav__link {
+  padding: 6px 8px;
+}
+
+/* Prevent truncation */
+.md-sidebar--primary .md-nav__link .md-ellipsis,
+.md-sidebar--secondary .md-nav__link .md-ellipsis {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* Consistent padding for all nav links in primary sidebar */
+.md-sidebar--primary a.md-nav__link,
+.md-sidebar--primary label.md-nav__link {
+  padding: 8px !important;
+  margin-bottom: 2px !important;
+}
+
+/* Nested items maintain compact padding */
+.md-sidebar--primary .md-nav__item--nested .md-nav__link {
+  padding: 6px 8px !important;
+}
+
+.md-sidebar--primary .md-nav__link.md-nav__container {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Right TOC */
+.md-nav--secondary .md-nav__title {
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--ap-faint);
+  padding: var(--ap-2) var(--ap-4);
+  font-weight: 600;
+}
+
+.md-nav--secondary .md-nav__link {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  padding: var(--ap-2) var(--ap-4);
+  color: var(--ap-faint) !important;
+  border-left: 2px solid transparent;
+}
+
+.md-nav--secondary .md-nav__link:hover {
+  color: var(--ap-text) !important;
+}
+
+.md-nav--secondary .md-nav__link--active {
+  color: var(--ap-accent) !important;
+  border-left-color: var(--ap-accent);
+}
+
+/* ----------------------------
+   12) Admonitions / Callouts
+   ---------------------------- */
+.md-typeset .admonition,
+.md-typeset details {
+  border: var(--ap-border) solid var(--ap-border-color);
+  border-left: 3px solid var(--ap-accent);
+  background: var(--ap-surface-2);
+  border-radius: var(--ap-radius-lg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: var(--ap-3) var(--ap-4);
+  margin: 16px 0; /* HashiCorp: consistent spacing */
+}
+
+.md-typeset .admonition.tip {
+  border-left-color: #10b981;
+}
+
+.md-typeset .admonition.note,
+.md-typeset .admonition.info {
+  border-left-color: #3b82f6;
+}
+
+.md-typeset .admonition.warning {
+  border-left-color: #f59e0b;
+}
+
+.md-typeset .admonition.danger {
+  border-left-color: #ef4444;
+}
+
+.md-typeset .admonition-title {
+  font-size: 0.9375rem;
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 600;
+  color: var(--ap-text);
+  margin-bottom: var(--ap-3);
+}
+
+.md-typeset .admonition-title::before {
+  background-color: var(--ap-accent);
+}
+
+.md-typeset .admonition > :last-child {
+  margin-bottom: 0;
+}
+
+.md-typeset .admonition p,
+.md-typeset .admonition li {
+  color: var(--ap-muted);
+}
+
+.md-typeset .admonition ul,
+.md-typeset .admonition ol {
+  margin-bottom: var(--ap-3);
+}
+
+/* ----------------------------
+   13) Search
+   ---------------------------- */
+.md-search__input {
+  background: var(--ap-surface);
+  border: var(--ap-border) solid var(--ap-border-color);
+  border-radius: var(--ap-radius);
+  color: var(--ap-text);
+  padding: 0.4rem var(--ap-3);
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+[data-md-color-scheme="default"] .md-search__input {
+  background: var(--ap-surface) !important;
+  color: var(--ap-text) !important;
+  border-color: var(--ap-border-color) !important;
+}
+
+.md-search__input:focus {
+  border-color: var(--ap-accent);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  outline: none;
+}
+
+.md-search__input::placeholder {
+  color: var(--ap-faint);
+}
+
+[data-md-color-scheme="default"] .md-search__input::placeholder {
+  color: var(--ap-faint) !important;
+}
+
+/* ----------------------------
+   14) Footer
+   ---------------------------- */
+.md-footer {
+  border-top: var(--ap-border) solid var(--ap-border-color);
+  background: var(--ap-surface);
+  margin-top: var(--ap-7);
+}
+
+.md-footer__inner,
+.md-footer-meta {
+  padding: var(--ap-4) var(--ap-content-pad-x);
+}
+
+/* ----------------------------
+   15) Focus + selection
+   ---------------------------- */
+::selection {
+  background: rgba(139, 92, 246, 0.2);
+  color: var(--ap-text);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--ap-accent);
+  outline-offset: 2px;
+  border-radius: var(--ap-radius);
+}
+
+/* ----------------------------
+   16) Horizontal rules
+   ---------------------------- */
+.md-typeset hr {
+  margin: var(--ap-5) 0;
+  border: none;
+  border-top: var(--ap-border) solid var(--ap-border-color);
+}
+
+/* ----------------------------
+   17) Cards (for tutorial-style content)
+   ---------------------------- */
+.md-typeset .card {
+  border: var(--ap-border) solid var(--ap-border-color);
+  border-radius: var(--ap-radius-lg);
+  padding: var(--ap-5);
+  margin: var(--ap-5) 0;
+  background: var(--ap-surface-2);
+  transition: all 0.2s ease;
+}
+
+.md-typeset .card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* ----------------------------
+   18) Responsive
+   ---------------------------- */
+@media screen and (max-width: 76.1875em) {
+  :root {
+    --ap-body-size: 0.875rem;
+    --ap-content-pad-x: var(--ap-4);
+    --ap-content-pad-y: var(--ap-3);
+  }
+
+  .md-typeset h1 {
+    font-size: 1.75rem;
+  }
+
+  .md-typeset h2 {
+    font-size: 1.375rem;
+  }
+
+  .md-typeset h3 {
+    font-size: 1.125rem;
+  }
+
+  .md-content__inner {
+    max-width: 100%;
+  }
+}
+
+@media screen and (max-width: 60em) {
+  :root {
+    --ap-content-pad-x: var(--ap-3);
+  }
+
+  .md-tabs__link {
+    font-size: 0.8125rem;
+    padding: 0.6rem var(--ap-3);
+  }
+}
+
+/* ----------------------------
+   19) Product Tiles & Cards
+   ---------------------------- */
+
+/* Hero action buttons */
+.hero-actions {
+  display: flex;
+  gap: var(--ap-4);
+  margin: var(--ap-6) 0;
+}
+
+.hero-actions .md-button {
+  padding: var(--ap-3) var(--ap-6);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Product tiles (homepage) */
+.product-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--ap-5);
+  margin: var(--ap-6) 0;
+}
+
+.product-tiles > li {
+  border: var(--ap-border) solid var(--ap-border-color);
+  border-radius: var(--ap-radius-lg);
+  padding: var(--ap-6);
+  background: var(--ap-surface);
+  transition: all 0.2s ease;
+  list-style: none;
+}
+
+.product-tiles > li:hover {
+  border-color: var(--ap-accent);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.12);
+  transform: translateY(-4px);
+}
+
+.product-tiles .lg {
+  font-size: 2.5rem;
+  color: var(--ap-accent);
+  margin-bottom: var(--ap-3);
+}
+
+/* Chooser cards (role-based navigation) */
+.chooser-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--ap-4);
+  margin: var(--ap-5) 0;
+}
+
+.chooser-cards > li {
+  border: var(--ap-border) solid var(--ap-border-color);
+  border-radius: var(--ap-radius);
+  padding: 16px; /* HashiCorp: consistent spacing */
+  background: var(--ap-surface-2);
+  list-style: none;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.chooser-cards > li:hover {
+  background: var(--ap-surface);
+  border-color: var(--ap-accent-light);
+}
+
+/* Role cards (start-here page) */
+.role-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ap-5);
+  margin: var(--ap-6) 0;
+}
+
+.role-cards > li {
+  border: var(--ap-border) solid var(--ap-border-color);
+  border-left: 4px solid var(--ap-accent);
+  border-radius: var(--ap-radius-lg);
+  padding: var(--ap-6);
+  background: var(--ap-surface);
+  list-style: none;
+  transition: all 0.2s ease;
+}
+
+.role-cards > li:hover {
+  border-left-color: var(--ap-accent-light);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.08);
+}
+
+/* General card enhancements */
+.md-typeset .grid.cards {
+  margin: var(--ap-5) 0;
+}
+
+.md-typeset .grid.cards > li {
+  transition: all 0.2s ease;
+}
+
+.md-typeset .grid.cards > li:hover {
+  border-color: var(--ap-accent-light);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
+}
+
+/* Better "Best for" text styling */
+.product-tiles strong {
+  color: var(--ap-accent);
+  font-weight: 700;
+}
+
+/* Responsive product tiles */
+@media screen and (max-width: 60em) {
+  .product-tiles {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .hero-actions .md-button {
+    width: 100%;
+    text-align: center;
+  }
+}

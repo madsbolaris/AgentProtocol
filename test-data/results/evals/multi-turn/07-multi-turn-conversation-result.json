@@ -1,0 +1,85 @@
+{
+  "timestamp": "2026-02-09T19:15:51.097106Z",
+  "content": {
+    "threadId": "eval-007",
+    "description": "Multi-turn conversation with context",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "acknowledgment",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "Alice"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "contains.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          },
+          {
+            "name": "name-recall",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "Alice"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "contains.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 0
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 2,
+    "passedAsserts": 0,
+    "failedAsserts": 2,
+    "avgDurationMs": 0.0,
+    "timestamp": "2026-02-09T19:15:51.097042Z",
+    "totalDurationMs": 0
+  },
+  "hash": "ba0671696e686040e4054180980ac35f7199511ae42fd93fbc4dad59a19dde9c",
+  "metadata": {
+    "input_file": "07-multi-turn-conversation.xml",
+    "thread_id": "eval-007",
+    "description": "Multi-turn conversation with context",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

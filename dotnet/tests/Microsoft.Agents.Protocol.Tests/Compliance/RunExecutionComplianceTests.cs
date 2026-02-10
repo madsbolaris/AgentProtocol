@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Agents.Abstractions.Models;
-using Microsoft.Agents.Xml.Serialization;
+using Microsoft.Agents;
+using Microsoft.Agents.Protocol.Xml;
 
 namespace Microsoft.Agents.Protocol.Tests.Compliance;
 
 /// <summary>
 /// AUTO-GENERATED: Run execution compliance tests.
-/// Generated from: specs/typespec/execution.tsp
+/// Generated from: typespec/execution.tsp
 ///
 /// Verifies Run model per Agent Framework Protocol specification.
 ///

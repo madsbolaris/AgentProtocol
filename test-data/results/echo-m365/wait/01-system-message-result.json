@@ -1,0 +1,56 @@
+{
+  "runId": "run_d4f00a8cdbe44b638faabb3cb1bd8ce7",
+  "agentId": "echo-agent",
+  "threadId": "thread_bb22bc919fa64338b4c0084a22b6a5e7",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "system",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "You are a helpful AI assistant with access to various tools and capabilities.",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_2b374ce5d80d4d94bfae1c6bbec5fdbd",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nYou are a helpful AI assistant with access to various tools and capabilities.",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.045644Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.04569Z",
+  "completedAt": null
+}

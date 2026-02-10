@@ -1,0 +1,69 @@
+{
+  "timestamp": "2026-02-09T19:17:06.018247Z",
+  "content": {
+    "threadId": "eval-036",
+    "description": "Test mathematical reasoning capability",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "distance-calculation",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_exact_match",
+                "as": "match",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "reason": "Text does not match"
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': '150', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "match.passed &amp;&amp; contains.passed &amp;&amp; has(match.message.reasoning)",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 0
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 0.0,
+    "timestamp": "2026-02-09T19:17:06.018168Z",
+    "totalDurationMs": 0
+  },
+  "hash": "cfcd9e5fa542d9b715ecacd4ac8fe715d4da2c74dde5085e389b9ef6f20e7aeb",
+  "metadata": {
+    "input_file": "36-math-reasoning.xml",
+    "thread_id": "eval-036",
+    "description": "Test mathematical reasoning capability",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

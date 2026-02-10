@@ -1,0 +1,125 @@
+{
+  "timestamp": "2026-02-09T19:18:56.501056Z",
+  "content": {
+    "threadId": "eval-058",
+    "description": "CEL Score Math - Arithmetic operations on scores",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "test-score-addition",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "quality",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference expresses a topic 'Combined score evaluation', whereas the actual output is a generic placeholder 'This is a mock agent response.' They do not convey the same meaning or information."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "content",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "quality.score + content.score > 1.5",
+                "passed": false,
+                "value": 0.0
+              }
+            ]
+          },
+          {
+            "name": "test-score-average",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem1",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference conveys a notion of an average quality check, while the actual states that it is a mock agent response. They express unrelated ideas with no overlapping meaning."
+                }
+              },
+              {
+                "agent": "semantic_similarity",
+                "as": "sem2",
+                "passed": false,
+                "score": 0.1,
+                "details": {
+                  "similarity_score": 0.1,
+                  "llm_reasoning": "The reference says 'Average quality check', a label or concept; the actual says 'This is a mock agent response.', a statement about the nature of the response. They do not convey the same meaning or answer the same question."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "(sem1.score + sem2.score) / 2.0 >= 0.75",
+                "passed": false,
+                "value": null,
+                "error": "Judge result '(sem1' not found"
+              }
+            ]
+          },
+          {
+            "name": "test-score-multiplication",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "quality",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference output mentions 'Weighted scoring' while the actual output is a generic placeholder; there is no overlap in meaning or topic."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "quality.score * 1.2 >= 0.84",
+                "passed": false,
+                "value": 0.0
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 13767
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 3,
+    "passedAsserts": 0,
+    "failedAsserts": 3,
+    "avgDurationMs": 13767.0,
+    "timestamp": "2026-02-09T19:18:42.733764Z",
+    "totalDurationMs": 13767
+  },
+  "hash": "1ec2931b46093ef0b17fc03359c2112e73bcd9ae436bac8e4a0165c9094d555e",
+  "metadata": {
+    "input_file": "58-cel-score-math.xml",
+    "thread_id": "eval-058",
+    "description": "CEL Score Math - Arithmetic operations on scores",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

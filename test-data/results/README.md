@@ -6,17 +6,20 @@ This directory contains golden datasets and test results organized by sample nam
 
 ```
 test-data/results/
-├── echom365/              # EchoM365 sample results
-│   ├── golden/          # Golden files (language-agnostic, all languages validate against these)
+├── echo-m365/           # EchoM365 sample results
 │   ├── json/            # JSON format outputs
 │   ├── xml/             # XML format outputs
-│   └── streaming/       # Streaming response outputs
-├── basic-m365/          # Basic M365 sample results
-│   ├── golden/
+│   ├── streaming/       # Streaming response outputs
+│   └── wait/            # Wait pattern outputs
+├── basic-m365/          # BasicM365 sample results
 │   ├── json/
 │   └── xml/
+├── emoji-chat/          # EmojiChatBot sample results
+│   ├── json/
+│   └── xml/
+├── evals/               # Evaluation test results
+│   └── json/
 └── {other-samples}/     # Additional samples follow same structure
-    ├── golden/
     ├── json/
     └── xml/
 ```
@@ -72,7 +75,10 @@ Use the unified golden dataset generation script. **The .NET implementation is t
 python scripts/generate_golden_datasets.py
 
 # Generate for specific sample
-python scripts/generate_golden_datasets.py --sample echom365
+python scripts/generate_golden_datasets.py --sample echo-m365
+
+# Generate for emoji-chat sample
+python scripts/generate_golden_datasets.py --sample emoji-chat
 
 # Use custom paths
 python scripts/generate_golden_datasets.py --inputs test-data/input --results test-data/results

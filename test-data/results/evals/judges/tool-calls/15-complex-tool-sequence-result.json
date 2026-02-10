@@ -1,0 +1,122 @@
+{
+  "timestamp": "2026-02-09T19:16:21.188817Z",
+  "content": {
+    "threadId": "eval-015",
+    "description": "Complex tool call sequence",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "search-flights",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "tool_call_match",
+                "as": "tool_match",
+                "passed": false,
+                "score": 0.0,
+                "details": {}
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "tool_match.passed &amp;&amp; tool_match.function_name == \"search_flights\"",
+                "passed": false,
+                "value": false
+              }
+            ]
+          },
+          {
+            "name": "present-options",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference reports finding flights and a cheapest price, whereas the actual output is a generic mock message with no flight information or pricing. They do not convey the same meaning or answer the same question."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains_299",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': '299', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains_2",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': '2', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; contains_299.passed &amp;&amp; contains_2.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          },
+          {
+            "name": "book-flight",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "tool_call_match",
+                "as": "tool_match",
+                "passed": false,
+                "score": 0.0,
+                "details": {}
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "tool_match.passed &amp;&amp; tool_match.function_name == \"book_flight\"",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 3483
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 3,
+    "passedAsserts": 0,
+    "failedAsserts": 3,
+    "avgDurationMs": 3483.0,
+    "timestamp": "2026-02-09T19:16:17.705367Z",
+    "totalDurationMs": 3483
+  },
+  "hash": "3664daa4832ea7a771c402d8c02240d6926ff0fbb66ce8f7893b307571237e44",
+  "metadata": {
+    "input_file": "15-complex-tool-sequence.xml",
+    "thread_id": "eval-015",
+    "description": "Complex tool call sequence",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

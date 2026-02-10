@@ -1,15 +1,10 @@
-# from microsoft.agents.xml.models import SystemMessage, ChatMessage, AgentMessage, TextContent
-# from microsoft.agents.xml.serialization import MessageSerializer
+# from pathlib import Path
 #
-# # Create conversation thread
-# thread = [
-#     SystemMessage(contents=[TextContent(text="You are a helpful assistant.")]),
-#     ChatMessage(role="user", contents=[TextContent(text="Hello!")]),
-#     AgentMessage(role="assistant", contents=[TextContent(text="Hi! How can I help?")])
-# ]
+# # Get path to shared test data
+# test_data_path = Path("test-data/input")
 #
-# # Serialize thread
-# serializer = MessageSerializer()
-# thread_xml = [serializer.serialize(msg) for msg in thread]
+# # Read a test XML file
+# xml_file = test_data_path / "01-system-message.xml"
+# xml_content = xml_file.read_text(encoding="utf-8")
 #
-# print(f"Thread length: {len(thread_xml)} messages")
+# print(f"Loaded {len(xml_content)} characters from {xml_file.name}")

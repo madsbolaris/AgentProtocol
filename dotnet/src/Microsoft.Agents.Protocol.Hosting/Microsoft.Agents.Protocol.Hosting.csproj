@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>Microsoft.Agents.Protocol.Hosting</PackageId>
+    <Description>Host SDK for building agent servers using the Agent Protocol specification</Description>
+    <RootNamespace>Microsoft.Agents.Protocol.Hosting</RootNamespace>
+    <Version>0.1.0-alpha</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Agents.Protocol.Abstractions\Microsoft.Agents.Protocol.Abstractions.csproj" />
+    <ProjectReference Include="..\Microsoft.Agents.Protocol.Runtime\Microsoft.Agents.Protocol.Runtime.csproj" />
+    <ProjectReference Include="..\Microsoft.Agents.Protocol.Model\Microsoft.Agents.Protocol.Model.csproj" />
+    <ProjectReference Include="..\Microsoft.Agents.Protocol.Model.OpenAI\Microsoft.Agents.Protocol.Model.OpenAI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

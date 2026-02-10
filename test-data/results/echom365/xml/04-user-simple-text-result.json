@@ -1,0 +1,39 @@
+{
+  "runId": "run_pe9uuc1jzy",
+  "agentId": "echo-agent",
+  "threadId": "thread_z395x2urwbo",
+  "status": "completed",
+  "input": [
+    {
+      "messageId": "msg_ne18a35lxh",
+      "role": "user",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "Hello! This is a simple text message without the text tag wrapper."
+        }
+      ]
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_ji2lsmjm97b",
+      "role": "agent",
+      "createdAt": "2026-02-09T18:38:52.533Z",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nHello! This is a simple text message without the text tag wrapper."
+        }
+      ]
+    }
+  ],
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "totalTokens": 0
+  },
+  "createdAt": "2026-02-09T18:38:52.533Z",
+  "updatedAt": "2026-02-09T18:38:52.533Z",
+  "completedAt": "2026-02-09T18:38:52.533Z"
+}

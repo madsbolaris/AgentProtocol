@@ -1,0 +1,17 @@
+{
+  "callId": 41,
+  "timestamp": "2026-02-09T19:18:20.264376+00:00",
+  "hash": "956af61655741a1c",
+  "response": {
+    "id": "chatcmpl-D7R3xDYa56scBD0JE7QtKhp7Yd8mw",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664697,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The reference output is 'Multi-level quality' while the actual output is 'This is a mock agent response.' They do not convey the same meaning or content.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

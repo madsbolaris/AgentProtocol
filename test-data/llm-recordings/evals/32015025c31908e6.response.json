@@ -1,0 +1,17 @@
+{
+  "callId": 21,
+  "timestamp": "2026-02-09T19:17:02.854871+00:00",
+  "hash": "32015025c31908e6",
+  "response": {
+    "id": "chatcmpl-D7R2iBw22Qml9AWr8ozZwyBnlhLNE",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664620,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The reference states a factual fact about Paris being the capital of France, while the actual output is a generic placeholder with no informational content; they do not convey the same meaning or answer the same question.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

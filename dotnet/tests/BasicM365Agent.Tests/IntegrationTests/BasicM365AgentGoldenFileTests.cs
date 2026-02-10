@@ -509,14 +509,25 @@ public class BasicM365AgentGoldenFileTests : IDisposable
                 using var doc = JsonDocument.Parse(agentCardJson);
                 var root = doc.RootElement;
 
-                // Check if outputContentTypes exists
-                if (root.TryGetProperty("outputContentTypes", out var outputTypes))
+                // Check required fields
+                Assert.True(root.TryGetProperty("agentId", out _), $"{language} agent card missing 'agentId' field");
+                Assert.True(root.TryGetProperty("name", out _), $"{language} agent card missing 'name' field");
+                Assert.True(root.TryGetProperty("description", out _), $"{language} agent card missing 'description' field");
+
+                _output.WriteLine($"  ✓ {language} agent card has required fields (agentId, name, description)");
+
+                // Check if outputContentTypes or outputModes exists (support both naming conventions)
+                var hasOutputTypes = root.TryGetProperty("outputContentTypes", out var outputTypes);
+                var hasOutputModes = root.TryGetProperty("outputModes", out var outputModes);
+
+                if (hasOutputTypes || hasOutputModes)
                 {
                     var contentTypes = new List<string>();
+                    var typesProperty = hasOutputTypes ? outputTypes : outputModes;
 
-                    if (outputTypes.ValueKind == JsonValueKind.Array)
+                    if (typesProperty.ValueKind == JsonValueKind.Array)
                     {
-                        foreach (var item in outputTypes.EnumerateArray())
+                        foreach (var item in typesProperty.EnumerateArray())
                         {
                             if (item.ValueKind == JsonValueKind.String)
                             {
@@ -544,8 +555,300 @@ public class BasicM365AgentGoldenFileTests : IDisposable
                 }
                 else
                 {
-                    _output.WriteLine($"  ✓ {language} agent card has no outputContentTypes (no reaction support)");
+                    _output.WriteLine($"  ✓ {language} agent card has no outputContentTypes/outputModes (no reaction support)");
                 }
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new Exception($"{language} basic-m365 agent not running: {ex.Message}", ex);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task AllServers_StreamingShouldReturnNonEmptyTextChunks()
+    {
+        _output.WriteLine("Checking all servers for streaming with non-empty text chunks...");
+
+        var testMessage = new AgentMessage
+        {
+            Role = "user",
+            Contents = new List<MessageContent>
+            {
+                new MessageContent { Kind = "text", Text = "Say hello" }
+            }
+        };
+
+        var runRequest = new RunRequest
+        {
+            AgentId = "basic-m365-agent",
+            Input = new List<AgentMessage> { testMessage }
+        };
+
+        foreach (var (language, url) in BasicM365Servers)
+        {
+            _output.WriteLine($"\nChecking {language} streaming endpoint...");
+
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{url}/runs/stream")
+                {
+                    Content = JsonContent.Create(runRequest, options: new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    })
+                };
+
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+
+                // Verify Content-Type is text/event-stream
+                Assert.Equal("text/event-stream", response.Content.Headers.ContentType?.MediaType);
+
+                using var stream = await response.Content.ReadAsStreamAsync();
+                using var reader = new StreamReader(stream);
+
+                var streamingEventsFound = false;
+                var nonEmptyTextFound = false;
+                var lineCount = 0;
+                var maxLinesToRead = 100; // Limit reading to prevent hanging
+
+                while (!reader.EndOfStream && lineCount < maxLinesToRead)
+                {
+                    var line = await reader.ReadLineAsync();
+                    lineCount++;
+
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    if (line.StartsWith("event:"))
+                    {
+                        var eventType = line.Substring(6).Trim();
+
+                        // Accept various streaming event types: message.created, message.updated, message.delta
+                        if (eventType.StartsWith("message."))
+                        {
+                            streamingEventsFound = true;
+                            _output.WriteLine($"  Event: {eventType}");
+                        }
+                    }
+                    else if (line.StartsWith("data:"))
+                    {
+                        var jsonData = line.Substring(5).Trim();
+                        try
+                        {
+                            using var doc = JsonDocument.Parse(jsonData);
+                            var root = doc.RootElement;
+
+                            // Check for message content with non-empty text
+                            // Structure can be:
+                            // 1. {"message": {"contents": [...]}} - DotNet format
+                            // 2. {"data": {"message": {"contents": [...]}}} - wrapped format
+                            // 3. {"data": {"delta": {"contents": [...]}}} - Python format
+                            JsonElement searchRoot = root;
+
+                            // If there's a "data" wrapper, use that as the search root
+                            if (root.TryGetProperty("data", out var dataProperty))
+                            {
+                                searchRoot = dataProperty;
+                            }
+
+                            // Now look for "message" or "delta" in the search root
+                            JsonElement messageOrDelta = default;
+                            var hasMessage = searchRoot.TryGetProperty("message", out messageOrDelta);
+                            var hasDelta = !hasMessage && searchRoot.TryGetProperty("delta", out messageOrDelta);
+
+                            if ((hasMessage || hasDelta) &&
+                                messageOrDelta.TryGetProperty("contents", out var contents) &&
+                                contents.ValueKind == JsonValueKind.Array)
+                            {
+                                foreach (var content in contents.EnumerateArray())
+                                {
+                                    if (content.TryGetProperty("kind", out var kind) &&
+                                        kind.GetString() == "text" &&
+                                        content.TryGetProperty("text", out var text))
+                                    {
+                                        var textValue = text.GetString();
+                                        if (!string.IsNullOrWhiteSpace(textValue))
+                                        {
+                                            nonEmptyTextFound = true;
+                                            _output.WriteLine($"  ✓ Found non-empty text chunk in streaming response");
+
+                                            // Exit early once we confirm non-empty text
+                                            goto ServerTestComplete;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (JsonException)
+                        {
+                            // Ignore JSON parsing errors for non-JSON data lines
+                        }
+                    }
+                }
+
+                ServerTestComplete:
+
+                // Assertions
+                Assert.True(streamingEventsFound, $"{language}: No streaming events (message.*) found");
+                Assert.True(nonEmptyTextFound,
+                    $"{language}: No non-empty text content found in streaming response. " +
+                    "This likely indicates the streaming text extraction bug where JSON-deserialized " +
+                    "content arrays (JsonElement) are not properly handled.");
+
+                _output.WriteLine($"  ✓ {language} streaming returns non-empty text chunks");
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new Exception($"{language} basic-m365 agent not running: {ex.Message}", ex);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task AllServers_StreamingFormatMatchesUIContract()
+    {
+        _output.WriteLine("Validating SSE format matches UI expectations (contract test)...");
+
+        var testMessage = new AgentMessage
+        {
+            Role = "user",
+            Contents = new List<MessageContent>
+            {
+                new MessageContent { Kind = "text", Text = "Test" }
+            }
+        };
+
+        var runRequest = new RunRequest
+        {
+            AgentId = "basic-m365-agent",
+            Input = new List<AgentMessage> { testMessage }
+        };
+
+        foreach (var (language, url) in BasicM365Servers)
+        {
+            _output.WriteLine($"\nValidating {language} SSE format...");
+
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{url}/runs/stream")
+                {
+                    Content = JsonContent.Create(runRequest, options: new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    })
+                };
+
+                var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+
+                using var stream = await response.Content.ReadAsStreamAsync();
+                using var reader = new StreamReader(stream);
+
+                var foundValidMessageDelta = false;
+                var foundValidRunStarted = false;
+                var lineCount = 0;
+                var maxLinesToRead = 100;
+
+                while (!reader.EndOfStream && lineCount < maxLinesToRead)
+                {
+                    var line = await reader.ReadLineAsync();
+                    lineCount++;
+
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    if (line.StartsWith("data:"))
+                    {
+                        var jsonData = line.Substring(5).Trim();
+                        try
+                        {
+                            using var doc = JsonDocument.Parse(jsonData);
+                            var root = doc.RootElement;
+
+                            // CONTRACT REQUIREMENT 1: Must have "event" property at root level
+                            if (!root.TryGetProperty("event", out var eventProperty))
+                            {
+                                Assert.Fail($"{language}: SSE data missing required 'event' property. " +
+                                    "UI expects {{\"event\":\"...\",\"data\":{{...}}}} format. " +
+                                    $"Got: {jsonData}");
+                            }
+
+                            var eventType = eventProperty.GetString();
+
+                            // CONTRACT REQUIREMENT 2: Must have "data" property at root level
+                            if (!root.TryGetProperty("data", out var dataProperty))
+                            {
+                                Assert.Fail($"{language}: SSE data missing required 'data' property. " +
+                                    "UI expects {{\"event\":\"...\",\"data\":{{...}}}} format. " +
+                                    $"Event type: {eventType}, Got: {jsonData}");
+                            }
+
+                            // Validate specific event types
+                            if (eventType == "run.started")
+                            {
+                                // run.started should have status in data
+                                if (dataProperty.TryGetProperty("status", out var status))
+                                {
+                                    foundValidRunStarted = true;
+                                    _output.WriteLine($"  ✓ run.started has correct format with status: {status.GetString()}");
+                                }
+                            }
+                            else if (eventType == "message.delta")
+                            {
+                                // CONTRACT REQUIREMENT 3: message.delta must have data.delta.contents
+                                if (!dataProperty.TryGetProperty("delta", out var delta))
+                                {
+                                    Assert.Fail($"{language}: message.delta event missing 'delta' property in data. " +
+                                        "UI expects {{\"event\":\"message.delta\",\"data\":{{\"delta\":{{\"contents\":[...]}}}}}} format. " +
+                                        $"Got: {jsonData}");
+                                }
+
+                                if (!delta.TryGetProperty("contents", out var contents) || contents.ValueKind != JsonValueKind.Array)
+                                {
+                                    Assert.Fail($"{language}: message.delta event missing or invalid 'contents' array in delta. " +
+                                        "UI expects {{\"event\":\"message.delta\",\"data\":{{\"delta\":{{\"contents\":[...]}}}}}} format. " +
+                                        $"Got: {jsonData}");
+                                }
+
+                                // Validate contents structure
+                                foreach (var content in contents.EnumerateArray())
+                                {
+                                    if (content.TryGetProperty("kind", out var kind) &&
+                                        kind.GetString() == "text" &&
+                                        content.TryGetProperty("text", out var text) &&
+                                        !string.IsNullOrWhiteSpace(text.GetString()))
+                                    {
+                                        foundValidMessageDelta = true;
+                                        _output.WriteLine($"  ✓ message.delta has correct format with text: '{text.GetString()}'");
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (foundValidMessageDelta && foundValidRunStarted)
+                            {
+                                break; // Found both required event types with correct format
+                            }
+                        }
+                        catch (JsonException ex)
+                        {
+                            Assert.Fail($"{language}: Failed to parse SSE data as JSON: {ex.Message}. Data was: {jsonData}");
+                        }
+                    }
+                }
+
+                // Assertions
+                Assert.True(foundValidRunStarted,
+                    $"{language}: No valid run.started event found with correct format {{\"event\":\"run.started\",\"data\":{{...}}}}. " +
+                    "This format is required for UI compatibility.");
+
+                Assert.True(foundValidMessageDelta,
+                    $"{language}: No valid message.delta event found with correct format " +
+                    "{{\"event\":\"message.delta\",\"data\":{{\"delta\":{{\"contents\":[...]}}}}}}. " +
+                    "This format is required for UI compatibility. " +
+                    "The UI JavaScript parses 'event.event' and 'event.data.delta.contents' - both must exist.");
+
+                _output.WriteLine($"  ✓ {language} SSE format matches UI contract");
             }
             catch (HttpRequestException ex)
             {

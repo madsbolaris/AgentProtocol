@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-02-09T19:17:40.673811Z",
+  "content": {
+    "threadId": "eval-047",
+    "description": "Test text summarization",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "concise-summary",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "Actual output does not reflect the topic or content of the reference. It is a generic placeholder ('This is a mock agent response') whereas the reference discusses human-driven climate change due to fossil fuels and its impact on long-term weather patterns."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; sem.text.size() &lt;= 200",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 3764
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 3764.0,
+    "timestamp": "2026-02-09T19:17:36.909296Z",
+    "totalDurationMs": 3764
+  },
+  "hash": "4f229139d4f3517d8bff262206cbfc327e8a2c10151fda97f0f8f12751954040",
+  "metadata": {
+    "input_file": "47-summarization.xml",
+    "thread_id": "eval-047",
+    "description": "Test text summarization",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

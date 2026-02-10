@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Multiple assertions on same output" thread-id="eval-008" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>List three primary colors</text>
+  </user>
+
+  <expect name="primary-colors">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>The three primary colors are red, blue, and yellow.</text>
+    </agent>
+    <judge agent="text_contains" as="red">["red"]</judge>
+    <judge agent="text_contains" as="blue">["blue"]</judge>
+    <judge agent="text_contains" as="yellow">["yellow"]</judge>
+    <assert>red.passed</assert>
+    <assert>blue.passed</assert>
+    <assert>yellow.passed</assert>
+  </expect>
+</thread>

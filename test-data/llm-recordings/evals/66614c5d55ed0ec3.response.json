@@ -1,0 +1,17 @@
+{
+  "callId": 53,
+  "timestamp": "2026-02-09T19:19:07.524449+00:00",
+  "hash": "66614c5d55ed0ec3",
+  "response": {
+    "id": "chatcmpl-D7R4jPKmYdK2xzo0Qpd00hk4u6Wqm",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664745,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The reference states that both options are acceptable ('Either path works'), while the actual response states 'This is a mock agent response' which conveys an unrelated meta-message and does not reflect the same meaning.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

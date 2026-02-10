@@ -1,0 +1,125 @@
+{
+  "timestamp": "2026-02-09T19:17:47.026740Z",
+  "content": {
+    "threadId": "eval-051",
+    "description": "CEL Boolean Operators - AND, OR, NOT",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "test-boolean-and",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "has_answer",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "has_number",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "has_answer.passed && has_number.passed",
+                "passed": true,
+                "value": true
+              }
+            ]
+          },
+          {
+            "name": "test-boolean-or",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "has_digit",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "has_word",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "has_digit.passed || has_word.passed",
+                "passed": true,
+                "value": true
+              }
+            ]
+          },
+          {
+            "name": "test-boolean-not",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "has_error",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "!has_error.passed",
+                "passed": false,
+                "value": null,
+                "error": "Judge result '!has_error' not found"
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 0
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 3,
+    "passedAsserts": 2,
+    "failedAsserts": 1,
+    "avgDurationMs": 0.0,
+    "timestamp": "2026-02-09T19:17:47.026671Z",
+    "totalDurationMs": 0
+  },
+  "hash": "3be69fa51c846368649debc2576e80a95bfc85cdf1aea8407616e1416929b7f8",
+  "metadata": {
+    "input_file": "51-cel-boolean-operators.xml",
+    "thread_id": "eval-051",
+    "description": "CEL Boolean Operators - AND, OR, NOT",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

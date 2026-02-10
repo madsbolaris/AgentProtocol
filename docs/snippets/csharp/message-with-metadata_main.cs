@@ -1,17 +1,17 @@
-using Microsoft.Agents.Xml.Generated.Models;
-using Microsoft.Agents.Xml.Serialization;
-using System.Linq;
+// using Microsoft.Agents.Xml.Generated.Models;
+// using Microsoft.Agents.Protocol.Xml;
 
-// Create conversation thread
-var thread = new List<object>
+// Create message with metadata
+var message = new UserMessage
 {
-    new SystemMessage { Contents = new List<AIContentBase> { new TextContent { Text = "You are a helpful assistant." } } },
-    new ChatMessage { Role = "user", Contents = new List<AIContentBase> { new TextContent { Text = "Hello!" } } },
-    new AgentMessage { Contents = new List<AIContentBase> { new TextContent { Text = "Hi! How can I help?" } } }
+    MessageId = "msg-meta-1",
+    CreatedAt = DateTime.Parse("2024-01-15T10:30:00Z").ToUniversalTime(),
+    Contents = new List<AIContent>
+    {
+        new TextContent { Text = "Hello!" }
+    }
 };
 
-// Serialize thread
 var serializer = new MessageSerializer();
-var threadXml = thread.Select(msg => serializer.Serialize(msg)).ToList();
-
-Console.WriteLine($"Thread length: {threadXml.Count} messages");
+var xmlOutput = serializer.Serialize(message);
+Console.WriteLine(xmlOutput);

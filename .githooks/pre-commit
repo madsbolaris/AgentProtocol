@@ -75,7 +75,7 @@ if [ -n "$PYTHON_CHANGES" ]; then
             echo "  pytest --update-golden tests/test_doc_examples.py"
             echo ""
             echo "Then review and stage the updated golden files:"
-            echo "  git add test-data/results/shared/"
+            echo "  git add test-data/results/"
             FAILED=1
         fi
 
@@ -104,7 +104,7 @@ if [ -n "$CSHARP_CHANGES" ]; then
             echo "  UPDATE_GOLDEN=1 dotnet test"
             echo ""
             echo "Then review and stage the updated golden files:"
-            echo "  git add test-data/results/shared/"
+            echo "  git add test-data/results/"
             FAILED=1
         fi
 

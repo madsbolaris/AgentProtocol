@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-02-09T19:16:32.542277Z",
+  "content": {
+    "threadId": "eval-020",
+    "description": "Test suggested actions output",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "suggestions",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.1,
+                "details": {
+                  "similarity_score": 0.1,
+                  "llm_reasoning": "The reference states the ability to help with various tasks, while the actual indicates it is a mock agent response. They do not convey the same meaning or intent."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; has(sem.message.suggested_actions) &amp;&amp; size(sem.message.suggested_actions) >= 2",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 3896
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 3896.0,
+    "timestamp": "2026-02-09T19:16:28.645990Z",
+    "totalDurationMs": 3896
+  },
+  "hash": "287853d77f426dc6abb75b79d03cc361de70507d0425f2658c0cbf169300ab2a",
+  "metadata": {
+    "input_file": "20-suggested-actions.xml",
+    "thread_id": "eval-020",
+    "description": "Test suggested actions output",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

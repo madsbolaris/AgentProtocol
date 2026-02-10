@@ -1,6 +1,6 @@
 """
 AUTO-GENERATED: EchoM365 TypeSpec compliance tests.
-Generated from: specs/typespec/messages.tsp
+Generated from: typespec/messages.tsp
 
 Verifies that EchoM365 conforms to Agent Framework Protocol specification.
 Tests cover:

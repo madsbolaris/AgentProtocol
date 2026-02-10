@@ -1,0 +1,32 @@
+{
+  "runId": "run_fijf1w3kfe",
+  "agentId": "echo-agent",
+  "threadId": "thread_b3vrljcnlxj",
+  "status": "completed",
+  "input": [
+    {
+      "messageId": "msg_9mkion4r0jv",
+      "role": "tool",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "{\"results\": [{\"id\": 123, \"name\": \"Example Record\"}], \"count\": 1}"
+        }
+      ]
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_8pnbho1fv9r",
+      "role": "agent",
+      "createdAt": "2026-02-09T18:38:53.129Z",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \n{\"results\": [{\"id\": 123, \"name\": \"Example Record\"}], \"count\": 1}"
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-09T18:38:53.129Z"
+}

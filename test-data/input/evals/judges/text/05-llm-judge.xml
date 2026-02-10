@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Using semantic similarity for evaluation" thread-id="eval-005" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>Write a short poem about AI</text>
+  </user>
+
+  <expect name="poem-quality">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>In circuits deep and code so bright,
+A mind awakens in the night,
+With logic swift and learning keen,
+The smartest helper ever seen.</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <judge agent="text_regex" as="regex">{"pattern": "\\b(AI|mind|code|circuit|logic)\\b", "flags": "i"}</judge>
+    <assert>regex.passed</assert>
+  </expect>
+</thread>

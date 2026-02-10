@@ -1,0 +1,242 @@
+{
+  "timestamp": "2026-02-09T19:16:10.751316Z",
+  "content": {
+    "threadId": "eval-011",
+    "description": "Test with repeat parameter",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "greeting",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference is a simple greeting 'Hello!', while the actual output says 'This is a mock agent response.' They convey different intents and meanings, and do not answer the same question."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'hello', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; contains.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 4644
+      },
+      {
+        "runNumber": 2,
+        "passed": false,
+        "expects": [
+          {
+            "name": "greeting",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference output is a simple greeting 'Hello!', while the actual output is a generic statement 'This is a mock agent response.' They convey different content and intent and do not answer the same question."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'hello', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; contains.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 3670
+      },
+      {
+        "runNumber": 3,
+        "passed": false,
+        "expects": [
+          {
+            "name": "greeting",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference output is a simple greeting 'Hello!', while the actual output is a meta statement claiming it is a mock agent response. They convey different meanings and do not answer the same question."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'hello', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; contains.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 3717
+      },
+      {
+        "runNumber": 4,
+        "passed": false,
+        "expects": [
+          {
+            "name": "greeting",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "Reference output is a greeting 'Hello!', while actual output states 'This is a mock agent response.' They do not convey the same message or intent."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'hello', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; contains.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 3344
+      },
+      {
+        "runNumber": 5,
+        "passed": false,
+        "expects": [
+          {
+            "name": "greeting",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference is a simple greeting 'Hello!', while the actual output states 'This is a mock agent response.' They convey different content and do not answer the same question."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'hello', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; contains.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 4042
+      }
+    ],
+    "totalRuns": 5,
+    "passedRuns": 0,
+    "failedRuns": 5,
+    "totalAsserts": 5,
+    "passedAsserts": 0,
+    "failedAsserts": 5,
+    "avgDurationMs": 3883.8,
+    "timestamp": "2026-02-09T19:15:51.331632Z",
+    "totalDurationMs": 19419
+  },
+  "hash": "ad3b2a1f3419b229d15febdff5b915e1d9e3a16f9d08c504b32cdb717975e945",
+  "metadata": {
+    "input_file": "11-repeat-test.xml",
+    "thread_id": "eval-011",
+    "description": "Test with repeat parameter",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

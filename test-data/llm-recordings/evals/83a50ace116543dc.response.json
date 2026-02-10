@@ -1,0 +1,17 @@
+{
+  "callId": 23,
+  "timestamp": "2026-02-09T19:17:09.559873+00:00",
+  "hash": "83a50ace116543dc",
+  "response": {
+    "id": "chatcmpl-D7R2prbcUAHugdpW0oBXCaSie8Jp5",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664627,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The actual output does not convey the same meaning or key information as the reference; it does not address whether the Earth is spherical and instead merely states it is a mock agent response.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-02-09T19:16:28.589512Z",
+  "content": {
+    "threadId": "eval-019",
+    "description": "Test adaptive card output",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "adaptive-card",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "contains_type",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'AdaptiveCard', 'caseSensitive': True}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "contains_type.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 0
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 0.0,
+    "timestamp": "2026-02-09T19:16:28.589449Z",
+    "totalDurationMs": 0
+  },
+  "hash": "6f8713647e2ea3bc08b33c63bfada569a45796731180e534aa72f9c5734a0a1d",
+  "metadata": {
+    "input_file": "19-adaptive-card-output.xml",
+    "thread_id": "eval-019",
+    "description": "Test adaptive card output",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

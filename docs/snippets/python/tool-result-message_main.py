@@ -1,11 +1,19 @@
-# Example: Tool execution result message
-# Simulated Python implementation
-
-xml_output = """<?xml version="1.0" encoding="utf-8"?>
-<tool>
-  <functionResult callId="call_001">
-    <result>{"temperature": 18, "condition": "partly cloudy"}</result>
-  </functionResult>
-</tool>"""
-
-print(xml_output)
+# from microsoft.agents.xml.models import ChatMessage, FunctionResultContent
+# from microsoft.agents.xml.serialization import MessageSerializer
+#
+# # Create tool result message
+# message = ChatMessage(
+#     role="tool",
+#     message_id="msg-result-1",
+#     contents=[
+#         FunctionResultContent(
+#             call_id="call_abc123",
+#             name="get_weather",
+#             content='{"temperature": 55, "conditions": "partly cloudy"}'
+#         )
+#     ]
+# )
+#
+# serializer = MessageSerializer()
+# xml_output = serializer.serialize(message)
+# print(xml_output)

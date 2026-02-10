@@ -1,0 +1,17 @@
+{
+  "callId": 28,
+  "timestamp": "2026-02-09T19:17:30.268583+00:00",
+  "hash": "37b2432f66adb7bd",
+  "response": {
+    "id": "chatcmpl-D7R39yK8arU3iGySRotmPB7hXgslb",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664647,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.1,\n  \"reasoning\": \"The reference asserts a conclusion cannot be drawn from the information, while the actual output states it is a mock agent response; they express unrelated meanings.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

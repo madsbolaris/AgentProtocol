@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="CEL Judge Details - Access nested properties" thread-id="eval-055" created-at="2026-02-09T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-09T00:00:00Z">
+    <text>Provide detailed information</text>
+  </user>
+
+  <expect name="test-details-access">
+    <agent message-id="ref-001" created-at="2026-02-09T00:00:01Z" agent-id="test-agent">
+      <text>Here is the detailed response</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <!-- Test accessing nested details property -->
+    <assert>sem.passed && sem.details.similarity_score > 0.8</assert>
+  </expect>
+
+  <expect name="test-combined-properties">
+    <agent message-id="ref-002" created-at="2026-02-09T00:00:02Z" agent-id="test-agent">
+      <text>Response with metrics</text>
+    </agent>
+    <judge agent="text_contains" as="content" />
+    <judge agent="semantic_similarity" as="quality" />
+    <!-- Test multiple property access -->
+    <assert>content.passed && quality.score >= 0.7 && quality.details.similarity_score >= 0.7</assert>
+  </expect>
+</thread>

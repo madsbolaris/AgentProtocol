@@ -1,0 +1,17 @@
+{
+  "callId": 44,
+  "timestamp": "2026-02-09T19:18:34.787335+00:00",
+  "hash": "b0d93d4f90d182e1",
+  "response": {
+    "id": "chatcmpl-D7R4BilQERXxk77sTmNzsdRHz4V7C",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664711,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.15,\n  \"reasoning\": \"The reference emphasizes attributes like keywords, quality, and proper format of an answer, while the actual output is a generic statement ('This is a mock agent response.') and does not reflect those criteria.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

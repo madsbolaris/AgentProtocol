@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head><title>Debug Test</title></head>
+<body>
+<h1>Debug Test</h1>
+<div id="output"></div>
+<script>
+async function test() {
+  const output = document.getElementById('output');
+  output.innerHTML = 'Loading agent-config.json...<br>';
+  
+  try {
+    const response = await fetch('/agent-config.json');
+    const config = await response.json();
+    output.innerHTML += `✅ Config loaded: ${Object.keys(config.bots).length} bots<br>`;
+    
+    output.innerHTML += 'Checking health...<br>';
+    for (const [key, bot] of Object.entries(config.bots)) {
+      const url = `${bot.baseUrl}:${bot.port}/health`;
+      try {
+        const healthResponse = await fetch(url, {
+          method: 'GET',
+          signal: AbortSignal.timeout(2000),
+          cache: 'no-store'
+        });
+        output.innerHTML += `✅ ${bot.name} (port ${bot.port}): Running<br>`;
+      } catch (error) {
+        output.innerHTML += `❌ ${bot.name} (port ${bot.port}): Not running<br>`;
+      }
+    }
+  } catch (error) {
+    output.innerHTML += `❌ Error: ${error.message}<br>`;
+  }
+}
+
+test();
+</script>
+</body>
+</html>

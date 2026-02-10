@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <PackageId>Microsoft.Agents.Protocol.Runtime</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Microsoft</Authors>
+    <Company>Microsoft</Company>
+    <Product>Microsoft Agents Protocol</Product>
+    <Description>Runtime utilities for Microsoft Agents Protocol - function execution, schema generation, and validation</Description>
+    <RootNamespace>Microsoft.Agents.Protocol.Runtime</RootNamespace>
+    <PackageProjectUrl>https://github.com/microsoft/agentprotocol</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/microsoft/agentprotocol</RepositoryUrl>
+    <PackageTags>agents;ai;llm;tools;functions;schema;microsoft</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Agents.Protocol.Abstractions\Microsoft.Agents.Protocol.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>

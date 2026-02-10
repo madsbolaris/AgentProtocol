@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <thread thread-id="thread_5a2a85753c6c4" status="active" created-at="2026-02-08T21:13:16Z">
-  <assistant>
+  <agent>
     <function-call call-id="call_GEBVWkNyhe6uLx44tnRi8mia" name="GetCurrentTime">{}</function-call>
-  </assistant>
+  </agent>
   <tool>
     <function-result call-id="call_GEBVWkNyhe6uLx44tnRi8mia">🕐 The current UTC time is 2026-02-08 21:13:14.</function-result>
   </tool>
-  <assistant>
+  <agent>
     <text>It's 21:13:14 UTC on 2026-02-08.
 
 If you tell me your local time zone or location, I can convert that to your local time.</text>
-  </assistant>
+  </agent>
 </thread>

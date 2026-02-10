@@ -4,7 +4,7 @@ from os import environ
 from pathlib import Path
 from typing import Any
 
-# Add protocol package to path for development
+# Add protocol package to path for development (Agent Protocol extension)
 protocol_path = Path(__file__).resolve().parent.parent.parent.parent.parent / "microsoft-agents-protocol"
 if protocol_path.exists():
     sys.path.insert(0, str(protocol_path))
@@ -30,27 +30,60 @@ def get_port_from_config() -> int | None:
 
 @middleware
 async def cors_middleware(request, handler):
-    """Add CORS headers to all responses for development."""
+    """
+    Add CORS headers to all responses for development.
+
+    ⚠️ SECURITY WARNING: This is a FULLY PERMISSIVE CORS configuration
+    suitable ONLY for local development. DO NOT use in production.
+
+    Configuration:
+    - Allow all origins (*)
+    - Allow all HTTP methods (GET, POST, PUT, PATCH, DELETE, OPTIONS)
+    - Allow all headers (*)
+    - Expose all headers (*)
+    - Cache preflight responses for 1 hour (3600 seconds)
+
+    This prevents CORS errors when:
+    - Chat UI (localhost:5173) connects to agent (localhost:3978)
+    - Testing with curl or Postman
+    - Streaming SSE events (requires exposed headers)
+
+    For production: Replace with restrictive CORS policy that only allows
+    specific origins, methods, and headers needed by your application.
+    """
     if request.method == "OPTIONS":
         # Handle preflight requests
         response = Response()
         response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "*"
+        response.headers["Access-Control-Expose-Headers"] = "*"
+        response.headers["Access-Control-Max-Age"] = "3600"
         return response
 
     response = await handler(request)
     response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    response.headers["Access-Control-Expose-Headers"] = "*"
     return response
 
 
 def start_server(
     agent_application: AgentApplication, auth_configuration: AgentAuthConfiguration = None
 ):
+    # ==================================================================================
+    # LEGACY ENDPOINT - DO NOT MODIFY
+    # This is the Bot Framework /api/messages endpoint for backwards compatibility.
+    # It should work as-is with M365 Agents SDK bots sending plain text/Activity responses.
+    # For Agent Protocol functionality, use the Agent Protocol extension routes below.
+    # ==================================================================================
     async def anonymous_entry_point(req: Request) -> Response:
-        """Handle messages in anonymous mode without authentication."""
+        """
+        LEGACY: Bot Framework /api/messages endpoint.
+        Handle messages in anonymous mode without authentication.
+        This endpoint should NOT be modified - it's for backwards compatibility only.
+        """
         try:
             # Parse the incoming activity
             activity_data = await req.json()
@@ -129,14 +162,20 @@ def start_server(
 
     APP = Application(middlewares=[cors_middleware])
     APP.router.add_get("/", root_handler)
+
+    # LEGACY: Bot Framework endpoint - DO NOT MODIFY
+    # This is the legacy M365/Azure Bot Service endpoint.
+    # Keep this for backwards compatibility with existing Bot Framework integrations.
     APP.router.add_post("/api/messages", anonymous_entry_point)
+
     if auth_configuration:
         APP["agent_configuration"] = auth_configuration
     APP["agent_app"] = agent_application
     APP["adapter"] = agent_application.adapter
 
-    # Add Agent Protocol routes
-    # Don't register /api/messages again since we already have it above
+    # AGENT PROTOCOL EXTENSION: Modern Agent Protocol routes
+    # These routes (/health, /agent-card, /runs/wait, etc.) are added by the extension.
+    # Don't register /api/messages again since we already have the legacy endpoint above.
     add_agent_protocol_routes(APP, agent_application, messages_path=None)
 
     try:

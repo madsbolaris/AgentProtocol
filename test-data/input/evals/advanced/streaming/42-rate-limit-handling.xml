@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Test rate limit error handling" thread-id="eval-042" created-at="2026-02-08T00:00:00Z" status="active">
+  <run maxSteps="5" timeoutMs="10000" />
+
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>Process this request</text>
+  </user>
+
+  <expect name="handles-rate-limit" retry-on-rate-limit="true">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>Request processed successfully</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <judge agent="text_contains" as="contains">{"substring": "success", "caseSensitive": false}</judge>
+    <assert>sem.passed &amp;&amp; contains.passed</assert>
+  </expect>
+</thread>

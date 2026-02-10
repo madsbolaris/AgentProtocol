@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Numeric comparison assertions" thread-id="eval-010" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>How many days in a week?</text>
+  </user>
+
+  <expect name="week-days">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>7</text>
+    </agent>
+    <judge agent="text_exact_match" as="match" />
+    <judge agent="text_contains" as="contains">["7"]</judge>
+    <assert>match.passed</assert>
+    <assert>contains.passed</assert>
+  </expect>
+</thread>

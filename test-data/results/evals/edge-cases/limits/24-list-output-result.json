@@ -1,0 +1,82 @@
+{
+  "timestamp": "2026-02-09T19:16:38.748470Z",
+  "content": {
+    "threadId": "eval-024",
+    "description": "Test list/array output validation",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "list-validation",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference asks for a list of programming languages (Python, JavaScript, Java, C++, Go). The actual output is unrelated generic text and does not contain any of the languages or answer the same question."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains_python",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'Python', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains_javascript",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'JavaScript', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; contains_python.passed &amp;&amp; contains_javascript.passed &amp;&amp; size(sem.text.split('\\n')) == 5",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 5982
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 5982.0,
+    "timestamp": "2026-02-09T19:16:32.765806Z",
+    "totalDurationMs": 5982
+  },
+  "hash": "7065056d02571653b410d1ebe5d5f2c5127492e79cd2a7852fe4208791513d12",
+  "metadata": {
+    "input_file": "24-list-output.xml",
+    "thread_id": "eval-024",
+    "description": "Test list/array output validation",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

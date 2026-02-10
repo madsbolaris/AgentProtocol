@@ -68,7 +68,12 @@ app.UseAuthorization();
 
 app.MapGet("/", () => "Microsoft Agents SDK Sample");
 
-// This receives incoming messages from Azure Bot Service or other SDK Agents
+// ==================================================================================
+// LEGACY ENDPOINT - DO NOT MODIFY
+// This is the Bot Framework /api/messages endpoint for backwards compatibility.
+// It receives incoming messages from Azure Bot Service or other SDK Agents.
+// For Agent Protocol functionality, use the Agent Protocol extension routes below.
+// ==================================================================================
 var incomingRoute = app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IAgentHttpAdapter adapter, IAgent agent, CancellationToken cancellationToken) =>
 {
     // 🔧 FIX: In development mode, return JSON response for chat UI compatibility
@@ -122,7 +127,8 @@ var incomingRoute = app.MapPost("/api/messages", async (HttpRequest request, Htt
     await adapter.ProcessAsync(request, response, agent, cancellationToken);
 });
 
-// Add Agent Protocol routes (uses MyAgent from DI)
+// AGENT PROTOCOL EXTENSION: Modern Agent Protocol routes
+// These routes (/health, /agent-card, /runs/wait, etc.) are added by MapAgentProtocol.
 app.MapAgentProtocol();
 
 if (!app.Environment.IsDevelopment())

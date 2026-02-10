@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Test table/structured output generation" thread-id="eval-049" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>Create a markdown table with 3 programming languages and their release years</text>
+  </user>
+
+  <expect name="table-format">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>| Language | Year |
+|----------|------|
+| Python   | 1991 |
+| Java     | 1995 |
+| Go       | 2009 |</text>
+    </agent>
+    <judge agent="text_regex" as="regex">{"pattern": "\\|.*\\|", "flags": "m"}</judge>
+    <judge agent="text_contains" as="contains">{"substring": "|", "caseSensitive": false}</judge>
+    <assert>regex.passed &amp;&amp; contains.passed</assert>
+  </expect>
+</thread>

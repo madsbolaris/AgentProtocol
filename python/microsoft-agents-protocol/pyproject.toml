@@ -25,6 +25,8 @@ classifiers = [
 dependencies = [
     "aiohttp>=3.8.0",
     "microsoft-agents-abstractions>=0.1.0",
+    "microsoft-agents-common>=1.0.0",
+    "microsoft-agents-xml>=0.1.0",
 ]
 
 [project.optional-dependencies]
@@ -36,3 +38,12 @@ dev = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["microsoft*"]
+namespaces = true
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: Integration tests that test full end-to-end scenarios",
+    "unit: Unit tests that test individual components in isolation",
+]
+testpaths = ["tests"]
+asyncio_mode = "auto"

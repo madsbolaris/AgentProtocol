@@ -1,0 +1,17 @@
+{
+  "callId": 18,
+  "timestamp": "2026-02-09T19:16:53.244302+00:00",
+  "hash": "41a903da1c93ce73",
+  "response": {
+    "id": "chatcmpl-D7R2YzfdOF41xpC28JhzeBLi1xexg",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664610,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The reference contains the exact spoken line 'Hello, how are you today?', while the actual output is a generic placeholder ('This is a mock agent response.') and does not convey the same content.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

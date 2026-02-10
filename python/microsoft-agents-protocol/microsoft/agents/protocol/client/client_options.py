@@ -26,3 +26,9 @@ class AgentProtocolClientOptions:
 
     max_retries: int = 3
     """Maximum number of retry attempts for failed requests (default: 3)"""
+
+    enable_logging: bool = False
+    """Enable automatic logging of conversations to XML files (default: False)"""
+
+    log_directory: str = "logs/conversations"
+    """Directory path for saving conversation logs (default: logs/conversations)"""

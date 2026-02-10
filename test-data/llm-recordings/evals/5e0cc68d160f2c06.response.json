@@ -1,0 +1,17 @@
+{
+  "callId": 8,
+  "timestamp": "2026-02-09T19:16:14.060278+00:00",
+  "hash": "5e0cc68d160f2c06",
+  "response": {
+    "id": "chatcmpl-D7R1vBK3Dzn7eXBPCd1OGXMzP63fQ",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664571,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The reference is a simple French greeting 'Bonjour!' while the actual output states a generic meta-message 'This is a mock agent response.' They do not convey the same meaning or content.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

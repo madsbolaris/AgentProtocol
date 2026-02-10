@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-09T19:15:50.980258+00:00",
+  "hash": "5362b578c88d8471",
+  "response": {
+    "id": "chatcmpl-D7R1YNQCImrF3g4Pc7xM4gv5pi3G6",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664548,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": true,\n  \"score\": 1.0,\n  \"reasoning\": \"The actual output is identical to the reference output; all lines and meaning are the same.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

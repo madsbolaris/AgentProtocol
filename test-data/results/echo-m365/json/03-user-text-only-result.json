@@ -7,11 +7,11 @@
     "status": "completed",
     "output": [
       {
-        "role": "assistant",
+        "role": "agent",
         "contents": [
           {
             "kind": "text",
-            "text": "you said: \n    What's the weather like in Seattle?\n  "
+            "text": "you said: What's the weather like in Seattle?"
           }
         ]
       }

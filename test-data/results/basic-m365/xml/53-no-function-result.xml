@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <thread thread-id="thread_9df4b7a9b60d4" status="active" created-at="2026-02-08T21:13:35Z">
-  <assistant>
+  <agent>
     <text>Hi there! I’m here and ready to help. I don’t have feelings, but I’m glad to assist you. What would you like to do today?
 
 - Tell you the current UTC time
 - Get the weather for a location (tell me the city or place)
 
 If you want, just say what you’d like and I’ll fetch it for you.</text>
-  </assistant>
+  </agent>
 </thread>

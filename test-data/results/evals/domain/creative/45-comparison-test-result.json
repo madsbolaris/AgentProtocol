@@ -1,0 +1,82 @@
+{
+  "timestamp": "2026-02-09T19:17:33.251634Z",
+  "content": {
+    "threadId": "eval-045",
+    "description": "Test comparison and ranking",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "correct-comparison",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference states a factual comparison between Pacific and Atlantic Ocean sizes. The actual output is a generic placeholder with no relation to the content. They do not convey the same meaning or answer the same question."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains_pacific",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'Pacific', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains_larger",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'larger', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; contains_pacific.passed &amp;&amp; contains_larger.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 2861
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 2861.0,
+    "timestamp": "2026-02-09T19:17:30.390554Z",
+    "totalDurationMs": 2861
+  },
+  "hash": "d12ddaf7d86c1c1c7666a5daf3b3e08ee8b3043e76837d71d708425213a5f9b5",
+  "metadata": {
+    "input_file": "45-comparison-test.xml",
+    "thread_id": "eval-045",
+    "description": "Test comparison and ranking",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

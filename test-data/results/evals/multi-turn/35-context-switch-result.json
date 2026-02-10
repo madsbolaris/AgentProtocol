@@ -1,0 +1,117 @@
+{
+  "timestamp": "2026-02-09T19:17:05.965774Z",
+  "content": {
+    "threadId": "eval-035",
+    "description": "Test context switching between topics",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "paris-info",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference states a factual fact about Paris being the capital of France, while the actual output is a generic placeholder with no informational content; they do not convey the same meaning or answer the same question."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'Paris', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; contains.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          },
+          {
+            "name": "tokyo-info",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference conveys a specific factual statement (Tokyo is the capital of Japan), whereas the actual output is a generic placeholder with no substantive content. They do not share meaning or address the same content."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains_tokyo",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'Tokyo', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "not_contains_paris",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': 'Paris', 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; contains_tokyo.passed &amp;&amp; !not_contains_paris.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 6350
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 2,
+    "passedAsserts": 0,
+    "failedAsserts": 2,
+    "avgDurationMs": 6350.0,
+    "timestamp": "2026-02-09T19:16:59.614807Z",
+    "totalDurationMs": 6350
+  },
+  "hash": "65390f28e5c8d98d9b3853e7bf8808b20fb38365a50c16a311552f82dfbd0060",
+  "metadata": {
+    "input_file": "35-context-switch.xml",
+    "thread_id": "eval-035",
+    "description": "Test context switching between topics",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

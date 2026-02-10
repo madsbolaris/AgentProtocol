@@ -1,0 +1,36 @@
+/* ============================================================================
+   HIDE MATERIAL'S DEFAULT STRUCTURE
+   We're using custom hc-* layout instead
+   ============================================================================ */
+
+/* Hide Material's container structure - we use hc-layout instead */
+.md-container {
+  display: contents !important;
+}
+
+.md-main {
+  display: contents !important;
+}
+
+.md-main__inner {
+  display: contents !important;
+}
+
+/* Hide Material's sidebars - we use hc-sidebar instead */
+.md-sidebar {
+  display: none !important;
+}
+
+/* Hide Material's grid */
+.md-grid {
+  display: contents !important;
+}
+
+/* Hide skip link and overlays from Material */
+.md-skip {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

@@ -1,0 +1,91 @@
+{
+  "timestamp": "2026-02-09T19:18:30.340418Z",
+  "content": {
+    "threadId": "eval-055",
+    "description": "CEL Judge Details - Access nested properties",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "test-details-access",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.2,
+                "details": {
+                  "similarity_score": 0.2,
+                  "llm_reasoning": "The reference asserts a 'detailed response' whereas the actual describes a 'mock agent response'. They convey different meanings and contents, not semantically equivalent."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed && sem.details.similarity_score > 0.8",
+                "passed": false,
+                "value": false
+              }
+            ]
+          },
+          {
+            "name": "test-combined-properties",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "text_contains",
+                "as": "content",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "expected_items": [],
+                  "all_found": true
+                }
+              },
+              {
+                "agent": "semantic_similarity",
+                "as": "quality",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference specifies a response that includes metrics, whereas the actual output is a generic mock agent statement with no relation to metrics. They do not convey the same meaning or answer the same question."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "content.passed && quality.score >= 0.7 && quality.details.similarity_score >= 0.7",
+                "passed": true,
+                "value": true
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 10014
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 2,
+    "passedAsserts": 1,
+    "failedAsserts": 1,
+    "avgDurationMs": 10014.0,
+    "timestamp": "2026-02-09T19:18:20.325900Z",
+    "totalDurationMs": 10014
+  },
+  "hash": "1ee2bfe0bb397e78d7258a594bba9139b62fddd5aeb97aaa05dac455256abf94",
+  "metadata": {
+    "input_file": "55-cel-judge-details.xml",
+    "thread_id": "eval-055",
+    "description": "CEL Judge Details - Access nested properties",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

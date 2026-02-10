@@ -50,6 +50,6 @@ public class MyAgent : AgentApplication
             return;
         }
 
-        await turnContext.SendActivityAsync($"You said: {turnContext.Activity.Text}", cancellationToken: cancellationToken);
+        await turnContext.SendActivityAsync($"you said: {turnContext.Activity.Text}", cancellationToken: cancellationToken);
     }
 }

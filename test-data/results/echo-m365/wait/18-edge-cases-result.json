@@ -1,0 +1,56 @@
+{
+  "runId": "run_f89d94c72aac4a3b94dcd00452cafc7f",
+  "agentId": "echo-agent",
+  "threadId": "thread_fc9c18de38644fb2a76c536df2dfef73",
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "user",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "Text with special characters: \u003C\u003E\u0026\u0022\u0027 and unicode: \u4F60\u597D \uD83C\uDF0D",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_853d26ce95774ffdb4b89f305d4ed7ec",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nText with special characters: \u003C\u003E\u0026\u0022\u0027 and unicode: \u4F60\u597D \uD83C\uDF0D",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:34.115581Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "error": null,
+  "createdAt": "2026-02-09T18:38:34.115583Z",
+  "completedAt": null
+}

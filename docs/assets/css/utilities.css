@@ -1,0 +1,85 @@
+/* ============================================================================
+   UTILITY CLASSES - HashiCorp style
+   ============================================================================ */
+
+/* Toggle inputs (for drawer, search) */
+.hc-toggle {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* HashiCorp-style buttons */
+.hc-button,
+.md-button {  /* md-button for backward compatibility */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 0.25rem;
+  color: var(--md-default-fg-color);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+/* SVG icons inside buttons */
+.hc-button svg,
+.hc-button .twemoji svg,
+.md-button svg,
+.md-button .twemoji svg {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  max-width: 1.25rem !important;
+  max-height: 1.25rem !important;
+  flex-shrink: 0;
+  fill: currentColor;
+  display: inline-block !important;
+}
+
+.hc-button:hover,
+.md-button:hover {
+  border-color: var(--md-accent-fg-color);
+  background: var(--md-default-fg-color--lightest);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Primary button variant */
+.hc-button--primary,
+.md-button--primary {
+  background: var(--md-accent-fg-color);
+  color: white;
+  border-color: var(--md-accent-fg-color);
+}
+
+.hc-button--primary:hover,
+.md-button--primary:hover {
+  background: var(--md-accent-fg-color);
+  filter: brightness(1.1);
+  border-color: var(--md-accent-fg-color);
+}
+
+/* Dark mode */
+[data-md-color-scheme="slate"] .hc-button,
+[data-md-color-scheme="slate"] .md-button {
+  background: var(--md-default-bg-color);
+  border-color: var(--md-default-fg-color--lighter);
+}
+
+[data-md-color-scheme="slate"] .hc-button:hover,
+[data-md-color-scheme="slate"] .md-button:hover {
+  border-color: var(--md-accent-fg-color);
+  background: var(--md-default-fg-color--lightest);
+}
+
+[data-md-color-scheme="slate"] .hc-button--primary,
+[data-md-color-scheme="slate"] .md-button--primary {
+  background: var(--md-accent-fg-color);
+  color: white;
+}

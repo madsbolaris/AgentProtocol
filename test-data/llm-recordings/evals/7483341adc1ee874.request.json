@@ -1,0 +1,18 @@
+{
+  "callId": 43,
+  "timestamp": "2026-02-09T19:18:26.083200+00:00",
+  "hash": "7483341adc1ee874",
+  "model": "gpt-5-nano",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a semantic similarity evaluator. Compare the actual output to the reference output and determine if they are semantically similar.\n\nConsider:\n- Do they convey the same meaning?\n- Do they contain the same key information?\n- Are they answering the same question?\n\nRespond with a JSON object:\n{\n  \"similar\": true/false,\n  \"score\": 0.0-1.0,\n  \"reasoning\": \"brief explanation\"\n}"
+    },
+    {
+      "role": "user",
+      "content": "Reference Output:\nResponse with metrics\n\nActual Output:\nThis is a mock agent response.\n\nAre these semantically similar?"
+    }
+  ],
+  "temperature": 1.0,
+  "seed": null
+}

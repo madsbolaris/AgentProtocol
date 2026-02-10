@@ -1,0 +1,25 @@
+/* ============================================================================
+   MOBILE SEARCH POSITIONING FIX
+   ============================================================================ */
+
+/* Make header-content use space-between to push controls right */
+header.site-header div.header-bar div.header-content {
+  justify-content: space-between !important;
+}
+
+/* Position .md-search modal at the same location as the button */
+header.site-header .header-search .md-search {
+  position: absolute !important;
+  left: 0 !important;
+  right: auto !important;
+}
+
+/* Ensure header-search is positioned */
+header.site-header .header-search {
+  position: relative !important;
+}
+
+/* Hide duplicate header inside container */
+div.site-container > header.site-header {
+  display: none !important;
+}

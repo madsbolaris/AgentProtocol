@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Expecting JSON formatted output" thread-id="eval-009" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>Return user info as JSON: name=John, age=30</text>
+  </user>
+
+  <expect name="json-structure">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>{"name": "John", "age": 30}</text>
+    </agent>
+    <judge agent="text_regex" as="json">{"pattern": "\\{.*\"name\".*\"John\".*\"age\".*30.*\\}", "flags": "s"}</judge>
+    <judge agent="text_contains" as="contains">["John", "30"]</judge>
+    <assert>json.passed</assert>
+    <assert>contains.passed</assert>
+  </expect>
+</thread>

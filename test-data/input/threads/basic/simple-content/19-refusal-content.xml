@@ -1,0 +1,3 @@
+<agent message-id="msg_0001" created-at="2026-02-07T10:00:00Z" agent-id="agent_test_1">
+  <refusal reason="Test reason for testing purposes"/>
+</agent>

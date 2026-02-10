@@ -250,6 +250,18 @@ public class TypeScriptModelGenerator
             if (baseType.StartsWith("Record<"))
                 continue;
 
+            // Skip literal string types (start with quotes)
+            if (baseType.StartsWith("\"") || baseType.StartsWith("'"))
+                continue;
+
+            // Skip generic/array types (contain < or [)
+            if (baseType.Contains('<') || baseType.Contains('['))
+                continue;
+
+            // Skip built-in TypeScript types
+            if (baseType == "unknown" || baseType == "any" || baseType == "never")
+                continue;
+
             // Add complex type
             imports.Add(baseType);
         }

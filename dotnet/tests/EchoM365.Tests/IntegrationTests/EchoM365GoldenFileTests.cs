@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Xunit;
+using XunitAssert = Xunit.Assert;
 using Xunit.Abstractions;
 
 namespace EchoM365.Tests.IntegrationTests;
@@ -22,8 +23,8 @@ namespace EchoM365.Tests.IntegrationTests;
 ///
 /// This test suite:
 /// 1. Connects to running echo bot servers on ports 3978, 3979, 3980
-/// 2. Sends test-data/input/*.xml files to each bot
-/// 3. Validates responses against test-data/results/echom365/json/ and xml/ golden files
+/// 2. Sends test-data/input/threads/*.xml files to each bot
+/// 3. Validates responses against test-data/results/echo-m365/json/ and xml/ golden files
 /// 4. Ensures all three language implementations (Python, C#, TypeScript) behave identically
 /// 5. Tests both JSON and XML output formats
 ///
@@ -85,12 +86,14 @@ public class EchoM365GoldenFileTests : IDisposable
 
     private static List<string> GetInputFiles()
     {
-        var inputDir = Path.Combine(RepoRoot, "test-data", "input");
-        return Directory.GetFiles(inputDir, "*.xml")
+        var inputDir = Path.Combine(RepoRoot, "test-data", "input", "threads");
+        return Directory.GetFiles(inputDir, "*.xml", SearchOption.AllDirectories)
             .Where(f =>
             {
                 var fileName = Path.GetFileName(f);
-                return !fileName.StartsWith("error-") && !fileName.Contains("errors");
+                var dirName = Path.GetFileName(Path.GetDirectoryName(f));
+                // Exclude files in the invalid subdirectory
+                return dirName != "invalid" && !fileName.StartsWith("error-") && !fileName.Contains("errors") && !f.Contains("/invalid/");
             })
             .OrderBy(f => f)
             .ToList();
@@ -151,7 +154,8 @@ public class EchoM365GoldenFileTests : IDisposable
             var content = new MessageContent
             {
                 Kind = "text",
-                Text = textElem.Value ?? ""
+                // Trim whitespace from XML formatting (newlines, indentation, etc.)
+                Text = (textElem.Value ?? "").Trim()
             };
 
             var audienceAttr = textElem.Attribute("audience");
@@ -172,9 +176,9 @@ public class EchoM365GoldenFileTests : IDisposable
         return message;
     }
 
-    private static string NormalizeXml(string xmlContent)
+    private static XDocument NormalizeXmlToDocument(string xmlContent)
     {
-        var doc = XDocument.Parse(xmlContent);
+        var doc = XDocument.Parse(xmlContent, LoadOptions.None);
 
         // Remove dynamic attributes that change on every run
         // These include: thread-id, created-at, and any timestamp fields
@@ -191,7 +195,76 @@ public class EchoM365GoldenFileTests : IDisposable
             element.Attribute("completed-at")?.Remove();
         }
 
-        return doc.ToString(SaveOptions.None);
+        return doc;
+    }
+
+    private static string NormalizeXml(string xmlContent)
+    {
+        var doc = NormalizeXmlToDocument(xmlContent);
+
+        // Create a settings that produces consistent output with explicit closing tags
+        var settings = new XmlWriterSettings
+        {
+            OmitXmlDeclaration = true,
+            Indent = false,
+            NewLineHandling = NewLineHandling.None
+        };
+
+        using var stringWriter = new StringWriter();
+        using var xmlWriter = XmlWriter.Create(stringWriter, settings);
+        doc.WriteTo(xmlWriter);
+        xmlWriter.Flush();
+
+        return stringWriter.ToString();
+    }
+
+    /// <summary>
+    /// Validates XML output for common formatting bugs that were previously found.
+    /// This catches issues like:
+    /// - Newlines being inserted after opening tags (e.g., "<text>\ncontent" instead of "<text>content")
+    /// - Wrong role names (e.g., "assistant" instead of "agent")
+    /// </summary>
+    private static void ValidateXmlFormatting(string xmlContent, string serverName)
+    {
+        var doc = XDocument.Parse(xmlContent);
+
+        // Check 1: No newlines immediately after <text> opening tag
+        // This catches the bug where XmlWriter with Indent=true adds newlines inside text elements
+        var textElements = doc.Descendants("text");
+        foreach (var textElem in textElements)
+        {
+            var textValue = textElem.Value;
+            if (!string.IsNullOrEmpty(textValue) && textValue.StartsWith("\n"))
+            {
+                throw new Exception(
+                    $"\n❌ XML FORMATTING BUG DETECTED in {serverName}:\n" +
+                    $"   Text element has unwanted leading newline.\n" +
+                    $"   This indicates XmlWriter is adding formatting newlines inside text content.\n" +
+                    $"   Expected: <text>content...</text>\n" +
+                    $"   Actual: <text>\\ncontent...</text>\n" +
+                    $"   Full element: {textElem}\n" +
+                    $"\n   FIX: Use WriteElementString() or set proper indentation rules for text elements.");
+            }
+        }
+
+        // Check 2: Agent responses must use "agent" role, not "assistant"
+        // This catches copy-paste errors from other protocols (OpenAI, etc.)
+        var agentMessages = doc.Descendants().Where(e =>
+            e.Name.LocalName == "assistant" || e.Name.LocalName == "agent");
+
+        foreach (var msg in agentMessages)
+        {
+            if (msg.Name.LocalName == "assistant")
+            {
+                throw new Exception(
+                    $"\n❌ ROLE NAME BUG DETECTED in {serverName}:\n" +
+                    $"   Found <assistant> element - should be <agent>.\n" +
+                    $"   Agent Protocol uses 'agent' role, NOT 'assistant'.\n" +
+                    $"   This is likely a copy-paste error from OpenAI or other protocols.\n" +
+                    $"   Full element: {msg}\n" +
+                    $"\n   FIX: Change role from 'assistant' to 'agent' in response conversion code.");
+            }
+        }
     }
 
     public static IEnumerable<object[]> GetTestData()
@@ -202,8 +275,8 @@ public class EchoM365GoldenFileTests : IDisposable
         // Only test first 3 input files for now (to speed up initial test run)
         var limitedFiles = inputFiles.Take(3).ToList();
 
-        // Only test Python for now (other bots have startup issues)
-        var activeServers = new[] { "Python" };
+        // Test all servers to ensure cross-language consistency
+        var activeServers = new[] { "Python", "DotNet", "TypeScript" };
 
         foreach (var language in activeServers)
         {
@@ -317,7 +390,7 @@ public class EchoM365GoldenFileTests : IDisposable
             RepoRoot,
             "test-data",
             "results",
-            "echom365",
+            "echo-m365",
             format,
             $"{testName}-result.{format}");
 
@@ -370,6 +443,8 @@ public class EchoM365GoldenFileTests : IDisposable
             try
             {
                 actualContent = await response.Content.ReadAsStringAsync();
+
+                // Normalize both to consistent string format
                 var normalizedActual = NormalizeXml(actualContent);
                 var normalizedExpected = NormalizeXml(goldenContent);
 
@@ -382,6 +457,9 @@ public class EchoM365GoldenFileTests : IDisposable
                         $"Actual:\n{normalizedActual}\n" +
                         "THIS IS EXPECTED TO FAIL on first run because golden files are incorrect.");
                 }
+
+                // Additional validation: Check for common XML formatting bugs
+                ValidateXmlFormatting(actualContent, language);
 
                 _output.WriteLine("   ✓ XML structure validation passed");
             }

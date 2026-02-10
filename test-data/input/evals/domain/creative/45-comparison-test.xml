@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Test comparison and ranking" thread-id="eval-045" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>Which is larger: the Pacific Ocean or the Atlantic Ocean?</text>
+  </user>
+
+  <expect name="correct-comparison">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>The Pacific Ocean is larger than the Atlantic Ocean.</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <judge agent="text_contains" as="contains_pacific">{"substring": "Pacific", "caseSensitive": false}</judge>
+    <judge agent="text_contains" as="contains_larger">{"substring": "larger", "caseSensitive": false}</judge>
+    <assert>sem.passed &amp;&amp; contains_pacific.passed &amp;&amp; contains_larger.passed</assert>
+  </expect>
+</thread>

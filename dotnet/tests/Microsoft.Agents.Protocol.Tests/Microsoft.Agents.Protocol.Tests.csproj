@@ -22,8 +22,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol\Microsoft.Agents.Protocol.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Agents.Abstractions\Microsoft.Agents.Abstractions.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.Agents.Xml\Microsoft.Agents.Xml.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol.Xml\Microsoft.Agents.Protocol.Xml.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Agents.Validation\Microsoft.Agents.Validation.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol.Hosting\Microsoft.Agents.Protocol.Hosting.csproj" />
     <ProjectReference Include="..\..\samples\agents\EchoM365\EchoM365.csproj" />
   </ItemGroup>
 

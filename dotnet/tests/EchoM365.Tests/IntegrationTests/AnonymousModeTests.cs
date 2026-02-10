@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Xunit;
+using XunitAssert = Xunit.Assert;
 
 namespace EchoM365.Tests.IntegrationTests;
 

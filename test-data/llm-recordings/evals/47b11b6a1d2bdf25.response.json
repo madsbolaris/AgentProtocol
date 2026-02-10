@@ -1,0 +1,17 @@
+{
+  "callId": 31,
+  "timestamp": "2026-02-09T19:17:40.670537+00:00",
+  "hash": "47b11b6a1d2bdf25",
+  "response": {
+    "id": "chatcmpl-D7R3JRQXsMEz8jyKpyfOe4IySfKRV",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664657,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"Actual output does not reflect the topic or content of the reference. It is a generic placeholder ('This is a mock agent response') whereas the reference discusses human-driven climate change due to fossil fuels and its impact on long-term weather patterns.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

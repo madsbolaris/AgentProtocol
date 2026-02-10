@@ -1,0 +1,65 @@
+{
+  "runId": "run_0a1de0391522447298888f90730dc1fa",
+  "agentId": "echo-agent",
+  "threadId": "thread_6e66389031b64f87ba708fd4f3cc775c",
+  "journalId": null,
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "test_actions",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "agent": null,
+  "output": [
+    {
+      "messageId": "msg_1c2cb2d99a3a429f949e0f0d37453287",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \ntest_actions",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:33.829791Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "createdAt": "2026-02-09T18:38:33.829791Z",
+  "updatedAt": null,
+  "completedAt": "2026-02-09T18:38:33.829791Z",
+  "cancelledAt": null,
+  "cancellationReason": null,
+  "error": null,
+  "userId": null,
+  "threadCleanup": null,
+  "webhook": null,
+  "metadata": null
+}

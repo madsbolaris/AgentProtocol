@@ -1,0 +1,65 @@
+{
+  "runId": "run_0df1ec2298d8470fa63f33a6000dd147",
+  "agentId": "echo-agent",
+  "threadId": "thread_df9ecae494404e0c8262b28654d1dc63",
+  "journalId": null,
+  "status": "Completed",
+  "input": [
+    {
+      "messageId": null,
+      "role": "channel",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "{\u0022userId\u0022: \u0022user123\u0022, \u0022userName\u0022: \u0022Alice\u0022}",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": null,
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "agent": null,
+  "output": [
+    {
+      "messageId": "msg_b452e7d6a92e473da79eb2aeeb6c27ff",
+      "role": "agent",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \n{\u0022userId\u0022: \u0022user123\u0022, \u0022userName\u0022: \u0022Alice\u0022}",
+          "audience": null
+        }
+      ],
+      "userId": null,
+      "agentId": null,
+      "authorName": null,
+      "threadId": null,
+      "runId": null,
+      "parentId": null,
+      "createdAt": "2026-02-09T18:38:33.992599Z",
+      "updatedAt": null,
+      "status": null,
+      "metadata": null
+    }
+  ],
+  "usage": null,
+  "createdAt": "2026-02-09T18:38:33.9926Z",
+  "updatedAt": null,
+  "completedAt": "2026-02-09T18:38:33.9926Z",
+  "cancelledAt": null,
+  "cancellationReason": null,
+  "error": null,
+  "userId": null,
+  "threadCleanup": null,
+  "webhook": null,
+  "metadata": null
+}

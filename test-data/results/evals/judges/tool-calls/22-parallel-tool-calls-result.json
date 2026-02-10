@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-02-09T19:16:32.656824Z",
+  "content": {
+    "threadId": "eval-022",
+    "description": "Test parallel tool execution",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "parallel-calls",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "tool_call_match",
+                "as": "tool_match",
+                "passed": false,
+                "score": 0.0,
+                "details": {}
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "tool_match.passed &amp;&amp; size(tool_match.calls) == 2",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 0
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 0.0,
+    "timestamp": "2026-02-09T19:16:32.656765Z",
+    "totalDurationMs": 0
+  },
+  "hash": "f09f4468cd1e9716d000583e8338c93bf5f6078982d3237ccb35d60f192ef276",
+  "metadata": {
+    "input_file": "22-parallel-tool-calls.xml",
+    "thread_id": "eval-022",
+    "description": "Test parallel tool execution",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

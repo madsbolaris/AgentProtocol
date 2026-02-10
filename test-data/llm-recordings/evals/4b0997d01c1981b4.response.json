@@ -1,0 +1,17 @@
+{
+  "callId": 51,
+  "timestamp": "2026-02-09T19:19:00.203299+00:00",
+  "hash": "4b0997d01c1981b4",
+  "response": {
+    "id": "chatcmpl-D7R4bdkuPx1MwAA20SyrqDWPKjcg8",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664737,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The reference discusses high quality requiring strict checking, while the actual output states it is a mock agent response. They convey unrelated ideas with no semantic overlap.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

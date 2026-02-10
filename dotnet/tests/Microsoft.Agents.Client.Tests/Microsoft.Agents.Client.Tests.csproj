@@ -10,6 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="xunit" Version="2.6.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.4">
@@ -23,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol\Microsoft.Agents.Protocol.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol.Client\Microsoft.Agents.Protocol.Client.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Agents.Abstractions\Microsoft.Agents.Abstractions.csproj" />
   </ItemGroup>
 

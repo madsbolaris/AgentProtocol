@@ -62,7 +62,7 @@ def test_input_files():
     from utils.test_helpers import load_input_file, get_test_data_dir
 
     test_data_dir = get_test_data_dir()
-    input_dir = test_data_dir / "input"
+    input_dir = test_data_dir / "input" / "threads"
 
     # Check all 4 test input files exist
     test_files = [
@@ -76,8 +76,8 @@ def test_input_files():
         xml_path = input_dir / f"{test_file}.xml"
         assert xml_path.exists(), f"Input file missing: {xml_path}"
 
-        # Load it
-        content = load_input_file(test_file)
+        # Load it using the subdir parameter
+        content = load_input_file(test_file, subdir="threads")
         assert content, f"Input file {test_file} is empty"
         assert isinstance(content, str), f"Input file should be string"
 
@@ -92,19 +92,19 @@ def test_golden_file_paths():
     test_data_dir = get_test_data_dir()
 
     # JSON path should exist (renamed from wait)
-    json_dir = test_data_dir / "results" / "function-tools" / "json"
+    json_dir = test_data_dir / "results" / "basic-m365" / "json"
     assert json_dir.exists(), f"JSON directory doesn't exist: {json_dir}"
     print(f"  ✅ JSON golden files directory exists")
 
     # Wait path should NOT exist anymore
-    wait_dir = test_data_dir / "results" / "function-tools" / "wait"
+    wait_dir = test_data_dir / "results" / "basic-m365" / "wait"
     if wait_dir.exists():
         print(f"  ⚠️  Old 'wait' directory still exists: {wait_dir}")
     else:
         print(f"  ✅ Old 'wait' directory removed")
 
     # XML path should exist
-    xml_dir = test_data_dir / "results" / "function-tools" / "xml"
+    xml_dir = test_data_dir / "results" / "basic-m365" / "xml"
     assert xml_dir.exists(), f"XML directory doesn't exist: {xml_dir}"
     print(f"  ✅ XML golden files directory exists")
 

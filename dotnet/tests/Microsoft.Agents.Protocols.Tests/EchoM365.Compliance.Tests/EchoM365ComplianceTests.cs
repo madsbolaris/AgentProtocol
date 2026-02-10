@@ -6,18 +6,19 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using XunitAssert = Xunit.Assert;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Agents;
-using Microsoft.Agents.Abstractions.Models;
-using Microsoft.Agents.Xml.Serialization;
+using Microsoft.Agents;
+using Microsoft.Agents.Protocol.Xml;
 using QuickStart;
 
 namespace Microsoft.Agents.Protocol.Tests.EchoM365.Compliance;
 
 /// <summary>
 /// AUTO-GENERATED: EchoM365 TypeSpec compliance tests.
-/// Generated from: specs/typespec/messages.tsp
+/// Generated from: typespec/messages.tsp
 ///
 /// Verifies that EchoM365 conforms to Agent Framework Protocol specification.
 /// Tests cover:

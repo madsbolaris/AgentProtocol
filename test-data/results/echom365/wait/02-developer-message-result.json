@@ -1,0 +1,32 @@
+{
+  "runId": "run_00vf6bsapf24f",
+  "agentId": "echo-agent",
+  "threadId": "thread_zi6ti4jbc8",
+  "status": "completed",
+  "input": [
+    {
+      "messageId": "msg_ap3broxony",
+      "role": "developer",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "Additional developer instructions: Use concise responses and cite sources."
+        }
+      ]
+    }
+  ],
+  "output": [
+    {
+      "messageId": "msg_mp02phj3txk",
+      "role": "agent",
+      "createdAt": "2026-02-09T18:38:53.126Z",
+      "contents": [
+        {
+          "kind": "text",
+          "text": "you said: \nAdditional developer instructions: Use concise responses and cite sources."
+        }
+      ]
+    }
+  ],
+  "createdAt": "2026-02-09T18:38:53.126Z"
+}

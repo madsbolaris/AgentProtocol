@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-02-09T19:16:32.599790Z",
+  "content": {
+    "threadId": "eval-021",
+    "description": "Test handling empty response",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "empty-check",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "text_exact_match",
+                "as": "match",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "reason": "Text does not match"
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "match.passed &amp;&amp; match.text == \"\"",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 0
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 0.0,
+    "timestamp": "2026-02-09T19:16:32.599734Z",
+    "totalDurationMs": 0
+  },
+  "hash": "aee92b9682f0d4da6f7580dae6a2a2323cb058d6e22b5a2562d957bf4cb2131a",
+  "metadata": {
+    "input_file": "21-empty-response.xml",
+    "thread_id": "eval-021",
+    "description": "Test handling empty response",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

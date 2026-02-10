@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thread desc="Test document content handling" thread-id="eval-031" created-at="2026-02-08T00:00:00Z" status="active">
+  <user message-id="msg-001" created-at="2026-02-08T00:00:00Z">
+    <text>Summarize this document</text>
+    <document title="Report.pdf" url="https://example.com/report.pdf" mime-type="application/pdf" />
+  </user>
+
+  <expect name="document-summary">
+    <agent message-id="ref-001" created-at="2026-02-08T00:00:01Z" agent-id="test-agent">
+      <text>The document discusses quarterly financial results...</text>
+    </agent>
+    <judge agent="semantic_similarity" as="sem" />
+    <assert>sem.passed &amp;&amp; sem.text.size() >= 50</assert>
+  </expect>
+</thread>

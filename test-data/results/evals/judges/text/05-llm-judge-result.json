@@ -1,0 +1,68 @@
+{
+  "timestamp": "2026-02-09T19:15:50.982967Z",
+  "content": {
+    "threadId": "eval-005",
+    "description": "Using semantic similarity for evaluation",
+    "passed": true,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": true,
+        "expects": [
+          {
+            "name": "poem-quality",
+            "passed": true,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "similarity_score": 1.0,
+                  "llm_reasoning": "The actual output is identical to the reference output; all lines and meaning are the same."
+                }
+              },
+              {
+                "agent": "text_regex",
+                "as": "regex",
+                "passed": true,
+                "score": 1.0,
+                "details": {
+                  "pattern": "\\b(AI|mind|code|circuit|logic)\\b",
+                  "matched": true
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "regex.passed",
+                "passed": true,
+                "value": true
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 3187
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 1,
+    "failedRuns": 0,
+    "totalAsserts": 1,
+    "passedAsserts": 1,
+    "failedAsserts": 0,
+    "avgDurationMs": 3187.0,
+    "timestamp": "2026-02-09T19:15:47.795440Z",
+    "totalDurationMs": 3187
+  },
+  "hash": "64af19bd0465427e3ec046c18ad71bd9e50791596386f0277921a0fe22caeb03",
+  "metadata": {
+    "input_file": "05-llm-judge.xml",
+    "thread_id": "eval-005",
+    "description": "Using semantic similarity for evaluation",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

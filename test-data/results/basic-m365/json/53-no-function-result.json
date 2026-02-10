@@ -5,7 +5,7 @@
   "status": "completed",
   "output": [
     {
-      "role": "assistant",
+      "role": "agent",
       "contents": [
         {
           "kind": "text",

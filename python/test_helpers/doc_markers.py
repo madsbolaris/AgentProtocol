@@ -62,13 +62,23 @@ def doc_example(
             "language": "python"
         }
 
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            return func(*args, **kwargs)
+        # Handle both sync and async functions
+        if inspect.iscoroutinefunction(func):
+            @wraps(func)
+            async def async_wrapper(*args, **kwargs):
+                return await func(*args, **kwargs)
 
-        # Attach metadata to function for introspection
-        wrapper._doc_example_metadata = _doc_examples[test_id]  # type: ignore
-        return wrapper
+            # Attach metadata to function for introspection
+            async_wrapper._doc_example_metadata = _doc_examples[test_id]  # type: ignore
+            return async_wrapper
+        else:
+            @wraps(func)
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs)
+
+            # Attach metadata to function for introspection
+            wrapper._doc_example_metadata = _doc_examples[test_id]  # type: ignore
+            return wrapper
 
     return decorator
 

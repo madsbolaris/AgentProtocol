@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-02-09T19:16:56.845824Z",
+  "content": {
+    "threadId": "eval-033",
+    "description": "Test video content analysis",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "video-description",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference describes a video content (someone walking in a park), while the actual output is a generic, unrelated statement about being a mock agent. They do not convey the same meaning or content."
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; sem.text.size() >= 20",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 3541
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 1,
+    "passedAsserts": 0,
+    "failedAsserts": 1,
+    "avgDurationMs": 3541.0,
+    "timestamp": "2026-02-09T19:16:53.304488Z",
+    "totalDurationMs": 3541
+  },
+  "hash": "fd26266feff84991abca3b5da17af3d71e3e82f41e9ddd5c4bea24af5314f4fa",
+  "metadata": {
+    "input_file": "33-video-analysis.xml",
+    "thread_id": "eval-033",
+    "description": "Test video content analysis",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

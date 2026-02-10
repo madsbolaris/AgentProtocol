@@ -1,0 +1,90 @@
+{
+  "timestamp": "2026-02-09T19:17:18.777871Z",
+  "content": {
+    "threadId": "eval-040",
+    "description": "Test error recovery and retry",
+    "passed": false,
+    "runs": [
+      {
+        "runNumber": 1,
+        "passed": false,
+        "expects": [
+          {
+            "name": "error-tool-call",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "tool_call_match",
+                "as": "tool_match",
+                "passed": false,
+                "score": 0.0,
+                "details": {}
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "tool_match.passed &amp;&amp; tool_match.function_name == \"get_weather\"",
+                "passed": false,
+                "value": false
+              }
+            ]
+          },
+          {
+            "name": "error-handled",
+            "passed": false,
+            "judges": [
+              {
+                "agent": "semantic_similarity",
+                "as": "sem",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "similarity_score": 0.0,
+                  "llm_reasoning": "The reference requests a valid city name due to missing weather information, while the actual output is a generic placeholder with no relevant content. They do not convey the same meaning or answer the same question."
+                }
+              },
+              {
+                "agent": "text_contains",
+                "as": "contains",
+                "passed": false,
+                "score": 0.0,
+                "details": {
+                  "expected_items": [
+                    "{'substring': \"couldn't find\", 'caseSensitive': False}"
+                  ],
+                  "all_found": false
+                }
+              }
+            ],
+            "asserts": [
+              {
+                "expression": "sem.passed &amp;&amp; contains.passed",
+                "passed": false,
+                "value": false
+              }
+            ]
+          }
+        ],
+        "error": null,
+        "durationMs": 5239
+      }
+    ],
+    "totalRuns": 1,
+    "passedRuns": 0,
+    "failedRuns": 1,
+    "totalAsserts": 2,
+    "passedAsserts": 0,
+    "failedAsserts": 2,
+    "avgDurationMs": 5239.0,
+    "timestamp": "2026-02-09T19:17:13.538032Z",
+    "totalDurationMs": 5239
+  },
+  "hash": "7455f189898267940dc44c476a98cbb948f4a8ba8a610ec880b77858bf7c8df9",
+  "metadata": {
+    "input_file": "40-error-recovery.xml",
+    "thread_id": "eval-040",
+    "description": "Test error recovery and retry",
+    "mock_data": true,
+    "generator": "python"
+  }
+}

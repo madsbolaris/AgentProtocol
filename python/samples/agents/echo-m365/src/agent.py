@@ -83,11 +83,6 @@ async def on_members_added(context: TurnContext, _state: TurnState):
     return True
 
 
-@AGENT_APP.message(re.compile(r"^hello$"))
-async def on_hello(context: TurnContext, _state: TurnState):
-    await context.send_activity("Hello!")
-
-
 @AGENT_APP.activity("message")
 async def on_message(context: TurnContext, _state: TurnState):
     # 🔧 Periodically clean up old storage to prevent memory leaks

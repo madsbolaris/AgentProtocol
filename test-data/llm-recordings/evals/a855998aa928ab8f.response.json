@@ -1,0 +1,17 @@
+{
+  "callId": 9,
+  "timestamp": "2026-02-09T19:16:17.646999+00:00",
+  "hash": "a855998aa928ab8f",
+  "response": {
+    "id": "chatcmpl-D7R1zkqEK8U38BYAzzC7PC6hZ1Ike",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": 1770664575,
+    "finishReason": "stop",
+    "content": [
+      {
+        "text": "{\n  \"similar\": false,\n  \"score\": 0.0,\n  \"reasoning\": \"The reference claims there is a cat in the image, while the actual output is a generic mock agent statement and does not convey any observation about the image or match the reference content.\"\n}"
+      }
+    ],
+    "toolCalls": []
+  }
+}

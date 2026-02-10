@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol\Microsoft.Agents.Protocol.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.Agents.Abstractions\Microsoft.Agents.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol.Abstractions\Microsoft.Agents.Protocol.Abstractions.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol.Xml\Microsoft.Agents.Protocol.Xml.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Agents.Validation\Microsoft.Agents.Validation.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol.Hosting\Microsoft.Agents.Protocol.Hosting.csproj" />

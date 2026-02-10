@@ -1,10 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+// ============================================================================
+// MODERN SAMPLE - New Hosting Package Only
+// ============================================================================
+// This sample demonstrates the NEW way to build agents using ONLY the
+// Microsoft.Agents.Protocol.Hosting package. This is the recommended approach
+// for new applications.
+//
+// For examples of adapting LEGACY M365 Agents SDK apps to speak Agent Protocol,
+// see the EchoM365 and BasicM365Agent samples.
+// ============================================================================
+
 using EmojiChatBot;
-using Microsoft.Agents.Builder;
-using Microsoft.Agents.Hosting.AspNetCore;
-using Microsoft.Agents.Protocol.Server;
+using Microsoft.Agents.Protocol.Hosting;
+using Microsoft.Agents.Protocol.Hosting.Core;
+using Microsoft.Agents.Protocol.Hosting.Runtime;
+using Microsoft.Agents.Protocol.Hosting.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,49 +30,34 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
 
-// Add AgentApplicationOptions from appsettings section "AgentApplication".
-builder.AddAgentApplicationOptions();
-
-// Add the EmojiBotAgent, which contains the logic for responding to
-// user messages with emoji functionality.
-builder.AddAgent<EmojiBotAgent>();
-
-// Configure the HTTP request pipeline.
-
-// Add CORS for local development
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
-
 builder.Services.AddControllers();
+
+// Register core services
+builder.Services.AddSingleton<IStorage, InMemoryStorage>();
+
+// Register the EmojiBotAgent with new hosting package
+builder.Services.AddAgentProtocol<EmojiBotAgent, EmojiContext>(options =>
+{
+    options.Name = "EmojiBot";
+    options.Description = "Emoji expert bot powered by AI";
+});
 
 WebApplication app = builder.Build();
 
 // Enable CORS for local development
-app.UseCors("AllowAll");
+app.UseCors("AgentProtocol");
 
-app.MapGet("/", () => "Microsoft Agents SDK - EmojiChatBot Sample");
-
-// ==================================================================================
-// LEGACY ENDPOINT - DO NOT MODIFY
-// This is the Bot Framework /api/messages endpoint for backwards compatibility.
-// It receives incoming messages from Azure Bot Service or other SDK Agents.
-// For Agent Protocol functionality, use the Agent Protocol extension routes below.
-// ==================================================================================
-var incomingRoute = app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IAgentHttpAdapter adapter, IAgent agent, CancellationToken cancellationToken) =>
-{
-    await adapter.ProcessAsync(request, response, agent, cancellationToken);
-});
-
-// AGENT PROTOCOL EXTENSION: Modern Agent Protocol routes
-// These routes (/health, /agent-card, /runs/wait, /runs/stream, etc.) are added by MapAgentProtocol.
-app.MapAgentProtocol();
+// AGENT PROTOCOL ROUTES: Modern Agent Protocol routes
+// The new hosting package provides ONLY Agent Protocol routes:
+// - / (root): Agent info
+// - /health: Health check
+// - /agent-card: Agent metadata
+// - /runs/wait: Create and wait for run completion
+// - /runs/stream: Stream run execution with SSE
+//
+// NOTE: /api/messages is NOT provided by the new hosting package.
+// That endpoint is for LEGACY M365 Agents SDK apps (see echo-m365, basic-m365 samples).
+app.MapAgentProtocol<EmojiContext>();
 
 // Read port from centralized agent-config.json
 // Falls back to environment variable PORT, then default 3984

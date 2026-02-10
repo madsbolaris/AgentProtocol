@@ -800,7 +800,9 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                addMessage('❌ Sorry, I encountered an error. Please try again.');
+                // Show detailed error message to user
+                const errorMsg = error.message || 'Unknown error';
+                addMessage(`❌ Error: ${errorMsg}\n\nCheck the browser console for more details.`);
             } finally {
                 sendBtn.disabled = false;
                 input.disabled = false;
@@ -811,29 +813,66 @@
         // Send message using /wait endpoint
         async function sendMessageWait(message) {
             const url = `${currentBot.baseUrl}:${currentBot.port}/runs/wait`;
+            const requestBody = {
+                agentId: currentBot.key,
+                threadId: threadId,
+                input: [{
+                    role: 'user',
+                    contents: [{
+                        kind: 'text',
+                        text: message
+                    }]
+                }]
+            };
+
+            console.log('[Wait Mode] Request:', {
+                url,
+                method: 'POST',
+                body: requestBody
+            });
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    agentId: currentBot.key,
-                    threadId: threadId,
-                    input: [{
-                        role: 'user',
-                        contents: [{
-                            kind: 'text',
-                            text: message
-                        }]
-                    }]
-                })
+                body: JSON.stringify(requestBody)
             });
 
+            console.log('[Wait Mode] Response status:', response.status, response.statusText);
+
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                // Try to get detailed error message from response body
+                let errorDetails = response.statusText;
+                try {
+                    const errorBody = await response.text();
+                    console.error('[Wait Mode] Error response body:', errorBody);
+
+                    // Try to parse as JSON for structured error
+                    try {
+                        const errorJson = JSON.parse(errorBody);
+                        if (errorJson.error) {
+                            errorDetails = errorJson.error;
+                        } else if (errorJson.message) {
+                            errorDetails = errorJson.message;
+                        } else {
+                            errorDetails = errorBody;
+                        }
+                    } catch {
+                        // Not JSON, use raw text
+                        errorDetails = errorBody.substring(0, 500); // Limit length
+                    }
+                } catch (e) {
+                    console.error('[Wait Mode] Could not read error body:', e);
+                }
+
+                const errorMsg = `HTTP ${response.status}: ${errorDetails}`;
+                console.error('[Wait Mode] Error:', errorMsg);
+                throw new Error(errorMsg);
             }
 
             const run = await response.json();
+            console.log('[Wait Mode] Success response:', run);
 
             // Extract bot text from Agent Protocol output
             const output = run.output || [];
@@ -858,26 +897,62 @@
         // Send message using /stream endpoint
         async function sendMessageStream(message) {
             const url = `${currentBot.baseUrl}:${currentBot.port}/runs/stream`;
+            const requestBody = {
+                agentId: currentBot.key,
+                threadId: threadId,
+                input: [{
+                    role: 'user',
+                    contents: [{
+                        kind: 'text',
+                        text: message
+                    }]
+                }]
+            };
+
+            console.log('[Stream Mode] Request:', {
+                url,
+                method: 'POST',
+                body: requestBody
+            });
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    agentId: currentBot.key,
-                    threadId: threadId,
-                    input: [{
-                        role: 'user',
-                        contents: [{
-                            kind: 'text',
-                            text: message
-                        }]
-                    }]
-                })
+                body: JSON.stringify(requestBody)
             });
 
+            console.log('[Stream Mode] Response status:', response.status, response.statusText);
+
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                // Try to get detailed error message from response body
+                let errorDetails = response.statusText;
+                try {
+                    const errorBody = await response.text();
+                    console.error('[Stream Mode] Error response body:', errorBody);
+
+                    // Try to parse as JSON for structured error
+                    try {
+                        const errorJson = JSON.parse(errorBody);
+                        if (errorJson.error) {
+                            errorDetails = errorJson.error;
+                        } else if (errorJson.message) {
+                            errorDetails = errorJson.message;
+                        } else {
+                            errorDetails = errorBody;
+                        }
+                    } catch {
+                        // Not JSON, use raw text
+                        errorDetails = errorBody.substring(0, 500); // Limit length
+                    }
+                } catch (e) {
+                    console.error('[Stream Mode] Could not read error body:', e);
+                }
+
+                const errorMsg = `HTTP ${response.status}: ${errorDetails}`;
+                console.error('[Stream Mode] Error:', errorMsg);
+                throw new Error(errorMsg);
             }
 
             // Read the streaming response
@@ -905,6 +980,8 @@
             chat.appendChild(currentMessageDiv);
 
             try {
+                let currentEventType = null;
+
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
@@ -914,19 +991,25 @@
                     buffer = lines.pop(); // Keep incomplete line in buffer
 
                     for (const line of lines) {
+                        // Parse SSE format: event type comes from "event:" line
+                        if (line.startsWith('event: ')) {
+                            currentEventType = line.slice(7);
+                            continue;
+                        }
+
                         if (line.startsWith('data: ')) {
                             const data = line.slice(6);
                             if (data === '[DONE]') continue;
 
                             try {
-                                const event = JSON.parse(data);
-                                console.log('[SSE Event]', event.event, 'Full event:', event);
+                                const eventData = JSON.parse(data);
+                                console.log('[SSE Event]', currentEventType, 'Full event:', eventData);
 
                                 // Handle different event types
-                                if (event.event === 'message.delta' || event.event === 'run.delta') {
+                                if (currentEventType === 'message.delta' || currentEventType === 'run.delta') {
                                     console.log('[message.delta] Processing delta event');
                                     // Extract text from delta
-                                    const delta = event.data?.delta;
+                                    const delta = eventData?.delta;
                                     console.log('[message.delta] Delta object:', delta);
                                     if (delta?.contents) {
                                         console.log('[message.delta] Contents array:', delta.contents);
@@ -944,20 +1027,38 @@
                                     } else {
                                         console.warn('[message.delta] No delta.contents found');
                                     }
-                                } else if (event.event === 'run.completed') {
+                                } else if (currentEventType === 'message.updated') {
+                                    console.log('[message.updated] Processing update event');
+                                    // Extract text from message contents (handle both camelCase and PascalCase)
+                                    const message = eventData?.message;
+                                    if (message) {
+                                        const contents = message.contents || message.Contents || [];
+                                        for (const content of contents) {
+                                            const kind = content.kind || content.Kind;
+                                            const text = content.text || content.Text;
+                                            if (kind === 'text' && text) {
+                                                console.log('[message.updated] Adding text:', text);
+                                                botText += text;
+                                                currentBubble.textContent = botText;
+                                                chat.scrollTop = chat.scrollHeight;
+                                            }
+                                        }
+                                    }
+                                } else if (currentEventType === 'run.completed') {
                                     console.log('[run.completed] Processing completion event');
-                                    // Final message - extract complete output
-                                    const output = event.data?.output || [];
-                                    const finalText = output.map(msg =>
-                                        msg.contents.map(c => c.text).filter(t => t).join('')
-                                    ).filter(t => t).join('\n');
+                                    // Final message - extract complete output (handle both camelCase and PascalCase)
+                                    const output = eventData?.output || [];
+                                    const finalText = output.map(msg => {
+                                        const contents = msg.contents || msg.Contents || [];
+                                        return contents.map(c => c.text || c.Text).filter(t => t).join('');
+                                    }).filter(t => t).join('\n');
 
                                     if (finalText && finalText !== botText) {
                                         botText = finalText;
                                         currentBubble.textContent = botText;
                                     }
                                 } else {
-                                    console.log('[SSE Event] Unhandled event type:', event.event);
+                                    console.log('[SSE Event] Unhandled event type:', currentEventType);
                                 }
                             } catch (e) {
                                 console.error('Error parsing SSE data:', e, 'Data was:', data);

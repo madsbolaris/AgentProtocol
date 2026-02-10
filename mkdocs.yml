@@ -101,6 +101,9 @@ plugins:
 
 # Extensions
 markdown_extensions:
+  # Custom extensions
+  - hashicorp_cards
+
   # Python Markdown
   - abbr
   - admonition
@@ -141,6 +144,7 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+  - markdown_extensions.hashicorp_tabs
 
 # Navigation
 nav:
@@ -159,18 +163,90 @@ nav:
 
   - Client SDK:
     - products/client-sdk/index.md
+    - Quickstart: products/client-sdk/quickstart.md
+    - Use Cases: products/client-sdk/use-cases/index.md
+    - Concepts:
+      - products/client-sdk/concepts/index.md
+      - Data Model: products/client-sdk/concepts/data-model.md
+      - Streaming: products/client-sdk/concepts/streaming.md
+      - Tools & Function Calling: products/client-sdk/concepts/tools.md
+      - Error Handling: products/client-sdk/concepts/error-handling.md
+    - Guides:
+      - products/client-sdk/guides/index.md
+      - First Steps: products/client-sdk/guides/first-steps.md
+      - Multimodal: products/client-sdk/guides/multimodal.md
+      - Tools: products/client-sdk/guides/tools.md
+      - Batch Processing: products/client-sdk/guides/batch-processing.md
+      - Testing: products/client-sdk/guides/testing.md
+      - Best Practices: products/client-sdk/guides/best-practices/index.md
+      - Error Handling Patterns: products/client-sdk/guides/best-practices/error-handling-patterns.md
+      - Performance Optimization: products/client-sdk/guides/best-practices/performance-optimization.md
+      - Security Patterns: products/client-sdk/guides/best-practices/security-patterns.md
+      - Chatbot Tutorial: products/client-sdk/guides/tutorials/chatbot.md
+      - Multimodal Assistant Tutorial: products/client-sdk/guides/tutorials/multimodal-assistant.md
+      - Tools Tutorial: products/client-sdk/guides/tutorials/tools-tutorial.md
+      - Production Deployment Tutorial: products/client-sdk/guides/tutorials/production-deployment.md
+    - Integrations:
+      - products/client-sdk/integrations/index.md
+      - Discord: products/client-sdk/integrations/channels/discord.md
+      - Teams: products/client-sdk/integrations/channels/teams.md
+      - Slack: products/client-sdk/integrations/channels/slack.md
+      - Pinecone: products/client-sdk/integrations/vector-stores/pinecone.md
+      - Chroma: products/client-sdk/integrations/vector-stores/chroma.md
+      - Weaviate: products/client-sdk/integrations/vector-stores/weaviate.md
+      - OpenAI: products/client-sdk/integrations/llm-providers/openai.md
+      - Anthropic: products/client-sdk/integrations/llm-providers/anthropic.md
+      - Azure OpenAI: products/client-sdk/integrations/llm-providers/azure-openai.md
+      - Database Tools: products/client-sdk/integrations/tools/database.md
+      - Search APIs: products/client-sdk/integrations/tools/search-apis.md
+      - Weather API: products/client-sdk/integrations/tools/weather-api.md
+    - Testing:
+      - products/client-sdk/testing/index.md
+      - Quickstart: products/client-sdk/testing/quickstart.md
+      - Unit Testing: products/client-sdk/testing/unit-testing/index.md
+      - Integration Testing: products/client-sdk/testing/integration-testing/index.md
+      - Compliance Testing: products/client-sdk/testing/compliance-testing/index.md
+      - Security Testing: products/client-sdk/testing/security-testing/index.md
+      - Evaluation: products/client-sdk/testing/evaluation/index.md
+      - Golden Datasets: products/client-sdk/testing/golden-datasets/index.md
+    - Observability:
+      - products/client-sdk/observability/index.md
+      - Quickstart: products/client-sdk/observability/quickstart.md
+      - Metrics: products/client-sdk/observability/metrics/index.md
+      - Tracing: products/client-sdk/observability/tracing/index.md
+      - Logging: products/client-sdk/observability/logging/index.md
+      - Integrations: products/client-sdk/observability/integrations/index.md
+      - Best Practices: products/client-sdk/observability/best-practices/index.md
+    - Troubleshooting:
+      - products/client-sdk/troubleshooting/index.md
+    - API Reference:
+      - products/client-sdk/api-reference/index.md
+      - Python: products/client-sdk/api-reference/python/index.md
+      - TypeScript: products/client-sdk/api-reference/typescript/index.md
+      - C#: products/client-sdk/api-reference/csharp/index.md
+      - Common: products/client-sdk/api-reference/common/index.md
+      - XML Schema: products/client-sdk/api-reference/xml-schema/index.md
 
   - Hosting SDK:
     - products/hosting-sdk/index.md
+    - products/hosting-sdk/quickstart.md
+    - products/hosting-sdk/getting-started.md
+    - ... | products/hosting-sdk/**
 
   - UX React:
     - products/ux-react/index.md
+    - products/ux-react/quickstart.md
+    - ... | products/ux-react/**
 
   - XML:
     - products/xml/index.md
+    - products/xml/quickstart.md
+    - ... | products/xml/**
 
   - Operations SDK:
     - products/operations-sdk/index.md
+    - products/operations-sdk/quickstart.md
+    - ... | products/operations-sdk/**
 
   - Reference:
     - reference/index.md
@@ -205,16 +281,23 @@ extra:
             Thanks for your feedback! Help us improve by
             <a href="https://github.com/madsbolaris/AgentFramework/issues/new" target="_blank" rel="noopener">opening an issue</a>.
 
-# Extra CSS
+# Extra CSS - Complete HashiCorp CSS from working complete-page.html
 extra_css:
-  - assets/css/hashicorp-variables.css      # CSS variables - must load FIRST
-  - assets/css/hashicorp-extracted.css      # CSS rules extracted from live HashiCorp site
-  - assets/css/hashicorp-inline-styles.css  # Inline styles from HashiCorp HTML
+  - assets/css/main.css              # Main HashiCorp CSS (262KB, 1426 rules)
+  - assets/css/inline-styles-1.css   # Inline style block 1 (49KB)
+  - assets/css/inline-styles-2.css   # Inline style block 2 (16KB)
+  - assets/css/inline-styles-3.css   # Inline style block 3 (15KB)
+  - assets/css/inline-styles-4.css   # Inline style block 4 (16KB)
+  - assets/css/inline-styles-5.css   # Inline style block 5 (5.5KB)
+  - assets/css/inline-styles-6.css   # Inline style block 6 (819B)
+  - assets/css/icon-fixes.css        # Fix oversized twemoji icons
 
 # Extra JavaScript
 extra_javascript:
   - assets/js/tabbed-sync.js
   - assets/js/scroll-scrims.js  # HashiCorp scroll fade effects
+  - assets/js/hashicorp-tabs.js  # HashiCorp tab switching
+  - assets/js/nav-toggle.js  # Navigation expand/collapse
 
 # Watch for changes
 watch:

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Agents;
 using Microsoft.Agents.Protocol.Hosting.Core;
@@ -45,7 +47,7 @@ internal class AgentProtocolRunner<TContext> where TContext : class
             threadId,
             request.JournalId,
             context,
-            request.Messages ?? new List<ChatMessage>());
+            request.Input ?? new List<ChatMessage>());
 
         // Execute run started hooks
         foreach (var hook in _application.RunStartedHooks)
@@ -58,7 +60,7 @@ internal class AgentProtocolRunner<TContext> where TContext : class
         try
         {
             // Process each message
-            foreach (var message in request.Messages ?? Enumerable.Empty<ChatMessage>())
+            foreach (var message in request.Input ?? Enumerable.Empty<ChatMessage>())
             {
                 var messageResponses = await ProcessMessageAsync(
                     runContext,
@@ -79,7 +81,7 @@ internal class AgentProtocolRunner<TContext> where TContext : class
                 RunId = runId,
                 ThreadId = threadId,
                 Status = "completed",
-                Messages = responses
+                Output = responses
             };
         }
         catch (Exception ex)
@@ -96,9 +98,239 @@ internal class AgentProtocolRunner<TContext> where TContext : class
                 ThreadId = threadId,
                 Status = "failed",
                 Error = ex.Message,
-                Messages = responses
+                Output = responses
             };
         }
+    }
+
+    /// <summary>
+    /// Execute a run with streaming, yielding events as they occur in real-time.
+    /// </summary>
+    public async IAsyncEnumerable<StreamEvent> ExecuteRunStreamAsync(
+        RunRequest request,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var runId = request.RunId ?? Guid.NewGuid().ToString();
+        var threadId = request.ThreadId ?? Guid.NewGuid().ToString();
+        var agentId = "default-agent";
+        var eventSeq = 0;
+
+        // Create a channel for real-time event streaming
+        var channel = Channel.CreateUnbounded<StreamEvent>();
+        var responses = new List<ChatMessage>();
+        var messageId = Guid.NewGuid().ToString();
+        var messageCreated = false;
+
+        // Helper to add events to channel
+        void EmitEvent(StreamEvent evt)
+        {
+            channel.Writer.TryWrite(evt);
+        }
+
+        // Yield run.created event
+        EmitEvent(new StreamEvent
+        {
+            EventName = "run.created",
+            Data = new
+            {
+                runId,
+                threadId,
+                agentId,
+                status = "queued",
+                createdAt = DateTime.UtcNow,
+                eventSeq = ++eventSeq
+            }
+        });
+
+        // Yield run.started event
+        EmitEvent(new StreamEvent
+        {
+            EventName = "run.started",
+            Data = new
+            {
+                runId,
+                threadId,
+                status = "in_progress",
+                startedAt = DateTime.UtcNow,
+                eventSeq = ++eventSeq
+            }
+        });
+
+        // Start processing in background task
+        var processingTask = Task.Run(async () =>
+        {
+            Exception? error = null;
+
+            try
+            {
+                // Create context for this run
+                var context = await _application.CreateContextAsync(runId, threadId, cancellationToken);
+
+                // Create run context
+                var runContext = new RunContextImpl<TContext>(
+                    runId,
+                    threadId,
+                    request.JournalId,
+                    context,
+                    request.Input ?? new List<ChatMessage>());
+
+                // Execute run started hooks
+                foreach (var hook in _application.RunStartedHooks)
+                {
+                    await hook(runContext, cancellationToken);
+                }
+
+                // Process each message
+                foreach (var message in request.Input ?? Enumerable.Empty<ChatMessage>())
+                {
+                    // Create message context with callback for streaming
+                    var messageContext = new MessageContextImpl<TContext>(runContext, message, responses, (sentMessage) =>
+                    {
+                        // Emit message.created on first chunk
+                        if (!messageCreated)
+                        {
+                            EmitEvent(new StreamEvent
+                            {
+                                EventName = "message.created",
+                                Data = new
+                                {
+                                    runId,
+                                    threadId,
+                                    message = new
+                                    {
+                                        messageId,
+                                        role = "agent",
+                                        contents = Array.Empty<object>()
+                                    },
+                                    createdAt = DateTime.UtcNow,
+                                    eventSeq = ++eventSeq
+                                }
+                            });
+                            messageCreated = true;
+                        }
+
+                        // Emit message.delta for each chunk
+                        foreach (var content in (sentMessage as AgentMessage)?.Contents ?? new List<AIContent>())
+                        {
+                            if (content is TextContent tc)
+                            {
+                                EmitEvent(new StreamEvent
+                                {
+                                    EventName = "message.delta",
+                                    Data = new
+                                    {
+                                        runId,
+                                        threadId,
+                                        messageId,
+                                        delta = new
+                                        {
+                                            role = "agent",
+                                            contents = new[]
+                                            {
+                                                new { kind = "text", text = tc.Text }
+                                            }
+                                        },
+                                        eventSeq = ++eventSeq
+                                    }
+                                });
+                            }
+                        }
+                    });
+
+                    // Route to appropriate handler based on message role
+                    if (message is UserMessage)
+                    {
+                        foreach (var handler in _application.UserMessageHandlers)
+                        {
+                            await handler(messageContext, message, cancellationToken);
+                        }
+                    }
+                }
+
+                // Emit message.completed
+                if (messageCreated)
+                {
+                    EmitEvent(new StreamEvent
+                    {
+                        EventName = "message.completed",
+                        Data = new
+                        {
+                            runId,
+                            threadId,
+                            messageId,
+                            usage = new { totalTokens = 0 },
+                            completedAt = DateTime.UtcNow,
+                            eventSeq = ++eventSeq
+                        }
+                    });
+                }
+
+                // Execute run completed hooks
+                foreach (var hook in _application.RunCompletedHooks)
+                {
+                    await hook(runContext, cancellationToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                error = ex;
+            }
+
+            // Emit final event
+            if (error == null)
+            {
+                EmitEvent(new StreamEvent
+                {
+                    EventName = "run.completed",
+                    Data = new
+                    {
+                        runId,
+                        threadId,
+                        status = "completed",
+                        output = responses.Select(r => new
+                        {
+                            messageId = Guid.NewGuid().ToString(),
+                            role = "agent",
+                            contents = (r as AgentMessage)?.Contents?.Select(c => new
+                            {
+                                kind = c is TextContent ? "text" : "unknown",
+                                text = (c as TextContent)?.Text
+                            }).ToArray() ?? Array.Empty<object>()
+                        }).ToArray(),
+                        completedAt = DateTime.UtcNow,
+                        eventSeq = ++eventSeq
+                    }
+                });
+            }
+            else
+            {
+                EmitEvent(new StreamEvent
+                {
+                    EventName = "run.failed",
+                    Data = new
+                    {
+                        runId,
+                        threadId,
+                        status = "failed",
+                        error = error.Message,
+                        failedAt = DateTime.UtcNow,
+                        eventSeq = ++eventSeq
+                    }
+                });
+            }
+
+            // Signal completion
+            channel.Writer.Complete();
+        }, cancellationToken);
+
+        // Yield events from channel as they arrive
+        await foreach (var evt in channel.Reader.ReadAllAsync(cancellationToken))
+        {
+            yield return evt;
+        }
+
+        // Wait for processing to complete
+        await processingTask;
     }
 
     /// <summary>
@@ -298,7 +530,8 @@ public class RunRequest
     public string? RunId { get; set; }
     public string? ThreadId { get; set; }
     public string? JournalId { get; set; }
-    public List<ChatMessage>? Messages { get; set; }
+    // Changed from "Messages" to "Input" to match Agent Protocol spec
+    public List<ChatMessage>? Input { get; set; }
 }
 
 /// <summary>
@@ -310,5 +543,15 @@ public class RunResult
     public required string ThreadId { get; set; }
     public required string Status { get; set; }
     public string? Error { get; set; }
-    public List<ChatMessage> Messages { get; set; } = new();
+    // Changed from "Messages" to "Output" to match Agent Protocol spec
+    public List<ChatMessage> Output { get; set; } = new();
+}
+
+/// <summary>
+/// Stream event for SSE streaming.
+/// </summary>
+public class StreamEvent
+{
+    public required string EventName { get; set; }
+    public required object Data { get; set; }
 }

@@ -1,6 +1,17 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+// ============================================================================
+// LEGACY SAMPLE - M365 Agents SDK + Agent Protocol
+// ============================================================================
+// This sample demonstrates how to take a LEGACY M365 Agents SDK application
+// with LLM integration and make it speak Agent Protocol. It uses the older
+// SDK architecture with AgentApplication and the protocol adapter layer.
+//
+// For NEW applications, see the EmojiChatBot sample which demonstrates the
+// modern approach using ONLY the Microsoft.Agents.Protocol.Hosting package.
+// ============================================================================
+
 using BasicM365Sample;
 using Microsoft.Agents.AspNetAuthentication;
 using Microsoft.Agents.Builder;

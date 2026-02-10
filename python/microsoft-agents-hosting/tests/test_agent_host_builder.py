@@ -3,6 +3,7 @@
 
 """Tests for AgentHostBuilder."""
 
+import os
 import pytest
 from typing import Any
 from microsoft.agents.hosting import AgentHostBuilder, ConfigurationError
@@ -16,6 +17,13 @@ from microsoft.agents.hosting.core import (
     ValidationError,
 )
 from microsoft.agents.hosting.state import MemoryStateStore
+
+
+@pytest.fixture(autouse=True)
+def setup_test_env(monkeypatch):
+    """Set up test environment variables for all tests."""
+    monkeypatch.setenv("FOUNDRY_ENDPOINT", "https://test.api.com")
+    monkeypatch.setenv("FOUNDRY_API_KEY", "test-key-123")
 
 
 class MockStateStore(IStateStore):

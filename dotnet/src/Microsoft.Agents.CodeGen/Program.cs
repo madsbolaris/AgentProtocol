@@ -1,4 +1,5 @@
 using System.CommandLine;
+using System.Text.Json;
 using Microsoft.Agents.CodeGen.TypeSpecParser;
 using Microsoft.Agents.CodeGen.RoslynGenerator;
 
@@ -183,15 +184,59 @@ public class Program
         Directory.CreateDirectory(messageDir);
         Directory.CreateDirectory(commonDir);
 
+        // Load or build type location map for cross-directory imports
+        var manifestPath = Path.Combine(outputDir, ".type-locations.json");
+        var typeLocations = await LoadOrBuildTypeLocations(typeSpecModel, manifestPath);
+
         // Check for specialized patterns
         var chatMessageModel = typeSpecModel.Models.FirstOrDefault(m => m.Name == "ChatMessage");
         var chatRoleEnum = typeSpecModel.Enums.FirstOrDefault(e => e.Name == "ChatRole");
         var aiContentUnion = typeSpecModel.Unions.FirstOrDefault(u => u.Name == "AIContent");
 
+        // Register ALL type locations upfront
+        if (chatMessageModel != null && chatRoleEnum != null)
+        {
+            typeLocations["ChatMessage"] = "messages";
+            typeLocations["ChatRole"] = "messages";
+            typeLocations["AgentMessage"] = "messages";
+            typeLocations["UserMessage"] = "messages";
+            typeLocations["SystemMessage"] = "messages";
+            typeLocations["ToolMessage"] = "messages";
+            typeLocations["ChannelMessage"] = "messages";
+            typeLocations["DeveloperMessage"] = "messages";
+        }
+
+        if (aiContentUnion != null)
+        {
+            var contentModels = typeSpecModel.Models.Where(m => m.Name.EndsWith("Content")).ToList();
+            typeLocations["AIContent"] = "content";
+            typeLocations["AIContentBase"] = "content";
+            foreach (var model in contentModels)
+            {
+                typeLocations[model.Name] = "content";
+            }
+        }
+
+        // Register common types
+        foreach (var model in typeSpecModel.Models.Where(m => m.Name != "ChatMessage" && !m.Name.EndsWith("Content")))
+        {
+            typeLocations[model.Name] = "common";
+        }
+        foreach (var enumDef in typeSpecModel.Enums.Where(e => e.Name != "ChatRole"))
+        {
+            typeLocations[enumDef.Name] = "common";
+        }
+        foreach (var union in typeSpecModel.Unions.Where(u => u.Name != "AIContent"))
+        {
+            typeLocations[union.Name] = "common";
+        }
+
+        // Now generate with type locations available
         if (chatMessageModel != null && chatRoleEnum != null)
         {
             Console.WriteLine("   📨 Detected message pattern - generating role-specific messages");
             var messageGenerator = new TypeScriptMessageGenerator(rootNamespace);
+            messageGenerator.SetTypeLocations(typeLocations);
             var messageFiles = messageGenerator.GenerateRoleMessages(
                 chatMessageModel,
                 chatRoleEnum,
@@ -209,6 +254,7 @@ public class Program
                 .ToList();
 
             var contentGenerator = new TypeScriptContentTypeGenerator(rootNamespace);
+            contentGenerator.SetTypeLocations(typeLocations);
             var contentFiles = contentGenerator.GenerateContentTypes(
                 aiContentUnion,
                 contentModels,
@@ -220,6 +266,8 @@ public class Program
 
         // Generate remaining models, enums, and unions
         var generator = new TypeScriptModelGenerator(rootNamespace);
+        generator.SetTypeLocations(typeLocations);
+
         var remainingModels = new TypeSpecModel
         {
             Namespace = typeSpecModel.Namespace,
@@ -316,5 +364,74 @@ export * from './common';
         }
 
         return await Task.FromResult(generatedFiles);
+    }
+
+    static async Task<Dictionary<string, string>> LoadOrBuildTypeLocations(TypeSpecModel typeSpecModel, string manifestPath)
+    {
+        var typeLocations = new Dictionary<string, string>();
+
+        // Try to load existing manifest
+        if (File.Exists(manifestPath))
+        {
+            try
+            {
+                var json = await File.ReadAllTextAsync(manifestPath);
+                typeLocations = JsonSerializer.Deserialize<Dictionary<string, string>>(json)
+                    ?? new Dictionary<string, string>();
+                Console.WriteLine($"   📋 Loaded type locations from manifest ({typeLocations.Count} types)");
+            }
+            catch
+            {
+                Console.WriteLine("   ⚠️  Failed to load type locations manifest, rebuilding...");
+            }
+        }
+
+        // Check for specialized patterns and add new types
+        var chatMessageModel = typeSpecModel.Models.FirstOrDefault(m => m.Name == "ChatMessage");
+        var chatRoleEnum = typeSpecModel.Enums.FirstOrDefault(e => e.Name == "ChatRole");
+        var aiContentUnion = typeSpecModel.Unions.FirstOrDefault(u => u.Name == "AIContent");
+
+        if (chatMessageModel != null && chatRoleEnum != null)
+        {
+            typeLocations["ChatMessage"] = "messages";
+            typeLocations["ChatRole"] = "messages";
+            typeLocations["AgentMessage"] = "messages";
+            typeLocations["UserMessage"] = "messages";
+            typeLocations["SystemMessage"] = "messages";
+            typeLocations["ToolMessage"] = "messages";
+            typeLocations["ChannelMessage"] = "messages";
+            typeLocations["DeveloperMessage"] = "messages";
+        }
+
+        if (aiContentUnion != null)
+        {
+            var contentModels = typeSpecModel.Models.Where(m => m.Name.EndsWith("Content")).ToList();
+            typeLocations["AIContent"] = "content";
+            typeLocations["AIContentBase"] = "content";
+            foreach (var model in contentModels)
+            {
+                typeLocations[model.Name] = "content";
+            }
+        }
+
+        // Add common types
+        foreach (var model in typeSpecModel.Models.Where(m => m.Name != "ChatMessage" && !m.Name.EndsWith("Content")))
+        {
+            typeLocations[model.Name] = "common";
+        }
+        foreach (var enumDef in typeSpecModel.Enums.Where(e => e.Name != "ChatRole"))
+        {
+            typeLocations[enumDef.Name] = "common";
+        }
+        foreach (var union in typeSpecModel.Unions.Where(u => u.Name != "AIContent"))
+        {
+            typeLocations[union.Name] = "common";
+        }
+
+        // Save manifest
+        var manifestJson = JsonSerializer.Serialize(typeLocations, new JsonSerializerOptions { WriteIndented = true });
+        await File.WriteAllTextAsync(manifestPath, manifestJson);
+
+        return typeLocations;
     }
 }

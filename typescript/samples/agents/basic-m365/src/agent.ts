@@ -1,9 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-import { TurnState, MemoryStorage, TurnContext, AgentApplication, AttachmentDownloader }
-  from '@microsoft/agents-hosting'
-import { version } from '@microsoft/agents-hosting/package.json'
-import { ActivityTypes } from '@microsoft/agents-activity'
+
+// ============================================================================
+// LEGACY SAMPLE - M365 Agents SDK + Agent Protocol
+// ============================================================================
+// This sample demonstrates how to take a LEGACY M365 Agents SDK application
+// with LLM integration and make it speak Agent Protocol. It uses the older
+// SDK architecture with AgentApplication and the protocol adapter layer.
+//
+// For NEW applications, see the emoji-chat sample which demonstrates the
+// modern approach using ONLY the @microsoft/agents-protocol-hosting package.
+// ============================================================================
+
+import { TurnState, MemoryStorage, TurnContext, AgentApplication } from '@microsoft/agents-hosting'
 import OpenAI from 'openai'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -12,8 +21,6 @@ interface ConversationState {
   messages: OpenAI.Chat.ChatCompletionMessageParam[];
 }
 type ApplicationTurnState = TurnState<ConversationState>
-
-const downloader = new AttachmentDownloader()
 
 // 🔧 FIX: Track storage access for cleanup to prevent memory leaks
 const storageAccessTimes = new Map<string, number>()
@@ -54,6 +61,20 @@ function cleanupOldStorage(storage: MemoryStorage): void {
 let openaiClient: OpenAI | null = null
 let model: string = 'gpt-4'
 let useRecordings: boolean = false
+
+// ============================================================================
+// ENVIRONMENT VARIABLES - Set automatically by scripts/ci/start_samples.py
+// ============================================================================
+// These environment variables are loaded from .env file at repo root:
+//   - FOUNDRY_ENDPOINT: LLM endpoint URL
+//   - FOUNDRY_API_KEY: API key for authentication
+//   - FOUNDRY_MODEL_DEPLOYMENT: Model name (default: gpt-4)
+//   - USE_LLM_RECORDINGS: Set to "true" for test mode (replays recordings)
+//   - RECORD_LLM: Set to "true" to record LLM interactions
+//
+// Developers should NEVER manually set these variables.
+// Use: python3 scripts/ci/start_samples.py basic-m365 --lang typescript --ui
+// ============================================================================
 
 function initLLM() {
   console.log('🔧 Initializing LLM...')
@@ -211,8 +232,7 @@ function replayLLMResponse(messages: OpenAI.Chat.ChatCompletionMessageParam[], t
 // Define storage and application
 const storage = new MemoryStorage()
 export const agentApp = new AgentApplication<ApplicationTurnState>({
-  storage,
-  fileDownloaders: [downloader]
+  storage
 })
 
 // Function tools
@@ -293,7 +313,7 @@ agentApp.onConversationUpdate('membersAdded', async (context: TurnContext, state
 })
 
 // Listen for ANY message to be received
-agentApp.onActivity(ActivityTypes.Message, async (context: TurnContext, state: ApplicationTurnState) => {
+agentApp.onActivity('message', async (context: TurnContext, state: ApplicationTurnState) => {
   // 🔧 Periodically clean up old storage to prevent memory leaks
   cleanupOldStorage(storage)
 
@@ -315,11 +335,13 @@ agentApp.onActivity(ActivityTypes.Message, async (context: TurnContext, state: A
   // Debug: Check LLM configuration
   console.log(`🔍 Message handler - openaiClient: ${openaiClient ? 'EXISTS' : 'NULL'}, useRecordings: ${useRecordings}`)
 
-  // If LLM is not configured, just echo
+  // If LLM is not configured, provide helpful message
   if (!openaiClient && !useRecordings) {
-    console.log('⚠️ Echoing because LLM not configured')
+    console.log('⚠️ LLM not configured')
     await context.sendActivity(
-      `Echo: ${userMessage}\n\n(Note: LLM not configured. Set FOUNDRY_ENDPOINT and FOUNDRY_API_KEY to enable LLM features.)`
+      `Hello! I'm a Basic M365 Agent with LLM capabilities.\n\n` +
+      `To enable AI features, please start this sample using:\n` +
+      `python3 scripts/ci/start_samples.py basic-m365 --lang typescript`
     )
     return
   }

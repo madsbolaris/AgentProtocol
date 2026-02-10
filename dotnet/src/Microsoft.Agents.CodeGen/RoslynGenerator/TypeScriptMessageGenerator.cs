@@ -11,10 +11,20 @@ namespace Microsoft.Agents.CodeGen.RoslynGenerator;
 public class TypeScriptMessageGenerator
 {
     private readonly string _rootNamespace;
+    private Dictionary<string, string> _typeLocations = new();
+    private string _currentDirectory = "messages";
 
     public TypeScriptMessageGenerator(string rootNamespace = "")
     {
         _rootNamespace = rootNamespace;
+    }
+
+    /// <summary>
+    /// Sets the type location mappings for cross-directory imports.
+    /// </summary>
+    public void SetTypeLocations(Dictionary<string, string> typeLocations)
+    {
+        _typeLocations = typeLocations;
     }
 
     /// <summary>
@@ -115,7 +125,8 @@ public class TypeScriptMessageGenerator
         var sb = new StringBuilder();
 
         // Import AIContent union
-        sb.AppendLine("import { AIContent } from '../content';");
+        var contentImportPath = GetContentUnionImportPath();
+        sb.AppendLine($"import {{ AIContent }} from '{contentImportPath}';");
         sb.AppendLine("import { ChatRole } from './ChatRole';");
         sb.AppendLine();
 
@@ -171,7 +182,6 @@ public class TypeScriptMessageGenerator
 
         // Imports
         sb.AppendLine("import { ChatMessage } from './ChatMessage';");
-        sb.AppendLine("import { ChatRole } from './ChatRole';");
         sb.AppendLine();
 
         // JSDoc comment
@@ -336,5 +346,15 @@ public class TypeScriptMessageGenerator
             },
             _ => new List<(string, string, bool, string?)>()
         };
+    }
+
+    /// <summary>
+    /// Gets the import path for the AIContent union from the content directory.
+    /// </summary>
+    private string GetContentUnionImportPath()
+    {
+        // AIContent is exported from the content/index.ts
+        // Messages are in the messages directory, so we need ../content
+        return "../content";
     }
 }

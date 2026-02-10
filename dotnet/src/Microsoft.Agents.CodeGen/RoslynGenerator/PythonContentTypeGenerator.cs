@@ -132,8 +132,8 @@ public class PythonContentTypeGenerator
         sb.AppendLine();
         sb.AppendLine();
 
-        // Generate class
-        sb.AppendLine("@dataclass");
+        // Generate class with kw_only=True since AIContentBase has default fields
+        sb.AppendLine("@dataclass(kw_only=True)");
         sb.AppendLine($"class {contentModel.Name}(AIContentBase):");
 
         if (!string.IsNullOrWhiteSpace(contentModel.Documentation))
@@ -153,7 +153,7 @@ public class PythonContentTypeGenerator
 
             hasProperties = true;
             var pythonType = PythonModelGenerator.MapTypeSpecTypeToPython(prop.Type, prop.IsArray, prop.IsOptional);
-            var propertyName = NamingConventions.ToSnakeCase(prop.Name);
+            var propertyName = PythonModelGenerator.GetPythonSafeName(prop.Name);
 
             if (prop.IsOptional)
             {
@@ -209,9 +209,14 @@ public class PythonContentTypeGenerator
         sb.AppendLine();
         sb.AppendLine();
 
+        // Add docstring (handle multi-line documentation)
         if (!string.IsNullOrWhiteSpace(unionDef.Documentation))
         {
-            sb.AppendLine("# " + unionDef.Documentation);
+            var docLines = unionDef.Documentation.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            foreach (var line in docLines)
+            {
+                sb.AppendLine($"# {line}");
+            }
         }
 
         // Generate union type
@@ -281,6 +286,17 @@ public class PythonContentTypeGenerator
             // Skip literal types
             if (baseType.StartsWith("\""))
                 continue;
+
+            // Handle Array<T> types - extract inner type
+            if (baseType.StartsWith("Array<") && baseType.EndsWith(">"))
+            {
+                var innerType = baseType.Substring(6, baseType.Length - 7);
+                if (!TypeMapper.IsSimpleType(innerType))
+                {
+                    imports.Add(innerType);
+                }
+                continue;
+            }
 
             // Skip 'kind' discriminator
             if (prop.Name.Equals("kind", StringComparison.OrdinalIgnoreCase))

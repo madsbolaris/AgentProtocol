@@ -183,6 +183,14 @@ public class MessageInheritanceGenerator
             .AddMembers(properties)
             .AddMembers(roleProperty);
 
+        // Add base class if ChatMessage is part of a union (e.g., ThreadElement)
+        if (!string.IsNullOrWhiteSpace(model.BaseModel))
+        {
+            classDecl = classDecl.AddBaseListTypes(
+                SimpleBaseType(ParseTypeName(model.BaseModel))
+            );
+        }
+
         if (classAttributes.Any())
         {
             classDecl = classDecl.AddAttributeLists(
@@ -334,6 +342,13 @@ public class MessageInheritanceGenerator
             classDecl = classDecl.AddMembers(prop);
         }
 
+        // Add ShouldSerialize methods for nullable value type XML attributes
+        var shouldSerializeMethods = GenerateShouldSerializeMethodsForRole(roleName, roleSpecificProps);
+        foreach (var method in shouldSerializeMethods)
+        {
+            classDecl = classDecl.AddMembers(method);
+        }
+
         // Add Content/Contents property based on role
         if (NeedsSimpleTextContent(roleName))
         {
@@ -470,6 +485,49 @@ public class MessageInheritanceGenerator
         property = property.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(documentation));
 
         return property;
+    }
+
+    private IEnumerable<MethodDeclarationSyntax> GenerateShouldSerializeMethodsForRole(
+        string roleName,
+        PropertyDeclarationSyntax[] properties)
+    {
+        var methods = new List<MethodDeclarationSyntax>();
+
+        // Determine which properties are nullable value types with XmlAttribute
+        var nullableValueTypeProps = new Dictionary<string, string>
+        {
+            ["agent"] = "CompletedAt" // Agent role has CompletedAt as nullable DateTime
+        };
+
+        if (!nullableValueTypeProps.ContainsKey(roleName.ToLower()))
+        {
+            return methods;
+        }
+
+        var propertyName = nullableValueTypeProps[roleName.ToLower()];
+
+        // Generate: public bool ShouldSerializeCompletedAt() => CompletedAt.HasValue;
+        var methodName = $"ShouldSerialize{propertyName}";
+
+        var method = MethodDeclaration(
+                ParseTypeName("bool"),
+                Identifier(methodName)
+            )
+            .AddModifiers(Token(SyntaxKind.PublicKeyword))
+            .WithExpressionBody(
+                ArrowExpressionClause(
+                    MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        IdentifierName(propertyName),
+                        IdentifierName("HasValue")
+                    )
+                )
+            )
+            .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+
+        methods.Add(method);
+
+        return methods;
     }
 
     private bool NeedsSimpleTextContent(string roleName)

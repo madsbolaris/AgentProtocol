@@ -11,10 +11,17 @@ namespace Microsoft.Agents.CodeGen.RoslynGenerator;
 public class TypeScriptModelGenerator
 {
     private readonly string _rootNamespace;
+    private Dictionary<string, string> _typeLocations = new();
+    private string _currentDirectory = "";
 
     public TypeScriptModelGenerator(string rootNamespace = "")
     {
         _rootNamespace = rootNamespace;
+    }
+
+    public void SetTypeLocations(Dictionary<string, string> typeLocations)
+    {
+        _typeLocations = typeLocations;
     }
 
     public List<string> GenerateModels(TypeSpecModel typeSpec, string outputDirectory)
@@ -22,6 +29,9 @@ public class TypeScriptModelGenerator
         var generatedFiles = new List<string>();
 
         Directory.CreateDirectory(outputDirectory);
+
+        // Extract the current directory name (common, messages, or content)
+        _currentDirectory = Path.GetFileName(outputDirectory);
 
         // Generate enums
         foreach (var enumDef in typeSpec.Enums)
@@ -36,7 +46,7 @@ public class TypeScriptModelGenerator
         foreach (var modelDef in typeSpec.Models)
         {
             var filePath = Path.Combine(outputDirectory, $"{modelDef.Name}.ts");
-            var code = GenerateModel(modelDef);
+            var code = GenerateModel(modelDef, typeSpec);
             File.WriteAllText(filePath, code);
             generatedFiles.Add(filePath);
         }
@@ -103,17 +113,22 @@ public class TypeScriptModelGenerator
         return sb.ToString();
     }
 
-    private string GenerateModel(ModelDefinition modelDef)
+    private string GenerateModel(ModelDefinition modelDef, TypeSpecModel? typeSpec = null)
     {
         var sb = new StringBuilder();
 
         // Collect imports for referenced types
-        var imports = CollectImports(modelDef);
+        var imports = CollectImports(modelDef, typeSpec);
+
+        // Remove self-import (can happen with recursive types like JSONSchema)
+        imports.Remove(modelDef.Name);
+
         if (imports.Any())
         {
             foreach (var import in imports)
             {
-                sb.AppendLine($"import {{ {import} }} from './{import}';");
+                var importPath = GetImportPath(import);
+                sb.AppendLine($"import {{ {import} }} from '{importPath}';");
             }
             sb.AppendLine();
         }
@@ -126,8 +141,15 @@ public class TypeScriptModelGenerator
             sb.AppendLine(" */");
         }
 
+        // Check if this model is a union variant
+        // Union variants should NOT extend the union type in TypeScript (causes circular reference)
+        bool isUnionVariant = typeSpec != null &&
+                              !string.IsNullOrWhiteSpace(modelDef.BaseModel) &&
+                              typeSpec.Unions.Any(u => u.Name == modelDef.BaseModel);
+
         // Generate interface or type declaration
-        var extendsClause = !string.IsNullOrWhiteSpace(modelDef.BaseModel)
+        // Only add extends clause for regular inheritance, NOT for union variants
+        var extendsClause = !string.IsNullOrWhiteSpace(modelDef.BaseModel) && !isUnionVariant
             ? $" extends {modelDef.BaseModel}"
             : "";
 
@@ -163,7 +185,8 @@ public class TypeScriptModelGenerator
         // Import all variant types
         foreach (var variant in unionDef.Variants)
         {
-            sb.AppendLine($"import {{ {variant} }} from './{variant}';");
+            var importPath = GetImportPath(variant);
+            sb.AppendLine($"import {{ {variant} }} from '{importPath}';");
         }
         sb.AppendLine();
 
@@ -227,14 +250,40 @@ public class TypeScriptModelGenerator
         return sb.ToString();
     }
 
-    private HashSet<string> CollectImports(ModelDefinition modelDef)
+    private string GetImportPath(string typeName)
+    {
+        // If we don't have location info, use same directory
+        if (!_typeLocations.ContainsKey(typeName) || string.IsNullOrEmpty(_currentDirectory))
+        {
+            return $"./{typeName}";
+        }
+
+        var targetDirectory = _typeLocations[typeName];
+
+        // Same directory - use relative import
+        if (targetDirectory == _currentDirectory)
+        {
+            return $"./{typeName}";
+        }
+
+        // Different directory - use cross-directory import
+        return $"../{targetDirectory}/{typeName}";
+    }
+
+    private HashSet<string> CollectImports(ModelDefinition modelDef, TypeSpecModel? typeSpec = null)
     {
         var imports = new HashSet<string>();
 
-        // Add base model import
+        // Add base model import (but not for union variants, as they don't extend the union)
         if (!string.IsNullOrWhiteSpace(modelDef.BaseModel))
         {
-            imports.Add(modelDef.BaseModel);
+            bool isUnionVariant = typeSpec != null &&
+                                  typeSpec.Unions.Any(u => u.Name == modelDef.BaseModel);
+
+            if (!isUnionVariant)
+            {
+                imports.Add(modelDef.BaseModel);
+            }
         }
 
         // Add imports for complex property types
@@ -254,12 +303,23 @@ public class TypeScriptModelGenerator
             if (baseType.StartsWith("\"") || baseType.StartsWith("'"))
                 continue;
 
-            // Skip generic/array types (contain < or [)
-            if (baseType.Contains('<') || baseType.Contains('['))
-                continue;
-
             // Skip built-in TypeScript types
             if (baseType == "unknown" || baseType == "any" || baseType == "never")
+                continue;
+
+            // Extract type from Array<T> syntax
+            if (baseType.StartsWith("Array<") && baseType.EndsWith(">"))
+            {
+                var innerType = baseType.Substring(6, baseType.Length - 7);
+                if (!TypeMapper.IsSimpleType(innerType) && !innerType.StartsWith("Record<"))
+                {
+                    imports.Add(innerType);
+                }
+                continue;
+            }
+
+            // Skip other generic types (contain < or [)
+            if (baseType.Contains('<') || baseType.Contains('['))
                 continue;
 
             // Add complex type

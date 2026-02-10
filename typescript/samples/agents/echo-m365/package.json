@@ -19,7 +19,9 @@
     "test:integration": "jest --testMatch='**/tests/**/*.test.ts'"
   },
   "dependencies": {
-    "@microsoft/agents-protocol-hosting": "^1.2.3",
+    "@microsoft/agents-hosting": "^1.2.3",
+    "@microsoft/agents-hosting-express": "^1.2.3",
+    "@microsoft/agents-protocol-hosting": "*",
     "express": "^5.1.0"
   },
   "devDependencies": {

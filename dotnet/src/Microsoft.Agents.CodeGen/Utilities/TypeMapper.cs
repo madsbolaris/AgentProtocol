@@ -41,6 +41,13 @@ public static class TypeMapper
         bool isOptional,
         NullableStrategy strategy = NullableStrategy.Default)
     {
+        // Handle Array<T> syntax from TypeSpec
+        if (typeSpecType.StartsWith("Array<") && typeSpecType.EndsWith(">"))
+        {
+            var innerType = typeSpecType.Substring(6, typeSpecType.Length - 7);
+            return MapTypeSpecTypeToCSharp(innerType, true, isOptional, strategy);
+        }
+
         var baseType = MapBaseType(typeSpecType);
 
         // Handle array types
@@ -123,6 +130,6 @@ public static class TypeMapper
     public static bool IsSimpleType(string typeSpecType)
     {
         return typeSpecType is "string" or "int32" or "int64" or
-               "float32" or "float64" or "boolean" or "utcDateTime" or "bytes";
+               "float32" or "float64" or "boolean" or "utcDateTime" or "bytes" or "unknown";
     }
 }

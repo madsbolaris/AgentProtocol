@@ -46,7 +46,7 @@ public class CSharpModelGenerator
         foreach (var modelDef in typeSpec.Models)
         {
             var filePath = Path.Combine(outputDirectory, $"{modelDef.Name}.cs");
-            var code = GenerateModel(modelDef);
+            var code = GenerateModel(modelDef, typeSpec);
             File.WriteAllText(filePath, code);
             generatedFiles.Add(filePath);
         }
@@ -105,18 +105,29 @@ public class CSharpModelGenerator
         return CodeGenerationUtilities.FormatCode(compilationUnit);
     }
 
-    private string GenerateModel(ModelDefinition modelDef)
+    private string GenerateModel(ModelDefinition modelDef, TypeSpecModel typeSpec)
     {
-        // Create properties with XML attributes
-        var properties = modelDef.Properties.Select(p => GenerateProperty(p)).ToArray();
+        // Check if base model is a discriminated union
+        UnionDefinition? baseUnion = null;
+        if (!string.IsNullOrWhiteSpace(modelDef.BaseModel))
+        {
+            baseUnion = typeSpec.Unions.FirstOrDefault(u => u.Name == modelDef.BaseModel);
+        }
 
-        // Create class declaration
+        // Create properties with XML attributes
+        var properties = modelDef.Properties.Select(p => GenerateProperty(p, baseUnion)).ToArray();
+
+        // Generate ShouldSerialize methods for nullable XML attributes
+        var shouldSerializeMethods = GenerateShouldSerializeMethods(modelDef).ToArray();
+
+        // Create class declaration with both properties and ShouldSerialize methods
         var classDecl = ClassDeclaration(modelDef.Name)
             .AddModifiers(
                 Token(SyntaxKind.PublicKeyword),
                 Token(SyntaxKind.PartialKeyword)
             )
-            .AddMembers(properties);
+            .AddMembers(properties)
+            .AddMembers(shouldSerializeMethods);
 
         // Special case: AIContentBase should extend AIContent and override Kind
         if (modelDef.Name == "AIContentBase")
@@ -176,6 +187,13 @@ public class CSharpModelGenerator
                 );
             classDecl = classDecl.AddMembers(kindProperty);
         }
+        // General case: Add base class if specified in model definition
+        else if (!string.IsNullOrWhiteSpace(modelDef.BaseModel))
+        {
+            classDecl = classDecl.AddBaseListTypes(
+                SimpleBaseType(ParseTypeName(modelDef.BaseModel))
+            );
+        }
 
         // Add serialization attributes based on mode
         if (_serializationMode.HasFlag(SerializationMode.Xml))
@@ -217,23 +235,36 @@ public class CSharpModelGenerator
         return CodeGenerationUtilities.FormatCode(compilationUnit);
     }
 
-    private PropertyDeclarationSyntax GenerateProperty(PropertyDefinition propDef)
+    private PropertyDeclarationSyntax GenerateProperty(PropertyDefinition propDef, UnionDefinition? baseUnion = null)
     {
         // Map TypeSpec types to C# types
         var csharpType = TypeMapper.MapTypeSpecTypeToCSharp(propDef.Type, propDef.IsArray, propDef.IsOptional);
 
-        // Create property with getter/setter
+        // Check if this property is the discriminator from a base union
+        var isDiscriminator = baseUnion != null &&
+                             !string.IsNullOrWhiteSpace(baseUnion.DiscriminatorProperty) &&
+                             propDef.Name.Equals(baseUnion.DiscriminatorProperty, StringComparison.OrdinalIgnoreCase);
+
+        // Create property with getter/setter (or just getter for discriminators)
+        var propertyModifiers = new List<SyntaxToken> { Token(SyntaxKind.PublicKeyword) };
+        if (isDiscriminator)
+        {
+            propertyModifiers.Add(Token(SyntaxKind.OverrideKeyword));
+        }
+
+        var accessors = isDiscriminator
+            ? new[] { AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)) }
+            : new[] {
+                AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+            };
+
         var property = PropertyDeclaration(
                 ParseTypeName(csharpType),
                 Identifier(NamingConventions.ToPascalCase(propDef.Name))
             )
-            .AddModifiers(Token(SyntaxKind.PublicKeyword))
-            .AddAccessorListAccessors(
-                AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
-            );
+            .AddModifiers(propertyModifiers.ToArray())
+            .AddAccessorListAccessors(accessors);
 
         // Add serialization attributes based on mode
         if (_serializationMode.HasFlag(SerializationMode.Xml))
@@ -254,6 +285,70 @@ public class CSharpModelGenerator
         property = property.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(documentation));
 
         return property;
+    }
+
+    private IEnumerable<MethodDeclarationSyntax> GenerateShouldSerializeMethods(ModelDefinition modelDef)
+    {
+        var methods = new List<MethodDeclarationSyntax>();
+
+        foreach (var propDef in modelDef.Properties)
+        {
+            // Check if this property is a nullable XML attribute
+            var isXmlAttribute = propDef.Decorators.Any(d => d.Name == "xmlAttribute");
+            var isNullable = propDef.IsOptional || propDef.Type.EndsWith("?");
+
+            // Check if it's a value type (DateTime, int, bool, etc.)
+            var isValueType = IsValueType(propDef.Type);
+
+            if (isXmlAttribute && isNullable && isValueType)
+            {
+                // Generate: public bool ShouldSerialize{PropertyName}() => {PropertyName}.HasValue;
+                var propertyName = NamingConventions.ToPascalCase(propDef.Name);
+                var methodName = $"ShouldSerialize{propertyName}";
+
+                var method = MethodDeclaration(
+                        ParseTypeName("bool"),
+                        Identifier(methodName)
+                    )
+                    .AddModifiers(Token(SyntaxKind.PublicKeyword))
+                    .WithExpressionBody(
+                        ArrowExpressionClause(
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                IdentifierName(propertyName),
+                                IdentifierName("HasValue")
+                            )
+                        )
+                    )
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+
+                methods.Add(method);
+            }
+        }
+
+        return methods;
+    }
+
+    private bool IsValueType(string typeSpecType)
+    {
+        // Check if the TypeSpec type maps to a C# value type
+        var csharpType = TypeMapper.MapTypeSpecTypeToCSharp(typeSpecType, isArray: false, isOptional: false);
+
+        // Common value types
+        return csharpType switch
+        {
+            "DateTime" => true,
+            "int" => true,
+            "long" => true,
+            "short" => true,
+            "byte" => true,
+            "bool" => true,
+            "float" => true,
+            "double" => true,
+            "decimal" => true,
+            "Guid" => true,
+            _ => false
+        };
     }
 
     private string GenerateUnion(UnionDefinition unionDef)

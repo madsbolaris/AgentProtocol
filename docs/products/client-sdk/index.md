@@ -4,33 +4,29 @@ Welcome to the Agent Protocol Client SDK documentation.
 
 ## Quick Links
 
-<div class="grid cards" markdown>
+::cards:: cols=4
 
-- **:material-rocket-launch: Quick Start**
+- title: Quick Start
+  eyebrow: START HERE
+  description: Get started in 30 minutes with your first agent
+  url: quickstart/
 
-    Get started in 30 minutes
+- title: Concepts
+  eyebrow: LEARN
+  description: Understand core concepts and fundamentals
+  url: concepts/
 
-    [:octicons-arrow-right-24: Quick Start](quickstart.md)
+- title: API Reference
+  eyebrow: REFERENCE
+  description: Complete API documentation for all languages
+  url: api-reference/
 
-- **:material-book-open: Documentation**
+- title: Guides
+  eyebrow: HOW-TO
+  description: Step-by-step guides and tutorials
+  url: guides/
 
-    Core concepts and guides
-
-    [:octicons-arrow-right-24: Documentation](docs/)
-
-- **:material-code-braces: API Reference**
-
-    Complete API documentation
-
-    [:octicons-arrow-right-24: API Reference](api-reference/)
-
-- **:material-compass: Guides**
-
-    How-to guides and tutorials
-
-    [:octicons-arrow-right-24: Guides](guides/)
-
-</div>
+::/cards::
 
 ## What is the Client SDK?
 

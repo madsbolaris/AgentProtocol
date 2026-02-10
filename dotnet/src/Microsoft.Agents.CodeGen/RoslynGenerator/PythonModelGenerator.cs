@@ -12,6 +12,50 @@ public class PythonModelGenerator
 {
     private readonly string _rootNamespace;
 
+    // Python reserved keywords that cannot be used as module names
+    private static readonly HashSet<string> PythonReservedKeywords = new()
+    {
+        "and", "as", "assert", "async", "await", "break", "class", "continue", "def",
+        "del", "elif", "else", "except", "finally", "for", "from", "global", "if",
+        "import", "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise",
+        "return", "try", "while", "with", "yield"
+    };
+
+    /// <summary>
+    /// Converts a name to snake_case and handles Python reserved keywords.
+    /// </summary>
+    public static string GetPythonSafeName(string name)
+    {
+        var snakeName = NamingConventions.ToSnakeCase(name);
+        if (PythonReservedKeywords.Contains(snakeName))
+        {
+            return snakeName + "_";  // Append underscore to avoid keyword conflict
+        }
+        return snakeName;
+    }
+
+    /// <summary>
+    /// Determines if a property will have a default value in Python.
+    /// Used for sorting fields (fields without defaults must come first in dataclasses).
+    /// </summary>
+    private static bool WillHaveDefault(PropertyDefinition prop)
+    {
+        // Optional fields get = None
+        if (prop.IsOptional)
+            return true;
+
+        // Arrays get = field(default_factory=list)
+        if (prop.IsArray)
+            return true;
+
+        // Dicts get = field(default_factory=dict)
+        var pythonType = MapTypeSpecTypeToPython(prop.Type, prop.IsArray, prop.IsOptional);
+        if (pythonType.Contains("Dict"))
+            return true;
+
+        return false;
+    }
+
     /// <summary>
     /// Generates auto-generated header comment for Python files.
     /// </summary>
@@ -41,7 +85,7 @@ public class PythonModelGenerator
         // Generate enums
         foreach (var enumDef in typeSpec.Enums)
         {
-            var filePath = Path.Combine(outputDirectory, $"{NamingConventions.ToSnakeCase(enumDef.Name)}.py");
+            var filePath = Path.Combine(outputDirectory, $"{GetPythonSafeName(enumDef.Name)}.py");
             var code = GenerateEnum(enumDef);
             File.WriteAllText(filePath, code);
             generatedFiles.Add(filePath);
@@ -50,7 +94,7 @@ public class PythonModelGenerator
         // Generate model classes
         foreach (var modelDef in typeSpec.Models)
         {
-            var filePath = Path.Combine(outputDirectory, $"{NamingConventions.ToSnakeCase(modelDef.Name)}.py");
+            var filePath = Path.Combine(outputDirectory, $"{GetPythonSafeName(modelDef.Name)}.py");
             var code = GenerateModel(modelDef);
             File.WriteAllText(filePath, code);
             generatedFiles.Add(filePath);
@@ -59,7 +103,7 @@ public class PythonModelGenerator
         // Generate union types
         foreach (var unionDef in typeSpec.Unions)
         {
-            var filePath = Path.Combine(outputDirectory, $"{NamingConventions.ToSnakeCase(unionDef.Name)}.py");
+            var filePath = Path.Combine(outputDirectory, $"{GetPythonSafeName(unionDef.Name)}.py");
             var code = GenerateUnion(unionDef);
             File.WriteAllText(filePath, code);
             generatedFiles.Add(filePath);
@@ -138,7 +182,7 @@ public class PythonModelGenerator
             sb.AppendLine();
             foreach (var import in imports)
             {
-                var snakeCaseName = NamingConventions.ToSnakeCase(import);
+                var snakeCaseName = GetPythonSafeName(import);
                 sb.AppendLine($"from .{snakeCaseName} import {import}");
             }
         }
@@ -146,18 +190,28 @@ public class PythonModelGenerator
         sb.AppendLine();
         sb.AppendLine();
 
-        // Add docstring
-        sb.AppendLine("@dataclass");
+        // Add @dataclass decorator
+        // If class has base model, use kw_only=True to avoid field ordering issues
+        if (!string.IsNullOrWhiteSpace(modelDef.BaseModel))
+        {
+            sb.AppendLine("@dataclass(kw_only=True)");
+        }
+        else
+        {
+            sb.AppendLine("@dataclass");
+        }
+
+        // Add class definition and docstring
         if (!string.IsNullOrWhiteSpace(modelDef.Documentation))
         {
-            sb.AppendLine($"class {modelDef.Name}:");
+            sb.AppendLine($"class {modelDef.Name}{(!string.IsNullOrWhiteSpace(modelDef.BaseModel) ? $"({modelDef.BaseModel})" : "")}:");
             sb.AppendLine("    \"\"\"");
             sb.AppendLine($"    {modelDef.Documentation}");
             sb.AppendLine("    \"\"\"");
         }
         else
         {
-            sb.AppendLine($"class {modelDef.Name}:");
+            sb.AppendLine($"class {modelDef.Name}{(!string.IsNullOrWhiteSpace(modelDef.BaseModel) ? $"({modelDef.BaseModel})" : "")}:");
         }
 
         // Generate properties
@@ -167,16 +221,28 @@ public class PythonModelGenerator
         }
         else
         {
-            foreach (var prop in modelDef.Properties)
+            // Sort properties: fields without defaults first, then fields with defaults
+            // This is required by Python dataclasses
+            var sortedProps = modelDef.Properties
+                .OrderBy(p => WillHaveDefault(p) ? 1 : 0)  // No default = 0, Has default = 1
+                .ThenBy(p => p.Name)  // Secondary sort by name for consistency
+                .ToList();
+
+            foreach (var prop in sortedProps)
             {
                 // Add property docstring
                 if (!string.IsNullOrWhiteSpace(prop.Documentation))
                 {
-                    sb.AppendLine($"    # {prop.Documentation}");
+                    // Handle multi-line documentation by commenting each line
+                    var docLines = prop.Documentation.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                    foreach (var line in docLines)
+                    {
+                        sb.AppendLine($"    # {line}");
+                    }
                 }
 
                 var pythonType = MapTypeSpecTypeToPython(prop.Type, prop.IsArray, prop.IsOptional);
-                var propertyName = NamingConventions.ToSnakeCase(prop.Name);
+                var propertyName = GetPythonSafeName(prop.Name);
 
                 // Use field(default=None) for optional fields, or field(default_factory=list) for lists
                 if (prop.IsOptional)
@@ -213,17 +279,21 @@ public class PythonModelGenerator
         // Import all variant types
         foreach (var variant in unionDef.Variants)
         {
-            var snakeCaseName = NamingConventions.ToSnakeCase(variant);
+            var snakeCaseName = GetPythonSafeName(variant);
             sb.AppendLine($"from .{snakeCaseName} import {variant}");
         }
 
         sb.AppendLine();
         sb.AppendLine();
 
-        // Add docstring
+        // Add docstring (handle multi-line documentation)
         if (!string.IsNullOrWhiteSpace(unionDef.Documentation))
         {
-            sb.AppendLine("# " + unionDef.Documentation);
+            var docLines = unionDef.Documentation.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            foreach (var line in docLines)
+            {
+                sb.AppendLine($"# {line}");
+            }
         }
 
         // Generate union type
@@ -250,7 +320,7 @@ public class PythonModelGenerator
         // Export all enums
         foreach (var enumDef in typeSpec.Enums)
         {
-            var snakeCaseName = NamingConventions.ToSnakeCase(enumDef.Name);
+            var snakeCaseName = GetPythonSafeName(enumDef.Name);
             sb.AppendLine($"from .{snakeCaseName} import {enumDef.Name}, {enumDef.Name}Type");
             allExports.Add(enumDef.Name);
             allExports.Add($"{enumDef.Name}Type");
@@ -259,7 +329,7 @@ public class PythonModelGenerator
         // Export all models
         foreach (var modelDef in typeSpec.Models)
         {
-            var snakeCaseName = NamingConventions.ToSnakeCase(modelDef.Name);
+            var snakeCaseName = GetPythonSafeName(modelDef.Name);
             sb.AppendLine($"from .{snakeCaseName} import {modelDef.Name}");
             allExports.Add(modelDef.Name);
         }
@@ -267,7 +337,7 @@ public class PythonModelGenerator
         // Export all unions
         foreach (var unionDef in typeSpec.Unions)
         {
-            var snakeCaseName = NamingConventions.ToSnakeCase(unionDef.Name);
+            var snakeCaseName = GetPythonSafeName(unionDef.Name);
             sb.AppendLine($"from .{snakeCaseName} import {unionDef.Name}");
             allExports.Add(unionDef.Name);
         }
@@ -310,6 +380,21 @@ public class PythonModelGenerator
             if (baseType.StartsWith("\""))
                 continue;
 
+            // Handle Array<T> types - extract inner type
+            if (baseType.StartsWith("Array<") && baseType.EndsWith(">"))
+            {
+                var innerType = baseType.Substring(6, baseType.Length - 7);
+                if (!TypeMapper.IsSimpleType(innerType) && innerType != modelDef.Name)
+                {
+                    imports.Add(innerType);
+                }
+                continue;
+            }
+
+            // Skip self-references (recursive types like JSONSchema)
+            if (baseType == modelDef.Name)
+                continue;
+
             // Add the type to imports
             imports.Add(baseType);
         }
@@ -319,6 +404,13 @@ public class PythonModelGenerator
 
     public static string MapTypeSpecTypeToPython(string typeSpecType, bool isArray, bool isOptional)
     {
+        // Handle Array<T> syntax from TypeSpec
+        if (typeSpecType.StartsWith("Array<") && typeSpecType.EndsWith(">"))
+        {
+            var innerType = typeSpecType.Substring(6, typeSpecType.Length - 7);
+            return MapTypeSpecTypeToPython(innerType, true, isOptional);
+        }
+
         var baseType = typeSpecType switch
         {
             "string" => "str",

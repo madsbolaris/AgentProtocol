@@ -40,7 +40,7 @@ internal class RunContextImpl<TContext> : IRunContext<TContext> where TContext :
     public int NextEventSeq => ++_eventSeq;
 
     // Advanced features - not implemented in this basic version
-    public Core.RunStatus Status => Core.RunStatus.InProgress;
+    public Microsoft.Agents.Protocol.Hosting.Core.RunStatus Status => Microsoft.Agents.Protocol.Hosting.Core.RunStatus.InProgress;
     public Task<UserMessage> RequestInputAsync(string prompt, CancellationToken cancellationToken = default)
         => throw new NotImplementedException();
     public Task<string> RequireAuthAsync(string scope, string? message = null, CancellationToken cancellationToken = default)
@@ -58,15 +58,18 @@ internal class MessageContextImpl<TContext> : IMessageContext<TContext> where TC
 {
     internal readonly RunContextImpl<TContext> RunContext;
     internal readonly List<ChatMessage> Responses;
+    internal Action<ChatMessage>? OnMessageSent;
 
     public MessageContextImpl(
         RunContextImpl<TContext> runContext,
         ChatMessage message,
-        List<ChatMessage> responses)
+        List<ChatMessage> responses,
+        Action<ChatMessage>? onMessageSent = null)
     {
         RunContext = runContext;
         Message = message;
         Responses = responses;
+        OnMessageSent = onMessageSent;
     }
 
     public ChatMessage Message { get; }
@@ -88,6 +91,7 @@ internal class MessageContextImpl<TContext> : IMessageContext<TContext> where TC
         };
 
         Responses.Add(message);
+        OnMessageSent?.Invoke(message);
         return Task.CompletedTask;
     }
 
@@ -113,6 +117,21 @@ internal class MessageContextImpl<TContext> : IMessageContext<TContext> where TC
         CancellationToken cancellationToken = default)
     {
         return streamProvider();
+    }
+
+    public Task EmitStreamChunkAsync(string text, CancellationToken cancellationToken = default)
+    {
+        // Emit streaming event via callback WITHOUT adding to Responses
+        // This allows real-time streaming without creating separate messages
+        if (OnMessageSent != null)
+        {
+            var streamMessage = new AgentMessage
+            {
+                Contents = new List<AIContent> { new TextContent { Text = text } }
+            };
+            OnMessageSent.Invoke(streamMessage);
+        }
+        return Task.CompletedTask;
     }
 }
 

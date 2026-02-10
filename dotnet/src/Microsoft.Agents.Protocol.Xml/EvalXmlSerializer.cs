@@ -102,16 +102,7 @@ public class EvalXmlSerializer
     {
         writer.WriteStartElement("thread");
 
-        // Write attributes
-        writer.WriteAttributeString("thread-id", evalThread.ThreadId);
-
-        if (evalThread.Status.HasValue)
-        {
-            writer.WriteAttributeString("status", evalThread.Status.Value.ToString());
-        }
-
-        writer.WriteAttributeString("created-at", evalThread.CreatedAt.ToString("o"));
-
+        // Write attributes that exist on the regenerated model
         if (!string.IsNullOrEmpty(evalThread.Description))
         {
             writer.WriteAttributeString("desc", evalThread.Description);
@@ -123,9 +114,12 @@ public class EvalXmlSerializer
         }
 
         // Write elements (messages, expects, runs, reviews)
-        foreach (var element in evalThread.Elements)
+        if (evalThread.Elements != null)
         {
-            WriteElement(writer, element);
+            foreach (var element in evalThread.Elements)
+            {
+                WriteElement(writer, element);
+            }
         }
 
         writer.WriteEndElement(); // thread
@@ -133,30 +127,32 @@ public class EvalXmlSerializer
 
     private void WriteElement(XmlWriter writer, ThreadElement element)
     {
-        switch (element)
+        // Use runtime type checking since the generated types don't inherit from ThreadElement
+        var elementType = element.GetType();
+
+        if (typeof(ChatMessage).IsAssignableFrom(elementType))
         {
-            case ChatMessage message:
-                // Use MessageSerializer for ChatMessage
-                var messageXml = _messageSerializer.Serialize(message);
-                var doc = XDocument.Parse(messageXml);
-                doc.Root?.WriteTo(writer);
-                break;
-
-            case Expect expect:
-                WriteExpect(writer, expect);
-                break;
-
-            case EvalRun run:
-                WriteEvalRun(writer, run);
-                break;
-
-            case Review review:
-                WriteReview(writer, review);
-                break;
-
-            default:
-                throw new InvalidOperationException(
-                    $"Unsupported thread element type: {element.GetType().Name}");
+            // Use MessageSerializer for ChatMessage
+            var messageXml = _messageSerializer.Serialize((ChatMessage)(object)element);
+            var doc = XDocument.Parse(messageXml);
+            doc.Root?.WriteTo(writer);
+        }
+        else if (elementType.Name == "Expect")
+        {
+            WriteExpect(writer, (Expect)(object)element);
+        }
+        else if (elementType.Name == "EvalRun")
+        {
+            WriteEvalRun(writer, (EvalRun)(object)element);
+        }
+        else if (elementType.Name == "Review")
+        {
+            WriteReview(writer, (Review)(object)element);
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                $"Unsupported thread element type: {element.GetType().Name}");
         }
     }
 
@@ -269,23 +265,9 @@ public class EvalXmlSerializer
             Elements = new List<ThreadElement>()
         };
 
-        // Read attributes
+        // Read attributes - only read properties that exist on regenerated model
         if (reader.HasAttributes)
         {
-            evalThread.ThreadId = reader.GetAttribute("thread-id") ?? string.Empty;
-
-            var statusAttr = reader.GetAttribute("status");
-            if (!string.IsNullOrEmpty(statusAttr) && Enum.TryParse<ThreadStatus>(statusAttr, out var status))
-            {
-                evalThread.Status = status;
-            }
-
-            var createdAtAttr = reader.GetAttribute("created-at");
-            if (!string.IsNullOrEmpty(createdAtAttr) && DateTime.TryParse(createdAtAttr, out var createdAt))
-            {
-                evalThread.CreatedAt = createdAt;
-            }
-
             evalThread.Description = reader.GetAttribute("desc");
 
             var repeatAttr = reader.GetAttribute("repeat");
@@ -324,13 +306,14 @@ public class EvalXmlSerializer
     {
         var elementName = reader.LocalName;
 
+        // Cast results to ThreadElement via object since generated types don't inherit from ThreadElement
         return elementName.ToLower() switch
         {
             "user" or "agent" or "assistant" or "tool" or "system" or "developer" or "channel"
-                => ReadChatMessage(reader),
-            "expect" => ReadExpect(reader),
-            "run" => ReadEvalRun(reader),
-            "review" => ReadReview(reader),
+                => (ThreadElement)(object)ReadChatMessage(reader),
+            "expect" => (ThreadElement)(object)ReadExpect(reader),
+            "run" => (ThreadElement)(object)ReadEvalRun(reader),
+            "review" => (ThreadElement)(object)ReadReview(reader),
             _ => throw new InvalidOperationException($"Unknown thread element: {elementName}")
         };
     }

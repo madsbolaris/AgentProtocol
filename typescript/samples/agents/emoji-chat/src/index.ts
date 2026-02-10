@@ -7,7 +7,16 @@
  * 3. Emoji reaction handling
  * 4. State management (message count, last emoji used)
  *
- * This sample mirrors the .NET EmojiChatBot implementation using the TypeScript Hosting SDK.
+ * ============================================================================
+ * MODERN SAMPLE - New Hosting Package Only
+ * ============================================================================
+ * This sample demonstrates the NEW way to build agents using ONLY the
+ * @microsoft/agents-protocol-hosting package. This is the recommended approach
+ * for new applications.
+ *
+ * For examples of adapting LEGACY M365 Agents SDK apps to speak Agent Protocol,
+ * see the echo-m365 and basic-m365 samples.
+ * ============================================================================
  */
 
 import {
@@ -176,6 +185,20 @@ function getPortFromConfig(): number {
 
   return parseInt(process.env.PORT || '3986', 10);
 }
+
+// ============================================================================
+// ENVIRONMENT VARIABLES - Set automatically by scripts/ci/start_samples.py
+// ============================================================================
+// These environment variables are loaded from .env file at repo root:
+//   - FOUNDRY_ENDPOINT: LLM endpoint URL
+//   - FOUNDRY_API_KEY: API key for authentication
+//   - FOUNDRY_MODEL_DEPLOYMENT: Model name (default: gpt-4)
+//   - USE_LLM_RECORDINGS: Set to "true" for test mode (replays recordings)
+//   - RECORD_LLM: Set to "true" to record LLM interactions
+//
+// Developers should NEVER manually set these variables.
+// Use: python3 scripts/ci/start_samples.py emoji-chat --lang typescript --ui
+// ============================================================================
 
 // Get model from environment (matches basic-m365 pattern)
 const model = process.env.FOUNDRY_MODEL_DEPLOYMENT || 'gpt-4';

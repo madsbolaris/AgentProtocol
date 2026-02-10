@@ -21,7 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Microsoft.Agents.CodeGen\Microsoft.Agents.CodeGen.csproj" />
     <ProjectReference Include="..\..\..\src\Microsoft.Agents.Protocol.Xml\Microsoft.Agents.Protocol.Xml.csproj" />
-    <ProjectReference Include="..\..\..\src\Microsoft.Agents.Abstractions\Microsoft.Agents.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\src\Microsoft.Agents.Protocol.Abstractions\Microsoft.Agents.Protocol.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,8 +7,8 @@ Agent Protocol Server
 This module provides the main function to add all Agent Protocol routes to an aiohttp Application.
 """
 
-from aiohttp.web import Application, Request, Response, StreamResponse, json_response
-from typing import TYPE_CHECKING, Dict, Any, List
+from aiohttp.web import Application, Request, Response, StreamResponse, json_response, middleware
+from typing import TYPE_CHECKING, Dict, Any, List, Callable, Awaitable
 import json
 import uuid
 from datetime import datetime
@@ -16,6 +16,30 @@ from lxml import etree
 
 if TYPE_CHECKING:
     from microsoft.agents.hosting.core import AgentApplication
+
+
+@middleware
+async def cors_middleware(request: Request, handler: Callable[[Request], Awaitable[Response]]) -> Response:
+    """CORS middleware to add headers to all responses."""
+    # Handle preflight OPTIONS requests
+    if request.method == "OPTIONS":
+        response = Response(status=204)
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = '*'
+        response.headers['Access-Control-Max-Age'] = '86400'
+        return response
+
+    # Process the request
+    response = await handler(request)
+
+    # Add CORS headers to response
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = '*'
+    response.headers['Access-Control-Expose-Headers'] = '*'
+
+    return response
 
 
 def _create_sse_response() -> StreamResponse:
@@ -73,6 +97,10 @@ def add_agent_protocol_routes(
         app = Application()
         add_agent_protocol_routes(app, agent_app)
     """
+
+    # Add CORS middleware to handle all routes
+    if not any(m.__name__ == 'cors_middleware' for m in app.middlewares):
+        app.middlewares.append(cors_middleware)
 
     # Store agent_application in app for access in route handlers
     app["agent_app"] = agent_application
@@ -331,10 +359,19 @@ def add_agent_protocol_routes(
             # Return empty response on error
             return convert_to_message({"text": ""})
 
+    def _add_cors_headers(response: Response) -> Response:
+        """Add CORS headers to response for browser access."""
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = '*'
+        response.headers['Access-Control-Expose-Headers'] = '*'
+        return response
+
     # Health check endpoint
     async def health_check(request: Request) -> Response:
         """Health check endpoint to verify the service is running."""
-        return json_response({"status": "healthy", "version": "0.1.0"})
+        response = json_response({"status": "healthy", "version": "0.1.0"})
+        return _add_cors_headers(response)
 
     async def get_agent_card(request: Request) -> Response:
         """Get agent card with capabilities."""
@@ -346,7 +383,8 @@ def add_agent_protocol_routes(
             "outputModes": ["text"],
             "inputModes": ["text"]
         }
-        return json_response(agent_card)
+        response = json_response(agent_card)
+        return _add_cors_headers(response)
 
     # Create run endpoint
     async def create_run(request: Request) -> Response:
@@ -504,8 +542,9 @@ def add_agent_protocol_routes(
 
             # Helper to send SSE event
             async def send_event(event_name: str, event_data: dict):
-                event_payload = {"event": event_name, "data": event_data}
-                await response.write(f'event: {event_name}\ndata: {json.dumps(event_payload)}\n\n'.encode())
+                # Send SSE event with proper format: event line + data line
+                # Don't wrap event_data - SSE format already provides event/data structure
+                await response.write(f'event: {event_name}\ndata: {json.dumps(event_data)}\n\n'.encode())
                 await response.drain()  # Flush the data to the client
 
             # Event: run.started

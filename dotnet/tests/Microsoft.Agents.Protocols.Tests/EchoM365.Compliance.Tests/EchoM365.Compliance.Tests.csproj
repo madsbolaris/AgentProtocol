@@ -32,7 +32,7 @@
     <ProjectReference Include="..\..\..\src\Microsoft.Agents.Protocol\Microsoft.Agents.Protocol.csproj" />
 
     <!-- XML serialization -->
-    <ProjectReference Include="..\..\..\src\Microsoft.Agents.Abstractions\Microsoft.Agents.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\src\Microsoft.Agents.Protocol.Abstractions\Microsoft.Agents.Protocol.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\src\Microsoft.Agents.Protocol.Xml\Microsoft.Agents.Protocol.Xml.csproj" />
 
     <!-- EchoM365 sample (to test) -->

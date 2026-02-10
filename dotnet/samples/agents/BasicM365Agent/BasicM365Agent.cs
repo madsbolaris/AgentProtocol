@@ -37,6 +37,20 @@ public class BasicM365Agent : AgentApplication
     {
         _httpClient = httpClient;
 
+        // ============================================================================
+        // ENVIRONMENT VARIABLES - Set automatically by scripts/ci/start_samples.py
+        // ============================================================================
+        // These environment variables are loaded from .env file at repo root:
+        //   - FOUNDRY_ENDPOINT: LLM endpoint URL
+        //   - FOUNDRY_API_KEY: API key for authentication
+        //   - FOUNDRY_MODEL_DEPLOYMENT: Model name (default: gpt-5-nano)
+        //   - USE_LLM_RECORDINGS: Set to "true" for test mode (replays recordings)
+        //   - RECORD_LLM: Set to "true" to record LLM interactions
+        //
+        // Developers should NEVER manually set these variables.
+        // Use: python3 scripts/ci/start_samples.py basic-m365 --lang dotnet --ui
+        // ============================================================================
+
         // Check if we should use LLM recordings (test mode)
         var useRecordings = Environment.GetEnvironmentVariable("USE_LLM_RECORDINGS");
         _useRecordings = !string.IsNullOrEmpty(useRecordings) && useRecordings.Equals("true", StringComparison.OrdinalIgnoreCase);

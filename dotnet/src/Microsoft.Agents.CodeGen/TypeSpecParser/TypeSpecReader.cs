@@ -35,6 +35,9 @@ public class TypeSpecReader
         // Parse unions
         model.Unions = ParseUnions(content);
 
+        // Link union variants to their base classes
+        LinkUnionVariants(model);
+
         return model;
     }
 
@@ -309,10 +312,12 @@ public class TypeSpecReader
     private List<UnionDefinition> ParseUnions(string content)
     {
         var unions = new List<UnionDefinition>();
-        var unionPattern = @"@discriminator\([""'](\w+)[""']\)\s*union\s+(\w+)\s*\{([^}]+)\}";
-        var matches = Regex.Matches(content, unionPattern, RegexOptions.Singleline);
 
-        foreach (Match match in matches)
+        // Pattern 1: Discriminated unions with @discriminator decorator
+        var discriminatedPattern = @"@discriminator\([""'](\w+)[""']\)\s*union\s+(\w+)\s*\{([^}]+)\}";
+        var discriminatedMatches = Regex.Matches(content, discriminatedPattern, RegexOptions.Singleline);
+
+        foreach (Match match in discriminatedMatches)
         {
             var unionDef = new UnionDefinition
             {
@@ -324,22 +329,78 @@ public class TypeSpecReader
 
             // Parse variants
             var variantsText = match.Groups[3].Value;
-            var variantPattern = @"(\w+)\s*,?";
-            var variantMatches = Regex.Matches(variantsText, variantPattern);
+            ParseVariants(variantsText, unionDef);
+            unions.Add(unionDef);
+        }
 
-            foreach (Match variantMatch in variantMatches)
+        // Pattern 2: Simple unions without discriminator (e.g., union ThreadElement { ... })
+        var simplePattern = @"(?<!@discriminator\([^)]+\)\s*)union\s+(\w+)\s*\{([^}]+)\}";
+        var simpleMatches = Regex.Matches(content, simplePattern, RegexOptions.Singleline);
+
+        foreach (Match match in simpleMatches)
+        {
+            var name = match.Groups[1].Value;
+
+            // Skip if already added as discriminated union
+            if (unions.Any(u => u.Name == name))
+                continue;
+
+            var unionDef = new UnionDefinition
             {
-                var variant = variantMatch.Groups[1].Value.Trim();
-                if (!string.IsNullOrWhiteSpace(variant) && variant != "//")
-                {
-                    unionDef.Variants.Add(variant);
-                }
-            }
+                DiscriminatorProperty = "",  // No discriminator
+                Name = name,
+                Documentation = ExtractDocumentation(content, match.Index),
+                IsXmlPolymorphic = false
+            };
 
+            // Parse variants
+            var variantsText = match.Groups[2].Value;
+            ParseVariants(variantsText, unionDef);
             unions.Add(unionDef);
         }
 
         return unions;
+    }
+
+    private void ParseVariants(string variantsText, UnionDefinition unionDef)
+    {
+        // Remove commented lines before parsing
+        var lines = variantsText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        var activeLines = lines
+            .Select(line => line.Trim())
+            .Where(line => !line.StartsWith("//"))  // Skip commented lines
+            .ToList();
+
+        var cleanedText = string.Join(" ", activeLines);
+
+        var variantPattern = @"(\w+)\s*,?";
+        var variantMatches = Regex.Matches(cleanedText, variantPattern);
+
+        foreach (Match variantMatch in variantMatches)
+        {
+            var variant = variantMatch.Groups[1].Value.Trim();
+            if (!string.IsNullOrWhiteSpace(variant))
+            {
+                unionDef.Variants.Add(variant);
+            }
+        }
+    }
+
+    private void LinkUnionVariants(TypeSpecModel model)
+    {
+        // For each union, set the BaseModel property on its variant models
+        foreach (var union in model.Unions)
+        {
+            foreach (var variantName in union.Variants)
+            {
+                var variantModel = model.Models.FirstOrDefault(m => m.Name == variantName);
+                if (variantModel != null && string.IsNullOrWhiteSpace(variantModel.BaseModel))
+                {
+                    // Only set BaseModel if it's not already set (don't override explicit extends)
+                    variantModel.BaseModel = union.Name;
+                }
+            }
+        }
     }
 
     private string? ExtractDocumentation(string content, int position)

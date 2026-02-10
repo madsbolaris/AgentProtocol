@@ -3,7 +3,7 @@
 
 """Agent builder for configuring individual agents."""
 
-from typing import Callable, Optional, Any
+from typing import Callable, Optional, Any, Union
 from dataclasses import dataclass
 
 from ..core import (
@@ -19,7 +19,7 @@ from .function_builder import FunctionBuilder
 class AgentConfiguration:
     """Configuration for an agent."""
 
-    model: Optional[str]
+    model: Optional[Union[str, Any]]
     instructions: Optional[str]
     functions: list[FunctionDefinition]
     user_message_handlers: list[UserMessageHandler]
@@ -33,19 +33,21 @@ class AgentBuilder:
     def __init__(self, services: dict[type, Any]) -> None:
         """Initialize a new agent builder."""
         self._services = services
-        self._llm_model: Optional[str] = None
+        self._llm_model: Optional[Union[str, Any]] = None
         self._llm_instructions: Optional[str] = None
         self._functions: list[FunctionDefinition] = []
         self._user_message_handlers: list[UserMessageHandler] = []
         self._reaction_handlers: list[ReactionHandler] = []
         self._error_handler: Optional[ErrorHandler] = None
 
-    def use_llm(self, model: str, instructions: str) -> "AgentBuilder":
+    def use_llm(self, model: Union[str, Any], instructions: str) -> "AgentBuilder":
         """
         Configure the LLM to use for this agent.
 
         Args:
-            model: Model identifier (e.g., "gpt-4", "claude-3-5-sonnet-20241022").
+            model: Model identifier (string) or LLM client instance.
+                   String: "gpt-4", "claude-3-5-sonnet-20241022" (requires FOUNDRY_ENDPOINT/FOUNDRY_API_KEY).
+                   Instance: Custom LLM client with provider_info, generate(), and stream() methods.
             instructions: System instructions for the agent.
 
         Returns:
@@ -56,10 +58,14 @@ class AgentBuilder:
 
         Example:
             ```python
+            # String-based (requires environment variables)
             agent.use_llm("gpt-4", "You are a helpful assistant.")
+
+            # Provider instance (no environment variables needed)
+            agent.use_llm(my_custom_client, "You are a helpful assistant.")
             ```
         """
-        if not model:
+        if model is None or (isinstance(model, str) and not model):
             raise ValueError("model cannot be None or empty")
         if not instructions:
             raise ValueError("instructions cannot be None or empty")

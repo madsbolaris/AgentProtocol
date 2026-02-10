@@ -19,5 +19,9 @@
       "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "tests"]
+  "exclude": ["node_modules", "dist", "tests"],
+  "references": [
+    { "path": "../../../packages/agents-protocol-abstractions" },
+    { "path": "../../../packages/agents-protocol-hosting" }
+  ]
 }

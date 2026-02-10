@@ -65,4 +65,11 @@ public interface IMessageContext<TContext> where TContext : class
     IAsyncEnumerable<AgentMessageDelta> StreamResponseAsync(
         Func<IAsyncEnumerable<AgentMessageDelta>> streamProvider,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Emit a streaming chunk without adding to response list.
+    /// Used for real-time token streaming where each token should trigger
+    /// an event but not create a separate message.
+    /// </summary>
+    Task EmitStreamChunkAsync(string text, CancellationToken cancellationToken = default);
 }

@@ -8,16 +8,28 @@ Supports:
 - emoji-chat (Python, .NET, TypeScript)
 
 Optionally starts the chat UI for interaction.
+
+Environment:
+- Automatically loads .env file from repo root
+- No manual environment variable setup required
 """
 
 import argparse
 import json
+import os
 import signal
 import subprocess
 import sys
 import time
 from pathlib import Path
 from typing import Dict, List, Optional
+
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    print("⚠️  python-dotenv not installed. Install with: pip install python-dotenv")
+    print("   Or run: pip install -r scripts/requirements.txt")
+    sys.exit(1)
 
 
 class SampleManager:
@@ -147,6 +159,12 @@ class SampleManager:
         # Set environment
         env = {"PORT": str(port), **subprocess.os.environ.copy()}
 
+        # For Python, add protocol packages to PYTHONPATH to support namespace packages
+        if language == "python":
+            protocol_pkg = self.repo_root / "python" / "microsoft-agents-protocol"
+            existing_path = env.get("PYTHONPATH", "")
+            env["PYTHONPATH"] = f"{protocol_pkg}:{existing_path}" if existing_path else str(protocol_pkg)
+
         # Start process
         log_file = self.log_dir / f"{sample}-{language}.log"
         with open(log_file, 'w') as log:
@@ -222,6 +240,24 @@ def main():
 
     script_dir = Path(__file__).parent
     repo_root = script_dir.parent.parent
+
+    # Load .env file from repo root if it exists
+    env_file = repo_root / ".env"
+    if env_file.exists():
+        print(f"📄 Loading environment from {env_file}")
+        load_dotenv(env_file)
+
+        # Verify LLM configuration
+        if os.getenv("FOUNDRY_ENDPOINT"):
+            print(f"   ✓ LLM configured: {os.getenv('FOUNDRY_MODEL_DEPLOYMENT', 'gpt-5-nano')}")
+        elif os.getenv("USE_LLM_RECORDINGS") == "true":
+            print("   ✓ Using LLM recordings (test mode)")
+        else:
+            print("   ⚠️  No LLM credentials found in .env")
+            print("      Samples requiring LLM may fail")
+    else:
+        print(f"⚠️  No .env file found at {env_file}")
+        print("   Create one from .env.example for LLM support")
 
     # Load config
     config_file = repo_root / "agent-config.json"

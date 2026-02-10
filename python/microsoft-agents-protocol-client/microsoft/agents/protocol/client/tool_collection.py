@@ -7,7 +7,8 @@ import json
 import inspect
 from typing import Callable, Optional, List, Dict, Any, Union, Awaitable
 from dataclasses import dataclass
-from microsoft.agents.common import ToolSchemaGenerator, ToolExecutor
+from microsoft.agents.protocol.runtime.tools.schema_generator import ToolSchemaGenerator
+from microsoft.agents.protocol.runtime.tools.executor import ToolExecutor
 
 
 @dataclass

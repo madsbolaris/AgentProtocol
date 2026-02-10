@@ -527,8 +527,7 @@ internal class AgentProtocolServer
             eventSeq++;
             await context.Response.WriteAsync($"event: run.started\n");
             await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new {
-                @event = "run.started",
-                data = new { runId, agentId, status = "in_progress", eventSeq, startedAt = DateTime.UtcNow }
+                runId, agentId, status = "in_progress", eventSeq, startedAt = DateTime.UtcNow
             })}\n\n");
             await context.Response.Body.FlushAsync();
             await Task.Delay(50);
@@ -537,8 +536,7 @@ internal class AgentProtocolServer
             eventSeq++;
             await context.Response.WriteAsync($"event: message.created\n");
             await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new {
-                @event = "message.created",
-                data = new { runId, agentId, eventSeq, message = new { messageId, role = "assistant", contents = new[] { new { kind = "text", text = "" } } }, createdAt = DateTime.UtcNow }
+                runId, agentId, eventSeq, message = new { messageId, role = "assistant", contents = new[] { new { kind = "text", text = "" } } }, createdAt = DateTime.UtcNow
             })}\n\n");
             await context.Response.Body.FlushAsync();
             await Task.Delay(50);
@@ -590,14 +588,11 @@ internal class AgentProtocolServer
                 eventSeq++;
                 await context.Response.WriteAsync($"event: message.delta\n");
                 await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new {
-                    @event = "message.delta",
-                    data = new {
-                        runId,
-                        agentId,
-                        messageId,
-                        eventSeq,
-                        delta = new { contents = new[] { new { kind = "text", text = chunk } } }
-                    }
+                    runId,
+                    agentId,
+                    messageId,
+                    eventSeq,
+                    delta = new { contents = new[] { new { kind = "text", text = chunk } } }
                 })}\n\n");
                 await context.Response.Body.FlushAsync();
                 await Task.Delay(50);
@@ -607,8 +602,7 @@ internal class AgentProtocolServer
             eventSeq++;
             await context.Response.WriteAsync($"event: message.completed\n");
             await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new {
-                @event = "message.completed",
-                data = new { runId, agentId, messageId, eventSeq, completedAt = DateTime.UtcNow }
+                runId, agentId, messageId, eventSeq, completedAt = DateTime.UtcNow
             })}\n\n");
             await context.Response.Body.FlushAsync();
             await Task.Delay(50);
@@ -617,8 +611,7 @@ internal class AgentProtocolServer
             eventSeq++;
             await context.Response.WriteAsync($"event: run.completed\n");
             await context.Response.WriteAsync($"data: {JsonSerializer.Serialize(new {
-                @event = "run.completed",
-                data = new { runId, agentId, status = "completed", output = outputMessages, eventSeq, completedAt = DateTime.UtcNow }
+                runId, agentId, status = "completed", output = outputMessages, eventSeq, completedAt = DateTime.UtcNow
             })}\n\n");
             await context.Response.Body.FlushAsync();
 

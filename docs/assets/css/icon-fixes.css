@@ -1,0 +1,97 @@
+/* Fix oversized twemoji icons */
+.twemoji {
+  display: inline-block;
+  height: 1.2em;
+  width: 1.2em;
+  vertical-align: text-bottom;
+}
+
+.twemoji svg {
+  height: 100%;
+  width: 100%;
+  fill: currentColor;
+}
+
+/* Fix headerlink (¶) styling - hide by default, show on hover */
+.headerlink {
+  opacity: 0;
+  margin-left: 0.5rem;
+  color: var(--mds-color-foreground-faint) !important;
+  text-decoration: none !important;
+  transition: opacity 0.2s ease;
+}
+
+h1:hover .headerlink,
+h2:hover .headerlink,
+h3:hover .headerlink,
+h4:hover .headerlink,
+h5:hover .headerlink,
+h6:hover .headerlink {
+  opacity: 1;
+}
+
+.headerlink:hover {
+  color: var(--mds-color-foreground-primary) !important;
+}
+
+/* Fix code block text color on dark background */
+.code-block__dOm6M.dark__aBMo7 pre,
+.code-block__dOm6M.dark__aBMo7 code,
+.code-block__dOm6M.dark__aBMo7 .line {
+  color: rgb(213, 215, 219);
+}
+
+/* Navigation expandable sections */
+.nav-expandable {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.nav-chevron {
+  display: inline-block;
+  vertical-align: middle;
+  transition: transform 0.2s ease;
+  transform: rotate(0deg);
+}
+
+.nav-expandable:not(.nav-expanded) .nav-chevron {
+  transform: rotate(0deg);
+}
+
+.nav-expandable.nav-expanded .nav-chevron {
+  transform: rotate(-180deg);
+}
+
+/* Accessibility: respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .nav-chevron {
+    transition: none;
+  }
+}
+
+.nav-submenu {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+  max-height: 2000px;
+  opacity: 1;
+}
+
+.nav-submenu.nav-collapsed {
+  max-height: 0;
+  opacity: 0;
+}
+
+/* Indent nested navigation items - same as top-level */
+.nav-submenu .sidebar-nav-menu-item_sidebarNavMenuItem__PiyI8 {
+  padding-left: 8px;
+}
+
+/* Active state background for ALL items (top-level and nested) */
+.sidebar-nav-item--active {
+  background-color: rgb(222, 223, 227) !important;
+  color: rgb(12, 12, 14) !important;
+}

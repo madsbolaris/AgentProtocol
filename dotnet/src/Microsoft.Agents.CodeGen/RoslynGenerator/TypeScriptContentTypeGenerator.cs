@@ -11,10 +11,20 @@ namespace Microsoft.Agents.CodeGen.RoslynGenerator;
 public class TypeScriptContentTypeGenerator
 {
     private readonly string _rootNamespace;
+    private Dictionary<string, string> _typeLocations = new();
+    private string _currentDirectory = "content";
 
     public TypeScriptContentTypeGenerator(string rootNamespace = "")
     {
         _rootNamespace = rootNamespace;
+    }
+
+    /// <summary>
+    /// Sets the type location mappings for cross-directory imports.
+    /// </summary>
+    public void SetTypeLocations(Dictionary<string, string> typeLocations)
+    {
+        _typeLocations = typeLocations;
     }
 
     /// <summary>
@@ -89,7 +99,8 @@ public class TypeScriptContentTypeGenerator
         var imports = CollectImports(contentModel);
         foreach (var import in imports)
         {
-            sb.AppendLine($"import {{ {import} }} from './{import}';");
+            var importPath = GetImportPath(import);
+            sb.AppendLine($"import {{ {import} }} from '{importPath}';");
         }
 
         if (imports.Any())
@@ -276,6 +287,35 @@ public class TypeScriptContentTypeGenerator
         }
 
         return imports;
+    }
+
+    /// <summary>
+    /// Gets the import path for a type, accounting for cross-directory references.
+    /// </summary>
+    private string GetImportPath(string typeName)
+    {
+        // Check if type is AIContentBase - always in same directory
+        if (typeName == "AIContentBase")
+        {
+            return "./AIContentBase";
+        }
+
+        // Check if we have location information
+        if (!_typeLocations.ContainsKey(typeName) || string.IsNullOrEmpty(_currentDirectory))
+        {
+            return $"./{typeName}";
+        }
+
+        var targetDirectory = _typeLocations[typeName];
+
+        // Same directory - relative import
+        if (targetDirectory == _currentDirectory)
+        {
+            return $"./{typeName}";
+        }
+
+        // Different directory - cross-directory import
+        return $"../{targetDirectory}/{typeName}";
     }
 
     /// <summary>

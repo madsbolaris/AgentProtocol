@@ -88,6 +88,32 @@ class AgentHostBuilder:
         new_builder._agent_configurations = self._agent_configurations + [configure]
         return new_builder
 
+    def add_agent(
+        self, name: str, configure: Callable[[AgentBuilder], AgentBuilder]
+    ) -> "AgentHostBuilder":
+        """
+        Add a named agent with the specified configuration.
+
+        Args:
+            name: The name of the agent.
+            configure: A function that configures an AgentBuilder.
+
+        Returns:
+            A new AgentHostBuilder with the agent added.
+
+        Example:
+            ```python
+            builder.add_agent("sales", lambda agent: agent
+                .use_llm("gpt-4", "You are a sales assistant.")
+            )
+            ```
+        """
+        # For now, named agents are stored the same way as default agents
+        # In the future, this could support routing by name
+        new_builder = self._copy()
+        new_builder._agent_configurations = self._agent_configurations + [configure]
+        return new_builder
+
     def use_production_defaults(self) -> "AgentHostBuilder":
         """
         Configure production defaults (logging, retries, queues, etc.).
@@ -300,7 +326,24 @@ class AgentHostBuilder:
         for configure in self._agent_configurations:
             agent_builder = AgentBuilder(self._services)
             configured = configure(agent_builder)
-            agents.append(configured._build())
+
+            # Validate environment variables for string-based LLM configuration
+            agent_config = configured._build()
+            if agent_config.model is not None and isinstance(agent_config.model, str):
+                # String-based model requires gateway environment variables
+                import os
+                if not os.environ.get("FOUNDRY_ENDPOINT"):
+                    raise ConfigurationError(
+                        "FOUNDRY_ENDPOINT environment variable is required when using string-based model configuration. "
+                        "Either set FOUNDRY_ENDPOINT or pass an LLM client instance to use_llm()."
+                    )
+                if not os.environ.get("FOUNDRY_API_KEY"):
+                    raise ConfigurationError(
+                        "FOUNDRY_API_KEY environment variable is required when using string-based model configuration. "
+                        "Either set FOUNDRY_API_KEY or pass an LLM client instance to use_llm()."
+                    )
+
+            agents.append(agent_config)
 
         # Initialize services
         state_store = self._state_store or MemoryStateStore()

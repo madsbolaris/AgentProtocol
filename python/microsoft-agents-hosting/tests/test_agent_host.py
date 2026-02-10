@@ -3,6 +3,7 @@
 
 """Tests for AgentHost."""
 
+import os
 import pytest
 import asyncio
 from typing import Any
@@ -19,6 +20,13 @@ from microsoft.agents.hosting.core import (
     SandboxConfig,
 )
 from microsoft.agents.hosting.builder.agent_builder import AgentConfiguration
+
+
+@pytest.fixture(autouse=True)
+def setup_test_env(monkeypatch):
+    """Set up test environment variables for all tests."""
+    monkeypatch.setenv("FOUNDRY_ENDPOINT", "https://test.api.com")
+    monkeypatch.setenv("FOUNDRY_API_KEY", "test-key-123")
 
 
 class MockStateStore(IStateStore):
@@ -73,11 +81,17 @@ class MockQueueAdapter(IQueueAdapter):
 
 def create_test_agent_host():
     """Create a test agent host with minimal configuration."""
+    from microsoft.agents.hosting.core import IAgentContext, CancellationToken
+
+    async def echo_handler(message: str, context: IAgentContext, cancellation_token: CancellationToken):
+        """Simple echo handler for testing."""
+        await context.respond_async(f"Echo: {message}", cancellation_token)
+
     mock_agent = AgentConfiguration(
         model="gpt-4",
         instructions="Test prompt",
         functions=[],
-        user_message_handlers=[],
+        user_message_handlers=[echo_handler],
         reaction_handlers=[],
         error_handler=None,
     )
@@ -121,8 +135,10 @@ async def test_agent_host_process_message():
     host, _, _ = create_test_agent_host()
     response = await host.process_message("Hello", thread_id="test_thread")
     assert response is not None
-    assert "text" in response
-    assert "Echo: Hello" in response["text"]
+    assert "contents" in response
+    assert len(response["contents"]) > 0
+    assert "text" in response["contents"][0]
+    assert "Echo: Hello" in response["contents"][0]["text"]
 
 
 @pytest.mark.asyncio
@@ -131,7 +147,9 @@ async def test_agent_host_process_message_without_thread_id():
     host, _, _ = create_test_agent_host()
     response = await host.process_message("Test message")
     assert response is not None
-    assert "text" in response
+    assert "contents" in response
+    assert len(response["contents"]) > 0
+    assert "text" in response["contents"][0]
 
 
 @pytest.mark.asyncio
@@ -154,7 +172,8 @@ async def test_agent_host_process_message_no_agents():
     )
 
     response = await host.process_message("Hello")
-    assert response["text"] == "No agents configured"
+    assert "contents" in response
+    assert response["contents"][0]["text"] == "No response generated"
 
 
 @pytest.mark.asyncio

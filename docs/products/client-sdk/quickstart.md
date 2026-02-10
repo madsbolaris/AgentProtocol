@@ -1,5 +1,8 @@
 # Client SDK Quickstart
 
+!!! tip "New to Agent Protocol?"
+    This quickstart focuses on the Client SDK specifically. If you want a unified 30-minute guide that shows all SDKs working together, start with the [Getting Started Guide](../../getting-started.md).
+
 **Get started in 30 minutes**
 
 This quickstart walks you through the simplest ways to interact with agents: simple completions, streaming responses, persistent conversations, and tool usage across Python, TypeScript, and C#.

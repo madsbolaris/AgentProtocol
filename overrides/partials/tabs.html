@@ -1,0 +1,30 @@
+{#-
+  Custom tabs (navigation) partial
+-#}
+
+{% if "navigation.tabs" in config.theme.features %}
+  {% if "navigation.tabs.sticky" in config.theme.features %}
+    {% set class = "md-tabs md-tabs--sticky" %}
+  {% else %}
+    {% set class = "md-tabs" %}
+  {% endif %}
+  <nav class="{{ class }}" aria-label="Tabs" data-md-component="tabs">
+    <div class="md-tabs__inner md-grid">
+      <ul class="md-tabs__list">
+        {% for nav_item in nav %}
+          <li class="md-tabs__item">
+            {% if nav_item.active %}
+              <a href="{{ nav_item.url | url }}" class="md-tabs__link md-tabs__link--active">
+                {{ nav_item.title }}
+              </a>
+            {% else %}
+              <a href="{{ nav_item.url | url }}" class="md-tabs__link">
+                {{ nav_item.title }}
+              </a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </nav>
+{% endif %}

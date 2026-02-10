@@ -1,0 +1,18 @@
+{#-
+  Custom source file (git info) partial
+-#}
+
+{% if page.meta %}
+  {% if page.meta.git_revision_date_localized or page.meta.revision_date %}
+    <hr>
+    <div class="md-source-file">
+      <small>
+        {% if page.meta.git_revision_date_localized %}
+          Last update: {{ page.meta.git_revision_date_localized }}
+        {% elif page.meta.revision_date %}
+          Last update: {{ page.meta.revision_date }}
+        {% endif %}
+      </small>
+    </div>
+  {% endif %}
+{% endif %}

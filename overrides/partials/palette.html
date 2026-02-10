@@ -1,0 +1,17 @@
+{#-
+  Custom palette (theme toggle) partial
+-#}
+
+{% if config.theme.palette %}
+  {% if not config.theme.palette is mapping %}
+    <form class="md-header__option" data-md-component="palette">
+      {% for option in config.theme.palette %}
+        {% set scheme = option.scheme | d("default", true) %}
+        <input class="md-option" data-md-color-scheme="{{ scheme }}" data-md-color-primary="{{ option.primary | replace(' ', '-') }}" data-md-color-accent="{{ option.accent | replace(' ', '-') }}" {% if option.media %}data-md-color-media="{{ option.media }}"{% endif %} type="radio" name="__palette" id="__palette_{{ loop.index }}">
+        <label class="md-header__button md-icon" title="{{ option.toggle.name }}" for="__palette_{{ loop.index0 or loop.length }}" hidden>
+          {% include ".icons/" ~ option.toggle.icon ~ ".svg" %}
+        </label>
+      {% endfor %}
+    </form>
+  {% endif %}
+{% endif %}

@@ -1,0 +1,41 @@
+{% if page.toc %}
+  <nav class="outline-nav_listRoot__Sm1fr" aria-label="Table of contents">
+    <ul class="sidebar_navList__4Rg4g">
+      {% for toc_item in page.toc.items %}
+        <li>
+          <a href="{{ toc_item.url }}" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow{% if loop.first %} outline-link_isActive__VNGIh{% endif %}" id="toc-{{ toc_item.id }}">
+            <span class="outline-nav_navLabel__HrjQb">
+              <span class="text_root__r0DFB hds-typography-body-200">{{ toc_item.title }}</span>
+            </span>
+          </a>
+          {% if toc_item.children %}
+            <ul class="sidebar_navList__4Rg4g">
+              {% for toc_subitem in toc_item.children %}
+                <li>
+                  <a href="{{ toc_subitem.url }}" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-{{ toc_subitem.id }}">
+                    <span class="outline-nav_navLabel__HrjQb">
+                      <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">{{ toc_subitem.title }}</span>
+                    </span>
+                  </a>
+                  {% if toc_subitem.children %}
+                    <ul class="sidebar_navList__4Rg4g">
+                      {% for toc_subsubitem in toc_subitem.children %}
+                        <li>
+                          <a href="{{ toc_subsubitem.url }}" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-{{ toc_subsubitem.id }}">
+                            <span class="outline-nav_navLabel__HrjQb">
+                              <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">{{ toc_subsubitem.title }}</span>
+                            </span>
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+{% endif %}

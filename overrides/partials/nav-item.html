@@ -1,0 +1,39 @@
+{#-
+  Custom navigation item partial (recursive)
+-#}
+
+<li class="md-nav__item{% if nav_item.active %} md-nav__item--active{% endif %}{% if nav_item.children %} md-nav__item--nested{% endif %}">
+  {% if nav_item.children %}
+    <input class="md-nav__toggle md-toggle md-toggle--indeterminate"
+           type="checkbox"
+           id="{{ path }}"
+           {% if nav_item.active %}checked{% endif %}>
+
+    <label class="md-nav__link" for="{{ path }}" id="{{ path }}_label" tabindex="0">
+      {{ nav_item.title }}
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+
+    <nav class="md-nav" data-md-level="{{ level }}">
+      <label class="md-nav__title" for="{{ path }}">
+        <span class="md-nav__icon md-icon"></span>
+        {{ nav_item.title }}
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        {% for nav_item in nav_item.children %}
+          {% set path = path ~ "-" ~ loop.index %}
+          {% set level = level + 1 %}
+          {% include "partials/nav-item.html" %}
+        {% endfor %}
+      </ul>
+    </nav>
+  {% else %}
+    {% set class = "md-nav__link" %}
+    {% if nav_item.active %}
+      {% set class = class ~ " md-nav__link--active" %}
+    {% endif %}
+    <a href="{{ nav_item.url | url }}" class="{{ class }}">
+      {{ nav_item.title }}
+    </a>
+  {% endif %}
+</li>

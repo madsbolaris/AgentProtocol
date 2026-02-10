@@ -1,0 +1,42 @@
+{
+  "typescript/client-simple-completion/main": {
+    "testId": "client-simple-completion",
+    "section": "main",
+    "title": "Simple Chat Completion",
+    "language": "typescript",
+    "file": "typescript/client-simple-completion_main.ts",
+    "sourceFile": "typescript/packages/agents-protocol-client/tests/simplified-client.test.ts"
+  },
+  "typescript/client-tools/main": {
+    "testId": "client-tools",
+    "section": "main",
+    "title": "Tools with Lambda Functions",
+    "language": "typescript",
+    "file": "typescript/client-tools_main.ts",
+    "sourceFile": "typescript/packages/agents-protocol-client/tests/simplified-client.test.ts"
+  },
+  "typescript/client-streaming/main": {
+    "testId": "client-streaming",
+    "section": "main",
+    "title": "Streaming with Callback",
+    "language": "typescript",
+    "file": "typescript/client-streaming_main.ts",
+    "sourceFile": "typescript/packages/agents-protocol-client/tests/simplified-client.test.ts"
+  },
+  "typescript/client-resume-conversation/main": {
+    "testId": "client-resume-conversation",
+    "section": "main",
+    "title": "Resume Conversation",
+    "language": "typescript",
+    "file": "typescript/client-resume-conversation_main.ts",
+    "sourceFile": "typescript/packages/agents-protocol-client/tests/simplified-client.test.ts"
+  },
+  "typescript/client-conversation/main": {
+    "testId": "client-conversation",
+    "section": "main",
+    "title": "Persistent Conversation",
+    "language": "typescript",
+    "file": "typescript/client-conversation_main.ts",
+    "sourceFile": "typescript/packages/agents-protocol-client/tests/simplified-client.test.ts"
+  }
+}

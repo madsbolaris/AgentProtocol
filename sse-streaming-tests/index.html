@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+  
+    <title>SSE Streaming Format Tests - Agent Framework Documentation</title>
+  
+  
+  
+    <meta name="description" content="A unified protocol for building AI agents across multiple platforms and frameworks">
+  
+  
+    <meta name="description" content="A unified protocol for building AI agents across multiple platforms and frameworks">
+  
+  
+  
+    <meta name="author" content="Agent Framework Contributors">
+  
+  
+  <link rel="canonical" href="None">
+  
+  
+    <link rel="icon" href="../assets/images/favicon.png">
+  
+  
+  <!-- CSS -->
+  
+    <link rel="stylesheet" href="../assets/css/main.css">
+  
+    <link rel="stylesheet" href="../assets/css/inline-styles-1.css">
+  
+    <link rel="stylesheet" href="../assets/css/inline-styles-2.css">
+  
+    <link rel="stylesheet" href="../assets/css/inline-styles-3.css">
+  
+    <link rel="stylesheet" href="../assets/css/inline-styles-4.css">
+  
+    <link rel="stylesheet" href="../assets/css/inline-styles-5.css">
+  
+    <link rel="stylesheet" href="../assets/css/inline-styles-6.css">
+  
+    <link rel="stylesheet" href="../assets/css/icon-fixes.css">
+  
+  
+  <!-- Fonts from Bunny CDN -->
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link href="https://fonts.bunny.net/css?family=anaheim:400|jetbrains-mono:400,400i,500,500i" rel="stylesheet">
+  
+  <!-- Material color scheme data attribute -->
+  <script>
+    var palette = localStorage.getItem("__palette") || '{"index":0}';
+    try {
+      var scheme = JSON.parse(palette).index === 0 ? "default" : "slate";
+      document.documentElement.setAttribute("data-md-color-scheme", scheme);
+    } catch(e) {
+      document.documentElement.setAttribute("data-md-color-scheme", "default");
+    }
+  </script>
+</head>
+
+<body class="mds-fonts">
+  <div id="__next">
+    <div class="core-dev-dot-layout_root__MT1PZ">
+      <div class="base-layout_root___qiZs" data-layout="base-new">
+
+          
+          <div class="base-layout_header__XhkxS">
+            <header class="navigation-header_root__oE_HT">
+              <div class="navigation-header_leftSide__V0xlc">
+                <a href=".." class="navigation-header_logo__JMwHY g-focus-ring-from-box-shadow">
+                  
+                  <span class="hds-typography-body-200 hds-font-weight-semibold">Agent Framework Documentation</span>
+                </a>
+
+                
+                <nav aria-label="Main" data-orientation="horizontal" dir="ltr" class="nav-bar-list-container_nav__C_i0_">
+                  <div style="position: relative;">
+                    <ul data-orientation="horizontal" class="nav-bar-list-container_ul___04HI" dir="ltr">
+                      
+                        <li>
+                          <a aria-label="Home" class="primary-nav-link_root__RXZIC g-focus-ring-from-box-shadow-dark" href="..">
+                            <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-medium primary-nav-link_linkText__58O0C">Home</span>
+                          </a>
+                        </li>
+                      
+                        <li>
+                          <a aria-label="Concepts" class="primary-nav-link_root__RXZIC g-focus-ring-from-box-shadow-dark" href="..">
+                            <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-medium primary-nav-link_linkText__58O0C">Concepts</span>
+                          </a>
+                        </li>
+                      
+                        <li>
+                          <a aria-label="Client SDK" class="primary-nav-link_root__RXZIC g-focus-ring-from-box-shadow-dark" href="../products/client-sdk/">
+                            <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-medium primary-nav-link_linkText__58O0C">Client SDK</span>
+                          </a>
+                        </li>
+                      
+                        <li>
+                          <a aria-label="Hosting SDK" class="primary-nav-link_root__RXZIC g-focus-ring-from-box-shadow-dark" href="../products/hosting-sdk/">
+                            <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-medium primary-nav-link_linkText__58O0C">Hosting SDK</span>
+                          </a>
+                        </li>
+                      
+                        <li>
+                          <a aria-label="UX React" class="primary-nav-link_root__RXZIC g-focus-ring-from-box-shadow-dark" href="..">
+                            <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-medium primary-nav-link_linkText__58O0C">UX React</span>
+                          </a>
+                        </li>
+                      
+                        <li>
+                          <a aria-label="XML" class="primary-nav-link_root__RXZIC g-focus-ring-from-box-shadow-dark" href="../products/xml/">
+                            <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-medium primary-nav-link_linkText__58O0C">XML</span>
+                          </a>
+                        </li>
+                      
+                        <li>
+                          <a aria-label="Operations SDK" class="primary-nav-link_root__RXZIC g-focus-ring-from-box-shadow-dark" href="..">
+                            <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-medium primary-nav-link_linkText__58O0C">Operations SDK</span>
+                          </a>
+                        </li>
+                      
+                        <li>
+                          <a aria-label="Reference" class="primary-nav-link_root__RXZIC g-focus-ring-from-box-shadow-dark" href="..">
+                            <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-medium primary-nav-link_linkText__58O0C">Reference</span>
+                          </a>
+                        </li>
+                      
+                        <li>
+                          <a aria-label="Community" class="primary-nav-link_root__RXZIC g-focus-ring-from-box-shadow-dark" href="..">
+                            <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-medium primary-nav-link_linkText__58O0C">Community</span>
+                          </a>
+                        </li>
+                      
+                    </ul>
+                  </div>
+                </nav>
+              </div>
+              <div class="navigation-header_rightSide__3l_uw">
+                <div class="navigation-header_authenticationControls__EP1LY">
+                  
+                    <a href="https://github.com/madsbolaris/AgentFramework" class="button-link_root___GwxM hds-font-weight-medium button-link_medium__a2_tZ button-link_secondary__5TbbU g-focus-ring-from-box-shadow" title="Go to repository" target="_blank" rel="noopener">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                      </svg>
+                      <span class="hds-typography-body-200">GitHub</span>
+                    </a>
+                  
+                  
+                    <button class="button_root__itF9E hds-font-weight-medium button_medium__Cm2eg button_secondary__m5f7i g-focus-ring-from-box-shadow" aria-label="Toggle dark mode" id="theme-toggle-button">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+                      </svg>
+                    </button>
+                  
+                </div>
+              </div>
+            </header>
+          </div>
+          
+
+          <div class="sidebar-sidecar-layout_root__h5rD8">
+            
+              
+              <div class="mobile-menu-container_root__fPUFu sidebar-sidecar-layout_sidebarContainer__4fcF8" style="left: -150vw; display: none;">
+                <div class="sidebar-sidecar-layout_sidebarContentWrapper__ftn5q">
+                  
+                  <div class="g-show-with-mobile-menu mobile-menu-container_mobileAuthenticationControlsWrap__8lAp2 sidebar-sidecar-layout_mobileAuthControlsContainer__ddlYG sidebar-sidecar-layout_sidePadding__iwNw_">
+                    <div class="mobile-menu-container_unauthenticatedControls__CJQpx">
+                      
+                      <div class="mobile-menu-container_themeSwitcher__xqlMF hds-font-weight-medium">
+                        <label class="theme-switcher_label__7Boh2 hds-typography-body-200" for="theme-select-mobile">Theme</label>
+                        <div class="theme-switcher_root__hYLSl">
+                          <span class="theme-switcher_themeIcon__CXlZj">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16" aria-hidden="true">
+                              <path fill="currentColor" fill-rule="evenodd" d="M0 3.25A2.25 2.25 0 012.25 1h11.5A2.25 2.25 0 0116 3.25v6.5A2.25 2.25 0 0113.75 12H8.5v1.5H11a.75.75 0 010 1.5H5a.75.75 0 010-1.5h2V12H2.25A2.25 2.25 0 010 9.75v-6.5zm13.75 7.25a.75.75 0 00.75-.75v-6.5a.75.75 0 00-.75-.75H2.25a.75.75 0 00-.75.75v6.5c0 .414.336.75.75.75h11.5z" clip-rule="evenodd"/>
+                            </svg>
+                          </span>
+                          <select class="theme-switcher_select__c1j_8 g-focus-ring-from-box-shadow-dark hds-font-weight-medium hds-typography-body-100" id="theme-select-mobile">
+                            <option value="dark">Dark</option>
+                            <option value="light">Light</option>
+                            <option value="system">System</option>
+                          </select>
+                          <span class="theme-switcher_trailingIcon__fW6AC">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16" aria-hidden="true">
+                              <g fill="currentColor">
+                                <path d="M8.55 2.24a.75.75 0 00-1.1 0L4.2 5.74a.75.75 0 101.1 1.02L8 3.852l2.7 2.908a.75.75 0 101.1-1.02l-3.25-3.5zM7.45 13.76a.75.75 0 001.1 0l3.25-3.5a.75.75 0 10-1.1-1.02L8 12.148 5.3 9.24a.75.75 0 00-1.1 1.02l3.25 3.5z"/>
+                              </g>
+                            </svg>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  
+                  <div class="sidebar-sidecar-layout_sidePadding__iwNw_">
+                    <div class="sidebar_sidebar___fTlC">
+                      <nav aria-labelledby="sidebar-label" class="sidebar_nav__IworY" id="sidebar-nav">
+  
+  <div class="g-screen-reader-only">
+    <h2 class="sidebar-headings_root__tGfxC" id="sidebar-label">Agent Framework Documentation</h2>
+  </div>
+
+  <ul class="sidebar_navList__4Rg4g">
+    
+      
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+      
+
+      
+      
+        
+      
+
+      
+    
+      
+      
+
+      
+      
+        
+      
+
+      
+    
+  </ul>
+</nav>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+
+            <div class="sidebar-sidecar-layout_contentWrapper__Z5BK4">
+              <div class="sidebar-sidecar-layout_paddedAreaWrapper___S_Ff">
+                <div class="sidebar-sidecar-layout_mainAndSidecar__UDm3Z">
+                  <main class="sidebar-sidecar-layout_main__0SN51">
+                    
+                      <div class="dev-dot-content_root__UJDct">
+  <div class="docs-view_docsPageHeading___xkrK">
+    
+  </div>
+
+  <div class="g-type-body">
+    <h1 id="sse-streaming-format-tests">SSE Streaming Format Tests<a class="headerlink" href="#sse-streaming-format-tests" title="Permanent link">&para;</a></h1>
+<p>This document describes the tests created to prevent regression of SSE streaming format issues.</p>
+<h2 id="background">Background<a class="headerlink" href="#background" title="Permanent link">&para;</a></h2>
+<p>During development, several issues occurred with the SSE streaming implementation:</p>
+<ol>
+<li><strong>Event Type Duplication</strong>: Event types were duplicated in the JSON data payload when they should only appear on the <code>event:</code> line</li>
+<li><strong>UI Parsing Issues</strong>: The UI was expecting event types in the JSON data instead of reading them from the <code>event:</code> line</li>
+<li><strong>Property Name Inconsistency</strong>: The .NET server was sending PascalCase property names while JavaScript expected camelCase</li>
+<li><strong>Missing Event Handlers</strong>: The UI didn't have handlers for <code>message.updated</code> events</li>
+</ol>
+<h2 id="test-coverage">Test Coverage<a class="headerlink" href="#test-coverage" title="Permanent link">&para;</a></h2>
+<h3 id="net-tests">.NET Tests<a class="headerlink" href="#net-tests" title="Permanent link">&para;</a></h3>
+<p>Location: <code>dotnet/tests/Microsoft.Agents.Protocol.Hosting.Tests/SseStreamingFormatTests.cs</code></p>
+<h4 id="test-runsstreamendpoint_sendseventtypeoneventline">Test: <code>RunsStreamEndpoint_SendsEventTypeOnEventLine</code><a class="headerlink" href="#test-runsstreamendpoint_sendseventtypeoneventline" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Purpose</strong>: Verifies that event types are sent on the <code>event:</code> line in SSE format</li>
+<li><strong>What it prevents</strong>: Event types missing from SSE stream or only in JSON data</li>
+<li><strong>Example assertion</strong>: <code>output.Should().Contain("event: run.created")</code></li>
+</ul>
+<h4 id="test-runsstreamendpoint_datalinecontainsjsonwithouteventfield">Test: <code>RunsStreamEndpoint_DataLineContainsJsonWithoutEventField</code><a class="headerlink" href="#test-runsstreamendpoint_datalinecontainsjsonwithouteventfield" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Purpose</strong>: Verifies that the JSON data does NOT contain a duplicate <code>event</code> field</li>
+<li><strong>What it prevents</strong>: Duplicating event type in both SSE <code>event:</code> line and JSON data</li>
+<li><strong>Example assertion</strong>: <code>root.TryGetProperty("event", out _).Should().BeFalse()</code></li>
+</ul>
+<h4 id="test-runsstreamendpoint_usescamelcasepropertynames">Test: <code>RunsStreamEndpoint_UsesCamelCasePropertyNames</code><a class="headerlink" href="#test-runsstreamendpoint_usescamelcasepropertynames" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Purpose</strong>: Verifies that all property names use camelCase, not PascalCase</li>
+<li><strong>What it prevents</strong>: JavaScript parsing errors due to property name mismatches</li>
+<li><strong>Example assertions</strong>:</li>
+<li><code>dataLines.Should().Contain("\"runId\"")</code></li>
+<li><code>dataLines.Should().NotContain("\"RunId\"")</code></li>
+</ul>
+<h4 id="test-runsstreamendpoint_sendsallrequiredeventtypes">Test: <code>RunsStreamEndpoint_SendsAllRequiredEventTypes</code><a class="headerlink" href="#test-runsstreamendpoint_sendsallrequiredeventtypes" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Purpose</strong>: Verifies that all required event types are sent during streaming</li>
+<li><strong>What it prevents</strong>: Missing events that the UI expects</li>
+<li><strong>Example assertions</strong>:</li>
+<li><code>eventList.Should().Contain("event: run.created")</code></li>
+<li><code>eventList.Should().Contain("event: message.updated")</code></li>
+<li><code>eventList.Should().Contain("event: run.completed")</code></li>
+</ul>
+<h3 id="python-tests">Python Tests<a class="headerlink" href="#python-tests" title="Permanent link">&para;</a></h3>
+<p>Location: <code>python/microsoft-agents-hosting/tests/test_sse_streaming_format.py</code></p>
+<h4 id="test-test_runs_stream_sends_event_type_on_event_line">Test: <code>test_runs_stream_sends_event_type_on_event_line</code><a class="headerlink" href="#test-test_runs_stream_sends_event_type_on_event_line" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Purpose</strong>: Same as .NET version - verifies event types on <code>event:</code> line</li>
+<li><strong>Example assertion</strong>: <code>assert 'event: run.created' in output</code></li>
+</ul>
+<h4 id="test-test_runs_stream_data_line_contains_json_without_event_field">Test: <code>test_runs_stream_data_line_contains_json_without_event_field</code><a class="headerlink" href="#test-test_runs_stream_data_line_contains_json_without_event_field" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Purpose</strong>: Same as .NET version - verifies no duplicate event field in JSON</li>
+<li><strong>Example assertion</strong>: <code>assert 'event' not in data</code></li>
+</ul>
+<h4 id="test-test_runs_stream_uses_camel_case_property_names">Test: <code>test_runs_stream_uses_camel_case_property_names</code><a class="headerlink" href="#test-test_runs_stream_uses_camel_case_property_names" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Purpose</strong>: Verifies camelCase property names (not snake_case)</li>
+<li><strong>What it prevents</strong>: Python's tendency to use snake_case causing UI parsing errors</li>
+<li><strong>Example assertions</strong>:</li>
+<li><code>assert '"runId"' in all_data</code></li>
+<li><code>assert '"run_id"' not in all_data</code></li>
+</ul>
+<h4 id="test-test_runs_stream_sends_all_required_event_types">Test: <code>test_runs_stream_sends_all_required_event_types</code><a class="headerlink" href="#test-test_runs_stream_sends_all_required_event_types" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Purpose</strong>: Same as .NET version - verifies all required events</li>
+<li><strong>Example assertion</strong>: <code>assert 'run.completed' in events</code></li>
+</ul>
+<h4 id="test-test_sse_format_no_nested_event_data_structure">Test: <code>test_sse_format_no_nested_event_data_structure</code><a class="headerlink" href="#test-test_sse_format_no_nested_event_data_structure" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Purpose</strong>: Explicitly verifies NO nested <code>{event, data}</code> structure</li>
+<li><strong>What it prevents</strong>: The double-nesting mistake that was made during development</li>
+<li><strong>Example assertion</strong>: <code>assert not ('event' in data and 'data' in data)</code></li>
+</ul>
+<h2 id="sse-format-specification">SSE Format Specification<a class="headerlink" href="#sse-format-specification" title="Permanent link">&para;</a></h2>
+<p>The correct SSE format for Agent Protocol streaming is:</p>
+<div class="code-block__dOm6M dark__aBMo7 undefined is-standalone__WLWxy language-text mdx-code-blocks_codeBlockMargin__xk4yr">
+<div class="header__42Fek"></div>
+<div class="body__pLFmP">
+<pre style="display: none;"><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">event: run.created</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">data: {&quot;runId&quot;: &quot;...&quot;, &quot;threadId&quot;: &quot;...&quot;, &quot;status&quot;: &quot;queued&quot;, ...}</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">event: run.started</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">data: {&quot;runId&quot;: &quot;...&quot;, &quot;threadId&quot;: &quot;...&quot;, &quot;status&quot;: &quot;in_progress&quot;, ...}</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">event: message.created</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">data: {&quot;runId&quot;: &quot;...&quot;, &quot;threadId&quot;: &quot;...&quot;, &quot;message&quot;: {...}, ...}</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">event: message.updated</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">data: {&quot;runId&quot;: &quot;...&quot;, &quot;threadId&quot;: &quot;...&quot;, &quot;messageId&quot;: &quot;...&quot;, &quot;message&quot;: {...}, ...}</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">event: message.completed</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">data: {&quot;runId&quot;: &quot;...&quot;, &quot;threadId&quot;: &quot;...&quot;, &quot;messageId&quot;: &quot;...&quot;, &quot;usage&quot;: {...}, ...}</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">event: run.completed</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">data: {&quot;runId&quot;: &quot;...&quot;, &quot;threadId&quot;: &quot;...&quot;, &quot;status&quot;: &quot;completed&quot;, &quot;output&quot;: [...], ...}</span>
+</span></pre>
+<pre class="code__J06se" id=":r08fa6f:"><code><span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">event: run.created</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">data: {&quot;runId&quot;: &quot;...&quot;, &quot;threadId&quot;: &quot;...&quot;, &quot;status&quot;: &quot;queued&quot;, ...}</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">event: run.started</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">data: {&quot;runId&quot;: &quot;...&quot;, &quot;threadId&quot;: &quot;...&quot;, &quot;status&quot;: &quot;in_progress&quot;, ...}</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">event: message.created</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">data: {&quot;runId&quot;: &quot;...&quot;, &quot;threadId&quot;: &quot;...&quot;, &quot;message&quot;: {...}, ...}</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">event: message.updated</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">data: {&quot;runId&quot;: &quot;...&quot;, &quot;threadId&quot;: &quot;...&quot;, &quot;messageId&quot;: &quot;...&quot;, &quot;message&quot;: {...}, ...}</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">event: message.completed</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">data: {&quot;runId&quot;: &quot;...&quot;, &quot;threadId&quot;: &quot;...&quot;, &quot;messageId&quot;: &quot;...&quot;, &quot;usage&quot;: {...}, ...}</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">event: run.completed</span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">data: {&quot;runId&quot;: &quot;...&quot;, &quot;threadId&quot;: &quot;...&quot;, &quot;status&quot;: &quot;completed&quot;, &quot;output&quot;: [...], ...}</span>
+</span></span></code></pre>
+<button type="button" class="button__gOWvd size-small__kT0Jp icon-only__5c-is color-secondary-white__AseI0 copy-button__uXOTd idle__1ofXr copy-button__nMsTD" aria-label="Copy" aria-describedby=":r08fa6f:">
+<svg class="flight-icon__f6lPO flight-icon-clipboard-copy display-inline__ItStG" aria-hidden="true" fill="currentColor" width="12" height="12" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+<path fill="currentColor" fill-rule="evenodd" d="M2 4.75C2 3.784 2.784 3 3.75 3h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v6.586A1.75 1.75 0 0112.25 16h-8.5A1.75 1.75 0 012 14.25V4.75zm1.75-.25a.25.25 0 00-.25.25v9.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25V7.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H3.75z" clip-rule="evenodd"/>
+<path fill="currentColor" d="M4.5 6.5a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 014.5 6.5zm0 3a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 014.5 9.5zm.75 2.25a.75.75 0 000 1.5h2.5a.75.75 0 000-1.5h-2.5z"/>
+</svg>
+</button>
+</div>
+</div>
+<h3 id="key-requirements">Key Requirements<a class="headerlink" href="#key-requirements" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Event Type Location</strong>: Event type MUST be on the <code>event:</code> line, NOT in the JSON data</li>
+<li><strong>No Duplication</strong>: The JSON data MUST NOT contain an <code>event</code> field</li>
+<li><strong>Property Naming</strong>: All property names MUST use camelCase (e.g., <code>runId</code>, not <code>RunId</code> or <code>run_id</code>)</li>
+<li><strong>Event Sequence</strong>: Events MUST include an <code>eventSeq</code> field for ordering</li>
+</ol>
+<h2 id="ui-requirements">UI Requirements<a class="headerlink" href="#ui-requirements" title="Permanent link">&para;</a></h2>
+<p>The UI (<code>demos/agent-demo.html</code>) has been updated to:</p>
+<ol>
+<li><strong>Parse Event Line</strong>: Read event type from <code>event:</code> line and store in <code>currentEventType</code></li>
+<li><strong>Parse Data Line</strong>: Parse JSON from <code>data:</code> line as <code>eventData</code></li>
+<li><strong>Handle Case Variations</strong>: Support both camelCase and PascalCase property names for compatibility</li>
+<li><strong>Handle All Events</strong>: Process <code>message.updated</code> events for streaming text display</li>
+</ol>
+<h2 id="running-the-tests">Running the Tests<a class="headerlink" href="#running-the-tests" title="Permanent link">&para;</a></h2>
+<h3 id="net">.NET<a class="headerlink" href="#net" title="Permanent link">&para;</a></h3>
+<div class="code-block__dOm6M dark__aBMo7 undefined is-standalone__WLWxy language-text mdx-code-blocks_codeBlockMargin__xk4yr">
+<div class="header__42Fek"></div>
+<div class="body__pLFmP">
+<pre style="display: none;"><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"><span style="color: var(--code-block-color-function);">cd dotnet/tests/Microsoft.Agents.Protocol.Hosting.Tests</span></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">dotnet <span style="color: var(--code-block-color-function);">test</span> --filter <span style="color: var(--code-block-color-string);">&quot;FullyQualifiedName~SseStreamingFormatTests&quot;</span></span>
+</span></pre>
+<pre class="code__J06se" id=":r62f5de:"><code><span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"><span style="color: var(--code-block-color-function);">cd dotnet/tests/Microsoft.Agents.Protocol.Hosting.Tests</span></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">dotnet <span style="color: var(--code-block-color-function);">test</span> --filter <span style="color: var(--code-block-color-string);">&quot;FullyQualifiedName~SseStreamingFormatTests&quot;</span></span>
+</span></span></code></pre>
+<button type="button" class="button__gOWvd size-small__kT0Jp icon-only__5c-is color-secondary-white__AseI0 copy-button__uXOTd idle__1ofXr copy-button__nMsTD" aria-label="Copy" aria-describedby=":r62f5de:">
+<svg class="flight-icon__f6lPO flight-icon-clipboard-copy display-inline__ItStG" aria-hidden="true" fill="currentColor" width="12" height="12" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+<path fill="currentColor" fill-rule="evenodd" d="M2 4.75C2 3.784 2.784 3 3.75 3h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v6.586A1.75 1.75 0 0112.25 16h-8.5A1.75 1.75 0 012 14.25V4.75zm1.75-.25a.25.25 0 00-.25.25v9.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25V7.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H3.75z" clip-rule="evenodd"/>
+<path fill="currentColor" d="M4.5 6.5a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 014.5 6.5zm0 3a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 014.5 9.5zm.75 2.25a.75.75 0 000 1.5h2.5a.75.75 0 000-1.5h-2.5z"/>
+</svg>
+</button>
+</div>
+</div>
+<h3 id="python">Python<a class="headerlink" href="#python" title="Permanent link">&para;</a></h3>
+<div class="code-block__dOm6M dark__aBMo7 undefined is-standalone__WLWxy language-text mdx-code-blocks_codeBlockMargin__xk4yr">
+<div class="header__42Fek"></div>
+<div class="body__pLFmP">
+<pre style="display: none;"><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"><span style="color: var(--code-block-color-function);">cd python/microsoft-agents-hosting</span></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">pytest tests/test_sse_streaming_format.py -v</span>
+</span></pre>
+<pre class="code__J06se" id=":rffdb8e:"><code><span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line"><span style="color: var(--code-block-color-function);">cd python/microsoft-agents-hosting</span></span>
+</span><span class="line-of-code__mDztA line-highlight-first__OMDUP line-highlight-last__qC6nm"><span class="line">pytest tests/test_sse_streaming_format.py -v</span>
+</span></span></code></pre>
+<button type="button" class="button__gOWvd size-small__kT0Jp icon-only__5c-is color-secondary-white__AseI0 copy-button__uXOTd idle__1ofXr copy-button__nMsTD" aria-label="Copy" aria-describedby=":rffdb8e:">
+<svg class="flight-icon__f6lPO flight-icon-clipboard-copy display-inline__ItStG" aria-hidden="true" fill="currentColor" width="12" height="12" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+<path fill="currentColor" fill-rule="evenodd" d="M2 4.75C2 3.784 2.784 3 3.75 3h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v6.586A1.75 1.75 0 0112.25 16h-8.5A1.75 1.75 0 012 14.25V4.75zm1.75-.25a.25.25 0 00-.25.25v9.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25V7.664a.25.25 0 00-.073-.177l-2.914-2.914a.25.25 0 00-.177-.073H3.75z" clip-rule="evenodd"/>
+<path fill="currentColor" d="M4.5 6.5a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 014.5 6.5zm0 3a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5A.75.75 0 014.5 9.5zm.75 2.25a.75.75 0 000 1.5h2.5a.75.75 0 000-1.5h-2.5z"/>
+</svg>
+</button>
+</div>
+</div>
+<h2 id="integration-with-cicd">Integration with CI/CD<a class="headerlink" href="#integration-with-cicd" title="Permanent link">&para;</a></h2>
+<p>These tests should be run as part of the CI/CD pipeline to prevent regression. They validate the contract between the server and client for SSE streaming.</p>
+  </div>
+
+  
+    <a href="https://github.com/madsbolaris/AgentFramework/edit/main/docs/sse-streaming-tests.md" target="_blank" class="edit-on-github-link_editLink__AsG8Z sidebar-sidecar-layout_editOnGithubLink__SDraB" rel="noreferrer">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16" aria-hidden="true" class="edit-on-github-link_editLinkIcon__wMtY9">
+        <path fill="currentColor" fill-rule="evenodd" d="M8 1C4.133 1 1 4.13 1 7.993c0 3.09 2.006 5.71 4.787 6.635.35.064.478-.152.478-.337 0-.166-.006-.606-.01-1.19-1.947.423-2.357-.937-2.357-.937-.319-.808-.778-1.023-.778-1.023-.635-.434.048-.425.048-.425.703.05 1.073.72 1.073.72.624 1.07 1.638.76 2.037.582.063-.452.244-.76.444-.935-1.554-.176-3.188-.776-3.188-3.456 0-.763.273-1.388.72-1.876-.072-.177-.312-.888.07-1.85 0 0 .586-.189 1.924.716A6.711 6.711 0 018 4.381c.595.003 1.194.08 1.753.236 1.336-.905 1.923-.717 1.923-.717.382.963.142 1.674.07 1.85.448.49.72 1.114.72 1.877 0 2.686-1.638 3.278-3.197 3.45.251.216.475.643.475 1.296 0 .934-.009 1.688-.009 1.918 0 .187.127.404.482.336A6.996 6.996 0 0015 7.993 6.997 6.997 0 008 1z" clip-rule="evenodd"/>
+      </svg>
+      Edit this page on GitHub
+    </a>
+  
+</div>
+                    
+                  </main>
+
+                  
+                    
+                    <aside class="sidebar-sidecar-layout_sidecarPosition__WtTq0">
+                      <div class="sidebar-sidecar-layout_sidecarTopSlot__qRAEI">
+                        
+                      </div>
+                      <div class="sidecar-scroll-container_root__a8nIj">
+                        <div class="sidecar-scroll-container_scrollContainer__Dw9id">
+                          <div class="sidebar-sidecar-layout_tocContent__XYZ789">
+                            <h3>On this page</h3>
+                            
+  <nav class="outline-nav_listRoot__Sm1fr" aria-label="Table of contents">
+    <ul class="sidebar_navList__4Rg4g">
+      
+        <li>
+          <a href="#sse-streaming-format-tests" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow outline-link_isActive__VNGIh" id="toc-sse-streaming-format-tests">
+            <span class="outline-nav_navLabel__HrjQb">
+              <span class="text_root__r0DFB hds-typography-body-200">SSE Streaming Format Tests</span>
+            </span>
+          </a>
+          
+            <ul class="sidebar_navList__4Rg4g">
+              
+                <li>
+                  <a href="#background" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-background">
+                    <span class="outline-nav_navLabel__HrjQb">
+                      <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">Background</span>
+                    </span>
+                  </a>
+                  
+                </li>
+              
+                <li>
+                  <a href="#test-coverage" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-test-coverage">
+                    <span class="outline-nav_navLabel__HrjQb">
+                      <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">Test Coverage</span>
+                    </span>
+                  </a>
+                  
+                    <ul class="sidebar_navList__4Rg4g">
+                      
+                        <li>
+                          <a href="#net-tests" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-net-tests">
+                            <span class="outline-nav_navLabel__HrjQb">
+                              <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">.NET Tests</span>
+                            </span>
+                          </a>
+                        </li>
+                      
+                        <li>
+                          <a href="#python-tests" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-python-tests">
+                            <span class="outline-nav_navLabel__HrjQb">
+                              <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">Python Tests</span>
+                            </span>
+                          </a>
+                        </li>
+                      
+                    </ul>
+                  
+                </li>
+              
+                <li>
+                  <a href="#sse-format-specification" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-sse-format-specification">
+                    <span class="outline-nav_navLabel__HrjQb">
+                      <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">SSE Format Specification</span>
+                    </span>
+                  </a>
+                  
+                    <ul class="sidebar_navList__4Rg4g">
+                      
+                        <li>
+                          <a href="#key-requirements" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-key-requirements">
+                            <span class="outline-nav_navLabel__HrjQb">
+                              <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">Key Requirements</span>
+                            </span>
+                          </a>
+                        </li>
+                      
+                    </ul>
+                  
+                </li>
+              
+                <li>
+                  <a href="#ui-requirements" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-ui-requirements">
+                    <span class="outline-nav_navLabel__HrjQb">
+                      <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">UI Requirements</span>
+                    </span>
+                  </a>
+                  
+                </li>
+              
+                <li>
+                  <a href="#running-the-tests" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-running-the-tests">
+                    <span class="outline-nav_navLabel__HrjQb">
+                      <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">Running the Tests</span>
+                    </span>
+                  </a>
+                  
+                    <ul class="sidebar_navList__4Rg4g">
+                      
+                        <li>
+                          <a href="#net" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-net">
+                            <span class="outline-nav_navLabel__HrjQb">
+                              <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">.NET</span>
+                            </span>
+                          </a>
+                        </li>
+                      
+                        <li>
+                          <a href="#python" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-python">
+                            <span class="outline-nav_navLabel__HrjQb">
+                              <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">Python</span>
+                            </span>
+                          </a>
+                        </li>
+                      
+                    </ul>
+                  
+                </li>
+              
+                <li>
+                  <a href="#integration-with-cicd" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-integration-with-cicd">
+                    <span class="outline-nav_navLabel__HrjQb">
+                      <span class="text_root__r0DFB hds-typography-body-200 hds-font-weight-regular">Integration with CI/CD</span>
+                    </span>
+                  </a>
+                  
+                </li>
+              
+            </ul>
+          
+        </li>
+      
+    </ul>
+  </nav>
+
+                          </div>
+                        </div>
+                      </div>
+                    </aside>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+
+          
+          
+            <footer class="base-layout_footer__F00ter">
+              <nav class="pagination_root__Pg1234">
+                
+                  <a href="../getting-started/" class="pagination_link__Lnk123 pagination_prev__Prv123">
+                    <span class="pagination_label__Lbl123">Previous</span>
+                    <span class="pagination_title__Ttl123">Getting started</span>
+                  </a>
+                
+                
+                  <a href="../end-to-end/" class="pagination_link__Lnk123 pagination_next__Nxt123">
+                    <span class="pagination_label__Lbl123">Next</span>
+                    <span class="pagination_title__Ttl123">Index</span>
+                  </a>
+                
+              </nav>
+
+              
+                <div class="base-layout_copyright__Cpy123">
+                  Copyright &copy; 2024 Agent Framework Contributors
+                </div>
+              
+            </footer>
+          
+
+        </div>
+      </div>
+    </div>
+
+  <!-- JavaScript -->
+  
+    <script src="../assets/js/tabbed-sync.js"></script>
+  
+    <script src="../assets/js/scroll-scrims.js"></script>
+  
+    <script src="../assets/js/hashicorp-tabs.js"></script>
+  
+    <script src="../assets/js/nav-toggle.js"></script>
+  
+  
+  <!-- Theme toggle script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var toggle = document.querySelector('.hc-theme-toggle');
+      if (toggle) {
+        toggle.addEventListener('click', function() {
+          var current = document.documentElement.getAttribute('data-md-color-scheme');
+          var next = current === 'default' ? 'slate' : 'default';
+          var index = next === 'default' ? 0 : 1;
+          
+          document.documentElement.setAttribute('data-md-color-scheme', next);
+          localStorage.setItem('__palette', JSON.stringify({index: index}));
+        });
+      }
+    });
+  </script>
+</body>
+</html>

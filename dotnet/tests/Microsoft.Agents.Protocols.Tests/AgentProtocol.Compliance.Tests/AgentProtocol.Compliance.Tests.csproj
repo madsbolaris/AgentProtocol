@@ -35,8 +35,16 @@
     <ProjectReference Include="..\..\..\src\Microsoft.Agents.Protocol.Abstractions\Microsoft.Agents.Protocol.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\src\Microsoft.Agents.Protocol.Xml\Microsoft.Agents.Protocol.Xml.csproj" />
 
-    <!-- EchoM365 sample (to test) -->
-    <ProjectReference Include="..\..\..\samples\agents\EchoM365\EchoM365.csproj" />
+    <!-- Agent samples (to test) with aliases to avoid Program class conflicts -->
+    <ProjectReference Include="..\..\..\samples\agents\EchoM365\EchoM365.csproj">
+      <Aliases>EchoM365</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\samples\agents\BasicM365Agent\BasicM365Agent.csproj">
+      <Aliases>BasicM365Agent</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\samples\agents\EmojiChatBot\EmojiChatBot.csproj">
+      <Aliases>EmojiChatBot</Aliases>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

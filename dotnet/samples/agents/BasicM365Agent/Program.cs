@@ -158,3 +158,6 @@ static string? GetPortFromConfig()
 }
 
 app.Run();
+
+// Required for WebApplicationFactory integration testing
+public partial class Program { }

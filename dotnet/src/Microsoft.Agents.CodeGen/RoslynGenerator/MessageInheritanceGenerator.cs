@@ -342,11 +342,11 @@ public class MessageInheritanceGenerator
             classDecl = classDecl.AddMembers(prop);
         }
 
-        // Add ShouldSerialize methods for nullable value type XML attributes
-        var shouldSerializeMethods = GenerateShouldSerializeMethodsForRole(roleName, roleSpecificProps);
-        foreach (var method in shouldSerializeMethods)
+        // Add Specified properties for nullable value type XML attributes
+        var specifiedProps = GenerateSpecifiedPropertiesForRole(roleName, roleSpecificProps);
+        foreach (var specProp in specifiedProps)
         {
-            classDecl = classDecl.AddMembers(method);
+            classDecl = classDecl.AddMembers(specProp);
         }
 
         // Add Content/Contents property based on role
@@ -444,90 +444,133 @@ public class MessageInheritanceGenerator
         string typeName,
         bool nullable = false)
     {
-        var type = nullable ? $"{typeName}?" : typeName;
+        // For nullable value types, use a non-nullable backing property with XmlAttribute
+        // and expose a nullable wrapper with XmlIgnore
+        bool isValueType = typeName == "DateTime" || typeName == "int" || typeName == "long" ||
+                          typeName == "bool" || typeName == "double" || typeName == "float" ||
+                          typeName == "decimal" || typeName == "Guid";
 
-        var property = PropertyDeclaration(
-                ParseTypeName(type),
-                Identifier(propertyName)
-            )
-            .AddModifiers(
-                Token(SyntaxKind.PublicKeyword),
-                Token(SyntaxKind.NewKeyword)
-            )
-            .AddAccessorListAccessors(
-                AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
-                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
-            )
-            .AddAttributeLists(
-                AttributeList(
-                    SingletonSeparatedList(
-                        Attribute(
-                            ParseName("XmlAttribute"),
-                            AttributeArgumentList(
-                                SingletonSeparatedList(
-                                    AttributeArgument(
-                                        LiteralExpression(
-                                            SyntaxKind.StringLiteralExpression,
-                                            Literal(xmlName)
+        if (nullable && isValueType)
+        {
+            // Use non-nullable type for XmlAttribute
+            var property = PropertyDeclaration(
+                    ParseTypeName(typeName),
+                    Identifier(propertyName)
+                )
+                .AddModifiers(
+                    Token(SyntaxKind.PublicKeyword),
+                    Token(SyntaxKind.NewKeyword)
+                )
+                .AddAccessorListAccessors(
+                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                )
+                .AddAttributeLists(
+                    AttributeList(
+                        SingletonSeparatedList(
+                            Attribute(
+                                ParseName("XmlAttribute"),
+                                AttributeArgumentList(
+                                    SingletonSeparatedList(
+                                        AttributeArgument(
+                                            LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                Literal(xmlName)
+                                            )
                                         )
                                     )
                                 )
                             )
                         )
                     )
+                );
+
+            var documentation = $"Gets or sets the {xmlName}.";
+            property = property.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(documentation));
+            return property;
+        }
+        else
+        {
+            var type = nullable ? $"{typeName}?" : typeName;
+
+            var property = PropertyDeclaration(
+                    ParseTypeName(type),
+                    Identifier(propertyName)
                 )
-            );
+                .AddModifiers(
+                    Token(SyntaxKind.PublicKeyword),
+                    Token(SyntaxKind.NewKeyword)
+                )
+                .AddAccessorListAccessors(
+                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                )
+                .AddAttributeLists(
+                    AttributeList(
+                        SingletonSeparatedList(
+                            Attribute(
+                                ParseName("XmlAttribute"),
+                                AttributeArgumentList(
+                                    SingletonSeparatedList(
+                                        AttributeArgument(
+                                            LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                Literal(xmlName)
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                );
 
-        // Add XML documentation
-        var documentation = $"Gets or sets the {xmlName}.";
-        property = property.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(documentation));
-
-        return property;
+            var documentation = $"Gets or sets the {xmlName}.";
+            property = property.WithLeadingTrivia(CodeGenerationUtilities.CreateXmlComment(documentation));
+            return property;
+        }
     }
 
-    private IEnumerable<MethodDeclarationSyntax> GenerateShouldSerializeMethodsForRole(
+    private IEnumerable<PropertyDeclarationSyntax> GenerateSpecifiedPropertiesForRole(
         string roleName,
         PropertyDeclarationSyntax[] properties)
     {
-        var methods = new List<MethodDeclarationSyntax>();
+        var specifiedProps = new List<PropertyDeclarationSyntax>();
 
-        // Determine which properties are nullable value types with XmlAttribute
-        var nullableValueTypeProps = new Dictionary<string, string>
+        // For agent role, add CompletedAtSpecified property
+        if (roleName.ToLower() == "agent")
         {
-            ["agent"] = "CompletedAt" // Agent role has CompletedAt as nullable DateTime
-        };
+            // Generate: [XmlIgnore] public bool CompletedAtSpecified { get; set; }
+            var specProp = PropertyDeclaration(
+                    ParseTypeName("bool"),
+                    Identifier("CompletedAtSpecified")
+                )
+                .AddModifiers(
+                    Token(SyntaxKind.PublicKeyword),
+                    Token(SyntaxKind.NewKeyword)
+                )
+                .AddAccessorListAccessors(
+                    AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                    AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                )
+                .AddAttributeLists(
+                    AttributeList(
+                        SingletonSeparatedList(
+                            Attribute(ParseName("XmlIgnore"))
+                        )
+                    )
+                );
 
-        if (!nullableValueTypeProps.ContainsKey(roleName.ToLower()))
-        {
-            return methods;
+            specifiedProps.Add(specProp);
         }
 
-        var propertyName = nullableValueTypeProps[roleName.ToLower()];
-
-        // Generate: public bool ShouldSerializeCompletedAt() => CompletedAt.HasValue;
-        var methodName = $"ShouldSerialize{propertyName}";
-
-        var method = MethodDeclaration(
-                ParseTypeName("bool"),
-                Identifier(methodName)
-            )
-            .AddModifiers(Token(SyntaxKind.PublicKeyword))
-            .WithExpressionBody(
-                ArrowExpressionClause(
-                    MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        IdentifierName(propertyName),
-                        IdentifierName("HasValue")
-                    )
-                )
-            )
-            .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
-
-        methods.Add(method);
-
-        return methods;
+        return specifiedProps;
     }
 
     private bool NeedsSimpleTextContent(string roleName)

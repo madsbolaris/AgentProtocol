@@ -9,7 +9,7 @@
             </span>
           </a>
           {% if toc_item.children %}
-            <ul class="sidebar_navList__4Rg4g">
+            <ul class="sidebar_navList__4Rg4g outline-link-with-nesting_nested__A2Dq2">
               {% for toc_subitem in toc_item.children %}
                 <li>
                   <a href="{{ toc_subitem.url }}" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-{{ toc_subitem.id }}">
@@ -18,7 +18,7 @@
                     </span>
                   </a>
                   {% if toc_subitem.children %}
-                    <ul class="sidebar_navList__4Rg4g">
+                    <ul class="sidebar_navList__4Rg4g outline-link-with-nesting_nested__A2Dq2">
                       {% for toc_subsubitem in toc_subitem.children %}
                         <li>
                           <a href="{{ toc_subsubitem.url }}" class="outline-link_root__S7fQg g-focus-ring-from-box-shadow" id="toc-{{ toc_subsubitem.id }}">

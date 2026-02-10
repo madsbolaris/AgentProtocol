@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:00:05.124749Z",
+  "hash": "1e3fc46ac3d9c3d8",
+  "response": {
+    "id": "chatcmpl-D7p7wvsLDudsozFQ8KPF1Ft21Hg7O",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T21:00:00+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Here\u2019s the latest:\n\n- Paris weather: stormy, 17\u00B0C.\n- Current UTC time: 20:59:59 on 2026-02-10.\n- Paris local time (UTC\u002B1): 21:59:59 on 2026-02-10.\n\nWant the time for another city too?"
+      }
+    ],
+    "toolCalls": []
+  }
+}

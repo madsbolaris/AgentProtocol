@@ -2,9 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
+using System.ClientModel;
+using System.ClientModel.Primitives;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -177,33 +180,79 @@ internal static class ChatModelFactory
         string? refusal,
         ChatTokenUsage? usage)
     {
-        // Use reflection to create ChatCompletion since constructor is internal
-        var chatCompletionType = typeof(ChatCompletion);
-        var constructor = chatCompletionType.GetConstructors(
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance
-        ).FirstOrDefault();
-
-        if (constructor == null)
+        // Construct OpenAI-compatible response JSON and deserialize using SDK
+        var toolCallsArray = toolCalls.Any() ? toolCalls.Select(tc => new
         {
-            throw new InvalidOperationException("Could not find ChatCompletion constructor");
-        }
+            id = tc.Id,
+            type = "function",
+            function = new
+            {
+                name = tc.FunctionName,
+                arguments = tc.FunctionArguments.ToString()
+            }
+        }).ToArray() : null;
 
-        // Match the constructor parameters
-        var parameters = new object?[]
+        // Convert finish reason to OpenAI API format
+        string finishReasonString = finishReason switch
         {
-            id,
-            createdAt,
-            fingerprint,
-            model,
-            finishReason,
-            contentTokenLogProbabilities.ToList(),
-            refusalTokenLogProbabilities.ToList(),
-            content.ToList(),
-            toolCalls.ToList(),
-            refusal,
-            usage
+            ChatFinishReason.ToolCalls => "tool_calls",
+            ChatFinishReason.Stop => "stop",
+            ChatFinishReason.Length => "length",
+            _ => "stop"
         };
 
-        return (ChatCompletion)constructor.Invoke(parameters);
+        // When there are tool calls, content should be null, not empty string
+        object? contentValue = toolCallsArray != null ? null : (content.FirstOrDefault()?.Text ?? "");
+
+        var responseObj = new
+        {
+            id = id,
+            @object = "chat.completion",
+            created = createdAt.ToUnixTimeSeconds(),
+            model = model,
+            choices = new[]
+            {
+                new
+                {
+                    index = 0,
+                    message = new
+                    {
+                        role = "assistant",
+                        content = contentValue,
+                        tool_calls = toolCallsArray
+                    },
+                    finish_reason = finishReasonString
+                }
+            },
+            usage = new
+            {
+                prompt_tokens = 0,
+                completion_tokens = 0,
+                total_tokens = 0
+            }
+        };
+
+        var responseJson = JsonSerializer.Serialize(responseObj);
+
+        try
+        {
+            // Use ModelReaderWriter to deserialize - this is the proper way for SDK types
+            var jsonData = BinaryData.FromString(responseJson);
+            var result = ModelReaderWriter.Read<ChatCompletion>(jsonData);
+            if (result != null)
+            {
+                return result;
+            }
+
+            throw new InvalidOperationException("ModelReaderWriter returned null");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"⚠️  Failed to deserialize ChatCompletion: {ex.Message}");
+            Console.WriteLine($"   JSON: {responseJson}");
+            throw new InvalidOperationException(
+                $"Failed to create ChatCompletion from recorded data. Content: {string.Join(" ", content.Select(c => c.Text))}",
+                ex);
+        }
     }
 }

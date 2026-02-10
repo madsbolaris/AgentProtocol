@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:00:14.201928Z",
+  "hash": "37270ff0aa0f8235",
+  "response": {
+    "id": "chatcmpl-D7p867BPXn8z2NTlAxZEI5tJWjEBP",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T21:00:10+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "- Paris weather: partly cloudy, 13\u00B0C.\n- Current UTC time: 2026-02-10 21:00:09.\n- Paris local time (UTC\u002B1, in February): 2026-02-10 22:00:09."
+      }
+    ],
+    "toolCalls": []
+  }
+}

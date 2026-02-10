@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-10T20:59:07.100909Z",
+  "content": {
+    "runId": "run_01d31ead2d6443a9",
+    "agentId": "agent_test_15",
+    "threadId": "thread_9eef22f0ddf84",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-10T20:59:07.100372Z",
+    "completedAt": "2026-02-10T20:59:07.100372Z"
+  },
+  "hash": "52bc6f537ca4f966fcaf42c87dff7e3787289c227fe011761842f05c728a4f77",
+  "metadata": {
+    "input_file": "33-adaptive-card-content.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

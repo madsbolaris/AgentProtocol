@@ -1,0 +1,79 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:12:30.187296Z",
+  "hash": "ce70b3a93fd3c6c7",
+  "model": "gpt-5-nano",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant that can check the weather and tell the time. Use the available functions to help users."
+    },
+    {
+      "role": "user",
+      "content": "What\u0027s the weather and time in New York?"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_VCNG1m6sM4XLbWaNBqy1CLjd",
+          "type": "Function",
+          "function": {
+            "name": "GetWeatherAsync",
+            "arguments": "{\u0022location\u0022: \u0022New York\u0022}"
+          }
+        },
+        {
+          "id": "call_n8TXLkLGtF9QI28bIWKeJqaI",
+          "type": "Function",
+          "function": {
+            "name": "GetCurrentTime",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_VCNG1m6sM4XLbWaNBqy1CLjd",
+      "content": "\uD83C\uDF24\uFE0F The weather in New York is sunny with a temperature of 27\u00B0C."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_n8TXLkLGtF9QI28bIWKeJqaI",
+      "content": "\uD83D\uDD50 The current UTC time is 2026-02-10 21:12:23."
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "GetWeatherAsync",
+        "description": "Get the weather for a given location.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "The location to get the weather for."
+            }
+          },
+          "required": [
+            "location"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "GetCurrentTime",
+        "description": "Get the current UTC time.",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    }
+  ]
+}

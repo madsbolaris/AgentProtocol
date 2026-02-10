@@ -291,7 +291,6 @@ extra_css:
   - assets/css/inline-styles-5.css   # Inline style block 5 (5.5KB)
   - assets/css/inline-styles-6.css   # Inline style block 6 (819B)
   - assets/css/icon-fixes.css        # Fix oversized twemoji icons
-  - assets/css/toc-fixes.css         # Fix TOC indentation
 
 # Extra JavaScript
 extra_javascript:

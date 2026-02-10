@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-10T20:58:05.099057Z",
+  "content": {
+    "runId": "run_bee35138515f4f7c",
+    "agentId": "agent",
+    "threadId": "thread_aea6e8ef0a884",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-10T20:58:05.098205Z",
+    "completedAt": "2026-02-10T20:58:05.098205Z"
+  },
+  "hash": "dbafe5bc8c5722280b3d926e7eae616b17b7113ded3e9f8032d38009602e27a7",
+  "metadata": {
+    "input_file": "08-multiple-asserts.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

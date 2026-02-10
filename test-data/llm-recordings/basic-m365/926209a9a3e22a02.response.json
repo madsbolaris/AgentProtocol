@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T20:58:04.172763Z",
+  "hash": "926209a9a3e22a02",
+  "response": {
+    "id": "chatcmpl-D7p5xq16pyPgSxEj51XvMWBOmRfAJ",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T20:57:57+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "- Weather in New York: stormy, 31\u00B0C.\n- Current UTC time: 2026-02-10 20:57:57.\n- New York local time (Eastern Time, UTC-5): 2026-02-10 15:57:57."
+      }
+    ],
+    "toolCalls": []
+  }
+}

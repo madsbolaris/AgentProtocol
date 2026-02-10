@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-10T20:58:48.122422Z",
+  "content": {
+    "runId": "run_29a5f1069c344b09",
+    "agentId": "agent",
+    "threadId": "thread_10adda0ae44f4",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-10T20:58:48.121911Z",
+    "completedAt": "2026-02-10T20:58:48.121911Z"
+  },
+  "hash": "af515070b9e87f3776a88168df72a4dcb52f52b992151fea58e02217bf277780",
+  "metadata": {
+    "input_file": "11-channel-message.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

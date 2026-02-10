@@ -161,7 +161,8 @@ public static class AgentProtocolEndpointRouteBuilderExtensions
                 Message = new
                 {
                     MessageId = messageId,
-                    Role = "assistant",
+                    // CRITICAL: Agent Protocol uses "agent" role, NOT "assistant" (see TypeSpec ChatRole enum)
+                    Role = "agent",
                     Contents = new List<object>()
                 },
                 CreatedAt = DateTime.UtcNow.ToString("o")
@@ -216,7 +217,8 @@ public static class AgentProtocolEndpointRouteBuilderExtensions
                     new
                     {
                         MessageId = messageId,
-                        Role = "assistant",
+                        // CRITICAL: Agent Protocol uses "agent" role, NOT "assistant" (see TypeSpec ChatRole enum)
+                        Role = "agent",
                         Contents = new[]
                         {
                             new { Kind = "text", Text = responseText }

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_c401bce20ca64" status="active" created-at="2026-02-10T20:58:35Z">
+  <agent>
+    <text>Hello! I can help with weather and time. What would you like to do?
+
+- Weather: Tell me a location (city, country) and I’ll fetch the forecast.
+- Time: I can give you the current UTC time, or your local time if you tell me your time zone or location.
+
+I can do both at once for a location if you’d like.</text>
+  </agent>
+</thread>

@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T20:58:26.86446Z",
+  "hash": "3a0fd86d29d1e184",
+  "response": {
+    "id": "chatcmpl-D7p6L67iwGdtLKvOgLCLFVPazK5Ky",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T20:58:21+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Here\u2019s the latest:\n\n- Seattle weather: cloudy, 17\u00B0C (63\u00B0F)\n- Current UTC time: 2026-02-10 20:58:20\n- Seattle local time (Pacific Standard Time): 12:58:20 PM on 2026-02-10\n\nWould you like a 7-day forecast or precipitation details for Seattle?"
+      }
+    ],
+    "toolCalls": []
+  }
+}

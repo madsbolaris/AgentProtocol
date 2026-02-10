@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:58:06.326561Z",
+  "hash": "4dd39a6ee919032d4ff620d7f95f908d197d8a837363e97719492a5c66e5c0ad",
+  "metadata": {
+    "input_file": "57-cel-any-judge-passes.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

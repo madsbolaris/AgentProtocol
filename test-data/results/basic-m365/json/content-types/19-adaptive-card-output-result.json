@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-10T20:58:06.865176Z",
+  "content": {
+    "runId": "run_990c32eed47e4b9c",
+    "agentId": "agent",
+    "threadId": "thread_2246d3bc9d8d4",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-10T20:58:06.8647Z",
+    "completedAt": "2026-02-10T20:58:06.8647Z"
+  },
+  "hash": "bc86fab5aa0bb9f0815fc5ba4d52db2b0d224f531e9b35c4adb400acfc03588f",
+  "metadata": {
+    "input_file": "19-adaptive-card-output.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

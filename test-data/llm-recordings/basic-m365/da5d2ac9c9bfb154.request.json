@@ -1,0 +1,79 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:14:30.744361Z",
+  "hash": "da5d2ac9c9bfb154",
+  "model": "gpt-5-nano",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant that can check the weather and tell the time. Use the available functions to help users."
+    },
+    {
+      "role": "user",
+      "content": "What\u0027s the weather and time in New York?"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_MKlWViGoDddG7kl7QJIYaK0r",
+          "type": "Function",
+          "function": {
+            "name": "GetWeatherAsync",
+            "arguments": "{\u0022location\u0022: \u0022New York\u0022}"
+          }
+        },
+        {
+          "id": "call_BHIcvs47W0aknjRUWRAFay59",
+          "type": "Function",
+          "function": {
+            "name": "GetCurrentTime",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_MKlWViGoDddG7kl7QJIYaK0r",
+      "content": "\uD83C\uDF24\uFE0F The weather in New York is stormy with a temperature of 23\u00B0C."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_BHIcvs47W0aknjRUWRAFay59",
+      "content": "\uD83D\uDD50 The current UTC time is 2026-02-10 21:14:22."
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "GetWeatherAsync",
+        "description": "Get the weather for a given location.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "The location to get the weather for."
+            }
+          },
+          "required": [
+            "location"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "GetCurrentTime",
+        "description": "Get the current UTC time.",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    }
+  ]
+}

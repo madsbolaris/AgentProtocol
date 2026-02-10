@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:59:08.828959Z",
+  "hash": "67175dd1a3af0ad70f59a326c6187a6af084df4d3355f09881e86b1832fc0b8d",
+  "metadata": {
+    "input_file": "30-thread-multimodal.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-02-10T20:57:26.101194Z",
+  "content": {
+    "runId": "run_84d849aeeb47426a",
+    "agentId": "agent",
+    "threadId": "thread_b56cb5bd89314",
+    "status": "completed",
+    "output": [
+      {
+        "role": "agent",
+        "contents": [
+          {
+            "kind": "functionCall",
+            "callId": "call_XBIJPmmUbkpls6Vmg6F4Lv6R",
+            "name": "GetWeatherAsync",
+            "arguments": "{\"location\":\"Seattle\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "contents": [
+          {
+            "kind": "functionResult",
+            "callId": "call_XBIJPmmUbkpls6Vmg6F4Lv6R",
+            "result": "\ud83c\udf24\ufe0f The weather in Seattle is cloudy with a temperature of 25\u00b0C."
+          }
+        ]
+      },
+      {
+        "role": "agent",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "\ud83c\udf24\ufe0f In Seattle right now: it's cloudy with a temperature of 25\u00b0C.\n\nWant an hourly forecast or the chance of rain?"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-10T20:57:26.100417Z",
+    "completedAt": "2026-02-10T20:57:26.100417Z"
+  },
+  "hash": "c6ec118336c9fe9057bc0c9ac75eb9b0ca21d72b3f2a1494c61f8eac201e4431",
+  "metadata": {
+    "input_file": "51-weather-query.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-02-10T20:58:18.054592Z",
+  "content": {
+    "runId": "run_35058cbb244d4264",
+    "agentId": "agent",
+    "threadId": "thread_40feefc6d56f4",
+    "status": "completed",
+    "output": [
+      {
+        "role": "agent",
+        "contents": [
+          {
+            "kind": "functionCall",
+            "callId": "call_DHAxiqQjLc9TXlNJ5fs5Si0U",
+            "name": "GetWeatherAsync",
+            "arguments": "{\"location\":\"Seattle\"}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "contents": [
+          {
+            "kind": "functionResult",
+            "callId": "call_DHAxiqQjLc9TXlNJ5fs5Si0U",
+            "result": "\ud83c\udf24\ufe0f The weather in Seattle is cloudy with a temperature of 21\u00b0C."
+          }
+        ]
+      },
+      {
+        "role": "agent",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Seattle is currently cloudy with a temperature of 21\u00b0C.\n\nWould you like an hourly forecast or conditions for another city? I can also tell you the current time if you\u2019d like."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-10T20:58:18.053256Z",
+    "completedAt": "2026-02-10T20:58:18.053256Z"
+  },
+  "hash": "79e05dba0d9334abe2d455fe32d28a4eb4cf071367d2c72948e15a77d18cced5",
+  "metadata": {
+    "input_file": "03-user-text-only.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

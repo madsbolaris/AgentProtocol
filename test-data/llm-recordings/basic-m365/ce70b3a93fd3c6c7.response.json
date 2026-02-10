@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:12:30.188402Z",
+  "hash": "ce70b3a93fd3c6c7",
+  "response": {
+    "id": "chatcmpl-D7pJvuw0Jldb5aLBBr7XK4Iv0mocu",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T21:12:23+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Here\u2019s what I\u2019ve got:\n\n- Weather in New York: Sunny, 27\u00B0C (about 81\u00B0F).\n- Local time in New York (EST): 4:12 PM on February 10, 2026.\n- For reference, UTC time is 21:12:23 on February 10, 2026."
+      }
+    ],
+    "toolCalls": []
+  }
+}

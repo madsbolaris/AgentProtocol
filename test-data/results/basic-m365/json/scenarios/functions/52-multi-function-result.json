@@ -1,0 +1,66 @@
+{
+  "timestamp": "2026-02-10T21:00:05.130065Z",
+  "content": {
+    "runId": "run_d71e701d20ed41e4",
+    "agentId": "agent",
+    "threadId": "thread_60ab32315a694",
+    "status": "completed",
+    "output": [
+      {
+        "role": "agent",
+        "contents": [
+          {
+            "kind": "functionCall",
+            "callId": "call_LRbtduFGdzXeG1Xbu3O0pEz7",
+            "name": "GetWeatherAsync",
+            "arguments": "{\"location\": \"Paris\"}"
+          },
+          {
+            "kind": "functionCall",
+            "callId": "call_YGKyRcOUo2hQPRHiPTZ1Siaa",
+            "name": "GetCurrentTime",
+            "arguments": "{}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "contents": [
+          {
+            "kind": "functionResult",
+            "callId": "call_LRbtduFGdzXeG1Xbu3O0pEz7",
+            "result": "\ud83c\udf24\ufe0f The weather in Paris is stormy with a temperature of 17\u00b0C."
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "contents": [
+          {
+            "kind": "functionResult",
+            "callId": "call_YGKyRcOUo2hQPRHiPTZ1Siaa",
+            "result": "\ud83d\udd50 The current UTC time is 2026-02-10 20:59:59."
+          }
+        ]
+      },
+      {
+        "role": "agent",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Here\u2019s the latest:\n\n- Paris weather: stormy, 17\u00b0C.\n- Current UTC time: 20:59:59 on 2026-02-10.\n- Paris local time (UTC+1): 21:59:59 on 2026-02-10.\n\nWant the time for another city too?"
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-10T21:00:05.126728Z",
+    "completedAt": "2026-02-10T21:00:05.126728Z"
+  },
+  "hash": "2316b40194bc009274a7b748630471d516f060f9be2232177c124e468ffcd0f1",
+  "metadata": {
+    "input_file": "52-multi-function.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

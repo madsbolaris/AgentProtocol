@@ -1,0 +1,22 @@
+{
+  "callId": 1,
+  "timestamp": "2026-02-10T21:14:44.758095Z",
+  "hash": "7a8854a37cbd2450",
+  "response": {
+    "id": "chatcmpl-D7pM9HO97lF79ZI4viL0XpUqV4Qxk",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T21:14:41+00:00",
+    "finishReason": "ToolCalls",
+    "content": [],
+    "toolCalls": [
+      {
+        "id": "call_rIgj717GlUN87f3oozmgRgyu",
+        "type": "Function",
+        "function": {
+          "name": "GetCurrentTime",
+          "arguments": "{}"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:58:07.917977Z",
+  "hash": "32c4af127cc20d864578c213099e5207779485436945a479c15cbb4bf236f27b",
+  "metadata": {
+    "input_file": "45-comparison-test.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

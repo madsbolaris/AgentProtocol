@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_16018f2d1b354" status="active" created-at="2026-02-10T20:59:45Z">
+  <agent>
+    <text>I can’t modify messages or add reactions to msg_12345 from here. I don’t have access to your messaging platform.
+
+If you’d like, I can help with:
+- Weather: Tell me a location and I’ll fetch the forecast.
+- Time: I can provide the current UTC time.
+
+Or you can paste the thumbs up emoji yourself: 👍
+
+If you tell me which app you’re using, I can give you step-by-step instructions to add a reaction there.</text>
+  </agent>
+</thread>

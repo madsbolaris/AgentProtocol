@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:58:10.446732Z",
+  "hash": "fd869f331d6cbf3da850e40487b7d41d63df2ce45eae88d2543252d24e7a520d",
+  "metadata": {
+    "input_file": "06-regex-judge.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

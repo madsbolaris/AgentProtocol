@@ -1,0 +1,30 @@
+{
+  "callId": 1,
+  "timestamp": "2026-02-10T21:14:22.894115Z",
+  "hash": "9c675d27a6561919",
+  "response": {
+    "id": "chatcmpl-D7pLjyq3n67we8ZbKtK2PunqnlpGw",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T21:14:15+00:00",
+    "finishReason": "ToolCalls",
+    "content": [],
+    "toolCalls": [
+      {
+        "id": "call_MKlWViGoDddG7kl7QJIYaK0r",
+        "type": "Function",
+        "function": {
+          "name": "GetWeatherAsync",
+          "arguments": "{\u0022location\u0022: \u0022New York\u0022}"
+        }
+      },
+      {
+        "id": "call_BHIcvs47W0aknjRUWRAFay59",
+        "type": "Function",
+        "function": {
+          "name": "GetCurrentTime",
+          "arguments": "{}"
+        }
+      }
+    ]
+  }
+}

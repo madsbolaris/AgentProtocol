@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:15:07.857951Z",
+  "hash": "a0afcf158b00bfaa",
+  "response": {
+    "id": "chatcmpl-D7pMSyv0GKxWW2uS2UIEStUe2WT2a",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T21:15:00+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Cloudy in Seattle, with a temperature of 34\u00B0C (about 93\u00B0F). Want more details (humidity, wind) or a forecast for the day? I can check."
+      }
+    ],
+    "toolCalls": []
+  }
+}

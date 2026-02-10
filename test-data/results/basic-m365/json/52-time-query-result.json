@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-02-10T20:57:37.215643Z",
+  "content": {
+    "runId": "run_90c6e014e5824ed9",
+    "agentId": "agent",
+    "threadId": "thread_380c811adef24",
+    "status": "completed",
+    "output": [
+      {
+        "role": "agent",
+        "contents": [
+          {
+            "kind": "functionCall",
+            "callId": "call_lrKPFy1kZ8rEkc2Z7mmiPVIk",
+            "name": "GetCurrentTime",
+            "arguments": "{}"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "contents": [
+          {
+            "kind": "functionResult",
+            "callId": "call_lrKPFy1kZ8rEkc2Z7mmiPVIk",
+            "result": "\ud83d\udd50 The current UTC time is 2026-02-10 20:57:33."
+          }
+        ]
+      },
+      {
+        "role": "agent",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "It's 20:57:33 UTC (8:57 PM UTC) on 2026-02-10. If you\u2019d like your local time, tell me your city or time zone and I\u2019ll convert it."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-10T20:57:37.214733Z",
+    "completedAt": "2026-02-10T20:57:37.214733Z"
+  },
+  "hash": "661788978b0e21120c3350cfbba2d21b2e748323bc6b9e3bead235421a8ef05e",
+  "metadata": {
+    "input_file": "52-time-query.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_2a91deacfca24" status="active" created-at="2026-02-10T20:58:04Z">
+  <agent>
+    <function-call call-id="call_onhk4X7NkjGalGXkjM7Nk6dj" name="GetWeatherAsync">{"location": "New York"}</function-call>
+    <function-call call-id="call_bX1fP74y9c1Tr2UEHVQWPztM" name="GetCurrentTime">{}</function-call>
+  </agent>
+  <tool>
+    <function-result call-id="call_onhk4X7NkjGalGXkjM7Nk6dj">🌤️ The weather in New York is stormy with a temperature of 31°C.</function-result>
+  </tool>
+  <tool>
+    <function-result call-id="call_bX1fP74y9c1Tr2UEHVQWPztM">🕐 The current UTC time is 2026-02-10 20:57:57.</function-result>
+  </tool>
+  <agent>
+    <text>- Weather in New York: stormy, 31°C.
+- Current UTC time: 2026-02-10 20:57:57.
+- New York local time (Eastern Time, UTC-5): 2026-02-10 15:57:57.</text>
+  </agent>
+</thread>

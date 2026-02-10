@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-10T20:59:51.892595Z",
+  "content": {
+    "runId": "run_5c5335530e504cc2",
+    "agentId": "agent",
+    "threadId": "thread_c32332b89c374",
+    "status": "completed",
+    "output": [
+      {
+        "role": "agent",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Love that! Here are emoji ideas to match a happy vibe:\n\n- Classic smiles: \ud83d\ude04 \ud83d\ude01 \ud83d\ude0a\n- Warm & friendly: \ud83e\udd17 \ud83d\udc96 \ud83d\ude0c\n- Celebration: \ud83c\udf89 \ud83e\udd73 \ud83c\udf88\n- Sparkle & energy: \u2728 \ud83c\udf1f \ud83d\udcab\n- Sunshine & rainbow: \u2600\ufe0f \ud83c\udf1e \ud83c\udf08\n- Playful: \ud83d\ude06 \ud83d\ude02 \ud83e\udd17\n\nWant me to craft a quick caption or message with some of these? If you tell me the platform (text, post, story, etc.), I can tailor it."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-10T20:59:51.89001Z",
+    "completedAt": "2026-02-10T20:59:51.89001Z"
+  },
+  "hash": "7cc22fb81f4a2240d4edde4139f0c75e9d2b45d0df22c07e6a66431d69ae7172",
+  "metadata": {
+    "input_file": "83-user-request-suggest-emoji.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

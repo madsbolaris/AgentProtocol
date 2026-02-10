@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-10T20:58:29.557368Z",
+  "content": {
+    "runId": "run_e26f3940b1484020",
+    "agentId": "agent",
+    "threadId": "thread_92befd9dab194",
+    "status": "completed",
+    "output": [
+      {
+        "role": "agent",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "I can do that. Please tell me:\n- The location for the weather (city or area)\n- Do you want the time in UTC or your local time (if local, share your city or time zone)\n- Temperature units you prefer (Celsius or Fahrenheit), if you have a preference\n\nOnce I have that, I\u2019ll fetch the weather and the current time for you."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-10T20:58:29.555985Z",
+    "completedAt": "2026-02-10T20:58:29.555985Z"
+  },
+  "hash": "e320095d5e85587d9d236da841bf4be73f5ccc1238390df9a748a0fa7acec7d8",
+  "metadata": {
+    "input_file": "04-user-simple-text.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

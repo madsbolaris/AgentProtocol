@@ -1,50 +1,22 @@
 {
-  "$schema": "./agent-config.schema.json",
   "bots": {
-    "dotnet": {
-      "name": "EchoM365 (.NET)",
-      "port": 3979,
-      "baseUrl": "http://localhost"
-    },
-    "python": {
-      "name": "EchoM365 (Python)",
-      "port": 3978,
-      "baseUrl": "http://localhost"
-    },
-    "typescript": {
-      "name": "EchoM365 (TypeScript)",
-      "port": 3980,
-      "baseUrl": "http://localhost"
-    },
     "dotnet-basic-m365": {
-      "name": "Basic M365 Agent (.NET)",
+      "name": "BasicM365Agent (.NET)",
+      "baseUrl": "http://localhost",
       "port": 3981,
-      "baseUrl": "http://localhost"
+      "language": "dotnet"
     },
     "python-basic-m365": {
-      "name": "Basic M365 Agent (Python)",
+      "name": "BasicM365Agent (Python)",
+      "baseUrl": "http://localhost",
       "port": 3982,
-      "baseUrl": "http://localhost"
+      "language": "python"
     },
     "typescript-basic-m365": {
-      "name": "Basic M365 Agent (TypeScript)",
+      "name": "BasicM365Agent (TypeScript)",
+      "baseUrl": "http://localhost",
       "port": 3983,
-      "baseUrl": "http://localhost"
-    },
-    "dotnet-emoji-chat": {
-      "name": "EmojiChatBot (.NET)",
-      "port": 3984,
-      "baseUrl": "http://localhost"
-    },
-    "python-emoji-chat": {
-      "name": "EmojiChatBot (Python)",
-      "port": 3985,
-      "baseUrl": "http://localhost"
-    },
-    "typescript-emoji-chat": {
-      "name": "EmojiChatBot (TypeScript)",
-      "port": 3986,
-      "baseUrl": "http://localhost"
+      "language": "typescript"
     }
   }
 }

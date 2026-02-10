@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-10T20:58:06.450593Z",
+  "content": {
+    "runId": "run_8991213a1a49433d",
+    "agentId": "agent",
+    "threadId": "thread_535c1197ec684",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-10T20:58:06.449701Z",
+    "completedAt": "2026-02-10T20:58:06.449701Z"
+  },
+  "hash": "d93ccea600d52b1d5ad0d1e7ff6d131f64229c5ad6e85d55ea50302d6b5bb6f1",
+  "metadata": {
+    "input_file": "58-cel-score-math.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

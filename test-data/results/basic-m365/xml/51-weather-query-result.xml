@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_4ec93d60c9af4" status="active" created-at="2026-02-10T20:57:30Z">
+  <agent>
+    <function-call call-id="call_JDWnMNRbFmR6mcu6HmyhmWRv" name="GetWeatherAsync">{"location":"Seattle"}</function-call>
+  </agent>
+  <tool>
+    <function-result call-id="call_JDWnMNRbFmR6mcu6HmyhmWRv">🌤️ The weather in Seattle is rainy with a temperature of 27°C.</function-result>
+  </tool>
+  <agent>
+    <text>Currently in Seattle: rainy, about 27°C.
+
+Would you like an hourly forecast or a Fahrenheit conversion?</text>
+  </agent>
+</thread>

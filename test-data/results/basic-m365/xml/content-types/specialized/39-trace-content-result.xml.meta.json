@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:59:05.770585Z",
+  "hash": "c422dac99a3d28222359127661dea1a23984f3a61d4970ca13681ec665a6294a",
+  "metadata": {
+    "input_file": "39-trace-content.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:58:08.217261Z",
+  "hash": "f451dcb9b6dbd6223d522d683883ece454c69ec046c3c8f826c66dc9272ae776",
+  "metadata": {
+    "input_file": "39-instruction-following.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

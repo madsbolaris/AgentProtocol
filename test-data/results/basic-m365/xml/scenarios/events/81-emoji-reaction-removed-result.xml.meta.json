@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:59:32.937396Z",
+  "hash": "7e4de61bb40726a5be2a6c69f54dbc95cfe409d80da86bcc8efc055c8b411955",
+  "metadata": {
+    "input_file": "81-emoji-reaction-removed.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

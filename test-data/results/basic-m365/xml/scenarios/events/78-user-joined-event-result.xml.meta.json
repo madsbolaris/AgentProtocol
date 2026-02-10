@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:59:32.503274Z",
+  "hash": "b14aef9d49a16096ce28e4bf03fc04e3ea2555a0c6a4a324b4ed97dc116b11f8",
+  "metadata": {
+    "input_file": "78-user-joined-event.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

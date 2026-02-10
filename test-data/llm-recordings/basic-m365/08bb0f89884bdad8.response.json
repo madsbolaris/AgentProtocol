@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:13:19.424353Z",
+  "hash": "08bb0f89884bdad8",
+  "response": {
+    "id": "chatcmpl-D7pKkpyeZtpKCMeJEfD2wHXkTTH7y",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T21:13:14+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Right now in Seattle it\u0027s sunny, with a temperature of 10\u00B0C. Would you like the forecast or would you like me to convert that to Fahrenheit?"
+      }
+    ],
+    "toolCalls": []
+  }
+}

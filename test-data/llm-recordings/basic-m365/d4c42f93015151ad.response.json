@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T20:57:54.277662Z",
+  "hash": "d4c42f93015151ad",
+  "response": {
+    "id": "chatcmpl-D7p5pmUpRs1YRZ9kkgQQLqKoObhzd",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T20:57:49+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Here you go:\n\n- Weather in New York: Partly cloudy, 13\u00B0C.\n- New York local time: 3:57 PM on Feb 10, 2026 (Eastern Standard Time, UTC-5)."
+      }
+    ],
+    "toolCalls": []
+  }
+}

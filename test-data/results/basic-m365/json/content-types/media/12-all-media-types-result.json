@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-02-10T20:58:58.359033Z",
+  "content": {
+    "runId": "run_1b01e97b299540f3",
+    "agentId": "agent",
+    "threadId": "thread_20dba5582d704",
+    "status": "completed",
+    "output": [
+      {
+        "role": "agent",
+        "contents": [
+          {
+            "kind": "text",
+            "text": "I can help with analysis, but I\u2019ll need a bit more detail. What kind of analysis are you looking for with your media files? Some options:\n\n- Metadata extraction: file type, size, duration, resolution, bitrate, camera info (EXIF), GPS, etc.\n- Content description: what\u2019s depicted in images or scenes in video.\n- Quality metrics: color histograms, exposure, noise, sharpness, compression artifacts.\n- Audio/Video specifics: codecs, sample rate, channels, frame rate, loudness, etc.\n- Any specific questions or tasks (e.g., identify objects, detect scenes, verify authenticity).\n\nIf you can upload the files (or at least share key properties like file type, resolution/duration, and any available EXIF data), I can start with a structured summary. Also, if you want, I can help with weather or time: just tell me a location for weather, or say \u201cwhat time is it now\u201d and I\u2019ll fetch the current UTC time."
+          }
+        ]
+      }
+    ],
+    "createdAt": "2026-02-10T20:58:58.354353Z",
+    "completedAt": "2026-02-10T20:58:58.354353Z"
+  },
+  "hash": "2d98e46ddff4144caeb571ab7094a79de7de8682f057264f6bb9dcf09ffcc027",
+  "metadata": {
+    "input_file": "12-all-media-types.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

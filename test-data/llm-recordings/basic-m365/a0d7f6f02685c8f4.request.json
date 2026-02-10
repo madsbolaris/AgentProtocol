@@ -1,0 +1,66 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:14:15.691884Z",
+  "hash": "a0d7f6f02685c8f4",
+  "model": "gpt-5-nano",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant that can check the weather and tell the time. Use the available functions to help users."
+    },
+    {
+      "role": "user",
+      "content": "What\u0027s the weather in Seattle?"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_1aR6L9x5jeZFa4TqB24RCAnM",
+          "type": "Function",
+          "function": {
+            "name": "GetWeatherAsync",
+            "arguments": "{\u0022location\u0022:\u0022Seattle\u0022}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_1aR6L9x5jeZFa4TqB24RCAnM",
+      "content": "\uD83C\uDF24\uFE0F The weather in Seattle is partly cloudy with a temperature of 27\u00B0C."
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "GetWeatherAsync",
+        "description": "Get the weather for a given location.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "The location to get the weather for."
+            }
+          },
+          "required": [
+            "location"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "GetCurrentTime",
+        "description": "Get the current UTC time.",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    }
+  ]
+}

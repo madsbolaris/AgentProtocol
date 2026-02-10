@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:00:28.927919Z",
+  "hash": "4ce362cd76d47e03",
+  "response": {
+    "id": "chatcmpl-D7p8KQzS6oUjHfM5wO8B0ldeXLY7q",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T21:00:24+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Currently in Seattle: rainy with a temperature of about 32\u00B0C. Would you like an hourly forecast or a conversion to Fahrenheit? I can also tell you the current time if you\u2019d like."
+      }
+    ],
+    "toolCalls": []
+  }
+}

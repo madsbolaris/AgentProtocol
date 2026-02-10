@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_75db4c4533ec4" status="active" created-at="2026-02-10T21:00:14Z">
+  <agent>
+    <function-call call-id="call_6J08xToHdkWoe0sWL0WHw5Qa" name="GetWeatherAsync">{"location": "Paris"}</function-call>
+    <function-call call-id="call_5nglgl0A44Lm3BdjSGItUoWO" name="GetCurrentTime">{}</function-call>
+  </agent>
+  <tool>
+    <function-result call-id="call_6J08xToHdkWoe0sWL0WHw5Qa">🌤️ The weather in Paris is partly cloudy with a temperature of 13°C.</function-result>
+  </tool>
+  <tool>
+    <function-result call-id="call_5nglgl0A44Lm3BdjSGItUoWO">🕐 The current UTC time is 2026-02-10 21:00:09.</function-result>
+  </tool>
+  <agent>
+    <text>- Paris weather: partly cloudy, 13°C.
+- Current UTC time: 2026-02-10 21:00:09.
+- Paris local time (UTC+1, in February): 2026-02-10 22:00:09.</text>
+  </agent>
+</thread>

@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:14:15.695771Z",
+  "hash": "a0d7f6f02685c8f4",
+  "response": {
+    "id": "chatcmpl-D7pLfgDSDoSbnZWyCV5hzTLxeaGSi",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T21:14:11+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Seattle is partly cloudy right now, with a temperature of 27\u00B0C. Want the forecast for the rest of the day or the coming days?"
+      }
+    ],
+    "toolCalls": []
+  }
+}

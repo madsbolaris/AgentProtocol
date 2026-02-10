@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:58:50.977491Z",
+  "hash": "8d480f958e2b3d06c3bbdcda01f7ce85fb84a1e55056a1cfd115ff0da7684f78",
+  "metadata": {
+    "input_file": "31-function-call-complete-flow.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

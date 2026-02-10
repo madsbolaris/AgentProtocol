@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:12:19.974382Z",
+  "hash": "9fedb8ca5fb0e055",
+  "response": {
+    "id": "chatcmpl-D7pJmFG0rvoQmBE9jgHC6ZL6WHVax",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T21:12:14+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Seattle weather: partly cloudy, 12\u00B0C.\n\nCurrent UTC time: 2026-02-10 21:12:14.\nLocal Seattle time: 1:12 PM (PST)."
+      }
+    ],
+    "toolCalls": []
+  }
+}

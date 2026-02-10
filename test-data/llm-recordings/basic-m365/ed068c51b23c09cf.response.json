@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T20:57:30.914609Z",
+  "hash": "ed068c51b23c09cf",
+  "response": {
+    "id": "chatcmpl-D7p5UCnfwzJMzFvE2lhB1hSX09dr7",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T20:57:28+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Currently in Seattle: rainy, about 27\u00B0C.\n\nWould you like an hourly forecast or a Fahrenheit conversion?"
+      }
+    ],
+    "toolCalls": []
+  }
+}

@@ -95,3 +95,23 @@ h6:hover .headerlink {
   background-color: rgb(222, 223, 227) !important;
   color: rgb(12, 12, 14) !important;
 }
+
+/* Table of Contents nested list indentation */
+.sidebar-sidecar-layout_tocContent__XYZ789 .sidebar_navList__4Rg4g .sidebar_navList__4Rg4g {
+  padding-left: 20px !important;
+}
+
+/* Ensure nested TOC items have proper indentation at all levels */
+.outline-nav_listRoot__Sm1fr ul.sidebar_navList__4Rg4g {
+  padding-left: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.outline-nav_listRoot__Sm1fr ul.sidebar_navList__4Rg4g ul.sidebar_navList__4Rg4g {
+  padding-left: 20px !important;
+}
+
+.outline-nav_listRoot__Sm1fr li {
+  margin: 0;
+}

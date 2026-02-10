@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:59:07.117901Z",
+  "hash": "caa89b282ddd0062ec77bd42a2ec50ecfcce9c8e053d6f947523fea0038a8466",
+  "metadata": {
+    "input_file": "33-adaptive-card-content.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

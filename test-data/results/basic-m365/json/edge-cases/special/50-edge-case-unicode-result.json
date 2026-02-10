@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-10T20:58:09.843780Z",
+  "content": {
+    "runId": "run_c903ec0a02b344cd",
+    "agentId": "agent",
+    "threadId": "thread_4c50fbdb68e74",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-10T20:58:09.843256Z",
+    "completedAt": "2026-02-10T20:58:09.843256Z"
+  },
+  "hash": "1c1b6a309af874e55db6097e6f9dcd37b1df4f389ecdd810460f8f874a68f9c0",
+  "metadata": {
+    "input_file": "50-edge-case-unicode.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

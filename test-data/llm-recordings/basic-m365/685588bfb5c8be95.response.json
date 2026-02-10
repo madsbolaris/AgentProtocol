@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:13:54.71757Z",
+  "hash": "685588bfb5c8be95",
+  "response": {
+    "id": "chatcmpl-D7pLGuRXnipZGmKdoQWgCtX1Ai2Lf",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T21:13:46+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "In Seattle right now: stormy weather with a temperature of 29\u00B0C. Would you like a Fahrenheit conversion, an hourly forecast, or other details like wind and humidity? I can also tell you Seattle\u2019s current time if you\u2019d like."
+      }
+    ],
+    "toolCalls": []
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:58:49.482776Z",
+  "hash": "b3ec9dcd6e44021538f7fba193d62a880b4554e1a92880c222fca8104ce1e276",
+  "metadata": {
+    "input_file": "23-text-reasoning-content.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

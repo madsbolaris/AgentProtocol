@@ -147,9 +147,10 @@ internal class AgentProtocolServer
         }
 
         // Default: Convert activity text to TextContent
+        // CRITICAL: Agent Protocol uses "agent" role, NOT "assistant" (see TypeSpec ChatRole enum)
         return new Dictionary<string, object>
         {
-            ["role"] = "assistant",
+            ["role"] = "agent",
             ["contents"] = new List<object>
             {
                 new Dictionary<string, object>

@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:58:11.047408Z",
+  "hash": "537c51abcf950f26602414c9c27a5f2a525bd23b5134747e1218a13257531957",
+  "metadata": {
+    "input_file": "22-parallel-tool-calls.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

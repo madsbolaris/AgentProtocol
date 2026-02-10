@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_2acb73194cd64" status="active" created-at="2026-02-10T20:58:26Z">
+  <agent>
+    <function-call call-id="call_eKbm4vu5lOhiX7dSHMQynjp2" name="GetWeatherAsync">{"location": "Seattle"}</function-call>
+    <function-call call-id="call_TtSeITXrY5h2N6WFHYjASsUz" name="GetCurrentTime">{}</function-call>
+  </agent>
+  <tool>
+    <function-result call-id="call_eKbm4vu5lOhiX7dSHMQynjp2">🌤️ The weather in Seattle is cloudy with a temperature of 17°C.</function-result>
+  </tool>
+  <tool>
+    <function-result call-id="call_TtSeITXrY5h2N6WFHYjASsUz">🕐 The current UTC time is 2026-02-10 20:58:20.</function-result>
+  </tool>
+  <agent>
+    <text>Here’s the latest:
+
+- Seattle weather: cloudy, 17°C (63°F)
+- Current UTC time: 2026-02-10 20:58:20
+- Seattle local time (Pacific Standard Time): 12:58:20 PM on 2026-02-10
+
+Would you like a 7-day forecast or precipitation details for Seattle?</text>
+  </agent>
+</thread>

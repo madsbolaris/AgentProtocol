@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:58:06.463768Z",
+  "hash": "0921227d367a565bf39803e4b840756c5a36e8a93fbb4e835c1ac33ff1528320",
+  "metadata": {
+    "input_file": "58-cel-score-math.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

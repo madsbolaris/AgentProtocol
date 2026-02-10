@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T20:57:26.100021Z",
+  "hash": "94267f8d286a3728",
+  "response": {
+    "id": "chatcmpl-D7p5OPNFbUBjtes5kPD9ehALbTNYw",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T20:57:22+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "\uD83C\uDF24\uFE0F In Seattle right now: it\u0027s cloudy with a temperature of 25\u00B0C.\n\nWant an hourly forecast or the chance of rain?"
+      }
+    ],
+    "toolCalls": []
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-10T20:58:49.466154Z",
+  "content": {
+    "runId": "run_1a6609eab1b944e8",
+    "agentId": "agent_test_5",
+    "threadId": "thread_0c6cfa062ea84",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-10T20:58:49.465703Z",
+    "completedAt": "2026-02-10T20:58:49.465703Z"
+  },
+  "hash": "cd60a609e0da4b7ba27b72b4cacdeb79b2c6b2828a6747c86627eeeac638dccf",
+  "metadata": {
+    "input_file": "23-text-reasoning-content.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

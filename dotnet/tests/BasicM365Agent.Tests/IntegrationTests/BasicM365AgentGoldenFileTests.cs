@@ -226,17 +226,9 @@ public class BasicM365AgentGoldenFileTests : IDisposable
         }
     }
 
-    [Fact(Skip = "No test input files found in 50-53 range. Add test-data/input/50-*.xml through 53-*.xml to enable golden file testing.")]
-    public async Task BasicM365Agent_ShouldMatchGoldenFiles()
-    {
-        // Test skipped - no input files available
-        await Task.CompletedTask;
-    }
-
-    /* Original theory test kept for reference when test data becomes available
     [Theory]
     [MemberData(nameof(GetTestData))]
-    private async Task BasicM365Agent_ShouldMatchGoldenFiles_WithData(
+    public async Task BasicM365Agent_ShouldMatchGoldenFiles(
         string language,
         string format,
         string testName,
@@ -415,7 +407,6 @@ public class BasicM365AgentGoldenFileTests : IDisposable
         _output.WriteLine($"✅ TEST PASSED: {language} - {testName} ({format.ToUpper()})");
         _output.WriteLine($"{new string('=', 70)}\n");
     }
-    */
 
     [Fact]
     public async Task AllServers_ShouldRespondToHealthCheck()

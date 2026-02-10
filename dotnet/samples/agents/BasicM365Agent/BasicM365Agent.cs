@@ -298,9 +298,10 @@ public class BasicM365Agent : AgentApplication
         var message = new Dictionary<string, object>();
 
         // Determine role
+        // CRITICAL: Agent Protocol uses "agent" role, NOT "assistant" (see TypeSpec ChatRole enum)
         if (chatMessage is AssistantChatMessage)
         {
-            message["role"] = "assistant";
+            message["role"] = "agent";
         }
         else if (chatMessage is ToolChatMessage)
         {

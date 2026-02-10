@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:14:09.030214Z",
+  "hash": "89415f33590f02ca",
+  "response": {
+    "id": "chatcmpl-D7pLTW6wS1VPzmM4n2QP4ErF7C6Fh",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-10T21:13:59+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Here\u2019s the latest:\n\n- Weather in New York: cloudy, 18\u00B0C.\n- New York local time: 16:13:59 (4:13 PM) EST. UTC time: 21:13:59."
+      }
+    ],
+    "toolCalls": []
+  }
+}

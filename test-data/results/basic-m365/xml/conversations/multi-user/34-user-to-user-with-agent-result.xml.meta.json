@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:59:08.196118Z",
+  "hash": "f1714e8d366811277bae6680db735e14e1287d81bb541607d5c8fbfe1f4d291a",
+  "metadata": {
+    "input_file": "34-user-to-user-with-agent.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

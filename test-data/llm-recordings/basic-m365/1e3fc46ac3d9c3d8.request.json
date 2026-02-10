@@ -1,0 +1,79 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:00:05.121846Z",
+  "hash": "1e3fc46ac3d9c3d8",
+  "model": "gpt-5-nano",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant that can check the weather and tell the time. Use the available functions to help users."
+    },
+    {
+      "role": "user",
+      "content": "\n    What\u0027s the weather in Paris and what time is it?\n  "
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_LRbtduFGdzXeG1Xbu3O0pEz7",
+          "type": "Function",
+          "function": {
+            "name": "GetWeatherAsync",
+            "arguments": "{\u0022location\u0022: \u0022Paris\u0022}"
+          }
+        },
+        {
+          "id": "call_YGKyRcOUo2hQPRHiPTZ1Siaa",
+          "type": "Function",
+          "function": {
+            "name": "GetCurrentTime",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_LRbtduFGdzXeG1Xbu3O0pEz7",
+      "content": "\uD83C\uDF24\uFE0F The weather in Paris is stormy with a temperature of 17\u00B0C."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_YGKyRcOUo2hQPRHiPTZ1Siaa",
+      "content": "\uD83D\uDD50 The current UTC time is 2026-02-10 20:59:59."
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "GetWeatherAsync",
+        "description": "Get the weather for a given location.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "The location to get the weather for."
+            }
+          },
+          "required": [
+            "location"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "GetCurrentTime",
+        "description": "Get the current UTC time.",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-10T20:58:09.235208Z",
+  "content": {
+    "runId": "run_807a986fb5374b85",
+    "agentId": "agent",
+    "threadId": "thread_a8f6f430e84f4",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-10T20:58:09.234668Z",
+    "completedAt": "2026-02-10T20:58:09.234668Z"
+  },
+  "hash": "6f3ac43d8b7fb58f959d229c548c269b6ec7cada4ee77eb216636ad96c5742ab",
+  "metadata": {
+    "input_file": "25-timeout-test.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

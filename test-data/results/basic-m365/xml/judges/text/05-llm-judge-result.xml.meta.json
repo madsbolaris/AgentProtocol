@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-10T20:58:10.298060Z",
+  "hash": "10a045cef371a801606e8782e5caf6a8f559caea5c9f1ffc6c9e229ca58c476c",
+  "metadata": {
+    "input_file": "05-llm-judge.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

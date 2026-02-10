@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-02-10T20:58:11.178173Z",
+  "content": {
+    "runId": "run_f7892956352846d2",
+    "agentId": "agent",
+    "threadId": "thread_fc3fc48af9da4",
+    "status": "completed",
+    "output": [],
+    "createdAt": "2026-02-10T20:58:11.177271Z",
+    "completedAt": "2026-02-10T20:58:11.177271Z"
+  },
+  "hash": "347513c954895cfca09a6c561c37399c18aa1aa7fcbf0833a804a4f6f3896931",
+  "metadata": {
+    "input_file": "07-multi-turn-conversation.xml",
+    "sample": "basic-m365",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:00:44.376103Z",
+  "hash": "67e2b0ea1c259643",
+  "model": "gpt-5-nano",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant that can check the weather and tell the time. Use the available functions to help users."
+    },
+    {
+      "role": "user",
+      "content": "\n    What time is it?\n  "
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_Ja9M9MVDKhaKIGkdvJSmWxzH",
+          "type": "Function",
+          "function": {
+            "name": "GetCurrentTime",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_Ja9M9MVDKhaKIGkdvJSmWxzH",
+      "content": "\uD83D\uDD50 The current UTC time is 2026-02-10 21:00:41."
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "GetWeatherAsync",
+        "description": "Get the weather for a given location.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "The location to get the weather for."
+            }
+          },
+          "required": [
+            "location"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "GetCurrentTime",
+        "description": "Get the current UTC time.",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    }
+  ]
+}

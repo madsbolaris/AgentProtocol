@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<thread thread-id="thread_fe48c1cfc63b4" status="active" created-at="2026-02-10T20:59:31Z">
+  <agent>
+    <text>Thanks for the sample. I can handle special characters and Unicode just fine. Here are a few common encodings of your string:
+
+Original:
+Text with special characters: &lt;&gt;&amp;"' and unicode: 你好 🌍
+
+HTML escaping:
+Text with special characters: &amp;lt;&amp;gt;&amp;amp;&amp;quot;&amp;#39; and unicode: 你好 🌍
+
+JSON escaping (Unicode escapes):
+"Text with special characters: \u003C\u003E\u0026\u0022\u0027 and unicode: \u4F60\u597D \ud83C\udf0D"
+
+URL encoding:
+Text with special characters: %3C%3E%26%22%27 and unicode: %E4%BD%A0%E5%A5%BD%20%F0%9F%8C%8D
+
+Unicode code points:
+- 你: U+4F60
+- 好: U+597D
+- 🌍: U+1F30D
+
+If you want, I can convert the string into any of these formats (or another encoding you need). Also, if you’d like, I can translate or manipulate the text.</text>
+  </agent>
+</thread>

@@ -15,22 +15,22 @@ NC='\033[0m' # No Color
 # Track if any checks failed
 FAILED=0
 
-# Check 1: Extract documentation examples
-echo ""
-echo "📝 Extracting documentation examples..."
-if python scripts/extract-doc-examples.py > /dev/null 2>&1; then
-    echo -e "${GREEN}✓ Documentation examples extracted${NC}"
-
-    # Check if extraction created new files to stage
-    if git diff --name-only docs/snippets/ | grep -q .; then
-        echo -e "${YELLOW}  ⚠️  New snippets generated - staging them${NC}"
-        git add docs/snippets/
-    fi
-else
-    echo -e "${RED}✗ Failed to extract documentation examples${NC}"
-    echo "  Run: python scripts/extract-doc-examples.py"
-    FAILED=1
-fi
+# Check 1: Extract documentation examples (disabled - script not present)
+# echo ""
+# echo "📝 Extracting documentation examples..."
+# if python scripts/extract-doc-examples.py > /dev/null 2>&1; then
+#     echo -e "${GREEN}✓ Documentation examples extracted${NC}"
+#
+#     # Check if extraction created new files to stage
+#     if git diff --name-only docs/snippets/ | grep -q .; then
+#         echo -e "${YELLOW}  ⚠️  New snippets generated - staging them${NC}"
+#         git add docs/snippets/
+#     fi
+# else
+#     echo -e "${RED}✗ Failed to extract documentation examples${NC}"
+#     echo "  Run: python scripts/extract-doc-examples.py"
+#     FAILED=1
+# fi
 
 # Check 2: Detect if golden files are being modified
 echo ""

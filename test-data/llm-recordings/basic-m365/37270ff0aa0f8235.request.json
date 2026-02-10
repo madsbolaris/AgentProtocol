@@ -1,0 +1,79 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-10T21:00:14.200733Z",
+  "hash": "37270ff0aa0f8235",
+  "model": "gpt-5-nano",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant that can check the weather and tell the time. Use the available functions to help users."
+    },
+    {
+      "role": "user",
+      "content": "\n    What\u0027s the weather in Paris and what time is it?\n  "
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "call_6J08xToHdkWoe0sWL0WHw5Qa",
+          "type": "Function",
+          "function": {
+            "name": "GetWeatherAsync",
+            "arguments": "{\u0022location\u0022: \u0022Paris\u0022}"
+          }
+        },
+        {
+          "id": "call_5nglgl0A44Lm3BdjSGItUoWO",
+          "type": "Function",
+          "function": {
+            "name": "GetCurrentTime",
+            "arguments": "{}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_6J08xToHdkWoe0sWL0WHw5Qa",
+      "content": "\uD83C\uDF24\uFE0F The weather in Paris is partly cloudy with a temperature of 13\u00B0C."
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_5nglgl0A44Lm3BdjSGItUoWO",
+      "content": "\uD83D\uDD50 The current UTC time is 2026-02-10 21:00:09."
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "GetWeatherAsync",
+        "description": "Get the weather for a given location.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "The location to get the weather for."
+            }
+          },
+          "required": [
+            "location"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "GetCurrentTime",
+        "description": "Get the current UTC time.",
+        "parameters": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    }
+  ]
+}

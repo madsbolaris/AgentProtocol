@@ -1,15 +1,15 @@
 {
   "callId": 1,
-  "timestamp": "2026-02-08T19:26:54.132642Z",
+  "timestamp": "2026-02-10T20:59:31.620399Z",
   "hash": "217af8c2771408ed",
   "response": {
-    "id": "chatcmpl-D74ieVMMr5bfNwWKpfPgcrdD2DFxv",
+    "id": "chatcmpl-D7p7IPT1pDvHbhxEXQLbPoykzWbYf",
     "model": "gpt-5-nano-2025-08-07",
-    "created": "2026-02-08T19:26:48+00:00",
+    "created": "2026-02-10T20:59:20+00:00",
     "finishReason": "Stop",
     "content": [
       {
-        "text": "Nice test! I can handle text with special characters and Unicode, and I\u2019ll preserve them as-is. For example, your text is preserved as:\nText with special characters: \u003C\u003E\u0026\u0022\u0027 and unicode: \u4F60\u597D \uD83C\uDF0D\n\nWould you like me to fetch the weather for a location or tell the current time? If you give me a city (or a timezone), I\u2019ll respond with the latest weather or the current time."
+        "text": "Thanks for the sample. I can handle special characters and Unicode just fine. Here are a few common encodings of your string:\n\nOriginal:\nText with special characters: \u003C\u003E\u0026\u0022\u0027 and unicode: \u4F60\u597D \uD83C\uDF0D\n\nHTML escaping:\nText with special characters: \u0026lt;\u0026gt;\u0026amp;\u0026quot;\u0026#39; and unicode: \u4F60\u597D \uD83C\uDF0D\n\nJSON escaping (Unicode escapes):\n\u0022Text with special characters: \\u003C\\u003E\\u0026\\u0022\\u0027 and unicode: \\u4F60\\u597D \\ud83C\\udf0D\u0022\n\nURL encoding:\nText with special characters: %3C%3E%26%22%27 and unicode: %E4%BD%A0%E5%A5%BD%20%F0%9F%8C%8D\n\nUnicode code points:\n- \u4F60: U\u002B4F60\n- \u597D: U\u002B597D\n- \uD83C\uDF0D: U\u002B1F30D\n\nIf you want, I can convert the string into any of these formats (or another encoding you need). Also, if you\u2019d like, I can translate or manipulate the text."
       }
     ],
     "toolCalls": []

@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "microsoft-agents-protocol-runtime"
+version = "0.2.0"
+description = "Runtime utilities for Microsoft Agents Protocol - tool execution and schema generation"
+readme = "README.md"
+authors = [
+    {name = "Microsoft", email = "azureaiagents@microsoft.com"}
+]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "microsoft-agents-protocol-abstractions>=0.2.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/microsoft/agentprotocol"
+Repository = "https://github.com/microsoft/agentprotocol"
+Documentation = "https://github.com/microsoft/agentprotocol/tree/main/python/microsoft-agents-common"
+
+[tool.setuptools]
+packages = ["microsoft.agents.protocol.runtime", "microsoft.agents.protocol.runtime.tools"]
+
+[tool.setuptools.package-dir]
+"" = "."
+
+[tool.setuptools.package-data]
+"microsoft.agents.common" = ["py.typed"]

@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "microsoft-agents-protocol-client"
+version = "0.2.0"
+description = "HTTP client for Microsoft Agents Protocol APIs"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Microsoft Corporation"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "aiohttp>=3.8.0",
+    "microsoft-agents-protocol-abstractions>=0.2.0",
+    "microsoft-agents-protocol-runtime>=0.2.0",
+    "microsoft-agents-protocol-xml>=0.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["microsoft*"]
+namespaces = true
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: Integration tests that test full end-to-end scenarios",
+    "unit: Unit tests that test individual components in isolation",
+]
+testpaths = ["tests"]
+asyncio_mode = "auto"

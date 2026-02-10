@@ -52,7 +52,7 @@ PORT=3979 dotnet run
 
 **TypeScript:**
 ```bash
-cd typescript/samples/echo-m365
+cd typescript/samples/agents/echo-m365
 PORT=3980 npm start
 ```
 

@@ -1,0 +1,12 @@
+pyproject.toml
+agent_xml/__init__.py
+agent_xml.egg-info/PKG-INFO
+agent_xml.egg-info/SOURCES.txt
+agent_xml.egg-info/dependency_links.txt
+agent_xml.egg-info/requires.txt
+agent_xml.egg-info/top_level.txt
+agent_xml/models/__init__.py
+agent_xml/models/messages.py
+agent_xml/serialization/__init__.py
+agent_xml/serialization/xml_deserializer.py
+agent_xml/serialization/xml_serializer.py

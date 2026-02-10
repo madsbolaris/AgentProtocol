@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.agent.ai/messages/v1" elementFormDefault="qualified" targetNamespace="http://schemas.agent.ai/messages/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="AlwaysCondition">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="RolesCondition">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="roles" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ContentCondition">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="content-types" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ExpressionCondition">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="expression" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="RemoteCondition">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="endpoint" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="connection" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="MentionCondition">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="require-explicit-mention" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SimilarityCondition">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="kind" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="reference-texts" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="threshold" type="xs:float" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -14,41 +14,41 @@ install:
 # Run all validation checks
 validate:
 	@echo "Running complete validation suite..."
-	python3 validation/validate-consistency.py
+	python3 validation/validate_consistency.py
 
 # Individual checks
 enums:
 	@echo "Checking enum synchronization..."
-	python3 validation/validate-enums.py
+	python3 validation/validate_enums.py
 
 links:
 	@echo "Validating internal links..."
-	python3 validation/validate-links.py
+	python3 validation/validate_links.py
 
 line-refs:
 	@echo "Checking line number references..."
-	python3 validation/check-line-references.py
+	python3 validation/check_line_references.py
 
 api-ref:
 	@echo "Validating API reference quality..."
-	python3 validation/validate-api-reference.py
+	python3 validation/validate_api_reference.py
 
 misplaced:
 	@echo "Detecting misplaced content in API reference..."
-	python3 validation/detect-misplaced-content.py ../api-reference
+	python3 validation/detect_misplaced_content.py ../api-reference
 
 api-docs-complete:
 	@echo "Validating API documentation completeness..."
-	python3 validation/validate-api-docs-completeness.py ../api-reference
+	python3 validation/validate_api_docs_completeness.py ../api-reference
 
 # Generation tasks
 generate:
 	@echo "Generating API reference from TypeSpec..."
-	python3 generation/generate-api-reference.py
+	python3 codegen/generate_api_reference.py
 
 merge:
 	@echo "Merging generated and manual documentation..."
-	python3 generation/merge-api-docs.py
+	python3 codegen/merge_api_docs.py
 
 # Complete doc generation workflow
 docs: generate merge

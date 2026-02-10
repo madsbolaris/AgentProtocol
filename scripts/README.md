@@ -10,10 +10,10 @@ Generate golden files from .NET implementations (canonical source):
 
 ```bash
 # Generate for all samples (auto-starts .NET bots)
-python scripts/generate_golden_datasets.py
+python scripts/testgen/generate_golden_datasets.py
 
 # Generate for specific sample
-python scripts/generate_golden_datasets.py --sample echom365
+python scripts/testgen/generate_golden_datasets.py --sample echom365
 
 # Full documentation: test-data/results/README.md
 ```
@@ -23,16 +23,16 @@ python scripts/generate_golden_datasets.py --sample echom365
 Generate code and tests from TypeSpec schemas:
 
 ```bash
-# Generate all (TypeSpec → Python, .NET, TypeScript)
-./scripts/generation/generate-all.sh
+# Generate all SDKs (Python, .NET, TypeScript)
+python scripts/codegen/generate_sdk.py
 
-# Generate specific language
-./scripts/generation/generate-python.sh      # Python bindings
-./scripts/generation/generate-csharp.sh      # .NET bindings
-./scripts/generation/generate-typescript.sh  # TypeScript bindings
+# Or generate specific language only
+python scripts/codegen/generate_sdk.py --lang python
+python scripts/codegen/generate_sdk.py --lang csharp
+python scripts/codegen/generate_sdk.py --lang typescript
 
 # Generate tests
-python scripts/generation/generate-tests.py
+python scripts/testgen/generate_tests.py
 ```
 
 ### Documentation Validation
@@ -43,14 +43,14 @@ Validate documentation against TypeSpec schemas:
 cd scripts/validation
 
 # Main validations
-python validate-docs-against-typespec.py
-python validate-api-reference.py
-python validate-typespec-docs.py
+python validate_docs_against_typespec.py
+python validate_api_reference.py
+python validate_typespec_docs.py
 
 # Specific checks
-python check-cross-references.py
-python check-typespec-terms.py
-python validate-links.py
+python check_cross_references.py
+python check_typespec_terms.py
+python validate_links.py
 ```
 
 ## Directory Structure
@@ -58,31 +58,32 @@ python validate-links.py
 ```
 scripts/
 ├── README.md                          # This file
-├── generate_golden_datasets.py       # Main golden file generator
-├── cleanup_deprecated_results.sh     # Cleanup old result directories
-├── cleanup_and_organize.sh           # Cleanup scripts directory
+├── Makefile                           # Build targets for common tasks
 │
-├── generation/                       # Code generation from TypeSpec
-│   ├── generate-all.sh              # Generate all languages
-│   ├── generate-python.sh
-│   ├── generate-csharp.sh
-│   ├── generate-typescript.sh
-│   ├── generate-tests.py            # Generate tests
-│   ├── generate-api-reference.py
-│   └── test_gen/                    # Test generation modules
+├── codegen/                          # Code & doc generation from TypeSpec
+│   ├── generate_sdk.py              # Generate SDKs (all or --lang python|csharp|typescript)
+│   ├── generate_for_typescript.py   # Special TS package generation
+│   ├── generate_api_reference.py    # Generate API docs
+│   ├── merge_api_docs.py            # Merge generated + manual docs
+│   └── extract_doc_examples.py      # Extract examples from tests
 │
-├── validation/                       # Documentation validation
-│   ├── validate-*.py                # Validation scripts
-│   └── check-*.py                   # Specific checkers
+├── testgen/                          # Test generation & golden datasets
+│   ├── generate_tests.py            # Generate tests from TypeSpec
+│   ├── generate_golden_datasets.py  # Main golden file generator
+│   └── lib/                         # Test generation library modules
+│       ├── compliance_test_generator.py
+│       ├── property_test_generator.py
+│       └── ...
 │
-├── utilities/                        # General utilities
-│   ├── README.md                    # Utilities documentation
-│   ├── start-all-echo-bots.sh      # Bot management
-│   ├── validate-echo-bots.py        # Bot validation
-│   └── *.sh, *.py                   # Other utilities
+├── validation/                       # Documentation & code validation
+│   ├── validate_*.py                # Validation scripts
+│   ├── check_*.py                   # Specific checkers
+│   ├── validate_echo_m365s.py       # Sample validation
+│   └── validate_test_infrastructure.py  # Infrastructure checks
 │
-├── typescript/                       # TypeScript-specific utilities
-│   └── *.sh
+├── ci/                               # CI & development utilities
+│   ├── install_git_hooks.py         # Setup git hooks
+│   └── start_samples.py             # Start any sample + chat UI
 │
 └── .archive/                         # Deprecated scripts
     ├── README.md                    # Why scripts are archived
@@ -93,7 +94,7 @@ scripts/
 
 ### Generate Golden Files
 ```bash
-python scripts/generate_golden_datasets.py --sample echom365
+python scripts/testgen/generate_golden_datasets.py --sample echom365
 ```
 
 ### Validate Tests
@@ -104,17 +105,19 @@ SAMPLE_NAME=echom365 npm test
 
 ### Generate All Code
 ```bash
-./scripts/generation/generate-all.sh
+python scripts/codegen/generate_sdk.py
 ```
 
-### Start All Bots
+### Start Samples (with Chat UI)
 ```bash
-./scripts/utilities/start-all-echo-bots.sh
-```
+# Start specific sample with UI
+python scripts/ci/start_samples.py basic-m365 --ui
 
-### Cleanup Old Results
-```bash
-./scripts/cleanup_deprecated_results.sh
+# Start all echo-m365 samples
+python scripts/ci/start_samples.py echo-m365
+
+# Start everything
+python scripts/ci/start_samples.py all --ui
 ```
 
 ## Adding New Scripts
@@ -122,16 +125,17 @@ SAMPLE_NAME=echom365 npm test
 When adding new scripts:
 
 1. **Choose the right directory:**
-   - `generation/` - Code/test generation from schemas
-   - `validation/` - Documentation validation
-   - `utilities/` - General development utilities
-   - Root - Major standalone tools
+   - `codegen/` - Code & documentation generation from schemas
+   - `testgen/` - Test generation & golden datasets
+   - `validation/` - Documentation & code validation
+   - `ci/` - CI scripts & development utilities
 
 2. **Follow conventions:**
-   - Add shebang line: `#!/usr/bin/env python3` or `#!/bin/bash`
-   - Include description comment block
+   - Add shebang line: `#!/usr/bin/env python3`
+   - Include description docstring
    - Add usage examples
-   - Make executable: `chmod +x script.sh`
+   - Use underscores in filenames: `my_script.py` not `my-script.py`
+   - Make executable: `chmod +x script.py`
 
 3. **Update documentation:**
    - Add entry to appropriate README.md

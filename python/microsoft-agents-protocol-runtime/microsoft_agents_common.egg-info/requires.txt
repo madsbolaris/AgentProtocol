@@ -1,0 +1,1 @@
+microsoft-agents-abstractions>=0.1.0

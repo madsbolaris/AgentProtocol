@@ -1,0 +1,27 @@
+Metadata-Version: 2.4
+Name: microsoft-agents-xml
+Version: 0.1.0
+Summary: XML serialization for Agent Framework messages - Python implementation
+Author: Agent Protocol Contributors
+License: MIT
+Project-URL: Homepage, https://github.com/madsbolaris/AgentFramework
+Project-URL: Repository, https://github.com/madsbolaris/AgentFramework
+Project-URL: Documentation, https://agentframework.readthedocs.io
+Keywords: agent,xml,serialization,messages,ai
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: xsdata>=24.0
+Requires-Dist: lxml>=5.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0; extra == "dev"
+Requires-Dist: black>=24.0; extra == "dev"
+Requires-Dist: ruff>=0.1.0; extra == "dev"
+Requires-Dist: mypy>=1.8; extra == "dev"

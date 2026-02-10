@@ -2,7 +2,7 @@
 
 **Send your first message in 5 minutes**
 
-This quickstart walks you through the essential ways to interact with agents: simple completions, persistent conversations, tool usage, and streaming responses (text, rich content, and threads).
+This quickstart walks you through the essential ways to interact with agents: simple completions, multimodal content, persistent conversations, tool usage, and streaming responses.
 
 ---
 
@@ -93,7 +93,81 @@ The absolute simplest interaction - one line to get a response.
 
 ---
 
-## Step 2: Persistent Conversations
+## Step 2: Sending Multimodal Content
+
+Send images, files, or other media along with text to the agent.
+
+=== "Python"
+
+    ```python
+    import asyncio
+    from microsoft.agents.protocol import AgentProtocolClient, ImageContent
+
+    async def main():
+        client = AgentProtocolClient("http://localhost:5000")
+
+        # Send a message with an image
+        response = await client.complete_chat(
+            contents=[
+                {"type": "text", "text": "What's in this image?"},
+                {"type": "image", "uri": "https://example.com/photo.jpg"}
+            ]
+        )
+        print(f"Agent: {response.text}")
+
+    if __name__ == "__main__":
+        asyncio.run(main())
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol.Client;
+
+    var client = new AgentProtocolClient("http://localhost:5000");
+
+    // Send a message with an image
+    var response = await client.CompleteChatAsync(new[]
+    {
+        new TextContent { Text = "What's in this image?" },
+        new ImageContent { Uri = "https://example.com/photo.jpg" }
+    });
+
+    Console.WriteLine($"Agent: {response.Text}");
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { AgentProtocolClient } from '@microsoft/agents-protocol-client';
+
+    const client = new AgentProtocolClient("http://localhost:5000");
+
+    // Send a message with an image
+    const response = await client.completeChat([
+        { type: "text", text: "What's in this image?" },
+        { type: "image", uri: "https://example.com/photo.jpg" }
+    ]);
+
+    console.log(`Agent: ${response.text}`);
+    ```
+
+**Output:**
+
+```xml
+<agent thread-id="thread_def456">
+  This image shows the Eiffel Tower in Paris during sunset, with beautiful orange and pink hues in the sky.
+</agent>
+```
+
+!!! tip "What this does"
+    - Sends multiple content types in a single message
+    - Agent can analyze images, documents, audio, and more
+    - Content can be URLs or base64-encoded data
+
+---
+
+## Step 3: Persistent Conversations
 
 Maintain conversation context across multiple turns automatically.
 
@@ -183,7 +257,7 @@ Second message:
 
 ---
 
-## Step 3: Tools/Functions
+## Step 4: Tools/Functions
 
 Register tools that agents can call automatically.
 
@@ -247,12 +321,12 @@ Register tools that agents can call automatically.
 
 ---
 
-## Step 4: Streaming Responses
+## Step 5: Streaming Responses
 
 Stream responses in real-time for better user experience.
 
 !!! info "Learning Path"
-    The recommended order is: Step 1 (Simple) → Step 2 (Conversations) → Step 3 (Tools) → Step 4 (Streaming). Learn non-streaming patterns first, then progress to streaming.
+    The recommended order is: Step 1 (Simple) → Step 2 (Multimodal) → Step 3 (Conversations) → Step 4 (Tools) → Step 5 (Streaming). Learn non-streaming patterns first, then progress to streaming.
 
 ### Simple Text Streaming
 

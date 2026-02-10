@@ -540,10 +540,9 @@ def add_agent_protocol_routes(
 
             created_at = datetime.utcnow().isoformat()
 
-            # Helper to send SSE event
+            # Helper to send SSE event (standard SSE format)
             async def send_event(event_name: str, event_data: dict):
-                # Send SSE event with proper format: event line + data line
-                # Don't wrap event_data - SSE format already provides event/data structure
+                # Standard SSE format: event line + data line
                 await response.write(f'event: {event_name}\ndata: {json.dumps(event_data)}\n\n'.encode())
                 await response.drain()  # Flush the data to the client
 
@@ -632,22 +631,22 @@ def add_agent_protocol_routes(
             response = _create_sse_response()
             await response.prepare(request)
 
-            # Event 1: run.started
-            event = {
+            # Event 1: run.started (standard SSE format)
+            event_data = {
                 "runId": run_id,
                 "status": "in_progress",
                 "eventSeq": 1
             }
-            await response.write(f'event: run.started\ndata: {json.dumps(event)}\n\n'.encode())
+            await response.write(f'event: run.started\ndata: {json.dumps(event_data)}\n\n'.encode())
 
-            # Event 2: run.completed
-            event = {
+            # Event 2: run.completed (standard SSE format)
+            event_data = {
                 "runId": run_id,
                 "status": "completed",
                 "output": run.get("output", []),
                 "eventSeq": 2
             }
-            await response.write(f'event: run.completed\ndata: {json.dumps(event)}\n\n'.encode())
+            await response.write(f'event: run.completed\ndata: {json.dumps(event_data)}\n\n'.encode())
 
             await response.write_eof()
             return response

@@ -281,11 +281,13 @@ class AgentHost:
                             text = content.get("text", "")
                             break
 
-                # Helper to send SSE events (correct format per spec)
+                # Helper to send SSE events (standard SSE format)
+                # Format: event: <name>\ndata: <json>\n\n
                 async def send_event(event_name: str, event_data: dict):
                     nonlocal event_seq
                     event_seq += 1
                     event_data["eventSeq"] = event_seq
+                    # Standard SSE format: event line + data line
                     await response.write(f'event: {event_name}\ndata: {json.dumps(event_data)}\n\n'.encode())
                     await response.drain()
 

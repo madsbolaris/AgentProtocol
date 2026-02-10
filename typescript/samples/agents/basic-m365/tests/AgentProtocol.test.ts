@@ -54,6 +54,61 @@ describe('Agent Protocol Integration Tests', () => {
     });
   });
 
+  describe('Agent Card', () => {
+    it('should return agent card with required fields', async () => {
+      const response = await request(echoM365Url)
+        .get('/agent-card')
+        .expect(200)
+        .expect('Content-Type', /json/);
+
+      // Required fields
+      expect(response.body).toHaveProperty('agentId');
+      expect(response.body).toHaveProperty('name');
+      expect(response.body).toHaveProperty('description');
+
+      // Check that agentId is a string
+      expect(typeof response.body.agentId).toBe('string');
+      expect(response.body.agentId.length).toBeGreaterThan(0);
+
+      // Check that name is a string
+      expect(typeof response.body.name).toBe('string');
+      expect(response.body.name.length).toBeGreaterThan(0);
+
+      // Check that description is a string
+      expect(typeof response.body.description).toBe('string');
+      expect(response.body.description.length).toBeGreaterThan(0);
+    });
+
+    it('should return agent capabilities', async () => {
+      const response = await request(echoM365Url)
+        .get('/agent-card')
+        .expect(200);
+
+      // Check for capability fields (may be optional)
+      if (response.body.outputModes) {
+        expect(Array.isArray(response.body.outputModes)).toBe(true);
+      }
+
+      if (response.body.inputModes) {
+        expect(Array.isArray(response.body.inputModes)).toBe(true);
+      }
+
+      if (response.body.version) {
+        expect(typeof response.body.version).toBe('string');
+      }
+    });
+
+    it('should have CORS headers', async () => {
+      const response = await request(echoM365Url)
+        .get('/agent-card')
+        .set('Origin', 'http://localhost:3000')
+        .expect(200);
+
+      // Check for CORS headers
+      expect(response.headers['access-control-allow-origin']).toBeDefined();
+    });
+  });
+
   describe('Agent Protocol /runs endpoint', () => {
     it('should create and return a run', async () => {
       const run = {

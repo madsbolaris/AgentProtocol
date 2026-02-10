@@ -12,41 +12,6 @@ type ApplicationTurnState = TurnState<ConversationState>
 
 const downloader = new AttachmentDownloader()
 
-// 🔧 FIX: Track storage access for cleanup to prevent memory leaks
-const storageAccessTimes = new Map<string, number>()
-const STORAGE_MAX_AGE_MS = 60 * 60 * 1000 // 1 hour
-let lastCleanup = Date.now()
-
-function cleanupOldStorage(storage: MemoryStorage): void {
-  const now = Date.now()
-
-  // Only cleanup every 5 minutes
-  if (now - lastCleanup < 5 * 60 * 1000) {
-    return
-  }
-
-  lastCleanup = now
-  const cutoff = now - STORAGE_MAX_AGE_MS
-
-  // Find keys to delete
-  const keysToDelete: string[] = []
-  for (const [key, accessTime] of storageAccessTimes.entries()) {
-    if (accessTime < cutoff) {
-      keysToDelete.push(key)
-    }
-  }
-
-  // Delete old keys
-  if (keysToDelete.length > 0) {
-    storage.delete(keysToDelete).then(() => {
-      keysToDelete.forEach(key => storageAccessTimes.delete(key))
-      console.log(`Cleaned up ${keysToDelete.length} old conversation states`)
-    }).catch(err => {
-      console.error('Error during storage cleanup:', err)
-    })
-  }
-}
-
 // Define storage and application
 const storage = new MemoryStorage()
 export const agentApp = new AgentApplication<ApplicationTurnState>({
@@ -89,28 +54,12 @@ agentApp.onConversationUpdate('membersAdded', async (context: TurnContext, state
 
 // Listen for ANY message to be received. MUST BE AFTER ANY OTHER MESSAGE HANDLERS
 agentApp.onActivity(ActivityTypes.Message, async (context: TurnContext, state: ApplicationTurnState) => {
-  // 🔧 Periodically clean up old storage to prevent memory leaks
-  cleanupOldStorage(storage)
-
-  // Track this conversation's access time
-  if (context.activity.conversation?.id) {
-    storageAccessTimes.set(context.activity.conversation.id, Date.now())
-  }
-
-  // Extract role from channelData (default to "user" if not present)
-  const role = (context.activity.channelData as any)?.role ?? 'user'
-
-  // Only respond to user messages
-  if (role !== 'user') {
-    return
-  }
-
   // Increment count state
   let count = state.conversation.count ?? 0
   state.conversation.count = ++count
 
-  // Echo back users request
-  await context.sendActivity(`[${count}] you said: ${context.activity.text}`)
+  // Echo back users request (removed counter for consistency with golden data)
+  await context.sendActivity(`you said: ${context.activity.text}`)
 })
 
 agentApp.onActivity(/^message/, async (context: TurnContext, state: ApplicationTurnState) => {

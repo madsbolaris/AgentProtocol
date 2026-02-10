@@ -1,0 +1,35 @@
+{
+  "name": "typescript-emoji-chat-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Emoji Chat Bot sample using Agent Hosting SDK",
+  "author": "Microsoft",
+  "license": "MIT",
+  "main": "./dist/src/index.js",
+  "scripts": {
+    "prebuild": "echo 'Building...'",
+    "build": "tsc --build",
+    "prestart": "npm run build",
+    "start": "node ./dist/src/index.js",
+    "dev": "tsc --build && node ./dist/src/index.js",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "@microsoft/agents-protocol-hosting": "file:../../../packages/agents-protocol-hosting"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^22.15.18",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.8.3"
+  },
+  "keywords": [
+    "agent",
+    "emoji",
+    "chatbot",
+    "microsoft-agents"
+  ]
+}

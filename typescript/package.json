@@ -5,7 +5,8 @@
   "description": "TypeScript workspace for Microsoft Agents Protocol packages",
   "workspaces": [
     "packages/*",
-    "samples/*"
+    "samples/*",
+    "samples/agents/*"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",

@@ -12,8 +12,10 @@ const server = express()
 // Add CORS middleware for development
 server.use((_req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
+  res.header('Access-Control-Allow-Headers', '*')
+  res.header('Access-Control-Expose-Headers', '*')
+  res.header('Access-Control-Max-Age', '3600')
   if (_req.method === 'OPTIONS') {
     return res.status(200).end()
   }
@@ -37,7 +39,7 @@ if (authConfig.clientId && authConfig.clientSecret) {
  */
 function getPortFromConfig(): number | null {
   try {
-    // Navigate up to repository root (3 levels up from EchoM365 directory)
+    // Navigate up to repository root (4 levels up from echo-m365 directory)
     const configPath = path.join(__dirname, '..', '..', '..', '..', 'agent-config.json')
 
     if (!fs.existsSync(configPath)) {
@@ -47,7 +49,7 @@ function getPortFromConfig(): number | null {
     const configContent = fs.readFileSync(configPath, 'utf-8')
     const config = JSON.parse(configContent)
 
-    return config?.bots?.typescript?.port || null
+    return config?.bots?.['typescript-echo-m365']?.port || null
   } catch (error) {
     // If config reading fails, return null to fall back to environment variable
     return null
@@ -56,10 +58,6 @@ function getPortFromConfig(): number | null {
 
 function generateRunId(): string {
   return `run_${Math.random().toString(36).substring(2, 15)}`
-}
-
-function generateMessageId(): string {
-  return `msg_${Math.random().toString(36).substring(2, 15)}`
 }
 
 function generateThreadId(): string {
@@ -80,6 +78,13 @@ function buildThreadXml(threadId: string, outputMessages: any[], createdAt: stri
   }
 
   let xml = `<?xml version="1.0" encoding="utf-8"?>\n`
+
+  // Use self-closing tag if no output messages
+  if (outputMessages.length === 0) {
+    xml += `<thread thread-id="${threadId}" status="${status}" created-at="${createdAt}" />\n`
+    return xml
+  }
+
   xml += `<thread thread-id="${threadId}" status="${status}" created-at="${createdAt}">\n`
 
   for (const msg of outputMessages) {
@@ -121,49 +126,17 @@ function setupAgentProtocolRoutes(app: express.Application): void {
     res.status(200).json({ status: 'OK' })
   })
 
-  // Create run endpoint
-  app.post('/runs', async (req: express.Request, res: express.Response) => {
-    // Get format query parameter (default to json)
-    const format = req.query.format || 'json'
-
-    try {
-      const { agentId = 'agent', threadId = generateThreadId(), input = [] } = req.body
-      const runId = generateRunId()
-
-      // TODO: Process through agent
-      // Only process user messages
-      const output = input
-        .filter((msg: any) => msg.role === 'user')
-        .map((msg: any) => ({
-          role: 'assistant',
-          contents: [{ kind: 'text', text: `Echo: ${msg?.contents?.[0]?.text || ''}` }]
-        }))
-
-      const createdAt = new Date().toISOString()
-      const completedAt = new Date().toISOString()
-
-      const run = {
-        runId,
-        agentId,
-        threadId,
-        status: 'completed',
-        // NOTE: input field omitted per TypeSpec @visibility("create") rule
-        // input should only appear in request bodies, not responses
-        output,
-        createdAt,
-        completedAt
-      }
-
-      // Return XML or JSON based on format parameter
-      if (format === 'xml') {
-        const xml = buildThreadXml(threadId, output, createdAt)
-        res.status(201).type('application/xml').send(xml)
-      } else {
-        res.status(201).json(run)
-      }
-    } catch (error: any) {
-      res.status(400).json({ error: error.message })
+  // Agent card endpoint
+  app.get('/agent-card', (_req: express.Request, res: express.Response) => {
+    const agentCard = {
+      agentId: 'echo-m365',
+      name: 'Echo M365 Agent',
+      description: 'An echo agent that repeats user messages',
+      version: '1.0.0',
+      outputModes: ['text'],
+      inputModes: ['text']
     }
+    res.status(200).json(agentCard)
   })
 
   // Create and wait endpoint
@@ -175,14 +148,63 @@ function setupAgentProtocolRoutes(app: express.Application): void {
       const { agentId = 'agent', threadId = generateThreadId(), input = [] } = req.body
       const runId = generateRunId()
 
-      // TODO: Process through agent
-      // Only process user messages
-      const output = input
-        .filter((msg: any) => msg.role === 'user')
-        .map((msg: any) => ({
-          role: 'assistant',
-          contents: [{ kind: 'text', text: `Echo: ${msg?.contents?.[0]?.text || ''}` }]
-        }))
+      // Process through agent - convert each input message to activity and collect responses
+      const output: any[] = []
+
+      for (const msg of input) {
+        if (msg.role === 'user') {
+          const activity = {
+            type: 'message',
+            text: msg?.contents?.[0]?.text || '',
+            from: { id: 'user' },
+            recipient: { id: 'bot' },
+            conversation: { id: threadId },
+            channelId: 'agent-protocol',
+            serviceUrl: 'https://agent-protocol',
+            channelData: { role: 'user' },
+            removeRecipientMention: () => msg?.contents?.[0]?.text || ''
+          }
+
+          // Create a mock turn context to capture responses
+          const mockContext = {
+            activity,
+            sendActivity: async (activityOrText: any) => {
+              const responseActivity = typeof activityOrText === 'string'
+                ? { text: activityOrText, value: null }
+                : activityOrText
+
+              // If there's a value field (Agent Protocol format), use it
+              if (responseActivity.value) {
+                output.push(responseActivity.value)
+              } else if (responseActivity.text) {
+                // Otherwise convert text to Agent Protocol format
+                output.push({
+                  role: 'agent',
+                  contents: [{ kind: 'text', text: responseActivity.text }]
+                })
+              }
+              return { id: 'mock-id' }
+            },
+            sendActivities: async (activities: any[]) => {
+              for (const act of activities) {
+                const responseActivity = typeof act === 'string' ? { text: act, value: null } : act
+                if (responseActivity.value) {
+                  output.push(responseActivity.value)
+                } else if (responseActivity.text) {
+                  output.push({
+                    role: 'agent',
+                    contents: [{ kind: 'text', text: responseActivity.text }]
+                  })
+                }
+              }
+              return activities.map(() => ({ id: 'mock-id' }))
+            }
+          }
+
+          // Run the agent with mock context
+          await agentApp.run(mockContext as any)
+        }
+      }
 
       const createdAt = new Date().toISOString()
       const completedAt = new Date().toISOString()
@@ -214,47 +236,134 @@ function setupAgentProtocolRoutes(app: express.Application): void {
   // Create and stream endpoint
   app.post('/runs/stream', async (req: express.Request, res: express.Response) => {
     try {
-      const { agentId = 'agent', input = [] } = req.body
+      const { agentId = 'agent', threadId = generateThreadId(), input = [] } = req.body
       const runId = generateRunId()
 
+      // Set up SSE response headers
       res.setHeader('Content-Type', 'text/event-stream')
       res.setHeader('Cache-Control', 'no-cache')
       res.setHeader('Connection', 'keep-alive')
 
-      // Send run.started event
-      res.write(`event: run.started\n`)
-      res.write(`data: ${JSON.stringify({ runId, agentId, status: 'in_progress' })}\n\n`)
+      const createdAt = new Date().toISOString()
 
-      // TODO: Process through agent and stream results
-      // Only process first user message
-      const firstMsg = input.find((msg: any) => msg.role === 'user')
-      const text = firstMsg?.contents?.[0]?.text || ''
-
-      const messageId = generateMessageId()
-
-      // Send message.created event
-      res.write(`event: message.created\n`)
-      res.write(`data: ${JSON.stringify({ runId, messageId, role: 'assistant' })}\n\n`)
-
-      // Stream the text in chunks
-      const words = text.split(' ')
-      for (let i = 0; i < words.length; i++) {
-        res.write(`event: message.updated\n`)
-        res.write(`data: ${JSON.stringify({
-          runId,
-          messageId,
-          contents: [{ kind: 'text', text: words.slice(0, i + 1).join(' ') }]
-        })}\n\n`)
-        await new Promise<void>(resolve => global.setTimeout(resolve, 50))
+      // Helper to send SSE event
+      const sendEvent = (event: string, data: any) => {
+        res.write(`event: ${event}\n`)
+        res.write(`data: ${JSON.stringify({ event, data })}\n\n`)
       }
 
-      // Send message.completed event
-      res.write(`event: message.completed\n`)
-      res.write(`data: ${JSON.stringify({ runId, messageId })}\n\n`)
+      // Event: run.started
+      sendEvent('run.started', {
+        runId,
+        agentId,
+        threadId,
+        status: 'in_progress',
+        createdAt
+      })
 
-      // Send run.completed event
-      res.write(`event: run.completed\n`)
-      res.write(`data: ${JSON.stringify({ runId, status: 'completed' })}\n\n`)
+      // Process through agent - convert each input message to activity and collect responses
+      const output: any[] = []
+
+      for (const msg of input) {
+        if (msg.role === 'user') {
+          const activity = {
+            type: 'message',
+            text: msg?.contents?.[0]?.text || '',
+            from: { id: 'user' },
+            recipient: { id: 'bot' },
+            conversation: { id: threadId },
+            channelId: 'agent-protocol',
+            serviceUrl: 'https://agent-protocol',
+            channelData: { role: 'user' },
+            removeRecipientMention: () => msg?.contents?.[0]?.text || ''
+          }
+
+          // Create a mock turn context to capture responses
+          const mockContext = {
+            activity,
+            sendActivity: async (activityOrText: any) => {
+              const responseActivity = typeof activityOrText === 'string'
+                ? { text: activityOrText, value: null }
+                : activityOrText
+
+              // If there's a value field (Agent Protocol format), use it
+              if (responseActivity.value) {
+                output.push(responseActivity.value)
+              } else if (responseActivity.text) {
+                // Otherwise convert text to Agent Protocol format
+                output.push({
+                  role: 'agent',
+                  contents: [{ kind: 'text', text: responseActivity.text }]
+                })
+              }
+              return { id: 'mock-id' }
+            },
+            sendActivities: async (activities: any[]) => {
+              for (const act of activities) {
+                const responseActivity = typeof act === 'string' ? { text: act, value: null } : act
+                if (responseActivity.value) {
+                  output.push(responseActivity.value)
+                } else if (responseActivity.text) {
+                  output.push({
+                    role: 'agent',
+                    contents: [{ kind: 'text', text: responseActivity.text }]
+                  })
+                }
+              }
+              return activities.map(() => ({ id: 'mock-id' }))
+            }
+          }
+
+          // Run the agent with mock context
+          await agentApp.run(mockContext as any)
+        }
+      }
+
+      // Get the response text for streaming
+      let fullOutputText = ''
+      if (output.length > 0) {
+        const lastMessage = output[output.length - 1]
+        if (lastMessage?.contents?.[0]?.text) {
+          fullOutputText = lastMessage.contents[0].text
+        }
+      }
+
+      // Stream the output text in chunks (word-by-word for visual effect)
+      if (fullOutputText) {
+        const words = fullOutputText.split(' ').filter(w => w.length > 0)
+
+        for (let i = 0; i < words.length; i++) {
+          let chunk = words[i]
+          if (i > 0) chunk = ' ' + chunk // Add space before word (except first)
+
+          // Event: message.delta with delta containing the text chunk
+          sendEvent('message.delta', {
+            runId,
+            agentId,
+            threadId,
+            delta: {
+              role: 'agent',
+              contents: [{ kind: 'text', text: chunk }]
+            }
+          })
+
+          // Small delay to simulate streaming effect
+          await new Promise(resolve => setTimeout(resolve, 30))
+        }
+      }
+
+      const completedAt = new Date().toISOString()
+
+      // Event: run.completed
+      sendEvent('run.completed', {
+        runId,
+        agentId,
+        threadId,
+        status: 'completed',
+        output,
+        createdAt,
+        completedAt
+      })
 
       res.end()
     } catch (error: any) {
@@ -267,6 +376,12 @@ server.get('/', (_req: express.Request, res: express.Response) => {
   res.send('Microsoft Agents SDK Sample')
 })
 
+// ==================================================================================
+// LEGACY ENDPOINT - DO NOT MODIFY
+// This is the Bot Framework /api/messages endpoint for backwards compatibility.
+// It should work as-is with M365 Agents SDK bots sending plain text/Activity responses.
+// For Agent Protocol functionality, use the Agent Protocol extension routes below.
+// ==================================================================================
 server.post('/api/messages', async (req: Request, res: Response) => {
   try {
     // In anonymous mode, handle messages directly without full Bot Framework auth
@@ -320,7 +435,8 @@ server.post('/api/messages', async (req: Request, res: Response) => {
   }
 })
 
-// Add Agent Protocol routes
+// AGENT PROTOCOL EXTENSION: Modern Agent Protocol routes
+// These routes (/health, /agent-card, /runs/wait, etc.) are added by setupAgentProtocolRoutes.
 setupAgentProtocolRoutes(server)
 
 // Read port from centralized agent-config.json

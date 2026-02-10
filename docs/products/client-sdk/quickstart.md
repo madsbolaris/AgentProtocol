@@ -398,8 +398,7 @@ Handle multiple content types like text and images in a single message stream.
                     print(chunk, end="", flush=True)
             elif content.kind == "image":
                 # Explicitly wait for image (you could also stream if you wanted)
-                image = await content.wait_complete()
-                print(f"\n[Image: {image.uri}]")
+                print(f"\n[Image: {(await content.wait_complete()).uri}]")
         print()  # New line after message
     ```
 
@@ -426,8 +425,7 @@ Handle multiple content types like text and images in a single message stream.
 
                 case ImageContent image:
                     // Explicitly wait for image (you could also stream if you wanted)
-                    var completeImage = await image.WaitCompleteAsync();
-                    Console.WriteLine($"\n[Image: {completeImage.Uri}]");
+                    Console.WriteLine($"\n[Image: {(await image.WaitCompleteAsync()).Uri}]");
                     break;
             }
         }
@@ -454,8 +452,7 @@ Handle multiple content types like text and images in a single message stream.
 
                 case "image":
                     // Explicitly wait for image (you could also stream if you wanted)
-                    const completeImage = await content.waitComplete();
-                    console.log(`\n[Image: ${completeImage.uri}]`);
+                    console.log(`\n[Image: ${(await content.waitComplete()).uri}]`);
                     break;
             }
         }

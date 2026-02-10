@@ -393,11 +393,13 @@ Handle multiple content types like text and images in a single message stream.
     async for message in client.stream_messages("Show me a photo of Paris and describe it"):
         async for content in message.stream_contents():
             if content.kind == "text":
-                # Text streams incrementally
-                print(content.text, end="", flush=True)
+                # Stream text chunks incrementally (typewriter effect)
+                async for chunk in content.stream_chunks():
+                    print(chunk, end="", flush=True)
             elif content.kind == "image":
-                # Image URI becomes available when ready
-                print(f"\n[Image: {content.uri}]")
+                # Explicitly wait for image (you could also stream if you wanted)
+                image = await content.wait_complete()
+                print(f"\n[Image: {image.uri}]")
         print()  # New line after message
     ```
 
@@ -415,13 +417,17 @@ Handle multiple content types like text and images in a single message stream.
             switch (content)
             {
                 case TextContent text:
-                    // Text streams incrementally
-                    Console.Write(text.Text);
+                    // Stream text chunks incrementally (typewriter effect)
+                    await foreach (var chunk in text.StreamChunksAsync())
+                    {
+                        Console.Write(chunk);
+                    }
                     break;
 
                 case ImageContent image:
-                    // Image URI becomes available when ready
-                    Console.WriteLine($"\n[Image: {image.Uri}]");
+                    // Explicitly wait for image (you could also stream if you wanted)
+                    var completeImage = await image.WaitCompleteAsync();
+                    Console.WriteLine($"\n[Image: {completeImage.Uri}]");
                     break;
             }
         }
@@ -440,13 +446,16 @@ Handle multiple content types like text and images in a single message stream.
         for await (const content of message.streamContents()) {
             switch (content.kind) {
                 case "text":
-                    // Text streams incrementally
-                    process.stdout.write(content.text);
+                    // Stream text chunks incrementally (typewriter effect)
+                    for await (const chunk of content.streamChunks()) {
+                        process.stdout.write(chunk);
+                    }
                     break;
 
                 case "image":
-                    // Image URI becomes available when ready
-                    console.log(`\n[Image: ${content.uri}]`);
+                    // Explicitly wait for image (you could also stream if you wanted)
+                    const completeImage = await content.waitComplete();
+                    console.log(`\n[Image: ${completeImage.uri}]`);
                     break;
             }
         }

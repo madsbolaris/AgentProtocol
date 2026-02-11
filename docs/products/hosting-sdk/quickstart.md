@@ -253,7 +253,7 @@ Your agent code is a **Host** (server-side), not a **Client** (user-facing app).
 
 2. Worker picks up message
    → Loads conversation history
-   → Calls your middlewares
+   → Calls your middleware
    → Calls LLM if needed
    → Generates response events
    → Saves to durable log
@@ -312,7 +312,7 @@ Response
 config = AgentConfig(
     model="gpt-4",
     instructions="...",
-    middlewares=[middleware1],  # Runs first
+    middleware=[middleware1],  # Runs first
     functions=[my_function]     # Runs third (when LLM calls it)
 )
 agent = AgentHost(config)
@@ -758,7 +758,7 @@ Let's add simple logging to see what's happening:
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[log_messages]
+        middleware=[log_messages]
     )
 
     agent = AgentHost(config)
@@ -817,7 +817,7 @@ Let's add simple logging to see what's happening:
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [logMessages]
+        middleware: [logMessages]
     };
 
     const agent = new AgentHost(config);
@@ -876,7 +876,7 @@ Route specific commands to custom handlers without calling the LLM:
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[handle_commands]
+        middleware=[handle_commands]
     )
     ```
 
@@ -974,7 +974,7 @@ Route specific commands to custom handlers without calling the LLM:
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [handleCommands]
+        middleware: [handleCommands]
     };
     ```
 
@@ -1001,7 +1001,7 @@ Middlewares execute in the order you register them:
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[log_middleware, command_middleware]  # Execute in order
+        middleware=[log_middleware, command_middleware]  # Execute in order
     )
 
     # When a message arrives:
@@ -1068,7 +1068,7 @@ Middlewares execute in the order you register them:
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [logMiddleware, commandMiddleware]  // Execute in order
+        middleware: [logMiddleware, commandMiddleware]  // Execute in order
     };
 
     // When a message arrives:
@@ -1127,7 +1127,7 @@ The real power of middleware is doing something **before and after** processing:
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[timing_middleware]
+        middleware=[timing_middleware]
     )
     ```
 
@@ -1184,7 +1184,7 @@ The real power of middleware is doing something **before and after** processing:
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [timingMiddleware]
+        middleware: [timingMiddleware]
     };
     ```
 
@@ -1210,7 +1210,7 @@ Wrap processing in try/catch to handle errors gracefully:
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[error_middleware, other_middleware]  # error_middleware first
+        middleware=[error_middleware, other_middleware]  # error_middleware first
     )
     ```
 
@@ -1246,7 +1246,7 @@ Wrap processing in try/catch to handle errors gracefully:
         Middlewares = new object[]
         {
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)ErrorMiddleware
-            // ... other middlewares
+            // ... other middleware
         }
     };
     ```
@@ -1274,7 +1274,7 @@ Wrap processing in try/catch to handle errors gracefully:
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [errorMiddleware]  // Add first to catch all errors
+        middleware: [errorMiddleware]  // Add first to catch all errors
     };
     ```
 
@@ -1287,7 +1287,7 @@ The Agent Protocol uses **streaming by default**. When you call the LLM, it does
 **Key concepts:**
 
 1. **Streaming is the default**: All LLM responses are streamed, not returned as a single blob
-2. **Content middlewares**: Process chunks as they stream (not just whole messages)
+2. **Content middleware**: Process chunks as they stream (not just whole messages)
 3. **AsyncIterables**: Content comes as async streams you can iterate over
 
 **Mental model:**
@@ -1298,7 +1298,7 @@ LLM generates tokens → Chunks flow through pipeline → Your middleware proces
 
 ### Processing LLM Output
 
-To process content as it streams from the LLM, use **content middlewares** with tuple notation in the unified `middlewares` array:
+To process content as it streams from the LLM, use **content middleware** in the unified `middleware` array:
 
 === "Python"
 
@@ -1322,7 +1322,7 @@ To process content as it streams from the LLM, use **content middlewares** with 
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[
+        middleware=[
             log_middleware,                     # Message middleware (plain function)
             (TextContent, log_text_content),    # Content middleware (tuple)
         ]
@@ -1389,14 +1389,14 @@ To process content as it streams from the LLM, use **content middlewares** with 
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [
+        middleware: [
             logMiddleware,                      // Message middleware (plain function)
             [TextContent, logTextContent],      // Content middleware (array)
         ]
     };
     ```
 
-**Key differences from message middlewares:**
+**Key differences from message middleware:**
 
 | Aspect | Message Middleware | Content Middleware |
 |--------|-------------------|-------------------|
@@ -1432,7 +1432,7 @@ You can also process entire messages as they're generated (not just content):
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[process_all_chunks]  # Message middleware
+        middleware=[process_all_chunks]  # Message middleware
     )
     ```
 
@@ -1496,7 +1496,7 @@ You can also process entire messages as they're generated (not just content):
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [processAllChunks]  // Message middleware
+        middleware: [processAllChunks]  // Message middleware
     };
     ```
 
@@ -1527,7 +1527,7 @@ Transform LLM output before it reaches the client:
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[
+        middleware=[
             (TextContent, add_emojis),  # Content middleware as tuple
         ]
     )
@@ -1586,7 +1586,7 @@ Transform LLM output before it reaches the client:
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [
+        middleware: [
             [TextContent, addEmojis],  // Content middleware (array)
         ]
     };
@@ -1631,7 +1631,7 @@ Process function calls before they execute:
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
         functions=[get_weather],
-        middlewares=[
+        middleware=[
             (FunctionCallContent, log_function_calls),     # Content middleware (tuple)
             (FunctionResultContent, log_function_results),  # Content middleware (tuple)
         ]
@@ -1733,9 +1733,9 @@ Process function calls before they execute:
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
         functions: [getWeather],
-        middlewares: [
-            [FunctionCallContent, logFunctionCalls],      // Array/tuple
-            [FunctionResultContent, logFunctionResults],  // Array/tuple
+        middleware: [
+            [FunctionCallContent, logFunctionCalls],      // Content middleware (array)
+            [FunctionResultContent, logFunctionResults],  // Content middleware (array)
         ]
     };
     ```
@@ -1868,7 +1868,7 @@ Messages can contain text, images, audio, and more:
 
 ### Processing Multimodal Content in Middlewares
 
-Use content middlewares to process specific content types:
+Use content middleware to process specific content types:
 
 === "Python"
 
@@ -1893,7 +1893,7 @@ Use content middlewares to process specific content types:
         model="gpt-4-vision",
         instructions="You can see images.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[
+        middleware=[
             (ImageContent, process_images),  # Content middleware (tuple)
         ]
     )
@@ -1958,8 +1958,8 @@ Use content middlewares to process specific content types:
         model: "gpt-4-vision",
         instructions: "You can see images.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [
-            [ImageContent, processImages],  // Array/tuple
+        middleware: [
+            [ImageContent, processImages],  // Content middleware (array)
         ]
     };
     ```
@@ -1995,7 +1995,7 @@ The protocol includes special message types for richer interactions:
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[
+        middleware=[
             (MessageReactionContent, handle_reactions),  # Content middleware (tuple)
         ]
     )
@@ -2060,8 +2060,8 @@ The protocol includes special message types for richer interactions:
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [
-            [MessageReactionContent, handleReactions],  // Array/tuple
+        middleware: [
+            [MessageReactionContent, handleReactions],  // Content middleware (array)
         ]
     };
     ```
@@ -2430,7 +2430,7 @@ Collect chunks and send them in larger batches:
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[
+        middleware=[
             (TextContent, batch_content),  # Content middleware (tuple)
         ]
     )
@@ -2511,8 +2511,8 @@ Collect chunks and send them in larger batches:
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [
-            [TextContent, batchContent],  // Array/tuple
+        middleware: [
+            [TextContent, batchContent],  // Content middleware (array)
         ]
     };
     ```
@@ -2541,7 +2541,7 @@ Remove unwanted content:
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[
+        middleware=[
             (TextContent, filter_profanity),  # Content middleware (tuple)
         ]
     )
@@ -2603,8 +2603,8 @@ Remove unwanted content:
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [
-            [TextContent, filterProfanity],  // Array/tuple
+        middleware: [
+            [TextContent, filterProfanity],  // Content middleware (array)
         ]
     };
     ```
@@ -2635,7 +2635,7 @@ Send chunks to multiple destinations:
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[
+        middleware=[
             (TextContent, tee_to_analytics),  # Content middleware (tuple)
         ]
     )
@@ -2696,8 +2696,8 @@ Send chunks to multiple destinations:
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [
-            [TextContent, teeToAnalytics],  // Array/tuple
+        middleware: [
+            [TextContent, teeToAnalytics],  // Content middleware (array)
         ]
     };
     ```
@@ -2727,7 +2727,7 @@ Slow down chunk delivery:
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[
+        middleware=[
             (TextContent, rate_limit),  # Content middleware (tuple)
         ]
     )
@@ -2788,8 +2788,8 @@ Slow down chunk delivery:
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [
-            [TextContent, rateLimit],  // Array/tuple
+        middleware: [
+            [TextContent, rateLimit],  // Content middleware (array)
         ]
     };
     ```
@@ -2830,7 +2830,7 @@ Combine chunks in complex ways:
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middlewares=[
+        middleware=[
             (TextContent, markdown_to_html),  # Content middleware (tuple)
         ]
     )
@@ -2921,8 +2921,8 @@ Combine chunks in complex ways:
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middlewares: [
-            [TextContent, markdownToHtml],  // Array/tuple
+        middleware: [
+            [TextContent, markdownToHtml],  // Content middleware (array)
         ]
     };
     ```
@@ -2931,7 +2931,7 @@ Combine chunks in complex ways:
 
 ## Complete Example
 
-Here's a production-ready agent with multiple middlewares:
+Here's a production-ready agent with multiple middleware:
 
 === "Python"
 
@@ -2946,7 +2946,7 @@ Here's a production-ready agent with multiple middlewares:
     import os
     import time
 
-    # Message middlewares
+    # Message middleware
     async def log_messages(message: IMessage, thread: IThread, next: Callable[[], Awaitable[None]]) -> None:
         print(f"📨 [{thread.id}] Received: {message.text or ''}")
         await next()
@@ -2968,7 +2968,7 @@ Here's a production-ready agent with multiple middlewares:
                 return
         await next()
 
-    # Content middlewares
+    # Content middleware
     async def log_text_chunks(
         content_stream: AsyncIterable[TextContent],
         thread: IThread,
@@ -3018,7 +3018,7 @@ Here's a production-ready agent with multiple middlewares:
         api_key=os.getenv("OPENAI_API_KEY"),
         storage=SqlStorageProvider(os.getenv("DATABASE_URL")),
         functions=[get_weather, get_time],
-        middlewares=[
+        middleware=[
             log_messages,                           # Message middleware
             handle_commands,                        # Message middleware
             (TextContent, log_text_chunks),         # Content middleware (tuple)
@@ -3042,7 +3042,7 @@ Here's a production-ready agent with multiple middlewares:
 
     var builder = WebApplication.CreateBuilder(args);
 
-    // Message middlewares
+    // Message middleware
     async Task LogMessages(IMessage message, IThread thread, Func<Task> next, CancellationToken ct)
     {
         Console.WriteLine($"📨 [{thread.Id}] Received: {message.Text ?? ""}");
@@ -3053,7 +3053,7 @@ Here's a production-ready agent with multiple middlewares:
     {
         if (message is UserMessage userMsg && userMsg.Text?.StartsWith("/") == true)
         {
-            var command = userMsg.Text.Trim();
+            var command = userMsg.Text?.Trim() ?? "";
             if (command == "/help")
             {
                 thread.AddMessage(new UserMessage
@@ -3066,7 +3066,7 @@ Here's a production-ready agent with multiple middlewares:
         await next();
     }
 
-    // Content middlewares
+    // Content middleware
     async Task LogTextChunks(
         IAsyncEnumerable<TextContent> contentStream,
         IThread thread,
@@ -3164,7 +3164,7 @@ Here's a production-ready agent with multiple middlewares:
     import { SqlStorageProvider } from '@microsoft/agents-protocol-storage';
     import 'dotenv/config';
 
-    // Message middlewares
+    // Message middleware
     async function logMessages(message: IMessage, thread: IThread, next: () => Promise<void>) {
         console.log(`📨 [${thread.id}] Received: ${message.text || ""}`);
         await next();
@@ -3183,7 +3183,7 @@ Here's a production-ready agent with multiple middlewares:
         await next();
     }
 
-    // Content middlewares
+    // Content middleware
     async function logTextChunks(
         contentStream: AsyncIterable<TextContent>,
         thread: IThread,
@@ -3245,7 +3245,7 @@ Here's a production-ready agent with multiple middlewares:
             { name: "get_weather", description: "Get current weather", fn: getWeather },
             { name: "get_time", description: "Get current time", fn: getTime }
         ],
-        middlewares: [
+        middleware: [
             logMessages,                            // Message middleware
             handleCommands,                         // Message middleware
             [TextContent, logTextChunks],           // Content middleware (array)
@@ -3304,7 +3304,7 @@ async def my_middleware(message: IMessage, thread: IThread, next: Callable[[], A
     print("Done")
 
 # Register as plain function
-config = AgentConfig(middlewares=[my_middleware])
+config = AgentConfig(middleware=[my_middleware])
 ```
 
 ### Content Middlewares
@@ -3325,7 +3325,7 @@ async def my_content_middleware(
     await next(process())
 
 # Register as tuple: (ContentType, function)
-config = AgentConfig(middlewares=[
+config = AgentConfig(middleware=[
     (TextContent, my_content_middleware)  # Tuple notation
 ])
 ```
@@ -3336,7 +3336,7 @@ Mix both types in a single array:
 
 ```python
 config = AgentConfig(
-    middlewares=[
+    middleware=[
         message_middleware_1,                   # Message middleware
         (TextContent, content_middleware_1),    # Content middleware (tuple)
         message_middleware_2,                   # Message middleware
@@ -3346,8 +3346,8 @@ config = AgentConfig(
 ```
 
 **Key points:**
-- Message middlewares: plain function
-- Content middlewares: tuple `(ContentType, function)`
+- Message middleware: plain function
+- Content middleware: tuple `(ContentType, function)`
 - Execution order: array order
 - Stop processing: don't call `next()`
 - Transform content: yield modified chunks

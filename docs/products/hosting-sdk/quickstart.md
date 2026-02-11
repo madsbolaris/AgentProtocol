@@ -590,13 +590,11 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         content_stream: AsyncIterable[TextContent],
         thread: IThread
     ) -> AsyncIterable[TextContent]:
-        # Collect all chunks into full text
-        full_text = ""
-        async for chunk in content_stream:
-            full_text += chunk.text
+        # Wait for all chunks to assemble into complete text
+        complete_text = await content_stream.wait()
 
         # Check if it's a command
-        command = full_text.strip()
+        command = complete_text.text.strip()
 
         if command.startswith('/'):
             # Handle commands - return result without calling LLM
@@ -609,7 +607,7 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
                 yield TextContent(text=f"Unknown command: {command}")
         else:
             # Not a command - pass through to LLM
-            yield TextContent(text=full_text)
+            yield complete_text
 
     config = AgentConfig(
         model="gpt-4",
@@ -635,15 +633,11 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        // Collect all chunks into full text
-        var fullText = "";
-        await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
-        {
-            fullText += chunk.Text;
-        }
+        // Wait for all chunks to assemble into complete text
+        var completeText = await contentStream.WaitForCompletionAsync();
 
         // Check if it's a command
-        var command = fullText.Trim();
+        var command = completeText.Text.Trim();
 
         if (command.StartsWith('/'))
         {
@@ -673,7 +667,7 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         else
         {
             // Not a command - pass through to LLM
-            yield return new TextContent { Text = fullText };
+            yield return completeText;
         }
     }
 
@@ -704,14 +698,11 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         contentStream: AsyncIterable<TextContent>,
         thread: IThread
     ): AsyncIterable<TextContent> {
-        // Collect all chunks into full text
-        let fullText = '';
-        for await (const chunk of contentStream) {
-            fullText += chunk.text;
-        }
+        // Wait for all chunks to assemble into complete text
+        const completeText = await contentStream.value;
 
         // Check if it's a command
-        const command = fullText.trim();
+        const command = completeText.text.trim();
 
         if (command.startsWith('/')) {
             // Handle commands - return result without calling LLM
@@ -731,7 +722,7 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
             }
         } else {
             // Not a command - pass through to LLM
-            yield new TextContent({ text: fullText });
+            yield completeText;
         }
     }
 

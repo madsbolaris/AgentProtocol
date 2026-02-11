@@ -173,7 +173,6 @@ Create your first agent in under 2 minutes.
         client = AgentProtocolClient("http://localhost:5000")
         response = await client.complete_chat("Hello!")
         print(f"Agent: {response.text}")
-        # Output: "Agent: Hello! How can I help you today?"
 
     import asyncio
     asyncio.run(test())
@@ -187,7 +186,6 @@ Create your first agent in under 2 minutes.
     var client = new AgentProtocolClient("http://localhost:5000");
     var response = await client.CompleteChatAsync("Hello!");
     Console.WriteLine($"Agent: {response.Text}");
-    // Output: "Agent: Hello! How can I help you today?"
     ```
 
 === "TypeScript"
@@ -198,19 +196,15 @@ Create your first agent in under 2 minutes.
     const client = new AgentProtocolClient("http://localhost:5000");
     const response = await client.completeChat("Hello!");
     console.log(`Agent: ${response.text}`);
-    // Output: "Agent: Hello! How can I help you today?"
     ```
 
-🎉 **Congratulations!** You've built your first agent. The LLM automatically handles incoming messages and generates responses.
+**Output:**
 
-**What you get automatically:**
-- ✅ REST API endpoint (`POST /v1/threads/{thread_id}/runs`)
-- ✅ Streaming responses (SSE)
-- ✅ Conversation history (in-memory)
-- ✅ Horizontal scaling (multiple workers)
-- ✅ Worker restarts without losing state
-- ✅ Long-running conversations (days/weeks)
-- ✅ Async processing (user doesn't wait)
+```text
+Agent: Hello! How can I help you today?
+```
+
+🎉 **Congratulations!** You've built your first agent. The LLM automatically handles incoming messages and generates responses.
 
 ---
 
@@ -635,7 +629,14 @@ Let's add simple logging to see what's happening:
         thread: IThread,
         next: Callable[[], Awaitable[None]]
     ) -> None:
-        print(f"📨 Received: {message.text or ''}")
+        # Extract text from message contents
+        text_parts = []
+        async for content in message.stream_contents():
+            if isinstance(content, TextContent):
+                text_parts.append(await content.wait())
+        text = "".join(c.text for c in text_parts)
+
+        print(f"📨 Received: {text}")
         await next()  # Continue processing
         print(f"✅ Processed message")
 
@@ -661,7 +662,18 @@ Let's add simple logging to see what's happening:
         Func<Task> next,
         CancellationToken cancellationToken)
     {
-        Console.WriteLine($"📨 Received: {message.Text ?? ""}");
+        // Extract text from message contents
+        var textParts = new List<TextContent>();
+        await foreach (var content in message.StreamContentsAsync())
+        {
+            if (content is TextContent textContent)
+            {
+                textParts.Add(await textContent.WaitForCompletionAsync());
+            }
+        }
+        var text = string.Join("", textParts.Select(c => c.Text));
+
+        Console.WriteLine($"📨 Received: {text}");
         await next();
         Console.WriteLine($"✅ Processed message");
     }
@@ -693,7 +705,16 @@ Let's add simple logging to see what's happening:
         thread: IThread,
         next: () => Promise<void>
     ): Promise<void> {
-        console.log(`📨 Received: ${message.text || ""}`);
+        // Extract text from message contents
+        const textParts: TextContent[] = [];
+        for await (const content of message.streamContents()) {
+            if (content instanceof TextContent) {
+                textParts.push(await content.value);
+            }
+        }
+        const text = textParts.map(c => c.text).join("");
+
+        console.log(`📨 Received: ${text}`);
         await next();  // Continue processing
         console.log(`✅ Processed message`);
     }
@@ -726,7 +747,7 @@ Route specific commands to custom handlers without calling the LLM:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import UserMessage, TextContent
+    from microsoft.agents.protocol import UserMessage, AgentMessage, TextContent
 
     async def handle_commands(
         message: IMessage,
@@ -737,18 +758,23 @@ Route specific commands to custom handlers without calling the LLM:
             await next()
             return
 
-        text = (message.text or "").strip()
+        # Extract text from message contents
+        text_parts = []
+        async for content in message.stream_contents():
+            if isinstance(content, TextContent):
+                text_parts.append(await content.wait())
+        text = "".join(c.text for c in text_parts).strip()
 
         if text == "/help":
             # Handle directly - don't call next()
-            response = UserMessage(content=[
+            response = AgentMessage(content=[
                 TextContent(text="Available commands: /help, /status")
             ])
             thread.add_message(response)
             return
 
         if text == "/status":
-            response = UserMessage(content=[
+            response = AgentMessage(content=[
                 TextContent(text=f"Thread ID: {thread.id}, Messages: {len(thread.messages)}")
             ])
             thread.add_message(response)
@@ -769,6 +795,7 @@ Route specific commands to custom handlers without calling the LLM:
 
     ```csharp
     using Microsoft.Agents.Protocol;
+    using System.Linq;
 
     async Task HandleCommands(
         IMessage message,
@@ -776,17 +803,26 @@ Route specific commands to custom handlers without calling the LLM:
         Func<Task> next,
         CancellationToken cancellationToken)
     {
-        if (message is not UserMessage userMsg)
+        if (message is not UserMessage)
         {
             await next();
             return;
         }
 
-        var text = userMsg.Text?.Trim();
+        // Extract text from message contents
+        var textParts = new List<TextContent>();
+        await foreach (var content in message.StreamContentsAsync())
+        {
+            if (content is TextContent textContent)
+            {
+                textParts.Add(await textContent.WaitForCompletionAsync());
+            }
+        }
+        var text = string.Join("", textParts.Select(c => c.Text)).Trim();
 
         if (text == "/help")
         {
-            var response = new UserMessage
+            var response = new AgentMessage
             {
                 Content = new[] { new TextContent { Text = "Available commands: /help, /status" } }
             };
@@ -796,7 +832,7 @@ Route specific commands to custom handlers without calling the LLM:
 
         if (text == "/status")
         {
-            var response = new UserMessage
+            var response = new AgentMessage
             {
                 Content = new[] { new TextContent { Text = $"Thread: {thread.Id}, Messages: {thread.Messages.Count}" } }
             };
@@ -822,7 +858,7 @@ Route specific commands to custom handlers without calling the LLM:
 === "TypeScript"
 
     ```typescript
-    import { UserMessage, TextContent } from '@microsoft/agents-protocol';
+    import { UserMessage, AgentMessage, TextContent } from '@microsoft/agents-protocol';
 
     async function handleCommands(
         message: IMessage,
@@ -834,10 +870,17 @@ Route specific commands to custom handlers without calling the LLM:
             return;
         }
 
-        const text = (message.text || "").trim();
+        // Extract text from message contents
+        const textParts: TextContent[] = [];
+        for await (const content of message.streamContents()) {
+            if (content instanceof TextContent) {
+                textParts.push(await content.value);
+            }
+        }
+        const text = textParts.map(c => c.text).join("").trim();
 
         if (text === "/help") {
-            const response = new UserMessage({
+            const response = new AgentMessage({
                 content: [new TextContent({ text: "Available commands: /help, /status" })]
             });
             thread.addMessage(response);
@@ -845,7 +888,7 @@ Route specific commands to custom handlers without calling the LLM:
         }
 
         if (text === "/status") {
-            const response = new UserMessage({
+            const response = new AgentMessage({
                 content: [new TextContent({ text: `Thread: ${thread.id}, Messages: ${thread.messages.length}` })]
             });
             thread.addMessage(response);
@@ -1086,7 +1129,7 @@ Wrap processing in try/catch to handle errors gracefully:
         except Exception as e:
             print(f"❌ Error processing message: {e}")
             # Add error message to thread
-            error_msg = UserMessage(content=[
+            error_msg = AgentMessage(content=[
                 TextContent(text="Sorry, something went wrong. Please try again.")
             ])
             thread.add_message(error_msg)
@@ -1115,7 +1158,7 @@ Wrap processing in try/catch to handle errors gracefully:
         catch (Exception ex)
         {
             Console.WriteLine($"❌ Error: {ex.Message}");
-            var errorMsg = new UserMessage
+            var errorMsg = new AgentMessage
             {
                 Content = new[] { new TextContent { Text = "Sorry, something went wrong." } }
             };
@@ -1148,7 +1191,7 @@ Wrap processing in try/catch to handle errors gracefully:
             await next();
         } catch (error) {
             console.error(`❌ Error: ${error.message}`);
-            const errorMsg = new UserMessage({
+            const errorMsg = new AgentMessage({
                 content: [new TextContent({ text: "Sorry, something went wrong." })]
             });
             thread.addMessage(errorMsg);
@@ -2823,7 +2866,7 @@ Here's a production-ready agent with multiple middleware:
     ```python
     from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
     from microsoft.agents.protocol import (
-        IMessage, IThread, UserMessage, TextContent,
+        IMessage, IThread, UserMessage, AgentMessage, TextContent,
         FunctionCallContent, FunctionResultContent
     )
     from microsoft.agents.protocol.storage import SqlStorageProvider
@@ -2833,24 +2876,39 @@ Here's a production-ready agent with multiple middleware:
 
     # Message middleware
     async def log_messages(message: IMessage, thread: IThread, next: Callable[[], Awaitable[None]]) -> None:
-        print(f"📨 [{thread.id}] Received: {message.text or ''}")
+        # Extract text from message contents
+        text_parts = []
+        async for content in message.stream_contents():
+            if isinstance(content, TextContent):
+                text_parts.append(await content.wait())
+        text = "".join(c.text for c in text_parts)
+        print(f"📨 [{thread.id}] Received: {text}")
         await next()
 
     async def handle_commands(message: IMessage, thread: IThread, next: Callable[[], Awaitable[None]]) -> None:
-        if isinstance(message, UserMessage) and (message.text or "").startswith("/"):
-            command = (message.text or "").strip()
-            if command == "/help":
-                response = UserMessage(content=[
-                    TextContent(text="Available commands: /help, /status, /clear")
-                ])
-                thread.add_message(response)
-                return
-            elif command == "/status":
-                response = UserMessage(content=[
-                    TextContent(text=f"Thread: {thread.id}, Messages: {len(thread.messages)}")
-                ])
-                thread.add_message(response)
-                return
+        if not isinstance(message, UserMessage):
+            await next()
+            return
+
+        # Extract text from message contents
+        text_parts = []
+        async for content in message.stream_contents():
+            if isinstance(content, TextContent):
+                text_parts.append(await content.wait())
+        command = "".join(c.text for c in text_parts).strip()
+
+        if command == "/help":
+            response = AgentMessage(content=[
+                TextContent(text="Available commands: /help, /status, /clear")
+            ])
+            thread.add_message(response)
+            return
+        elif command == "/status":
+            response = AgentMessage(content=[
+                TextContent(text=f"Thread: {thread.id}, Messages: {len(thread.messages)}")
+            ])
+            thread.add_message(response)
+            return
         await next()
 
     # Content middleware
@@ -2930,23 +2988,46 @@ Here's a production-ready agent with multiple middleware:
     // Message middleware
     async Task LogMessages(IMessage message, IThread thread, Func<Task> next, CancellationToken ct)
     {
-        Console.WriteLine($"📨 [{thread.Id}] Received: {message.Text ?? ""}");
+        // Extract text from message contents
+        var textParts = new List<TextContent>();
+        await foreach (var content in message.StreamContentsAsync())
+        {
+            if (content is TextContent textContent)
+            {
+                textParts.Add(await textContent.WaitForCompletionAsync());
+            }
+        }
+        var text = string.Join("", textParts.Select(c => c.Text));
+        Console.WriteLine($"📨 [{thread.Id}] Received: {text}");
         await next();
     }
 
     async Task HandleCommands(IMessage message, IThread thread, Func<Task> next, CancellationToken ct)
     {
-        if (message is UserMessage userMsg && userMsg.Text?.StartsWith("/") == true)
+        if (message is not UserMessage)
         {
-            var command = userMsg.Text?.Trim() ?? "";
-            if (command == "/help")
+            await next();
+            return;
+        }
+
+        // Extract text from message contents
+        var textParts = new List<TextContent>();
+        await foreach (var content in message.StreamContentsAsync())
+        {
+            if (content is TextContent textContent)
             {
-                thread.AddMessage(new UserMessage
-                {
-                    Content = new[] { new TextContent { Text = "Available commands: /help, /status" } }
-                });
-                return;
+                textParts.Add(await textContent.WaitForCompletionAsync());
             }
+        }
+        var command = string.Join("", textParts.Select(c => c.Text)).Trim();
+
+        if (command == "/help")
+        {
+            thread.AddMessage(new AgentMessage
+            {
+                Content = new[] { new TextContent { Text = "Available commands: /help, /status" } }
+            });
+            return;
         }
         await next();
     }
@@ -3043,7 +3124,7 @@ Here's a production-ready agent with multiple middleware:
     ```typescript
     import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
     import {
-        IMessage, IThread, UserMessage, TextContent,
+        IMessage, IThread, UserMessage, AgentMessage, TextContent,
         FunctionCallContent, FunctionResultContent
     } from '@microsoft/agents-protocol';
     import { SqlStorageProvider } from '@microsoft/agents-protocol-storage';
@@ -3051,19 +3132,38 @@ Here's a production-ready agent with multiple middleware:
 
     // Message middleware
     async function logMessages(message: IMessage, thread: IThread, next: () => Promise<void>) {
-        console.log(`📨 [${thread.id}] Received: ${message.text || ""}`);
+        // Extract text from message contents
+        const textParts: TextContent[] = [];
+        for await (const content of message.streamContents()) {
+            if (content instanceof TextContent) {
+                textParts.push(await content.value);
+            }
+        }
+        const text = textParts.map(c => c.text).join("");
+        console.log(`📨 [${thread.id}] Received: ${text}`);
         await next();
     }
 
     async function handleCommands(message: IMessage, thread: IThread, next: () => Promise<void>) {
-        if (message instanceof UserMessage && (message.text || "").startsWith("/")) {
-            const command = (message.text || "").trim();
-            if (command === "/help") {
-                thread.addMessage(new UserMessage({
-                    content: [new TextContent({ text: "Available commands: /help, /status" })]
-                }));
-                return;
+        if (!(message instanceof UserMessage)) {
+            await next();
+            return;
+        }
+
+        // Extract text from message contents
+        const textParts: TextContent[] = [];
+        for await (const content of message.streamContents()) {
+            if (content instanceof TextContent) {
+                textParts.push(await content.value);
             }
+        }
+        const command = textParts.map(c => c.text).join("").trim();
+
+        if (command === "/help") {
+            thread.addMessage(new AgentMessage({
+                content: [new TextContent({ text: "Available commands: /help, /status" })]
+            }));
+            return;
         }
         await next();
     }
@@ -3181,7 +3281,7 @@ Process entire messages (once per message):
 ```python
 async def my_middleware(message: IMessage, thread: IThread, next: Callable[[], Awaitable[None]]) -> None:
     # Before processing
-    print(f"Message: {message.text or ''}")
+    print(f"Message: {text}")
 
     await next()  # Continue to next middleware/LLM
 

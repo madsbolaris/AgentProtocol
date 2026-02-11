@@ -377,8 +377,6 @@ Tools should handle errors gracefully and return error messages that the LLM can
 
 ---
 
----
-
 ## Step 3: Client-Provided Functions
 
 Allow clients to provide their own function implementations that the agent can call.

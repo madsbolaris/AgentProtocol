@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:58:00.017861Z",
+  "content": {
+    "runId": "1ae5e270-3ccd-4f73-ae4d-7629466cb7fe",
+    "threadId": "93846e89-3cd5-45a5-aa99-48863fdc769e",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Hello! I'm doing great, thanks for asking. Here are some friendly emojis: \ud83d\ude0a\ud83d\udc4b\ud83c\udf1e\u2728",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "db8da90b07540353323f06a2a54a23998635217e20f0820a5019a2bf66101086",
+  "metadata": {
+    "input_file": "53-no-function.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

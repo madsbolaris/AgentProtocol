@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:56:46.175293Z",
+  "content": {
+    "runId": "c0bf27d9-0549-4a11-8d78-1d096ec3c344",
+    "threadId": "6a885ebc-7540-4211-bbcb-91f7cc5f13d1",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Nice question! I can\u2019t view the image here, but tell me what it shows and I\u2019ll tailor the emojis. For a guessing vibe: \ud83d\uddbc\ufe0f\ud83e\udd14\ud83d\udccd\ud83d\uddfa\ufe0f\u2728",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "9432cc01821d73bb76a62b9d20e27f51f9d780511b0dad88b093061e30ee6a07",
+  "metadata": {
+    "input_file": "05-user-multimodal.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

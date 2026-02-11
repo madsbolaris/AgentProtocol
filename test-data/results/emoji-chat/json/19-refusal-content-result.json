@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-02-11T06:28:04.169087Z",
+  "timestamp": "2026-02-11T06:55:18.283481Z",
   "content": {
-    "runId": "822dba6b-2a21-495d-a1e3-6491b0858710",
-    "threadId": "22815531-a6a6-419d-87eb-12a1983b8bb1",
+    "runId": "d89334ff-e98b-4ef2-b96e-663770214522",
+    "threadId": "f391c066-d115-4b4f-b5f4-13c3479f7b6b",
     "status": "completed",
     "error": null,
     "output": []
   },
-  "hash": "45177dfb372a6c0e96f73aa7f1899ac6fc63d98e8989f1c479755f53277bba87",
+  "hash": "825aa7cbc04b0a70135363c69a287019fae83c23531837b88ea004b70c57cf3f",
   "metadata": {
     "input_file": "19-refusal-content.xml",
     "sample": "emoji-chat",

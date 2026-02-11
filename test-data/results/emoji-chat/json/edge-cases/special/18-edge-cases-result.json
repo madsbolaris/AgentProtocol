@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:57:14.641961Z",
+  "content": {
+    "runId": "ff540095-0b2c-4975-ba09-729a63200d11",
+    "threadId": "87d8df63-d9b8-471a-8e0c-37e44bc0226d",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Nice mix of characters, languages, and emoji vibes! Here are some fitting emojis: \ud83d\udcac \ud83c\udf0d \ud83c\udf10 \u2728",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "221c8eb81f570f3463068d2fe7ac9fdfc9fbbd3218f2ab3c58e383dc8d09a650",
+  "metadata": {
+    "input_file": "18-edge-cases.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

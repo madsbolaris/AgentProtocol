@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-02-11T06:57:08.984319Z",
+  "content": {
+    "runId": "8339675b-5862-4b7a-b98a-d9f8fc5d3b68",
+    "threadId": "a3754f50-b96b-4cf3-870f-bd5456dfdb46",
+    "status": "completed",
+    "error": null,
+    "output": []
+  },
+  "hash": "0cc747590ab31ad5054dd36cf1dd9487b79ed2c2f14db8928f397c7d5ce5ea47",
+  "metadata": {
+    "input_file": "46-hosted-vector-store-content.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "callId": 2,
+  "timestamp": "2026-02-11T06:55:29.650775Z",
+  "hash": "bfbf12e4c9214b02",
+  "response": {
+    "id": "chatcmpl-D7yQ9rz6oe3Xj9ttJ2oP5g7t0fyYM",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-11T06:55:25+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Hello there! \uD83D\uDC4B\uD83D\uDE04 Here are some friendly emojis: \uD83D\uDC4B\uD83D\uDE04\u2728\uD83C\uDF1F"
+      }
+    ],
+    "toolCalls": []
+  }
+}

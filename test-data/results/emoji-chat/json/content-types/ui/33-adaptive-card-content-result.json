@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-02-11T06:57:09.815090Z",
+  "content": {
+    "runId": "6d152748-8e63-41c9-816b-ccc6d3fef7e7",
+    "threadId": "d133411a-81c2-4e66-a935-0ae2e1393104",
+    "status": "completed",
+    "error": null,
+    "output": []
+  },
+  "hash": "19b8c12f725c5e91d9bf13f408c2e46a8ff33ecf56e3d69c2102379cab8c2651",
+  "metadata": {
+    "input_file": "33-adaptive-card-content.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

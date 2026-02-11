@@ -1,0 +1,17 @@
+{
+  "callId": 4,
+  "timestamp": "2026-02-11T06:55:41.71963Z",
+  "hash": "1128b3b889836f09",
+  "response": {
+    "id": "chatcmpl-D7yQKl8SZid1pQziq3ftLGnGw0nbW",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-11T06:55:36+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "You\u0027re asking about Seattle\u0027s weather. I can\u0027t fetch real-time data, but here are weather emojis you can use: \u26C5\uFE0F\uD83C\uDF27\uFE0F\u2601\uFE0F\uD83C\uDF26\uFE0F\u2614\uFE0F"
+      }
+    ],
+    "toolCalls": []
+  }
+}

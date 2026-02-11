@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:57:00.857474Z",
+  "content": {
+    "runId": "83ea3c26-cb89-416c-8cf7-62edbf680a50",
+    "threadId": "eeff44d5-2fe4-4ecd-b4f3-19b846bf7630",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Awesome\u2014ready to analyze those media files! \ud83d\udd0e\ud83d\uddc2\ufe0f\ud83e\udde0\ud83d\udcca",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "27a0e0e9df8950166a08ee4181fb6d063cdb9b898042024a210ebf5400173186",
+  "metadata": {
+    "input_file": "12-all-media-types.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

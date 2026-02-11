@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:56:17.596507Z",
+  "content": {
+    "runId": "8432ec71-8620-4a44-aefa-949290d7f2f9",
+    "threadId": "551ec66c-4eef-4857-901f-42b3ce45894d",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "You're asking about Seattle weather. I don't have live data, but Seattle often has rain. Emojis: \ud83c\udf27\ufe0f\u2614\ufe0f\u2601\ufe0f\ud83c\udf26\ufe0f",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "112316ed5952f15365b8ee259adc1c01753812110fd3560fde8ec8f565bf8a6a",
+  "metadata": {
+    "input_file": "03-user-text-only.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

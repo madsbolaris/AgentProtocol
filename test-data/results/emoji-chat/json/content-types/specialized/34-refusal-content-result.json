@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-02-11T06:57:08.234937Z",
+  "content": {
+    "runId": "fd17f0b0-817b-4da1-be18-1f04e9e54c6f",
+    "threadId": "da8b30b1-579c-4b71-8e8d-55d2bde9f5e9",
+    "status": "completed",
+    "error": null,
+    "output": []
+  },
+  "hash": "ee028d65e5c4e8625eff5ca4c5bc9ea4a462afc21411f0f5dadf886c7f229d9f",
+  "metadata": {
+    "input_file": "34-refusal-content.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

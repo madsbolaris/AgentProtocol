@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-02-11T06:56:53.366026Z",
+  "content": {
+    "runId": "d3211057-8f9d-46dd-ac1f-f14bdf32fcc4",
+    "threadId": "930f8d06-4419-453c-b9de-51837567487d",
+    "status": "completed",
+    "error": null,
+    "output": []
+  },
+  "hash": "8a9fb32b825edee703454985d1e12e666324737f361010c99a71d4feea89ebc2",
+  "metadata": {
+    "input_file": "23-message-delete-content.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

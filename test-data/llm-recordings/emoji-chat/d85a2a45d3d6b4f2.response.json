@@ -1,0 +1,17 @@
+{
+  "callId": 18,
+  "timestamp": "2026-02-11T06:57:22.653845Z",
+  "hash": "d85a2a45d3d6b4f2",
+  "response": {
+    "id": "chatcmpl-D7yRucLXdJZdUzNeN8s8936WQxFkW",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-11T06:57:14+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Nice mix of text, special characters, and a Chinese hello. Here are fitting emojis: \uD83D\uDC4B\uD83C\uDF0D\uD83D\uDD24\uD83D\uDCAC\u2728"
+      }
+    ],
+    "toolCalls": []
+  }
+}

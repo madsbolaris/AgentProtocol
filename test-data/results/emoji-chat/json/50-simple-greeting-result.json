@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-02-11T06:28:09.112009Z",
+  "timestamp": "2026-02-11T06:55:24.972979Z",
   "content": {
-    "runId": "6e7e922c-40a4-4930-bac5-0c813c4b6490",
-    "threadId": "e0ee18f0-1340-460f-b141-c1c25a077313",
+    "runId": "c76317da-7ecc-4f9a-b911-a032d677d485",
+    "threadId": "b976df30-6277-46bb-b574-3c61f2bc790c",
     "status": "completed",
     "error": null,
     "output": [
@@ -15,7 +15,7 @@
         "contents": [
           {
             "kind": "text",
-            "text": "Hi there! \ud83d\udc4b\ud83d\ude0a Here are some friendly greeting emojis: \ud83d\udc4b\ud83d\ude0a\ud83c\udf1f\u2728\ud83d\udcac",
+            "text": "Hello there! \ud83d\udc4b Here are some friendly emojis: \ud83d\udc4b\ud83d\ude0a\u2728\u2600\ufe0f",
             "audience": null,
             "encryption": null
           }
@@ -32,7 +32,7 @@
       }
     ]
   },
-  "hash": "b57c96ed82ec5f418a322585e1e29ef7342f24322b7f8b27229f8e68f34a9971",
+  "hash": "a3d100482a647e20c5c673c64f49e3d9007a4bfc955d56c8853b7f96027e1cf3",
   "metadata": {
     "input_file": "50-simple-greeting.xml",
     "sample": "emoji-chat",

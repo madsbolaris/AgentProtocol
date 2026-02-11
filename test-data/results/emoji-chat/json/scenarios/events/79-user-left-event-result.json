@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-02-11T06:57:23.018332Z",
+  "content": {
+    "runId": "eb4ef3b9-78c2-4caa-9268-c484a8c6c3e6",
+    "threadId": "cb81cd24-29d0-4fde-9913-94c633bc390b",
+    "status": "completed",
+    "error": null,
+    "output": []
+  },
+  "hash": "0523019d95d8db2026a8be86f6a01a4440e12a37d43ae23b4c078386462dbbda",
+  "metadata": {
+    "input_file": "79-user-left-event.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:57:49.263774Z",
+  "content": {
+    "runId": "a2b0fb9e-c34e-4a77-9479-00243155435b",
+    "threadId": "9fa75c88-9651-4df9-9d10-ecb06a78ef15",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Great question! I can\u2019t fetch live weather or current time, but you can check a weather app or world clock for Paris\u2014Paris-ready emojis: \ud83c\udf24\ufe0f\ud83c\udf27\ufe0f\u2600\ufe0f\ud83d\udd70\ufe0f\ud83d\uddfc",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "0be115745698749ca0bb7a31ef8b9f8d67f488a4e1a51deb7ad493cbba604c99",
+  "metadata": {
+    "input_file": "52-multi-function.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

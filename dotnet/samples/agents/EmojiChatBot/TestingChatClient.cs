@@ -234,6 +234,8 @@ public class TestingChatClient
         }
 
         // Serialize to stable JSON (sorted keys, no whitespace)
+        // IMPORTANT: UnsafeRelaxedJsonEscaping keeps Unicode characters (emojis, arrows) unescaped
+        // This matches Python's ensure_ascii=False for cross-language hash compatibility
         var serializerOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -244,8 +246,9 @@ public class TestingChatClient
         var json = JsonSerializer.Serialize(requestDict, serializerOptions);
 
         // Sort keys by converting to sorted dictionary
+        // CRITICAL: Pass serializerOptions to SortJsonKeys to preserve Unicode encoding
         using var doc = JsonDocument.Parse(json);
-        var sortedJson = SortJsonKeys(doc.RootElement);
+        var sortedJson = SortJsonKeys(doc.RootElement, serializerOptions);
 
         // Fix temperature formatting: ensure "temperature":0 becomes "temperature":0.0
         // This ensures consistency with Python's json.dumps() behavior
@@ -253,6 +256,31 @@ public class TestingChatClient
             sortedJson,
             @"""temperature"":0(?![.0-9])",
             @"""temperature"":0.0"
+        );
+
+        // Unescape Unicode surrogate pairs to match Python's ensure_ascii=False behavior
+        // Converts \uD83D\uDE0A → 😊 for cross-language hash compatibility
+        sortedJson = System.Text.RegularExpressions.Regex.Replace(
+            sortedJson,
+            @"\\u([0-9A-Fa-f]{4})(?:\\u([0-9A-Fa-f]{4}))?",
+            match =>
+            {
+                int code1 = Convert.ToInt32(match.Groups[1].Value, 16);
+                if (match.Groups[2].Success)
+                {
+                    // Surrogate pair: combine high and low surrogates
+                    int code2 = Convert.ToInt32(match.Groups[2].Value, 16);
+                    // Check if it's actually a surrogate pair (high: 0xD800-0xDBFF, low: 0xDC00-0xDFFF)
+                    if (code1 >= 0xD800 && code1 <= 0xDBFF && code2 >= 0xDC00 && code2 <= 0xDFFF)
+                    {
+                        return char.ConvertFromUtf32((code1 - 0xD800) * 0x400 + (code2 - 0xDC00) + 0x10000);
+                    }
+                    // Not a valid surrogate pair, process separately
+                    return ((char)code1).ToString() + "\\u" + match.Groups[2].Value;
+                }
+                // Single character
+                return ((char)code1).ToString();
+            }
         );
 
         // Log the JSON being hashed for debugging
@@ -323,7 +351,7 @@ public class TestingChatClient
         }).ToList();
     }
 
-    private string SortJsonKeys(JsonElement element)
+    private string SortJsonKeys(JsonElement element, JsonSerializerOptions options)
     {
         if (element.ValueKind == JsonValueKind.Object)
         {
@@ -332,23 +360,23 @@ public class TestingChatClient
             {
                 if (prop.Value.ValueKind == JsonValueKind.Object || prop.Value.ValueKind == JsonValueKind.Array)
                 {
-                    sorted[prop.Name] = JsonSerializer.Deserialize<object>(SortJsonKeys(prop.Value))!;
+                    sorted[prop.Name] = JsonSerializer.Deserialize<object>(SortJsonKeys(prop.Value, options))!;
                 }
                 else
                 {
                     sorted[prop.Name] = JsonSerializer.Deserialize<object>(prop.Value.GetRawText())!;
                 }
             }
-            return JsonSerializer.Serialize(sorted);
+            return JsonSerializer.Serialize(sorted, options);
         }
         else if (element.ValueKind == JsonValueKind.Array)
         {
             var array = element.EnumerateArray()
                 .Select(item => item.ValueKind == JsonValueKind.Object || item.ValueKind == JsonValueKind.Array
-                    ? JsonSerializer.Deserialize<object>(SortJsonKeys(item))!
+                    ? JsonSerializer.Deserialize<object>(SortJsonKeys(item, options))!
                     : JsonSerializer.Deserialize<object>(item.GetRawText())!)
                 .ToArray();
-            return JsonSerializer.Serialize(array);
+            return JsonSerializer.Serialize(array, options);
         }
         else
         {

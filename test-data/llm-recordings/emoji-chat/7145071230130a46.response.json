@@ -1,0 +1,17 @@
+{
+  "callId": 26,
+  "timestamp": "2026-02-11T06:58:04.845166Z",
+  "hash": "7145071230130a46",
+  "response": {
+    "id": "chatcmpl-D7ySeO5Gf8uRg4kjzRpHdPGWuKK2o",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-11T06:58:00+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Hello! I\u0027m excited to chat emojis today\u2014here are some friendly picks: \uD83D\uDE04 \uD83D\uDC4B \uD83C\uDF1F \u2600\uFE0F"
+      }
+    ],
+    "toolCalls": []
+  }
+}

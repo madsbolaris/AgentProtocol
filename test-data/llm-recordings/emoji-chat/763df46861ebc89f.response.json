@@ -1,0 +1,17 @@
+{
+  "callId": 24,
+  "timestamp": "2026-02-11T06:57:56.522302Z",
+  "hash": "763df46861ebc89f",
+  "response": {
+    "id": "chatcmpl-D7ySTpxJu76qNhZHCLWtK5QSt9C5V",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-11T06:57:49+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Nice question! I can\u2019t pull live weather or current time, but here are Paris vibes: \u26C5\uFE0F\uD83C\uDF26\uFE0F\uD83D\uDDFC\uD83D\uDD70\uFE0F\uD83C\uDDEB\uD83C\uDDF7"
+      }
+    ],
+    "toolCalls": []
+  }
+}

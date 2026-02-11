@@ -1,0 +1,17 @@
+{
+  "callId": 28,
+  "timestamp": "2026-02-11T06:58:20.149067Z",
+  "hash": "b163267e0f7d0f97",
+  "response": {
+    "id": "chatcmpl-D7ySosSuqW4DcMMJft4nJeDsSXoSH",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-11T06:58:10+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Nice question! I can\u0027t fetch live conditions, but here are Seattle weather vibes: \uD83C\uDF27\uFE0F\u2601\uFE0F\u2614\uFE0F\uD83C\uDF26\uFE0F Check a weather app for the current forecast."
+      }
+    ],
+    "toolCalls": []
+  }
+}

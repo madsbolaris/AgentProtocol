@@ -1,0 +1,17 @@
+{
+  "callId": 20,
+  "timestamp": "2026-02-11T06:57:36.73912Z",
+  "hash": "f5796b42a3c5658b",
+  "response": {
+    "id": "chatcmpl-D7ySBFPtlMB4gHteOKcTuIvlYLvFG",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-11T06:57:31+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Got it! Here are thumbs-up options for msg_12345: \uD83D\uDC4D \uD83D\uDC4D\uD83C\uDFFB \uD83D\uDC4D\uD83C\uDFFC \uD83D\uDC4D\uD83C\uDFFD"
+      }
+    ],
+    "toolCalls": []
+  }
+}

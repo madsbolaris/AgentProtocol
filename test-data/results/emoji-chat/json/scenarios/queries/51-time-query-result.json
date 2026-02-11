@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:58:24.024305Z",
+  "content": {
+    "runId": "ebe0e427-a4b2-4cf6-a19a-3dea5f5df0ad",
+    "threadId": "e9af14ba-443a-4aad-92db-669dfcee78f8",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Nice question! I can\u2019t check real-time, but it\u2019s always a good time for emojis: \ud83d\udd52 \u23f0 \u231a\ufe0f \ud83d\udd70\ufe0f \u23f3",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "91ccf99d4967686e4d3cb492a5b2ab5a1b2911fd6a5119451286da80a422c278",
+  "metadata": {
+    "input_file": "51-time-query.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

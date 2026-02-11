@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:56:34.307572Z",
+  "content": {
+    "runId": "37ef5dd2-0299-408b-af5d-6ce8bc924e61",
+    "threadId": "f9ee2baf-bbf9-4a1d-af21-5a2f36bbc50c",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Nice to chat about emojis! Tell me your mood or topic and I\u2019ll tailor 3-5 perfect emojis. Quick starters: happy \ud83d\ude0a\ud83c\udf89, curious \ud83e\udd14\ud83d\udcda, cozy \ud83d\udecb\ufe0f\u2615\ufe0f",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "4fabc213301eaec4530231f3881f0aba7e1acd2a6a5f41b4ebd4259f2124c07b",
+  "metadata": {
+    "input_file": "04-user-simple-text.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

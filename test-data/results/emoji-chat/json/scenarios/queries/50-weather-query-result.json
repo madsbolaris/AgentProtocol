@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:58:10.362429Z",
+  "content": {
+    "runId": "4bd3fd44-5a03-4efd-94a1-b8e1a7e83632",
+    "threadId": "5a7b74a2-00a2-4e22-8fe6-4d2f3a49cde3",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "I can\u2019t fetch live weather right now, but Seattle is often rainy. Here are some weather vibes: \ud83c\udf27\ufe0f\u2601\ufe0f\ud83c\udf26\ufe0f\u2614\ufe0f\ud83c\udf2b\ufe0f",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "b8cbae13a9224b109d07446538787b667d8800e17fe7a825acc7e055df647e17",
+  "metadata": {
+    "input_file": "50-weather-query.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

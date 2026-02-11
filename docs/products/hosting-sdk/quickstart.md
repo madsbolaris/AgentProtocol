@@ -786,7 +786,7 @@ Let's add simple logging to see what's happening:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)LogMessages
         }
@@ -927,7 +927,7 @@ Route specific commands to custom handlers without calling the LLM:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)HandleCommands
         }
@@ -982,7 +982,7 @@ Route specific commands to custom handlers without calling the LLM:
 
 ### Middleware Execution Order
 
-Middlewares execute in the order you register them:
+Middleware execute in the order you register them:
 
 === "Python"
 
@@ -1034,7 +1034,7 @@ Middlewares execute in the order you register them:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)LogMiddleware,
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)CommandMiddleware
@@ -1156,7 +1156,7 @@ The real power of middleware is doing something **before and after** processing:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)TimingMiddleware
         }
@@ -1243,7 +1243,7 @@ Wrap processing in try/catch to handle errors gracefully:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)ErrorMiddleware
             // ... other middleware
@@ -1357,7 +1357,7 @@ To process content as it streams from the LLM, use **content middleware** in the
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)LogMiddleware,  // Message middleware
             (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)LogTextContent)  // Content middleware (tuple)
@@ -1463,7 +1463,7 @@ You can also process entire messages as they're generated (not just content):
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)ProcessAllChunks
         }
@@ -1558,7 +1558,7 @@ Transform LLM output before it reaches the client:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)AddEmojis)  // Content middleware (tuple)
         }
@@ -1685,7 +1685,7 @@ Process function calls before they execute:
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Functions = new[] { ("get_weather", "Get weather", GetWeather) },
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (typeof(FunctionCallContent), (Func<IAsyncEnumerable<FunctionCallContent>, IThread, Func<IAsyncEnumerable<FunctionCallContent>, Task>, CancellationToken, Task>)LogFunctionCalls),     // Tuple
             (typeof(FunctionResultContent), (Func<IAsyncEnumerable<FunctionResultContent>, IThread, Func<IAsyncEnumerable<FunctionResultContent>, Task>, CancellationToken, Task>)LogFunctionResults)  // Tuple
@@ -1866,7 +1866,7 @@ Messages can contain text, images, audio, and more:
     });
     ```
 
-### Processing Multimodal Content in Middlewares
+### Processing Multimodal Content in Middleware
 
 Use content middleware to process specific content types:
 
@@ -1926,7 +1926,7 @@ Use content middleware to process specific content types:
         Model = "gpt-4-vision",
         Instructions = "You can see images.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (typeof(ImageContent), (Func<IAsyncEnumerable<ImageContent>, IThread, Func<IAsyncEnumerable<ImageContent>, Task>, CancellationToken, Task>)ProcessImages)  // Tuple
         }
@@ -2029,7 +2029,7 @@ The protocol includes special message types for richer interactions:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (typeof(MessageReactionContent), (Func<IAsyncEnumerable<MessageReactionContent>, IThread, Func<IAsyncEnumerable<MessageReactionContent>, Task>, CancellationToken, Task>)HandleReactions)  // Tuple
         }
@@ -2472,7 +2472,7 @@ Collect chunks and send them in larger batches:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)BatchContent)  // Tuple
         }
@@ -2573,7 +2573,7 @@ Remove unwanted content:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)FilterProfanity)  // Tuple
         }
@@ -2667,7 +2667,7 @@ Send chunks to multiple destinations:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)TeeToAnalytics)  // Tuple
         }
@@ -2759,7 +2759,7 @@ Slow down chunk delivery:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)RateLimit)  // Tuple
         }
@@ -2878,7 +2878,7 @@ Combine chunks in complex ways:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)MarkdownToHtml)  // Tuple
         }
@@ -3134,7 +3134,7 @@ Here's a production-ready agent with multiple middleware:
             ("get_weather", "Get current weather", (Func<string, string>)GetWeather),
             ("get_time", "Get current time", (Func<string>)GetTime)
         },
-        Middlewares = new object[]
+        Middleware = new object[]
         {
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)LogMessages,
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)HandleCommands,
@@ -3289,7 +3289,7 @@ You now know the fundamentals of the Agent Protocol Hosting SDK. Here are some n
 
 ## Appendix: Middleware Patterns Summary
 
-### Message Middlewares
+### Message Middleware
 
 Process entire messages (once per message):
 
@@ -3307,7 +3307,7 @@ async def my_middleware(message: IMessage, thread: IThread, next: Callable[[], A
 config = AgentConfig(middleware=[my_middleware])
 ```
 
-### Content Middlewares
+### Content Middleware
 
 Process streaming content (multiple times per message):
 

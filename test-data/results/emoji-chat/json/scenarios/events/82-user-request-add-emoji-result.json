@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:57:31.128239Z",
+  "content": {
+    "runId": "051dcd2c-78f5-46d0-a061-68c2141ba4f3",
+    "threadId": "9c46a37b-b40a-491c-81ba-48697bcf9b77",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Nice choice! I\u2019ve got you\u2014adding \ud83d\udc4d to msg_12345. Here are a few related options: \ud83d\udc4d\ud83d\udc4f\ud83d\udc4c\u2728",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "04a57ddd5a84e14e9e3de6456ccbd94c2ed101e087bf8f7abdbb934aac10a0a8",
+  "metadata": {
+    "input_file": "82-user-request-add-emoji.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

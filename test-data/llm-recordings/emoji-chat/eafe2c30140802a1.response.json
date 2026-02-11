@@ -1,0 +1,17 @@
+{
+  "callId": 12,
+  "timestamp": "2026-02-11T06:56:39.081795Z",
+  "hash": "eafe2c30140802a1",
+  "response": {
+    "id": "chatcmpl-D7yRGq0C7eMiSp9kezg9qCR1Yr3Ng",
+    "model": "gpt-5-nano-2025-08-07",
+    "created": "2026-02-11T06:56:34+00:00",
+    "finishReason": "Stop",
+    "content": [
+      {
+        "text": "Hey there! Not sure what you\u2019re feeling yet\u2014here are some friendly emoji options to choose from: \uD83D\uDE0A \uD83C\uDF88 \uD83C\uDF1F \uD83D\uDE04"
+      }
+    ],
+    "toolCalls": []
+  }
+}

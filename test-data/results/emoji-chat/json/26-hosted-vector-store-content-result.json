@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-02-11T06:28:05.092810Z",
+  "timestamp": "2026-02-11T06:55:19.257054Z",
   "content": {
-    "runId": "2a5c76ea-f978-4ce6-ae6a-d3f7092b74c2",
-    "threadId": "fb11041e-1e47-4aed-9976-99d9250912cc",
+    "runId": "6a44131e-832c-4971-ace8-5697b5772d1f",
+    "threadId": "ee171a0f-3ed3-4346-a723-5de057091a3a",
     "status": "completed",
     "error": null,
     "output": []
   },
-  "hash": "6221bb2e701bdc3b85d490a66670148ba8b541aeacafecb425b7b5774c20cac2",
+  "hash": "e25df01421249897d569db70d206b963666963d336e8b8f0946d0367e022c1b4",
   "metadata": {
     "input_file": "26-hosted-vector-store-content.xml",
     "sample": "emoji-chat",

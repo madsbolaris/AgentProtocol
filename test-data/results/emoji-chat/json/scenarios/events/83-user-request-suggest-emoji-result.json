@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:57:39.519262Z",
+  "content": {
+    "runId": "6f95052d-e377-445c-a0c1-672c11eae3b5",
+    "threadId": "f7d6df4d-8bbf-4455-be85-492a0c4f8b05",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "That's fantastic\u2014your happiness is contagious! Here are some joyful emojis: \ud83d\ude0a\ud83c\udf89\u2728\u2600\ufe0f\ud83c\udf88",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "02ca2dfeefb0143c58a2982eb58515e38467eb171a89b8c57957d0fd6143a40b",
+  "metadata": {
+    "input_file": "83-user-request-suggest-emoji.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

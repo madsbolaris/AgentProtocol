@@ -1348,10 +1348,11 @@ You can also process entire messages as they're generated (not just content):
         next: Callable[[], Awaitable[None]]
     ) -> None:
         if isinstance(message, AgentMessage):
-            print(f"🤖 Agent message with {len(message.content)} content items")
-            for content in message.content:
+            print(f"🤖 Agent message received")
+            async for content in message.content:
                 if isinstance(content, TextContent):
-                    print(f"  Text: {content.text}")
+                    complete_text = await content.wait()
+                    print(f"  Text: {complete_text.text}")
 
         await next()
 
@@ -1374,11 +1375,14 @@ You can also process entire messages as they're generated (not just content):
     {
         if (message is AgentMessage agentMsg)
         {
-            Console.WriteLine($"🤖 Agent message with {agentMsg.Content.Count} items");
-            foreach (var content in agentMsg.Content)
+            Console.WriteLine($"🤖 Agent message received");
+            await foreach (var content in agentMsg.Content)
             {
-                if (content is TextContent text)
-                    Console.WriteLine($"  Text: {text.Text}");
+                if (content is TextContent textContent)
+                {
+                    var completeText = await textContent.WaitForCompletionAsync();
+                    Console.WriteLine($"  Text: {completeText.Text}");
+                }
             }
         }
 
@@ -1408,10 +1412,11 @@ You can also process entire messages as they're generated (not just content):
         next: () => Promise<void>
     ): Promise<void> {
         if (message instanceof AgentMessage) {
-            console.log(`🤖 Agent message with ${message.content.length} items`);
-            for (const content of message.content) {
+            console.log(`🤖 Agent message received`);
+            for await (const content of message.content) {
                 if (content instanceof TextContent) {
-                    console.log(`  Text: ${content.text}`);
+                    const completeText = await content.value;
+                    console.log(`  Text: ${completeText.text}`);
                 }
             }
         }

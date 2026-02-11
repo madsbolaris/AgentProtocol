@@ -291,7 +291,12 @@ Here's a complete example showing how threads, messages, and runs work together:
         if run.status == "completed":
             messages = await client.threads.get_messages(thread_id=thread.id)
             latest = messages[0]  # Most recent message
-            print(f"Agent: {latest.content[0]['text']}")
+            # Extract first text content
+            async for content in latest.content:
+                if content.type == "text":
+                    complete_text = await content.wait()
+                    print(f"Agent: {complete_text.text}")
+                    break
 
         # 5. Continue conversation
         await client.threads.add_message(
@@ -324,7 +329,14 @@ Here's a complete example showing how threads, messages, and runs work together:
         if (run.status === "completed") {
             const messages = await client.threads.getMessages(thread.id);
             const latest = messages[0];
-            console.log(`Agent: ${latest.content[0].text}`);
+            // Extract first text content
+            for await (const content of latest.content) {
+                if (content.type === "text") {
+                    const completeText = await content.value;
+                    console.log(`Agent: ${completeText.text}`);
+                    break;
+                }
+            }
         }
 
         // 5. Continue conversation
@@ -355,7 +367,16 @@ Here's a complete example showing how threads, messages, and runs work together:
         {
             var messages = await client.Threads.GetMessagesAsync(thread.Id);
             var latest = messages.First();
-            Console.WriteLine($"Agent: {latest.Content[0].Text}");
+            // Extract first text content
+            await foreach (var content in latest.Content)
+            {
+                if (content is TextContent textContent)
+                {
+                    var completeText = await textContent.WaitForCompletionAsync();
+                    Console.WriteLine($"Agent: {completeText.Text}");
+                    break;
+                }
+            }
         }
 
         // 5. Continue conversation

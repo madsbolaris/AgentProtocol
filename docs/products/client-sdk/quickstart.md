@@ -399,7 +399,7 @@ Handle multiple content types like text and images in a single message stream.
 
     # Stream messages with multiple content types
     async for message in client.stream_messages("Show me a photo of Paris and describe it"):
-        async for content in message.stream_contents():
+        async for content in message.content:
             if content.type == "text":
                 # Content is async iterable - stream chunks directly
                 async for chunk in content:
@@ -419,7 +419,7 @@ Handle multiple content types like text and images in a single message stream.
 
     await foreach (var message in client.StreamMessagesAsync("Show me a photo of Paris and describe it"))
     {
-        await foreach (var content in message.StreamContentsAsync())
+        await foreach (var content in message.Content)
         {
             switch (content)
             {
@@ -449,7 +449,7 @@ Handle multiple content types like text and images in a single message stream.
     const client = new AgentProtocolClient("http://localhost:5000");
 
     for await (const message of client.streamMessages("Show me a photo of Paris and describe it")) {
-        for await (const content of message.streamContents()) {
+        for await (const content of message.content) {
             switch (content.type) {
                 case "text":
                     // Content is async iterable - stream chunks directly
@@ -501,7 +501,7 @@ Monitor a thread for messages from all participants - users, agents, and other c
         # Stream all messages on the thread in real-time
         async for message in client.stream_thread_messages(thread_id):
             print(f"{message.role}: ", end="", flush=True)
-            async for content in message.stream_contents():
+            async for content in message.content:
                 if content.type == "text":
                     async for chunk in content:
                         print(chunk.text, end="", flush=True)
@@ -523,7 +523,7 @@ Monitor a thread for messages from all participants - users, agents, and other c
     await foreach (var message in client.StreamThreadMessagesAsync(threadId))
     {
         Console.Write($"{message.Role}: ");
-        await foreach (var content in message.StreamContentsAsync())
+        await foreach (var content in message.Content)
         {
             if (content is TextContent text)
             {
@@ -548,7 +548,7 @@ Monitor a thread for messages from all participants - users, agents, and other c
     // Stream all messages on the thread in real-time
     for await (const message of client.streamThreadMessages(threadId)) {
         process.stdout.write(`${message.role}: `);
-        for await (const content of message.streamContents()) {
+        for await (const content of message.content) {
             if (content.type === "text") {
                 for await (const chunk of content) {
                     process.stdout.write(chunk.text);

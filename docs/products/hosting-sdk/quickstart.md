@@ -630,7 +630,7 @@ Let's add simple logging to see what's happening:
     ) -> None:
         # Extract text from message contents
         text_parts = []
-        async for content in message.stream_contents():
+        async for content in message.content:
             if isinstance(content, TextContent):
                 text_parts.append(await content.wait())
         text = "".join(c.text for c in text_parts)
@@ -663,7 +663,7 @@ Let's add simple logging to see what's happening:
     {
         // Extract text from message contents
         var textParts = new List<TextContent>();
-        await foreach (var content in message.StreamContentsAsync())
+        await foreach (var content in message.Content)
         {
             if (content is TextContent textContent)
             {
@@ -706,7 +706,7 @@ Let's add simple logging to see what's happening:
     ): Promise<void> {
         // Extract text from message contents
         const textParts: TextContent[] = [];
-        for await (const content of message.streamContents()) {
+        for await (const content of message.content) {
             if (content instanceof TextContent) {
                 textParts.push(await content.value);
             }
@@ -759,7 +759,7 @@ Route specific commands to custom handlers without calling the LLM:
 
         # Extract text from message contents
         text_parts = []
-        async for content in message.stream_contents():
+        async for content in message.content:
             if isinstance(content, TextContent):
                 text_parts.append(await content.wait())
         text = "".join(c.text for c in text_parts).strip()
@@ -810,7 +810,7 @@ Route specific commands to custom handlers without calling the LLM:
 
         // Extract text from message contents
         var textParts = new List<TextContent>();
-        await foreach (var content in message.StreamContentsAsync())
+        await foreach (var content in message.Content)
         {
             if (content is TextContent textContent)
             {
@@ -871,7 +871,7 @@ Route specific commands to custom handlers without calling the LLM:
 
         // Extract text from message contents
         const textParts: TextContent[] = [];
-        for await (const content of message.streamContents()) {
+        for await (const content of message.content) {
             if (content instanceof TextContent) {
                 textParts.push(await content.value);
             }
@@ -1530,26 +1530,30 @@ Process function calls before they execute:
     from typing import AsyncIterable, Callable, Awaitable
 
     async def log_function_calls(
-        content_stream: AsyncIterable[FunctionCallContent],
+        content_chunks: AsyncIterable[FunctionCallContent],
         thread: IThread,
         next: Callable[[AsyncIterable[FunctionCallContent]], Awaitable[None]]
     ) -> None:
+        # Wait for all chunks to assemble into complete function call
+        complete_call = await content_chunks.wait()
+        print(f"🔧 Function call: {complete_call.name}({complete_call.arguments})")
+
         async def process():
-            async for call in content_stream:
-                print(f"🔧 Function call: {call.name}({call.arguments})")
-                yield call
+            yield complete_call
 
         await next(process())
 
     async def log_function_results(
-        content_stream: AsyncIterable[FunctionResultContent],
+        content_chunks: AsyncIterable[FunctionResultContent],
         thread: IThread,
         next: Callable[[AsyncIterable[FunctionResultContent]], Awaitable[None]]
     ) -> None:
+        # Wait for all chunks to assemble into complete function result
+        complete_result = await content_chunks.wait()
+        print(f"✅ Function result: {complete_result.result}")
+
         async def process():
-            async for result in content_stream:
-                print(f"✅ Function result: {result.result}")
-                yield result
+            yield complete_result
 
         await next(process())
 
@@ -1571,36 +1575,36 @@ Process function calls before they execute:
     using Microsoft.Agents.Protocol;
 
     async Task LogFunctionCalls(
-        IAsyncEnumerable<FunctionCallContent> contentStream,
+        IAsyncEnumerable<FunctionCallContent> contentChunks,
         IThread thread,
         Func<IAsyncEnumerable<FunctionCallContent>, Task> next,
         CancellationToken cancellationToken)
     {
+        // Wait for all chunks to assemble into complete function call
+        var completeCall = await contentChunks.WaitForCompletionAsync();
+        Console.WriteLine($"🔧 Function call: {completeCall.Name}({completeCall.Arguments})");
+
         async IAsyncEnumerable<FunctionCallContent> Process()
         {
-            await foreach (var call in contentStream)
-            {
-                Console.WriteLine($"🔧 Function call: {call.Name}({call.Arguments})");
-                yield return call;
-            }
+            yield return completeCall;
         }
 
         await next(Process());
     }
 
     async Task LogFunctionResults(
-        IAsyncEnumerable<FunctionResultContent> contentStream,
+        IAsyncEnumerable<FunctionResultContent> contentChunks,
         IThread thread,
         Func<IAsyncEnumerable<FunctionResultContent>, Task> next,
         CancellationToken cancellationToken)
     {
+        // Wait for all chunks to assemble into complete function result
+        var completeResult = await contentChunks.WaitForCompletionAsync();
+        Console.WriteLine($"✅ Function result: {completeResult.Result}");
+
         async IAsyncEnumerable<FunctionResultContent> Process()
         {
-            await foreach (var result in contentStream)
-            {
-                Console.WriteLine($"✅ Function result: {result.Result}");
-                yield return result;
-            }
+            yield return completeResult;
         }
 
         await next(Process());
@@ -1626,30 +1630,32 @@ Process function calls before they execute:
     import { FunctionCallContent, FunctionResultContent } from '@microsoft/agents-protocol';
 
     async function logFunctionCalls(
-        contentStream: AsyncIterable<FunctionCallContent>,
+        contentChunks: AsyncIterable<FunctionCallContent>,
         thread: IThread,
         next: (stream: AsyncIterable<FunctionCallContent>) => Promise<void>
     ): Promise<void> {
+        // Wait for all chunks to assemble into complete function call
+        const completeCall = await contentChunks.value;
+        console.log(`🔧 Function call: ${completeCall.name}(${JSON.stringify(completeCall.arguments)})`);
+
         async function* process() {
-            for await (const call of contentStream) {
-                console.log(`🔧 Function call: ${call.name}(${JSON.stringify(call.arguments)})`);
-                yield call;
-            }
+            yield completeCall;
         }
 
         await next(process());
     }
 
     async function logFunctionResults(
-        contentStream: AsyncIterable<FunctionResultContent>,
+        contentChunks: AsyncIterable<FunctionResultContent>,
         thread: IThread,
         next: (stream: AsyncIterable<FunctionResultContent>) => Promise<void>
     ): Promise<void> {
+        // Wait for all chunks to assemble into complete function result
+        const completeResult = await contentChunks.value;
+        console.log(`✅ Function result: ${completeResult.result}`);
+
         async function* process() {
-            for await (const result of contentStream) {
-                console.log(`✅ Function result: ${result.result}`);
-                yield result;
-            }
+            yield completeResult;
         }
 
         await next(process());
@@ -2877,7 +2883,7 @@ Here's a production-ready agent with multiple middleware:
     async def log_messages(message: IMessage, thread: IThread, next: Callable[[], Awaitable[None]]) -> None:
         # Extract text from message contents
         text_parts = []
-        async for content in message.stream_contents():
+        async for content in message.content:
             if isinstance(content, TextContent):
                 text_parts.append(await content.wait())
         text = "".join(c.text for c in text_parts)
@@ -2891,7 +2897,7 @@ Here's a production-ready agent with multiple middleware:
 
         # Extract text from message contents
         text_parts = []
-        async for content in message.stream_contents():
+        async for content in message.content:
             if isinstance(content, TextContent):
                 text_parts.append(await content.wait())
         command = "".join(c.text for c in text_parts).strip()
@@ -2923,14 +2929,16 @@ Here's a production-ready agent with multiple middleware:
         await next(process())
 
     async def log_function_calls(
-        content_stream: AsyncIterable[FunctionCallContent],
+        content_chunks: AsyncIterable[FunctionCallContent],
         thread: IThread,
         next: Callable[[AsyncIterable[FunctionCallContent]], Awaitable[None]]
     ) -> None:
+        # Wait for all chunks to assemble into complete function call
+        complete_call = await content_chunks.wait()
+        print(f"🔧 Calling: {complete_call.name}({complete_call.arguments})")
+
         async def process():
-            async for call in content_stream:
-                print(f"🔧 Calling: {call.name}({call.arguments})")
-                yield call
+            yield complete_call
         await next(process())
 
     async def log_function_results(
@@ -2989,7 +2997,7 @@ Here's a production-ready agent with multiple middleware:
     {
         // Extract text from message contents
         var textParts = new List<TextContent>();
-        await foreach (var content in message.StreamContentsAsync())
+        await foreach (var content in message.Content)
         {
             if (content is TextContent textContent)
             {
@@ -3011,7 +3019,7 @@ Here's a production-ready agent with multiple middleware:
 
         // Extract text from message contents
         var textParts = new List<TextContent>();
-        await foreach (var content in message.StreamContentsAsync())
+        await foreach (var content in message.Content)
         {
             if (content is TextContent textContent)
             {
@@ -3050,18 +3058,18 @@ Here's a production-ready agent with multiple middleware:
     }
 
     async Task LogFunctionCalls(
-        IAsyncEnumerable<FunctionCallContent> contentStream,
+        IAsyncEnumerable<FunctionCallContent> contentChunks,
         IThread thread,
         Func<IAsyncEnumerable<FunctionCallContent>, Task> next,
         CancellationToken ct)
     {
+        // Wait for all chunks to assemble into complete function call
+        var completeCall = await contentChunks.WaitForCompletionAsync();
+        Console.WriteLine($"🔧 Calling: {completeCall.Name}({completeCall.Arguments})");
+
         async IAsyncEnumerable<FunctionCallContent> Process()
         {
-            await foreach (var call in contentStream)
-            {
-                Console.WriteLine($"🔧 Calling: {call.Name}({call.Arguments})");
-                yield return call;
-            }
+            yield return completeCall;
         }
         await next(Process());
     }
@@ -3133,7 +3141,7 @@ Here's a production-ready agent with multiple middleware:
     async function logMessages(message: IMessage, thread: IThread, next: () => Promise<void>) {
         // Extract text from message contents
         const textParts: TextContent[] = [];
-        for await (const content of message.streamContents()) {
+        for await (const content of message.content) {
             if (content instanceof TextContent) {
                 textParts.push(await content.value);
             }
@@ -3151,7 +3159,7 @@ Here's a production-ready agent with multiple middleware:
 
         // Extract text from message contents
         const textParts: TextContent[] = [];
-        for await (const content of message.streamContents()) {
+        for await (const content of message.content) {
             if (content instanceof TextContent) {
                 textParts.push(await content.value);
             }
@@ -3183,15 +3191,16 @@ Here's a production-ready agent with multiple middleware:
     }
 
     async function logFunctionCalls(
-        contentStream: AsyncIterable<FunctionCallContent>,
+        contentChunks: AsyncIterable<FunctionCallContent>,
         thread: IThread,
         next: (stream: AsyncIterable<FunctionCallContent>) => Promise<void>
     ) {
+        // Wait for all chunks to assemble into complete function call
+        const completeCall = await contentChunks.value;
+        console.log(`🔧 Calling: ${completeCall.name}(${JSON.stringify(completeCall.arguments)})`);
+
         async function* process() {
-            for await (const call of contentStream) {
-                console.log(`🔧 Calling: ${call.name}(${JSON.stringify(call.arguments)})`);
-                yield call;
-            }
+            yield completeCall;
         }
         await next(process());
     }

@@ -229,7 +229,7 @@ nav:
 
   - Hosting SDK:
     - products/hosting-sdk/index.md
-    - products/hosting-sdk/quickstart.md
+    - Quickstart: products/hosting-sdk/quickstart.md
     - products/hosting-sdk/getting-started.md
     - ... | products/hosting-sdk/**
 

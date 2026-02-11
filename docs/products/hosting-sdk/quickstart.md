@@ -171,7 +171,9 @@ Create your first agent in under 2 minutes.
 
 **Python Best Practices for Production:**
 
-The examples above use `print()` for simplicity. In production, follow these practices:
+> ⚠️ **Important**: The examples in this guide use `print()` for simplicity and clarity. In production code, always use the `logging` module for proper log levels, filtering, and formatting.
+
+In production, follow these practices:
 
 ```python
 # ✅ Complete imports with proper PEP 8 ordering
@@ -471,6 +473,86 @@ await next().ConfigureAwait(false);
 
 
 
+**Advanced C# Features:**
+
+```csharp
+// ✅ Enable Nullable Reference Types (C# 8+)
+// Add to your .csproj file:
+<PropertyGroup>
+    <Nullable>enable</Nullable>
+</PropertyGroup>
+
+// Then use nullable annotations:
+public async Task<string?> GetOptionalDataAsync()  // Returns string or null
+{
+    // Compiler helps prevent NullReferenceException
+}
+
+// ✅ Avoid Common Async Anti-Patterns
+
+// ❌ NEVER use .Result or .Wait() - causes deadlocks
+var result = SomeAsyncMethod().Result;  // BAD - blocks thread
+SomeAsyncMethod().Wait();              // BAD - blocks thread
+
+// ✅ Always use await
+var result = await SomeAsyncMethod();  // GOOD - non-blocking
+
+// ❌ NEVER use async void (except for event handlers)
+async void ProcessMessage()  // BAD - exceptions can't be caught
+{
+    await SomeAsyncMethod();
+}
+
+// ✅ Always return Task
+async Task ProcessMessageAsync()  // GOOD - exceptions propagate properly
+{
+    await SomeAsyncMethod();
+}
+
+// ✅ Dependency Injection Service Lifetimes
+
+// Middleware classes with DI
+public class RateLimitMiddleware
+{
+    private readonly IMemoryCache _cache;
+    private readonly ILogger<RateLimitMiddleware> _logger;
+
+    // Constructor injection
+    public RateLimitMiddleware(IMemoryCache cache, ILogger<RateLimitMiddleware> logger)
+    {
+        _cache = cache;
+        _logger = logger;
+    }
+
+    public async IAsyncEnumerable<IMessage> ProcessAsync(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var userId = thread.Metadata.GetValueOrDefault("user_id")?.ToString();
+        // Use _cache and _logger here
+        yield return message;
+    }
+}
+
+// Register with appropriate lifetime:
+builder.Services.AddMemoryCache();  // Singleton
+builder.Services.AddScoped<RateLimitMiddleware>();  // Scoped per request
+
+// Service lifetime guide:
+// - Singleton: Shared across entire app (caches, configurations)
+// - Scoped: One instance per request/thread (database contexts, user state)
+// - Transient: New instance every time (stateless services)
+```
+
+**Avoid these mistakes:**
+- ❌ Don't use `.Result` or `.Wait()` on async methods (causes deadlocks)
+- ❌ Don't use `async void` except for event handlers (exceptions can't be caught)
+- ❌ Don't ignore `CancellationToken` (prevents graceful shutdown)
+- ❌ Don't register middleware as Singleton if it has scoped dependencies
+
+
+
 === "TypeScript"
 
     ```typescript
@@ -734,8 +816,9 @@ Clients provide function implementations when sending messages:
                 return "Email sent successfully";
             })
         .add("get_local_files", "List files in user's current directory",
-            () => {
-                const files = fs.readdirSync('.');
+            async () => {
+                const { readdir } = await import('fs/promises');
+                const files = await readdir('.');
                 return `Found ${files.length} files: ${files.slice(0, 5).join(', ')}`;
             });
 
@@ -927,32 +1010,24 @@ LLM generates tokens → Chunks flow through pipeline → Your middleware proces
 
 ### Your First Middleware
 
-Let's add simple logging to see what's happening:
+Let's add simple logging to see what's happening. We'll use the **Transform pattern** (async generator with `yield`) because it's simpler to understand:
 
 === "Python"
 
     ```python
     from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
     from microsoft.agents.protocol import TextContent, IThread
-    from typing import Callable, Awaitable, AsyncIterable
+    from typing import AsyncIterable
     import os
 
+    # Simple transform pattern - just yield each chunk
     async def log_text(
-        content_chunks: AsyncIterable[TextContent],
-        thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
-    ) -> None:
-        # Wait for complete text content
-        complete_text = await content_chunks.wait()
-
-        print(f"📨 Received: {complete_text.text}")
-
-        # Yield complete content to next middleware
-        async def process():
-            yield complete_text
-
-        await next(process())  # Continue processing
-        print(f"✅ Processed message")
+        content_stream: AsyncIterable[TextContent],
+        thread: IThread
+    ) -> AsyncIterable[TextContent]:
+        async for chunk in content_stream:
+            print(f"📝 {chunk.text}")  # For demo - use logging in production (see Best Practices)
+            yield chunk  # Pass to next middleware
 
     config = AgentConfig(
         model="gpt-4",
@@ -971,36 +1046,30 @@ Let's add simple logging to see what's happening:
     ```csharp
     using Microsoft.Agents.Protocol;
     using Microsoft.Agents.Protocol.Hosting;
+    using System.Runtime.CompilerServices;
 
-    async Task LogText(
-        IAsyncEnumerable<TextContent> contentChunks,
+    // Simple transform pattern - just yield each chunk
+    async IAsyncEnumerable<TextContent> LogText(
+        IAsyncEnumerable<TextContent> contentStream,
         IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
-        CancellationToken cancellationToken)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        // Wait for complete text content
-        var completeText = await contentChunks.WaitForCompletionAsync();
-
-        Console.WriteLine($"📨 Received: {completeText.Text}");
-
-        // Yield complete content to next middleware
-        async IAsyncEnumerable<TextContent> Process()
+        await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
         {
-            yield return completeText;
+            Console.WriteLine($"📝 {chunk.Text}");  // Log as it streams
+            yield return chunk;  // Pass to next middleware
         }
-
-        await next(Process());
-        Console.WriteLine($"✅ Processed message");
     }
 
     var agentOptions = new AgentOptions
     {
         Model = "gpt-4",
         Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        ApiKey = builder.Configuration["OpenAI:ApiKey"] 
+            ?? throw new InvalidOperationException("OpenAI:ApiKey not configured"),
         Middleware = new object[]
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)LogText)
+            (typeof(TextContent), LogText)
         }
     };
 
@@ -1015,29 +1084,26 @@ Let's add simple logging to see what's happening:
     import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
     import { TextContent, IThread } from '@microsoft/agents-protocol';
 
-    async function logText(
-        contentChunks: AsyncIterable<TextContent>,
-        thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
-    ): Promise<void> {
-        // Wait for complete text content
-        const completeText = await contentChunks.value;
-
-        console.log(`📨 Received: ${completeText.text}`);
-
-        // Yield complete content to next middleware
-        async function* process() {
-            yield completeText;
+    // Simple transform pattern - just yield each chunk
+    async function* logText(
+        contentStream: AsyncIterable<TextContent>,
+        thread: IThread
+    ): AsyncIterable<TextContent> {
+        for await (const chunk of contentStream) {
+            console.log(`📝 ${chunk.text}`);  // Log as it streams
+            yield chunk;  // Pass to next middleware
         }
+    }
 
-        await next(process());
-        console.log(`✅ Processed message`);
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+        throw new Error("OPENAI_API_KEY environment variable is required");
     }
 
     const config: AgentConfig = {
         model: "gpt-4",
         instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
+        apiKey,
         middleware: [
             [TextContent, logText]  // Content middleware (array)
         ]
@@ -1521,11 +1587,11 @@ Wrap processing in try/catch to handle errors gracefully:
             await next();
         } catch (error) {
             const errorMsg = error instanceof Error ? error.message : String(error);
-            console.error(`❌ Error: ${errorMsg}  `);
-            const errorMsg = new AgentMessage({
+            console.error(`❌ Error: ${errorMsg}`);
+            const errorResponse = new AgentMessage({
                 content: [new TextContent({ text: "Sorry, something went wrong." })]
             });
-            thread.addMessage(errorMsg);
+            thread.addMessage(errorResponse);
         }
     }
 
@@ -1670,8 +1736,8 @@ Use this for the common case: transforming, filtering, or logging individual chu
         thread: IThread
     ): AsyncIterable<TextContent> {
         for await (const chunk of contentStream) {
-            chunk.text = chunk.text.toUpperCase();
-            yield chunk;
+            // Create new object instead of mutating
+            yield { ...chunk, text: chunk.text.toUpperCase() };
         }
     }
 
@@ -2180,6 +2246,736 @@ Use this for real-world scenarios like logging, moderation, rate limiting, and e
 - **Filter**: Don't yield to skip the message
 
 **Flexibility:** Work at any level - messages, content, or chunks - and the framework handles the plumbing.
+
+
+
+---
+
+## Production Agent Patterns
+
+The middleware examples above cover basic patterns. This section covers **agent-specific patterns** essential for production systems.
+
+### Pattern 1: Tool Access Control
+
+**Problem:** Not all users should have access to all tools (e.g., admin-only commands, sensitive APIs).
+
+**Solution:** Filter tool calls based on user permissions.
+
+=== "Python"
+
+    ```python
+    # Define role-based tool permissions
+    ROLE_PERMISSIONS = {
+        "admin": ["execute_command", "delete_user", "get_weather"],
+        "user": ["get_weather"],
+        "guest": []
+    }
+
+    async def enforce_tool_permissions(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        user_role = thread.metadata.get("user_role", "guest")
+        allowed_tools = ROLE_PERMISSIONS.get(user_role, [])
+        
+        # Filter tool calls in message
+        if message.tool_calls:
+            allowed_calls = [
+                call for call in message.tool_calls
+                if call.function.name in allowed_tools
+            ]
+            
+            if len(allowed_calls) < len(message.tool_calls):
+                # Some tools were blocked
+                blocked = len(message.tool_calls) - len(allowed_calls)
+                logger.warning(
+                    f"Blocked {blocked} unauthorized tool calls",
+                    extra={"user_role": user_role, "thread_id": thread.id}
+                )
+            
+            # Create new message with filtered tools
+            message.tool_calls = allowed_calls
+        
+        yield message
+
+    config = AgentConfig(
+        middleware=[enforce_tool_permissions, ...],
+        functions=all_available_functions  # Tools filtered per-user
+    )
+    ```
+
+### Pattern 2: Memory Injection (RAG)
+
+**Problem:** Agents need relevant context from knowledge bases or conversation history.
+
+**Solution:** Inject retrieved context before the agent processes the message.
+
+=== "Python"
+
+    ```python
+    from typing import List
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    # Simulated vector store
+    class VectorStore:
+        async def search(self, query: str, top_k: int = 3) -> List[str]:
+            # In production: query embedding database (Pinecone, Weaviate, etc.)
+            return [
+                "Relevant document 1...",
+                "Relevant document 2...",
+                "Relevant document 3..."
+            ]
+
+    vector_store = VectorStore()
+
+    async def inject_rag_context(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        if message.role == "user":
+            # Extract text from message
+            text_parts = []
+            async for content in message.content:
+                if isinstance(content, TextContent):
+                    chunk_text = await content.wait()
+                    text_parts.append(chunk_text.text)
+            
+            query = " ".join(text_parts)
+            
+            # Retrieve relevant documents
+            relevant_docs = await vector_store.search(query, top_k=3)
+            
+            # Prepend context to message
+            context_text = "\n\n".join([
+                "**Relevant Context:**",
+                *relevant_docs,
+                "**User Question:**"
+            ])
+            
+            context_content = TextContent(text=context_text)
+            
+            # Create enriched message
+            enriched_message = AgentMessage(
+                role=message.role,
+                content=[context_content] + list(message.content)
+            )
+            
+            logger.info(f"Injected {len(relevant_docs)} docs for context")
+            yield enriched_message
+        else:
+            # Agent messages pass through unchanged
+            yield message
+    ```
+
+### Pattern 3: Token Budget Enforcement
+
+**Problem:** Long conversations or large contexts can exceed model token limits.
+
+**Solution:** Track token usage and truncate/summarize when approaching limits.
+
+=== "Python"
+
+    ```python
+    import tiktoken  # pip install tiktoken
+
+    class TokenBudgetEnforcer:
+        def __init__(self, max_tokens: int = 4000, model: str = "gpt-4"):
+            self.max_tokens = max_tokens
+            self.encoder = tiktoken.encoding_for_model(model)
+        
+        def count_tokens(self, text: str) -> int:
+            return len(self.encoder.encode(text))
+        
+        async def enforce_budget(
+            self,
+            message: IMessage,
+            thread: IThread
+        ) -> AsyncIterable[IMessage]:
+            # Count tokens in current message
+            text_parts = []
+            async for content in message.content:
+                if isinstance(content, TextContent):
+                    chunk = await content.wait()
+                    text_parts.append(chunk.text)
+            
+            message_text = " ".join(text_parts)
+            message_tokens = self.count_tokens(message_text)
+            
+            # Track cumulative tokens in thread
+            thread_tokens = thread.metadata.get("total_tokens", 0)
+            new_total = thread_tokens + message_tokens
+            
+            if new_total > self.max_tokens:
+                logger.warning(
+                    f"Token budget exceeded: {new_total}/{self.max_tokens}. "
+                    f"Consider summarizing conversation history."
+                )
+                
+                # Option 1: Reject message
+                # raise ValueError(f"Token limit exceeded: {new_total}/{self.max_tokens}")
+                
+                # Option 2: Truncate message (shown here)
+                # In production, use smarter summarization
+                truncated = message_text[:self.max_tokens * 3]  # Rough estimate
+                truncated_content = TextContent(text=truncated + "... [truncated]")
+                
+                truncated_message = AgentMessage(
+                    role=message.role,
+                    content=[truncated_content]
+                )
+                
+                thread.metadata["total_tokens"] = self.max_tokens
+                yield truncated_message
+            else:
+                # Within budget
+                thread.metadata["total_tokens"] = new_total
+                yield message
+
+    # Usage
+    budget_enforcer = TokenBudgetEnforcer(max_tokens=8000)
+    config = AgentConfig(
+        middleware=[budget_enforcer.enforce_budget, ...]
+    )
+    ```
+
+### Pattern 4: Multi-Agent Routing
+
+**Problem:** Different types of questions need different specialist agents.
+
+**Solution:** Route messages to appropriate agents based on intent classification.
+
+=== "Python"
+
+    ```python
+    from enum import Enum
+
+    class AgentType(Enum):
+        GENERAL = "general"
+        TECHNICAL = "technical"
+        SALES = "sales"
+        SUPPORT = "support"
+
+    async def classify_intent(message_text: str) -> AgentType:
+        # In production: use ML classifier or LLM
+        if any(word in message_text.lower() for word in ["bug", "error", "broken"]):
+            return AgentType.SUPPORT
+        elif any(word in message_text.lower() for word in ["price", "purchase", "buy"]):
+            return AgentType.SALES
+        elif any(word in message_text.lower() for word in ["api", "code", "implement"]):
+            return AgentType.TECHNICAL
+        else:
+            return AgentType.GENERAL
+
+    async def route_to_specialist(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        if message.role == "user":
+            # Extract text
+            text_parts = []
+            async for content in message.content:
+                if isinstance(content, TextContent):
+                    chunk = await content.wait()
+                    text_parts.append(chunk.text)
+            
+            message_text = " ".join(text_parts)
+            
+            # Classify intent
+            agent_type = await classify_intent(message_text)
+            
+            # Store routing decision in thread metadata
+            thread.metadata["assigned_agent"] = agent_type.value
+            
+            logger.info(
+                f"Routed to {agent_type.value} agent",
+                extra={"thread_id": thread.id, "intent": agent_type.value}
+            )
+            
+            # Add routing context to message
+            routing_note = f"[Routed to {agent_type.value} specialist]\n\n"
+            routed_content = TextContent(text=routing_note + message_text)
+            
+            routed_message = AgentMessage(
+                role=message.role,
+                content=[routed_content]
+            )
+            
+            yield routed_message
+        else:
+            yield message
+
+    # In a multi-agent system, you'd have different AgentConfig instances
+    # and select which one to use based on thread.metadata["assigned_agent"]
+    ```
+
+### Pattern 5: Conversation State Management
+
+**Problem:** Track conversation goals, subtasks, or branching paths.
+
+**Solution:** Maintain structured state in thread metadata.
+
+=== "Python"
+
+    ```python
+    from dataclasses import dataclass, asdict
+    from typing import Optional, List
+    from datetime import datetime
+
+    @dataclass
+    class ConversationState:
+        goal: str
+        subtasks: List[str]
+        completed_subtasks: List[str]
+        current_step: int
+        started_at: datetime
+        last_updated: datetime
+        
+        def to_dict(self):
+            return {
+                **asdict(self),
+                "started_at": self.started_at.isoformat(),
+                "last_updated": self.last_updated.isoformat()
+            }
+
+    async def track_conversation_state(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        # Load or initialize state
+        state_dict = thread.metadata.get("conversation_state")
+        
+        if state_dict:
+            # Restore state (in production, use proper deserialization)
+            state = ConversationState(
+                goal=state_dict["goal"],
+                subtasks=state_dict["subtasks"],
+                completed_subtasks=state_dict["completed_subtasks"],
+                current_step=state_dict["current_step"],
+                started_at=datetime.fromisoformat(state_dict["started_at"]),
+                last_updated=datetime.now()
+            )
+        else:
+            # Initialize new conversation
+            state = ConversationState(
+                goal="Help user with their request",
+                subtasks=[],
+                completed_subtasks=[],
+                current_step=0,
+                started_at=datetime.now(),
+                last_updated=datetime.now()
+            )
+        
+        # Update state based on message
+        if message.role == "user":
+            # Extract potential new subtask
+            # In production: use LLM to identify subtasks
+            state.current_step += 1
+        
+        # Save updated state
+        thread.metadata["conversation_state"] = state.to_dict()
+        
+        # Add state context to message if helpful
+        if message.role == "user" and len(state.completed_subtasks) > 0:
+            context = f"[Progress: {len(state.completed_subtasks)}/{len(state.subtasks)} subtasks complete]\n\n"
+            # Could prepend to message content
+        
+        yield message
+    ```
+
+### Pattern 6: Reflection & Self-Critique
+
+**Problem:** Agent responses may contain errors or low-quality outputs.
+
+**Solution:** Add reflection middleware that critiques and optionally regenerates responses.
+
+=== "Python"
+
+    ```python
+    async def reflection_middleware(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        if message.role == "agent":
+            # Extract agent response
+            text_parts = []
+            async for content in message.content:
+                if isinstance(content, TextContent):
+                    chunk = await content.wait()
+                    text_parts.append(chunk.text)
+            
+            response_text = " ".join(text_parts)
+            
+            # Simple quality checks (in production: use LLM to critique)
+            issues = []
+            
+            if len(response_text) < 20:
+                issues.append("Response too short")
+            
+            if "I don't know" in response_text and len(response_text) < 50:
+                issues.append("Unhelpful response")
+            
+            if response_text.count("?") > 3:
+                issues.append("Too many questions, not enough answers")
+            
+            if issues:
+                logger.warning(
+                    f"Reflection found issues: {issues}",
+                    extra={"thread_id": thread.id}
+                )
+                
+                # Option 1: Add critique note to response
+                critique = f"\n\n[Reflection: {', '.join(issues)}]"
+                critiqued_content = TextContent(text=response_text + critique)
+                
+                critiqued_message = AgentMessage(
+                    role=message.role,
+                    content=[critiqued_content]
+                )
+                
+                yield critiqued_message
+                
+                # Option 2: Trigger regeneration (not shown - would need callback to LLM)
+            else:
+                yield message
+        else:
+            yield message
+    ```
+
+
+
+### Pattern 7: Planning & Task Decomposition
+
+**Problem:** Complex user requests need to be broken down into subtasks and executed step-by-step.
+
+**Solution:** Add planning middleware that decomposes goals into actionable steps.
+
+=== "Python"
+
+    ```python
+    from dataclasses import dataclass
+    from typing import List
+    import json
+
+    @dataclass
+    class Plan:
+        goal: str
+        steps: List[str]
+        completed_steps: List[str]
+        current_step_index: int
+
+    async def planning_middleware(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        if message.role == "user":
+            # Extract user request
+            text_parts = []
+            async for content in message.content:
+                if isinstance(content, TextContent):
+                    chunk = await content.wait()
+                    text_parts.append(chunk.text)
+            
+            user_request = " ".join(text_parts)
+            
+            # Check if we have an active plan
+            plan_data = thread.metadata.get("active_plan")
+            
+            if not plan_data:
+                # Create new plan by asking LLM to decompose the task
+                # In production: use LLM to generate steps
+                steps = await decompose_task(user_request)
+                
+                plan = Plan(
+                    goal=user_request,
+                    steps=steps,
+                    completed_steps=[],
+                    current_step_index=0
+                )
+                
+                thread.metadata["active_plan"] = {
+                    "goal": plan.goal,
+                    "steps": plan.steps,
+                    "completed_steps": plan.completed_steps,
+                    "current_step_index": plan.current_step_index
+                }
+                
+                # Add plan context to message
+                plan_text = f"\n\n**Plan Created:**\n" + "\n".join([
+                    f"{i+1}. {step}" for i, step in enumerate(steps)
+                ]) + f"\n\n**Starting Step 1**: {steps[0]}\n\n"
+                
+                enriched_message = AgentMessage(
+                    role=message.role,
+                    content=[TextContent(text=plan_text + user_request)]
+                )
+                
+                logger.info(f"Created plan with {len(steps)} steps")
+                yield enriched_message
+            else:
+                # Continue with existing plan
+                plan = Plan(**plan_data)
+                
+                if plan.current_step_index < len(plan.steps):
+                    current_step = plan.steps[plan.current_step_index]
+                    
+                    # Mark current step as completed
+                    plan.completed_steps.append(current_step)
+                    plan.current_step_index += 1
+                    
+                    # Update metadata
+                    thread.metadata["active_plan"] = {
+                        "goal": plan.goal,
+                        "steps": plan.steps,
+                        "completed_steps": plan.completed_steps,
+                        "current_step_index": plan.current_step_index
+                    }
+                    
+                    if plan.current_step_index < len(plan.steps):
+                        next_step = plan.steps[plan.current_step_index]
+                        context = f"\n\n**Progress**: {len(plan.completed_steps)}/{len(plan.steps)} steps completed\n**Next Step**: {next_step}\n\n"
+                    else:
+                        context = f"\n\n**Plan Complete!** All {len(plan.steps)} steps finished.\n\n"
+                        # Clear the plan
+                        del thread.metadata["active_plan"]
+                    
+                    enriched_message = AgentMessage(
+                        role=message.role,
+                        content=[TextContent(text=context + user_request)]
+                    )
+                    
+                    yield enriched_message
+                else:
+                    yield message
+        else:
+            yield message
+
+    async def decompose_task(task: str) -> List[str]:
+        # In production: use LLM to break down the task
+        # For demo, simple heuristic:
+        if "and" in task.lower():
+            parts = [p.strip() for p in task.split("and")]
+            return parts
+        else:
+            return [task]
+    ```
+
+### Pattern 8: Human-in-the-Loop (HITL)
+
+**Problem:** Some agent actions require human approval before execution (e.g., sending emails, making purchases, deleting data).
+
+**Solution:** Add approval gates that pause execution and wait for human confirmation.
+
+=== "Python"
+
+    ```python
+    from enum import Enum
+    from datetime import datetime
+    from typing import Optional, Callable, Awaitable
+
+    class ApprovalStatus(Enum):
+        PENDING = "pending"
+        APPROVED = "approved"
+        REJECTED = "rejected"
+
+    class ApprovalRequest:
+        def __init__(self, action: str, details: dict, thread_id: str):
+            self.id = f"approval_{datetime.now().timestamp()}"
+            self.action = action
+            self.details = details
+            self.thread_id = thread_id
+            self.status = ApprovalStatus.PENDING
+            self.approved_at: Optional[datetime] = None
+
+    # Global approval store (in production: use Redis or database)
+    approval_requests: dict[str, ApprovalRequest] = {}
+
+    def requires_approval(tool_name: str) -> bool:
+        """Check if a tool requires human approval"""
+        high_risk_tools = [
+            "send_email",
+            "delete_file",
+            "make_purchase",
+            "execute_command",
+            "modify_database"
+        ]
+        return tool_name in high_risk_tools
+
+    async def human_in_the_loop_middleware(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        if message.role == "agent" and message.tool_calls:
+            # Check if any tool calls require approval
+            pending_approvals = []
+            approved_calls = []
+            
+            for tool_call in message.tool_calls:
+                if requires_approval(tool_call.function.name):
+                    # Create approval request
+                    approval = ApprovalRequest(
+                        action=tool_call.function.name,
+                        details={
+                            "arguments": tool_call.function.arguments,
+                            "call_id": tool_call.id
+                        },
+                        thread_id=thread.id
+                    )
+                    
+                    approval_requests[approval.id] = approval
+                    pending_approvals.append(approval)
+                    
+                    logger.info(
+                        f"Tool '{tool_call.function.name}' requires approval",
+                        extra={"approval_id": approval.id, "thread_id": thread.id}
+                    )
+                else:
+                    # No approval needed
+                    approved_calls.append(tool_call)
+            
+            if pending_approvals:
+                # Create approval message for user
+                approval_text = "⚠️ **Approval Required**\n\n"
+                approval_text += "The following actions require your approval:\n\n"
+                
+                for i, approval in enumerate(pending_approvals, 1):
+                    approval_text += f"{i}. **{approval.action}**\n"
+                    approval_text += f"   Details: {json.dumps(approval.details['arguments'], indent=2)}\n"
+                    approval_text += f"   Approval ID: `{approval.id}`\n\n"
+                
+                approval_text += "\nTo approve: Reply with 'approve <approval_id>'\n"
+                approval_text += "To reject: Reply with 'reject <approval_id>'\n"
+                
+                # Store pending approvals in thread metadata
+                thread.metadata["pending_approvals"] = [a.id for a in pending_approvals]
+                
+                # Return approval request message
+                approval_message = AgentMessage(
+                    role="agent",
+                    content=[TextContent(text=approval_text)],
+                    tool_calls=approved_calls  # Only execute approved calls
+                )
+                
+                yield approval_message
+            else:
+                # No approvals needed, continue
+                yield message
+        
+        elif message.role == "user":
+            # Check if this is an approval response
+            text_parts = []
+            async for content in message.content:
+                if isinstance(content, TextContent):
+                    chunk = await content.wait()
+                    text_parts.append(chunk.text)
+            
+            user_text = " ".join(text_parts).lower()
+            
+            if user_text.startswith("approve ") or user_text.startswith("reject "):
+                parts = user_text.split()
+                action = parts[0]  # "approve" or "reject"
+                approval_id = parts[1] if len(parts) > 1 else None
+                
+                if approval_id and approval_id in approval_requests:
+                    approval = approval_requests[approval_id]
+                    
+                    if action == "approve":
+                        approval.status = ApprovalStatus.APPROVED
+                        approval.approved_at = datetime.now()
+                        
+                        # Execute the approved action
+                        response_text = f"✅ Approved and executing: {approval.action}"
+                        logger.info(f"Tool '{approval.action}' approved", extra={"approval_id": approval_id})
+                    else:
+                        approval.status = ApprovalStatus.REJECTED
+                        response_text = f"❌ Rejected: {approval.action}"
+                        logger.info(f"Tool '{approval.action}' rejected", extra={"approval_id": approval_id})
+                    
+                    # Remove from pending
+                    if "pending_approvals" in thread.metadata:
+                        thread.metadata["pending_approvals"] = [
+                            a for a in thread.metadata["pending_approvals"] 
+                            if a != approval_id
+                        ]
+                    
+                    response_message = AgentMessage(
+                        role="agent",
+                        content=[TextContent(text=response_text)]
+                    )
+                    
+                    yield response_message
+                else:
+                    yield message
+            else:
+                yield message
+        else:
+            yield message
+    ```
+
+**Integration with both patterns:**
+
+```python
+config = AgentConfig(
+    model="gpt-4",
+    instructions="You are a helpful assistant.",
+    api_key=os.getenv("OPENAI_API_KEY"),
+    middleware=[
+        error_handler,
+        authenticate,
+        planning_middleware,              # Pattern 7: Break down complex tasks
+        human_in_the_loop_middleware,     # Pattern 8: Require approval for high-risk actions
+        enforce_tool_permissions,
+        inject_rag_context,
+        track_conversation_state,
+        log_for_production,
+    ],
+    functions=[send_email, delete_file, get_weather, ...]  # All tools available
+)
+```
+
+**Pattern 7 benefits:**
+- Handles complex multi-step requests automatically
+- Tracks progress across conversation turns
+- Provides clear visibility into what's being done
+- Can be combined with HITL for approval at each step
+
+**Pattern 8 benefits:**
+- Safety: Prevents unauthorized or unintended actions
+- Compliance: Meets regulatory requirements for human oversight
+- Transparency: User sees exactly what will happen before it happens
+- Flexibility: Can approve/reject individual actions
+
+### Combining Agent Patterns
+
+In production, combine these patterns:
+
+```python
+config = AgentConfig(
+    model="gpt-4",
+    instructions="You are a helpful assistant.",
+    api_key=os.getenv("OPENAI_API_KEY"),
+    middleware=[
+        error_handler,                    # Catch all errors
+        authenticate,                     # Verify user
+        planning_middleware,              # Pattern 7: Planning & task decomposition
+        human_in_the_loop_middleware,     # Pattern 8: Human approval gates
+        enforce_tool_permissions,         # Pattern 1: Tool access control
+        budget_enforcer.enforce_budget,   # Pattern 3: Token limits
+        route_to_specialist,              # Pattern 4: Multi-agent routing
+        inject_rag_context,               # Pattern 2: Memory/RAG
+        track_conversation_state,         # Pattern 5: State management
+        log_for_production,               # Structured logging
+        reflection_middleware,            # Pattern 6: Self-critique
+    ]
+)
+```
+
+**Key takeaways:**
+- Middleware order matters: auth → permissions → routing → context → business logic
+- Use thread.metadata to persist state across messages
+- Combine patterns for production-grade agents
+- Add comprehensive logging and metrics
 
 ### Post-process after LLM
 
@@ -4435,18 +5231,110 @@ Use when adding before/after logic (timing, error handling):
     });
     ```
 
-### Choosing the Right Pattern
+### Choosing the Right Middleware
 
-| Use Case | Pattern | Example |
-| -------- | ------- | ------- |
-| Transform/filter data | Transform | Uppercase text, filter images, remove PII |
-| Log streaming chunks | Transform | Log each chunk as it streams |
-| Add metadata | Transform | Enrich messages with user context |
-| Rate limiting | Transform | Check limits, then yield message |
-| Content moderation | Transform | Validate safety, then yield |
-| Timing/metrics | Wrap | Measure time before/after |
-| Error handling | Wrap | Try/catch around processing |
-| Buffering | Wrap | Collect all chunks, then process |
+This comprehensive guide helps you decide which middleware type and pattern to use.
+
+#### Step 1: Message or Content Middleware?
+
+| Question | Answer | Use |
+| -------- | ------ | --- |
+| Does it run once per message (user or agent)? | Yes | **Message middleware** |
+| Does it process individual streaming chunks? | Yes | **Content middleware** |
+| Does it need to see the complete message? | Yes | **Message middleware** |
+| Does it transform text as it streams? | Yes | **Content middleware** |
+
+**Examples:**
+- **Message middleware**: Authentication, rate limiting, routing, message-level logging, content moderation
+- **Content middleware**: Transform text (uppercase), filter chunks, log each chunk, streaming metrics
+
+**Registration:**
+- **Message middleware**: Plain function in middleware array
+- **Content middleware**: Tuple `(ContentType, function)` in middleware array
+
+#### Step 2: Transform or Wrap Pattern?
+
+| Question | Answer | Use |
+| -------- | ------ | --- |
+| Do you need to modify or filter data? | Yes | **Transform pattern** (async generator with `yield`) |
+| Do you only need before/after logic? | Yes | **Wrap pattern** (`next()` callback) |
+| Do you need to change the stream? | Yes | **Transform pattern** |
+| Do you need timing or error handling? | Yes | **Wrap pattern** |
+
+**Transform pattern examples:**
+- Uppercase text, filter images, remove PII, log each chunk, enrich with metadata, rate limiting
+
+**Wrap pattern examples:**
+- Measure time before/after, error handling (try/catch), buffer entire response, add headers
+
+#### Step 3: Middleware Ordering
+
+**Order matters!** Middleware runs in array order. Follow these principles:
+
+**Recommended order:**
+```
+1. Error handling (wrap) - catches errors from all middleware below
+2. Timing/metrics (wrap) - measures total time
+3. Authentication (message, transform) - verify user FIRST
+4. Rate limiting (message, transform) - prevent abuse EARLY
+5. Logging (message, transform) - log after auth succeeds
+6. Content transformation (content, transform) - modify streaming data
+7. Business logic middleware
+```
+
+**Example:**
+```python
+middleware=[
+    error_handler,           # 1. Catch all errors (wrap, message)
+    time_message,            # 2. Measure time (wrap, message)
+    authenticate,            # 3. Verify user (transform, message)
+    rate_limit,              # 4. Check limits (transform, message)
+    log_for_debugging,       # 5. Log requests (transform, message)
+    (TextContent, uppercase) # 6. Transform content (transform, content)
+]
+```
+
+**Why this order?**
+- **Error handler first**: Catches exceptions from all other middleware
+- **Authentication before rate limiting**: Don't waste rate limit checks on invalid users
+- **Logging after authentication**: Don't log rejected requests (reduce noise)
+- **Content transformation last**: Operates on validated, authorized requests
+
+#### Step 4: Error Handling
+
+**What happens if middleware throws an exception?**
+
+1. **Transform pattern**: Exception stops the pipeline, no more items yielded
+2. **Wrap pattern**: Exception propagates up the stack
+3. **No automatic retry**: You must handle errors explicitly
+
+**Best practice: Add error handling middleware first**
+
+```python
+# Wrap pattern - catches errors from all middleware
+async def error_handler(message: IMessage, thread: IThread, next):
+    try:
+        await next()  # Run remaining middleware
+    except Exception as e:
+        logger.error(f"Middleware error: {e}")
+        # Send error message to user
+        error_content = TextContent(text="Sorry, something went wrong.")
+        error_msg = AgentMessage(content=[error_content])
+        thread.add_message(error_msg)
+```
+
+#### Quick Reference Table
+
+| Use Case | Middleware Type | Pattern | Example |
+| -------- | --------------- | ------- | ------- |
+| Verify user identity | Message | Transform | `if not valid: return; yield message` |
+| Check usage limits | Message | Transform | `if over_limit: raise; yield message` |
+| Log message metadata | Message | Transform | `logger.info(...); yield message` |
+| Measure message time | Message | Wrap | `start = time(); await next(); log(time()-start)` |
+| Uppercase streaming text | Content | Transform | `yield {...chunk, text: chunk.text.upper()}` |
+| Log each chunk | Content | Transform | `logger.debug(chunk); yield chunk` |
+| Buffer complete response | Content | Wrap | `chunks = []; async for c in stream: chunks.append(c)` |
+| Error handling | Message | Wrap | `try: await next(); except: handle()` |
 
 ### Unified Middleware Array
 

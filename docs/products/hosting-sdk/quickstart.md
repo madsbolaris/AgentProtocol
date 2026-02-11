@@ -574,119 +574,6 @@ This is **the most powerful feature** of the SDK. You can:
 - Transform LLM outputs (e.g., uppercase, remove PII)
 - Implement rate limiting and abuse prevention
 
-### What is Middleware? (Simple Analogy)
-
-**Think of middleware like airport security checkpoints:**
-
-When you travel, your luggage goes through multiple checkpoints:
-1. Check-in counter (validates your ticket)
-2. Security screening (scans for prohibited items)
-3. Customs (inspects contents)
-4. Baggage claim (delivers to you)
-
-Each checkpoint:
-- **Receives** your luggage from the previous step
-- **Inspects or modifies** it (opens, scans, tags)
-- **Passes it along** to the next checkpoint (or stops if there's a problem)
-
-**Middleware works the same way with messages:**
-
-```text
-User Message
-    ↓
-[Middleware 1: Authentication] ← Verify user
-    ↓
-[Middleware 2: Rate Limiting]  ← Check usage limits
-    ↓
-[Middleware 3: Logging]        ← Record for debugging
-    ↓
-Agent processes message
-    ↓
-[Middleware 3: Logging]        ← Record response
-    ↓
-[Middleware 2: Rate Limiting]  ← Update counters
-    ↓
-[Middleware 1: Authentication] ← Done
-    ↓
-Response to User
-```
-
-Notice middleware runs **twice**: once on the way in, once on the way out (the "onion model").
-
-### Middleware Function Structure
-
-A middleware function:
-1. **Receives** a message and the current thread context
-2. **Optionally processes** the message (logs, validates, modifies)
-3. **Calls `next()`** to continue to the next middleware (or doesn't call it to stop)
-4. **Optionally processes again** after `next()` returns (post-processing)
-
-**Familiar Pattern:** If you've used Express.js, Koa, or ASP.NET Core, this `next()` callback pattern will look familiar.
-
-### Framework Comparison
-
-If you've used other middleware frameworks, here's how the concepts map:
-
-| Express.js | Koa | ASP.NET Core | Hosting SDK (Wrap Pattern) |
-| ---------- | --- | ------------ | --------------------------- |
-| `app.use(fn)` | `app.use(fn)` | `app.Use(middleware)` | `middleware=[fn]` |
-| `(req, res, next) => {}` | `(ctx, next) => {}` | `(context, next) => {}` | `(message, thread, next) => {}` |
-| `next()` | `await next()` | `await next()` | `await next()` |
-| Onion model | Onion model | Onion model | Onion model (before/after) |
-| N/A | N/A | N/A | **Transform pattern** (async generators) |
-
-**Key similarities:**
-- ✅ `next()` callback pattern works the same way (Wrap pattern)
-- ✅ Middleware runs in array order
-- ✅ Not calling `next()` short-circuits the pipeline
-- ✅ Code before `await next()` runs before processing
-- ✅ Code after `await next()` runs after processing
-
-**Unique to Hosting SDK:**
-- ✨ **Transform pattern** (async generators with `yield`) - novel for streaming AI workloads
-- ✨ **Two middleware types**: Message middleware (once per message) and Content middleware (per streaming chunk)
-- ✨ **Granularity control**: Yield messages, content, or chunks - framework handles it
-
-**Best practices from Express/Koa apply here:**
-- Order matters: authentication → rate limiting → logging → business logic
-- Early middleware should be fast (authentication, validation)
-- Error handling middleware typically goes first (to catch all errors)
-- Logging middleware can go early (to log all requests) or late (to log results)
-
-
-
-### Understanding Streaming (Important!)
-
-**Before we write middleware, you need to understand how agent responses work.**
-
-The Agent Protocol uses **streaming by default**. When you call the LLM, it doesn't return a single response—it returns **chunks** as they're generated.
-
-**Key concepts:**
-
-1. **Streaming is the default**: All LLM responses are streamed, not returned as a single blob
-2. **Content middleware**: Process chunks as they stream (not just whole messages)
-3. **AsyncIterables**: Content comes as async streams you can iterate over with `async for`
-4. **Granularity control**: Yield messages, content, or chunks - framework handles it
-
-**Mental model:**
-
-```text
-LLM generates tokens → Chunks flow through pipeline → Your middleware processes each chunk → Client receives stream
-```
-
-**What this means for middleware:**
-
-- You'll see types like `AsyncIterable[TextContent]` - this is a stream of chunks
-- Use `async for chunk in stream:` to process each chunk
-- Use `yield chunk` to pass it to the next middleware
-- The framework automatically handles the streaming complexity
-
-> **Note on Async Programming**: This SDK uses async/await extensively. If you're new to async programming, key concepts:
-> - `async def` / `async function` - function can pause and resume
-> - `await` - wait for async operation to complete
-> - `AsyncIterable` - stream of items you loop over with `async for`
-> - `yield` - produce one item in a stream
-
 ### Your First Middleware
 
 Let's build a simple command router that intercepts commands (like `/help`) and handles them without calling the LLM. We'll use **text content middleware** with the **transform pattern** (async generator with `yield`):
@@ -703,25 +590,16 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         content_stream: AsyncIterable[TextContent],
         thread: IThread
     ) -> AsyncIterable[TextContent]:
-        # Collect first chunk to check for command
-        first_chunk = None
+        # Collect all chunks into full text
+        full_text = ""
         async for chunk in content_stream:
-            first_chunk = chunk
-            break
+            full_text += chunk.text
 
-        if not first_chunk:
-            return  # Empty stream
+        # Check if it's a command
+        command = full_text.strip()
 
-        # Check if message starts with '/'
-        if first_chunk.text.strip().startswith('/'):
-            # Consume rest of stream to get full command
-            full_text = first_chunk.text
-            async for chunk in content_stream:
-                full_text += chunk.text
-
-            command = full_text.strip()
-
-            # Handle commands
+        if command.startswith('/'):
+            # Handle commands - return result without calling LLM
             if command == "/help":
                 yield TextContent(text="Available commands:\n/help - Show this help\n/time - Show current time")
             elif command == "/time":
@@ -729,13 +607,9 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
                 yield TextContent(text=f"Current time: {datetime.now().strftime('%H:%M:%S')}")
             else:
                 yield TextContent(text=f"Unknown command: {command}")
-
-            return  # Don't call LLM
-
-        # Not a command - pass through to LLM
-        yield first_chunk
-        async for chunk in content_stream:
-            yield chunk
+        else:
+            # Not a command - pass through to LLM
+            yield TextContent(text=full_text)
 
     config = AgentConfig(
         model="gpt-4",
@@ -761,30 +635,19 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        // Collect first chunk
-        TextContent? firstChunk = null;
+        // Collect all chunks into full text
+        var fullText = "";
         await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
         {
-            firstChunk = chunk;
-            break;
+            fullText += chunk.Text;
         }
 
-        if (firstChunk == null)
-            yield break;  // Empty stream
+        // Check if it's a command
+        var command = fullText.Trim();
 
-        // Check if message starts with '/'
-        if (firstChunk.Text.Trim().StartsWith('/'))
+        if (command.StartsWith('/'))
         {
-            // Consume rest to get full command
-            var fullText = firstChunk.Text;
-            await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
-            {
-                fullText += chunk.Text;
-            }
-
-            var command = fullText.Trim();
-
-            // Handle commands
+            // Handle commands - return result without calling LLM
             if (command == "/help")
             {
                 yield return new TextContent
@@ -806,15 +669,11 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
                     Text = $"Unknown command: {command}"
                 };
             }
-
-            yield break;  // Don't call LLM
         }
-
-        // Not a command - pass through to LLM
-        yield return firstChunk;
-        await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
+        else
         {
-            yield return chunk;
+            // Not a command - pass through to LLM
+            yield return new TextContent { Text = fullText };
         }
     }
 
@@ -845,28 +704,17 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         contentStream: AsyncIterable<TextContent>,
         thread: IThread
     ): AsyncIterable<TextContent> {
-        // Collect first chunk
-        let firstChunk: TextContent | null = null;
+        // Collect all chunks into full text
+        let fullText = '';
         for await (const chunk of contentStream) {
-            firstChunk = chunk;
-            break;
+            fullText += chunk.text;
         }
 
-        if (!firstChunk) {
-            return;  // Empty stream
-        }
+        // Check if it's a command
+        const command = fullText.trim();
 
-        // Check if message starts with '/'
-        if (firstChunk.text.trim().startsWith('/')) {
-            // Consume rest to get full command
-            let fullText = firstChunk.text;
-            for await (const chunk of contentStream) {
-                fullText += chunk.text;
-            }
-
-            const command = fullText.trim();
-
-            // Handle commands
+        if (command.startsWith('/')) {
+            // Handle commands - return result without calling LLM
             if (command === '/help') {
                 yield new TextContent({
                     text: 'Available commands:\n/help - Show this help\n/time - Show current time'
@@ -881,14 +729,9 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
                     text: `Unknown command: ${command}`
                 });
             }
-
-            return;  // Don't call LLM
-        }
-
-        // Not a command - pass through to LLM
-        yield firstChunk;
-        for await (const chunk of contentStream) {
-            yield chunk;
+        } else {
+            // Not a command - pass through to LLM
+            yield new TextContent({ text: fullText });
         }
     }
 

@@ -101,19 +101,27 @@ Send images, files, or other media along with text to the agent.
 
     ```python
     import asyncio
-    from microsoft.agents.protocol import AgentProtocolClient, ImageContent
+    from microsoft.agents.protocol import AgentProtocolClient, TextContent, ImageContent
 
     async def main():
         client = AgentProtocolClient("http://localhost:5000")
 
-        # Send a message with an image
+        # Send a message with an image (using typed constructors)
         response = await client.complete_chat(
+            contents=[
+                TextContent(text="What's in this image?"),
+                ImageContent(uri="https://example.com/photo.jpg")
+            ]
+        )
+        print(f"Agent: {response.text}")
+
+        # Alternative: Using dicts (also supported)
+        response2 = await client.complete_chat(
             contents=[
                 {"type": "text", "text": "What's in this image?"},
                 {"type": "image", "uri": "https://example.com/photo.jpg"}
             ]
         )
-        print(f"Agent: {response.text}")
 
     if __name__ == "__main__":
         asyncio.run(main())
@@ -392,13 +400,13 @@ Handle multiple content types like text and images in a single message stream.
     # Stream messages with multiple content types
     async for message in client.stream_messages("Show me a photo of Paris and describe it"):
         async for content in message.stream_contents():
-            if content.kind == "text":
+            if content.type == "text":
                 # Content is async iterable - stream chunks directly
                 async for chunk in content:
                     print(chunk.text, end="", flush=True)
-            elif content.kind == "image":
+            elif content.type == "image":
                 # Wait for stream to complete
-                print(f"\n[Image: {(await content.complete()).uri}]")
+                print(f"\n[Image: {(await content.wait()).uri}]")
         print()  # New line after message
     ```
 
@@ -425,7 +433,7 @@ Handle multiple content types like text and images in a single message stream.
 
                 case ImageContent image:
                     // Wait for stream to complete
-                    Console.WriteLine($"\n[Image: {(await image.CompleteAsync()).Uri}]");
+                    Console.WriteLine($"\n[Image: {(await image.WaitForCompletionAsync()).Uri}]");
                     break;
             }
         }
@@ -442,7 +450,7 @@ Handle multiple content types like text and images in a single message stream.
 
     for await (const message of client.streamMessages("Show me a photo of Paris and describe it")) {
         for await (const content of message.streamContents()) {
-            switch (content.kind) {
+            switch (content.type) {
                 case "text":
                     // Content is async iterable - stream chunks directly
                     for await (const chunk of content) {
@@ -452,7 +460,7 @@ Handle multiple content types like text and images in a single message stream.
 
                 case "image":
                     // Wait for stream to complete
-                    console.log(`\n[Image: ${(await content.complete()).uri}]`);
+                    console.log(`\n[Image: ${(await content.value).uri}]`);
                     break;
             }
         }
@@ -492,9 +500,12 @@ Monitor a thread for messages from all participants - users, agents, and other c
 
         # Stream all messages on the thread in real-time
         async for message in client.stream_thread_messages(thread_id):
-            sender = message.role  # 'user' or 'agent'
-            text = message.contents[0].text if message.contents else ""
-            print(f"{sender}: {text}")
+            print(f"{message.role}: ", end="", flush=True)
+            async for content in message.stream_contents():
+                if content.type == "text":
+                    async for chunk in content:
+                        print(chunk.text, end="", flush=True)
+            print()  # New line after message
 
     if __name__ == "__main__":
         asyncio.run(main())
@@ -511,9 +522,18 @@ Monitor a thread for messages from all participants - users, agents, and other c
     // Stream all messages on the thread in real-time
     await foreach (var message in client.StreamThreadMessagesAsync(threadId))
     {
-        var sender = message.Role;  // "user" or "agent"
-        var text = message.Contents.Count > 0 ? message.Contents[0].Text : "";
-        Console.WriteLine($"{sender}: {text}");
+        Console.Write($"{message.Role}: ");
+        await foreach (var content in message.StreamContentsAsync())
+        {
+            if (content is TextContent text)
+            {
+                await foreach (var chunk in text)
+                {
+                    Console.Write(chunk.Text);
+                }
+            }
+        }
+        Console.WriteLine();  // New line after message
     }
     ```
 
@@ -527,9 +547,15 @@ Monitor a thread for messages from all participants - users, agents, and other c
 
     // Stream all messages on the thread in real-time
     for await (const message of client.streamThreadMessages(threadId)) {
-        const sender = message.role;  // 'user' or 'agent'
-        const text = message.contents[0]?.text || "";
-        console.log(`${sender}: ${text}`);
+        process.stdout.write(`${message.role}: `);
+        for await (const content of message.streamContents()) {
+            if (content.type === "text") {
+                for await (const chunk of content) {
+                    process.stdout.write(chunk.text);
+                }
+            }
+        }
+        console.log();  // New line after message
     }
     ```
 
@@ -614,10 +640,8 @@ Here's a full example combining all concepts:
             // Streaming
             Console.WriteLine("=== Streaming ===");
             Console.Write("Agent: ");
-            await client.StreamChatAsync(
-                "Count to 5",
-                onTextChunk: text => Console.Write(text)
-            );
+            var progress = new Progress<string>(text => Console.Write(text));
+            await client.StreamChatAsync("Count to 5", progress);
             Console.WriteLine("\n");
 
             // Conversation
@@ -703,6 +727,107 @@ Now that you've completed the quickstart, explore these topics:
   url: how-to/tools/
 
 ::/cards::
+
+## Error Handling
+
+Handle errors gracefully in your agent applications.
+
+=== "Python"
+
+    ```python
+    import asyncio
+    from microsoft.agents.protocol import AgentProtocolClient, AgentProtocolError
+
+    async def main():
+        client = AgentProtocolClient("http://localhost:5000")
+
+        try:
+            response = await client.complete_chat("Hello!")
+            print(f"Agent: {response.text}")
+        except AgentProtocolError as error:
+            print(f"Error {error.code}: {error.message}")
+            # Handle specific error codes
+            if error.code == "rate_limit_exceeded":
+                print("Rate limit hit, retrying later...")
+            elif error.code == "invalid_request":
+                print("Invalid request format")
+        except Exception as error:
+            print(f"Unexpected error: {error}")
+
+    if __name__ == "__main__":
+        asyncio.run(main())
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol.Client;
+
+    var client = new AgentProtocolClient("http://localhost:5000");
+
+    try
+    {
+        var response = await client.CompleteChatAsync("Hello!");
+        Console.WriteLine($"Agent: {response.Text}");
+    }
+    catch (AgentProtocolException ex)
+    {
+        Console.WriteLine($"Error {ex.Code}: {ex.Message}");
+
+        // Handle specific error codes
+        switch (ex.Code)
+        {
+            case "rate_limit_exceeded":
+                Console.WriteLine("Rate limit hit, retrying later...");
+                break;
+            case "invalid_request":
+                Console.WriteLine("Invalid request format");
+                break;
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Unexpected error: {ex.Message}");
+    }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { AgentProtocolClient, AgentProtocolError } from '@microsoft/agents-protocol-client';
+
+    const client = new AgentProtocolClient("http://localhost:5000");
+
+    try {
+        const response = await client.completeChat("Hello!");
+        console.log(`Agent: ${response.text}`);
+    } catch (error) {
+        if (error instanceof AgentProtocolError) {
+            console.log(`Error ${error.code}: ${error.message}`);
+
+            // Handle specific error codes
+            switch (error.code) {
+                case "rate_limit_exceeded":
+                    console.log("Rate limit hit, retrying later...");
+                    break;
+                case "invalid_request":
+                    console.log("Invalid request format");
+                    break;
+            }
+        } else {
+            console.log(`Unexpected error: ${error}`);
+        }
+    }
+    ```
+
+!!! tip "Common Error Codes"
+    - `rate_limit_exceeded`: Too many requests, implement backoff
+    - `invalid_request`: Check request format and parameters
+    - `authentication_failed`: Verify API credentials
+    - `service_unavailable`: Service temporarily down, retry with backoff
+    - `timeout`: Request took too long, consider streaming for long operations
+
+---
 
 ## Advanced Topics & Integrations
 

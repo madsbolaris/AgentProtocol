@@ -444,98 +444,97 @@ Clients provide function implementations when sending messages:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import AgentProtocolClient, FunctionProvider
+    import asyncio
+    from microsoft.agents.protocol import AgentProtocolClient, ToolCollection
+    import os
 
-    def send_email(to: str, subject: str, body: str) -> str:
-        """Send an email via user's email client"""
-        # Implementation runs on client side
-        print(f"📧 Sending email to {to}: {subject}")
-        return "Email sent successfully"
-
-    def get_local_files() -> list[str]:
-        """List files in user's current directory"""
-        import os
-        return os.listdir(".")
-
-    async def chat_with_functions():
+    async def main():
         client = AgentProtocolClient("http://localhost:5000")
 
-        # Provide client-side functions
-        functions = FunctionProvider([send_email, get_local_files])
+        # Define client-side tool implementations
+        tools = ToolCollection()
 
-        async for event in client.stream_chat(
+        @tools.function("send_email")
+        async def send_email(to: str, subject: str, body: str = "") -> str:
+            """Send an email via user's email client"""
+            print(f"📧 Sending email to {to}: {subject}")
+            return "Email sent successfully"
+
+        @tools.function("get_local_files")
+        async def get_local_files() -> str:
+            """List files in user's current directory"""
+            files = os.listdir(".")
+            return f"Found {len(files)} files: {', '.join(files[:5])}"
+
+        # Send message with client-provided tools
+        response = await client.complete_chat(
             "Send an email to bob@example.com with subject 'Meeting' and list my local files",
-            functions=functions
-        ):
-            if event.type == "text":
-                print(event.text)
+            tools=tools
+        )
+        print(response)
+
+    if __name__ == "__main__":
+        asyncio.run(main())
     ```
 
 === "C#"
 
     ```csharp
     using Microsoft.Agents.Protocol.Client;
-
-    string SendEmail(string to, string subject, string body)
-    {
-        Console.WriteLine($"📧 Sending email to {to}: {subject}");
-        return "Email sent successfully";
-    }
-
-    List<string> GetLocalFiles()
-    {
-        return Directory.GetFiles(".").ToList();
-    }
+    using System.IO;
 
     var client = new AgentProtocolClient("http://localhost:5000");
 
-    // Provide client-side functions
-    var functions = new FunctionProvider(new[]
-    {
-        ("send_email", "Send an email", (Func<string, string, string, string>)SendEmail),
-        ("get_local_files", "List local files", (Func<List<string>>)GetLocalFiles)
-    });
+    // Define client-side tool implementations
+    var tools = new ToolCollection()
+        .Add("send_email", "Send an email via user's email client",
+            (string to, string subject, string body = "") =>
+            {
+                Console.WriteLine($"📧 Sending email to {to}: {subject}");
+                return "Email sent successfully";
+            })
+        .Add("get_local_files", "List files in user's current directory",
+            () =>
+            {
+                var files = Directory.GetFiles(".");
+                return $"Found {files.Length} files: {string.Join(", ", files.Take(5))}";
+            });
 
-    await foreach (var evt in client.StreamChatAsync(
-        "Send an email to bob@example.com with subject 'Meeting'",
-        functions: functions))
-    {
-        if (evt.Type == "text")
-            Console.WriteLine(evt.Text);
-    }
+    // Send message with client-provided tools
+    var response = await client.CompleteChatAsync(
+        "Send an email to bob@example.com with subject 'Meeting' and list my local files",
+        tools: tools
+    );
+    Console.WriteLine(response.Text);
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { AgentProtocolClient, FunctionProvider } from '@microsoft/agents-protocol';
-
-    function sendEmail(to: string, subject: string, body: string): string {
-        console.log(`📧 Sending email to ${to}: ${subject}`);
-        return "Email sent successfully";
-    }
-
-    function getLocalFiles(): string[] {
-        const fs = require('fs');
-        return fs.readdirSync('.');
-    }
+    import { AgentProtocolClient, ToolCollection } from '@microsoft/agents-protocol-client';
+    import * as fs from 'fs';
 
     const client = new AgentProtocolClient("http://localhost:5000");
 
-    // Provide client-side functions
-    const functions = new FunctionProvider([
-        { name: "send_email", description: "Send an email", fn: sendEmail },
-        { name: "get_local_files", description: "List local files", fn: getLocalFiles }
-    ]);
+    // Define client-side tool implementations
+    const tools = new ToolCollection()
+        .add("send_email", "Send an email via user's email client",
+            async (to: string, subject: string, body: string = "") => {
+                console.log(`📧 Sending email to ${to}: ${subject}`);
+                return "Email sent successfully";
+            })
+        .add("get_local_files", "List files in user's current directory",
+            () => {
+                const files = fs.readdirSync('.');
+                return `Found ${files.length} files: ${files.slice(0, 5).join(', ')}`;
+            });
 
-    for await (const event of client.streamChat(
-        "Send an email to bob@example.com with subject 'Meeting'",
-        { functions }
-    )) {
-        if (event.type === "text") {
-            console.log(event.text);
-        }
-    }
+    // Send message with client-provided tools
+    const response = await client.completeChat(
+        "Send an email to bob@example.com with subject 'Meeting' and list my local files",
+        { tools }
+    );
+    console.log(response.text);
     ```
 
 **Expected Output:**
@@ -557,10 +556,10 @@ Clients provide function implementations when sending messages:
     </function-call>
   </agent>
   <tool call-id="call_002">
-    ["file1.txt","file2.py","README.md"]
+    Found 15 files: file1.txt, file2.py, README.md, config.json, package.json
   </tool>
   <agent>
-    I've sent an email to bob@example.com with subject 'Meeting' and here are your local files: file1.txt, file2.py, README.md
+    I've sent an email to bob@example.com with subject 'Meeting'. You have 15 files in your current directory including: file1.txt, file2.py, README.md, config.json, and package.json.
   </agent>
 </thread>
 ```

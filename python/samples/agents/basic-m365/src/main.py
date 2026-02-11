@@ -45,6 +45,8 @@ try:
 except ImportError:
     OPENAI_AVAILABLE = False
 
+from testing_chat_client import TestingChatClient
+
 """
 Demo application using Microsoft Agent 365 SDK with LLM integration.
 
@@ -116,144 +118,61 @@ def get_current_time() -> str:
 
 
 # LLM client setup
-openai_client: Optional[AsyncOpenAI] = None
+testing_client: Optional[TestingChatClient] = None
 model: str = "gpt-4"
-use_recordings: bool = False
-recordings_dir: Optional[Path] = None
 
 def init_llm():
-    """Initialize OpenAI client if credentials are available."""
-    global openai_client, model, use_recordings, recordings_dir
+    """Initialize TestingChatClient with appropriate mode."""
+    global testing_client, model
 
     if not OPENAI_AVAILABLE:
         print("⚠️  OpenAI package not installed. LLM features disabled.")
         return
 
-    # Check if we should use LLM recordings (test mode)
-    env_use_recordings = os.getenv("USE_LLM_RECORDINGS", "").lower() == "true"
-    use_recordings = env_use_recordings
+    # Check mode from environment variables
+    use_recordings = os.getenv("USE_LLM_RECORDINGS", "").lower() == "true"
+    record_llm = os.getenv("RECORD_LLM", "").lower() == "true"
 
-    print(f"🔧 Initializing LLM...")
-    print(f"   USE_LLM_RECORDINGS: {env_use_recordings}")
-    print(f"   useRecordings: {use_recordings}")
+    playback_mode = use_recordings
+    record_mode = record_llm
 
     # Find recordings directory
-    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
     recordings_dir = repo_root / "test-data" / "llm-recordings" / "basic-m365"
 
-    if use_recordings:
-        # Test mode: Use recorded LLM responses
-        model = "gpt-5-nano"  # Default model for recordings
-        print(f"▶️  LLM Playback enabled (using recordings)")
-        print(f"   Using recorded LLM responses (test mode)")
-        return  # Don't initialize OpenAI client in playback mode
+    # Create real OpenAI client if needed (for normal or recording mode)
+    real_client = None
+    if not playback_mode:
+        endpoint = os.getenv("FOUNDRY_ENDPOINT")
+        api_key = os.getenv("FOUNDRY_API_KEY")
 
-    # Generation mode: Use real LLM
-    endpoint = os.getenv("FOUNDRY_ENDPOINT")
-    api_key = os.getenv("FOUNDRY_API_KEY")
+        if not endpoint or not api_key:
+            print("⚠️  FOUNDRY_ENDPOINT or FOUNDRY_API_KEY not set. LLM features disabled.")
+            return
 
-    if not endpoint or not api_key:
-        print("⚠️  FOUNDRY_ENDPOINT or FOUNDRY_API_KEY not set. LLM features disabled.")
-        return
+        model = os.getenv("FOUNDRY_MODEL_DEPLOYMENT", "gpt-4")
 
-    model = os.getenv("FOUNDRY_MODEL_DEPLOYMENT", "gpt-4")
+        try:
+            real_client = AsyncOpenAI(
+                api_key=api_key,
+                base_url=f"{endpoint}/openai/v1/"
+            )
+        except Exception as e:
+            print(f"❌ Error creating OpenAI client: {e}")
+            return
+    else:
+        model = "gpt-5-nano"
 
-    try:
-        openai_client = AsyncOpenAI(
-            api_key=api_key,
-            base_url=f"{endpoint}/openai/v1/"
-        )
-        print(f"✅ OpenAI client initialized with model: {model}")
-    except Exception as e:
-        print(f"❌ Error creating OpenAI client: {e}")
-
-
-def _hash_request(model: str, messages: list, tools: list) -> str:
-    """Generate a hash for the LLM request to find/store recordings."""
-    import hashlib
-    import json
-
-    # Create a deterministic representation of the request
-    request_data = {
-        "model": model,
-        "messages": messages,
-        "tools": tools
-    }
-
-    # Convert to JSON and hash
-    request_str = json.dumps(request_data, sort_keys=True)
-    hash_obj = hashlib.md5(request_str.encode())
-    return hash_obj.hexdigest()[:16]
+    # Create TestingChatClient wrapper
+    testing_client = TestingChatClient(
+        real_client=real_client,
+        recordings_dir=str(recordings_dir),
+        model_id=model,
+        record_mode=record_mode,
+        playback_mode=playback_mode
+    )
 
 
-async def _replay_llm_response(messages: list, tools: list):
-    """Replay recorded LLM response."""
-    import json
-
-    global model, recordings_dir
-
-    # Generate hash to find recording
-    hash_key = _hash_request(model, messages, tools)
-
-    # Find response file
-    response_file = recordings_dir / f"{hash_key}.response.json"
-
-    if not response_file.exists():
-        print(f"⚠️  No recording found for hash: {hash_key}")
-        print(f"   Expected: {response_file}")
-        # Return a default response
-        class MockCompletion:
-            class Choice:
-                class Message:
-                    content = "I can help you with weather and time information!"
-                    tool_calls = None
-                finish_reason = "stop"
-                message = Message()
-            choices = [Choice()]
-        return MockCompletion()
-
-    # Load recording
-    with open(response_file, 'r') as f:
-        recording = json.load(f)
-
-    response_data = recording["response"]
-
-    # Build mock completion object that mimics OpenAI response
-    class MockMessage:
-        def __init__(self, data):
-            self.content = data.get("content")
-            self.role = data.get("role", "assistant")
-            self.tool_calls = None
-
-            # Handle tool calls if present
-            if "tool_calls" in data and data["tool_calls"]:
-                class ToolCall:
-                    def __init__(self, tc_data):
-                        self.id = tc_data["id"]
-                        self.type = tc_data["type"]
-
-                        class Function:
-                            def __init__(self, fn_data):
-                                self.name = fn_data["name"]
-                                self.arguments = fn_data["arguments"]
-
-                        self.function = Function(tc_data["function"])
-
-                self.tool_calls = [ToolCall(tc) for tc in data["tool_calls"]]
-
-    class MockChoice:
-        def __init__(self, choice_data):
-            self.message = MockMessage(choice_data["message"])
-            self.finish_reason = choice_data.get("finish_reason", "stop")
-            self.index = choice_data.get("index", 0)
-
-    class MockCompletion:
-        def __init__(self, response):
-            self.choices = [MockChoice(choice) for choice in response["choices"]]
-            self.id = response.get("id", "mock_id")
-            self.model = response.get("model", model)
-
-    return MockCompletion(response_data)
 
 
 # Conversation state storage
@@ -361,17 +280,14 @@ def create_app(config: AppConfig) -> web.Application:
 
     @agent_app.activity("message")
     async def on_message(context: TurnContext, _: TurnState):
-        global openai_client, model, use_recordings, recordings_dir
-
-        # Debug: print global variable values
-        print(f"🐛 DEBUG on_message: openai_client={openai_client}, use_recordings={use_recordings}")
+        global testing_client, model
 
         user_message = context.activity.text or ""
         if not user_message.strip():
             return
 
-        # If LLM is not configured (and not in recording playback mode), provide a helpful message
-        if not openai_client and not use_recordings:
+        # If LLM is not configured, provide a helpful message
+        if not testing_client:
             await context.send_activity(
                 "Hello! I'm a Basic M365 Agent with LLM capabilities. "
                 "To enable AI features, please start this sample using:\n"
@@ -406,19 +322,11 @@ def create_app(config: AppConfig) -> web.Application:
             iteration += 1
 
             try:
-                # Get completion from LLM (either real or replayed)
-                if use_recordings and recordings_dir:
-                    # Test mode: Replay recorded response
-                    completion = await _replay_llm_response(conversation_states[conv_id], tools)
-                elif openai_client:
-                    # Generation mode: Use real LLM
-                    completion = await openai_client.chat.completions.create(
-                        model=model,
-                        messages=conversation_states[conv_id],
-                        tools=tools
-                    )
-                else:
-                    raise ValueError("Neither OpenAI client nor recordings available")
+                # Get completion from LLM (transparently handles recording/playback)
+                completion = await testing_client.create_completion(
+                    messages=conversation_states[conv_id],
+                    tools=tools
+                )
 
                 choice = completion.choices[0]
 

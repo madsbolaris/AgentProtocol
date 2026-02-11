@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:28:39.714016Z",
+  "content": {
+    "runId": "dcf71556-a83b-459b-a7ce-dc87a6049f76",
+    "threadId": "bf74f1dc-2c56-40ed-af4b-1f80467b6160",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Nice question! I can\u2019t pull live weather or current time, but you can check a weather app or world clock for NYC. NYC vibes: \ud83d\uddfd\ud83d\udd52\u2600\ufe0f\ud83c\udf27\ufe0f\ud83c\udf06",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "042f9861b59d520a3f37edc87e34f0ecc536105cbe9ea784a2157c2e216a4795",
+  "metadata": {
+    "input_file": "53-combined-query.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

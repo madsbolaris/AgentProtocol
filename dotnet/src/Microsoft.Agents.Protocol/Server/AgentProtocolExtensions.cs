@@ -11,6 +11,7 @@ using Microsoft.Agents.Hosting.AspNetCore;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -60,6 +61,95 @@ internal class AgentProtocolServer
     private readonly ConcurrentDictionary<string, object> _runsDb = new();
 
     private string CreateRunId() => $"run_{Guid.NewGuid():N}"[..20];
+
+    /// <summary>
+    /// Parses XML thread input into messages list.
+    /// </summary>
+    private List<Dictionary<string, object>> ParseXmlInput(string xmlContent)
+    {
+        var messages = new List<Dictionary<string, object>>();
+
+        using var reader = XmlReader.Create(new System.IO.StringReader(xmlContent));
+
+        while (reader.Read())
+        {
+            if (reader.NodeType == XmlNodeType.Element)
+            {
+                // Check for message elements (user, assistant, agent, tool)
+                if (reader.Name == "message" || reader.Name == "user" || reader.Name == "assistant" ||
+                    reader.Name == "agent" || reader.Name == "tool")
+                {
+                    var message = new Dictionary<string, object>();
+
+                    // Get role from element name or role attribute
+                    var role = reader.GetAttribute("role") ?? reader.Name;
+                    if (role == "agent") role = "assistant"; // Normalize agent to assistant
+                    message["role"] = role;
+
+                    // Get message-id if present
+                    var messageId = reader.GetAttribute("message-id");
+                    if (!string.IsNullOrEmpty(messageId))
+                    {
+                        message["messageId"] = messageId;
+                    }
+
+                    // Parse contents
+                    var contents = new List<Dictionary<string, object>>();
+
+                    if (!reader.IsEmptyElement)
+                    {
+                        var depth = reader.Depth;
+                        while (reader.Read() && reader.Depth > depth)
+                        {
+                            if (reader.NodeType == XmlNodeType.Element)
+                            {
+                                var content = new Dictionary<string, object>();
+
+                                if (reader.Name == "text" || reader.Name == "content")
+                                {
+                                    content["kind"] = "text";
+                                    var audience = reader.GetAttribute("audience");
+                                    if (!string.IsNullOrEmpty(audience))
+                                    {
+                                        content["audience"] = audience;
+                                    }
+                                    content["text"] = reader.ReadElementContentAsString();
+                                }
+                                else if (reader.Name == "function-call")
+                                {
+                                    content["kind"] = "functionCall";
+                                    content["callId"] = reader.GetAttribute("call-id") ?? "";
+                                    content["name"] = reader.GetAttribute("name") ?? "";
+                                    content["arguments"] = reader.ReadElementContentAsString();
+                                }
+                                else if (reader.Name == "function-result")
+                                {
+                                    content["kind"] = "functionResult";
+                                    content["callId"] = reader.GetAttribute("call-id") ?? "";
+                                    var name = reader.GetAttribute("name");
+                                    if (!string.IsNullOrEmpty(name))
+                                    {
+                                        content["name"] = name;
+                                    }
+                                    content["result"] = reader.ReadElementContentAsString();
+                                }
+
+                                if (content.Count > 0)
+                                {
+                                    contents.Add(content);
+                                }
+                            }
+                        }
+                    }
+
+                    message["contents"] = contents;
+                    messages.Add(message);
+                }
+            }
+        }
+
+        return messages;
+    }
 
     /// <summary>
     /// Converts an Agent Protocol message to a Bot Framework Activity.
@@ -312,31 +402,68 @@ internal class AgentProtocolServer
 
     public IResult HealthCheck() => Results.Ok("OK");
 
-    public async Task<IResult> CreateRun(HttpContext context)
+    public async Task CreateRun(HttpContext context)
     {
         // Get format query parameter (default to json)
         var format = context.Request.Query["format"].FirstOrDefault() ?? "json";
 
         try
         {
-            // Use JsonDocument to properly parse the request
-            using var jsonDoc = await JsonDocument.ParseAsync(context.Request.Body);
-            var root = jsonDoc.RootElement;
-
             var runId = CreateRunId();
-            var agentId = root.TryGetProperty("agentId", out var agentIdProp) ? agentIdProp.GetString() : "agent";
-            var threadId = root.TryGetProperty("threadId", out var threadIdProp) ? threadIdProp.GetString() : $"thread_{Guid.NewGuid():N}"[..20];
-
-            // Parse input messages array
+            var agentId = "agent";
+            var threadId = $"thread_{Guid.NewGuid():N}"[..20];
             var inputMessages = new List<Dictionary<string, object>>();
-            if (root.TryGetProperty("input", out var inputArray) && inputArray.ValueKind == JsonValueKind.Array)
+
+            // Check Content-Type to determine how to parse the request body
+            var contentType = context.Request.ContentType?.ToLowerInvariant() ?? "application/json";
+
+            if (contentType.Contains("application/xml") || contentType.Contains("text/xml"))
             {
-                foreach (var item in inputArray.EnumerateArray())
+                // Parse XML input
+                using var reader = new StreamReader(context.Request.Body);
+                var xmlContent = await reader.ReadToEndAsync();
+
+                inputMessages = ParseXmlInput(xmlContent);
+
+                // Extract agentId and threadId from XML thread element if present
+                using var xmlReader = XmlReader.Create(new System.IO.StringReader(xmlContent));
+                while (xmlReader.Read())
                 {
-                    var msg = JsonSerializer.Deserialize<Dictionary<string, object>>(item.GetRawText());
-                    if (msg != null)
+                    if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "thread")
                     {
-                        inputMessages.Add(msg);
+                        var threadIdAttr = xmlReader.GetAttribute("thread-id");
+                        if (!string.IsNullOrEmpty(threadIdAttr))
+                        {
+                            threadId = threadIdAttr;
+                        }
+                        var agentIdAttr = xmlReader.GetAttribute("agent-id");
+                        if (!string.IsNullOrEmpty(agentIdAttr))
+                        {
+                            agentId = agentIdAttr;
+                        }
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // Parse JSON input
+                using var jsonDoc = await JsonDocument.ParseAsync(context.Request.Body);
+                var root = jsonDoc.RootElement;
+
+                agentId = root.TryGetProperty("agentId", out var agentIdProp) ? agentIdProp.GetString() ?? "agent" : "agent";
+                threadId = root.TryGetProperty("threadId", out var threadIdProp) ? threadIdProp.GetString() ?? $"thread_{Guid.NewGuid():N}"[..20] : $"thread_{Guid.NewGuid():N}"[..20];
+
+                // Parse input messages array
+                if (root.TryGetProperty("input", out var inputArray) && inputArray.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var item in inputArray.EnumerateArray())
+                    {
+                        var msg = JsonSerializer.Deserialize<Dictionary<string, object>>(item.GetRawText());
+                        if (msg != null)
+                        {
+                            inputMessages.Add(msg);
+                        }
                     }
                 }
             }
@@ -347,7 +474,10 @@ internal class AgentProtocolServer
 
             if (agent == null || adapter == null)
             {
-                return Results.Json(new { error = "Agent or adapter not configured" }, statusCode: 500);
+                context.Response.StatusCode = 500;
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsJsonAsync(new { error = "Agent or adapter not configured" });
+                return;
             }
 
             // Process each message through the agent (only user messages)
@@ -380,20 +510,27 @@ internal class AgentProtocolServer
 
             _runsDb[runId] = run;
 
+            // Set status code to 201 Created
+            context.Response.StatusCode = 201;
+
             // Return XML or JSON based on format parameter
             if (format == "xml")
             {
                 var xml = BuildThreadXml(threadId, outputMessages, createdAt);
-                return Results.Content(xml, "application/xml", Encoding.UTF8, 201);
+                context.Response.ContentType = "application/xml";
+                await context.Response.WriteAsync(xml, Encoding.UTF8);
             }
             else
             {
-                return Results.Json(run, statusCode: 201);
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsJsonAsync(run);
             }
         }
         catch (Exception ex)
         {
-            return Results.Json(new { error = ex.Message }, statusCode: 400);
+            context.Response.StatusCode = 400;
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsJsonAsync(new { error = ex.Message });
         }
     }
 
@@ -404,24 +541,55 @@ internal class AgentProtocolServer
 
         try
         {
-            // Use JsonDocument to properly parse the request
-            using var jsonDoc = await JsonDocument.ParseAsync(context.Request.Body);
-            var root = jsonDoc.RootElement;
-
             var runId = CreateRunId();
-            var agentId = root.TryGetProperty("agentId", out var agentIdProp) ? agentIdProp.GetString() : "agent";
-            var threadId = root.TryGetProperty("threadId", out var threadIdProp) ? threadIdProp.GetString() : $"thread_{Guid.NewGuid():N}"[..20];
-
-            // Parse input messages array
+            var agentId = "agent";
+            var threadId = $"thread_{Guid.NewGuid():N}"[..20];
             var inputMessages = new List<Dictionary<string, object>>();
-            if (root.TryGetProperty("input", out var inputArray) && inputArray.ValueKind == JsonValueKind.Array)
+
+            // Check Content-Type to determine how to parse the request body
+            var contentType = context.Request.ContentType?.ToLowerInvariant() ?? "application/json";
+
+            if (contentType.Contains("application/xml") || contentType.Contains("text/xml"))
             {
-                foreach (var item in inputArray.EnumerateArray())
+                // Parse XML input
+                using var reader = new StreamReader(context.Request.Body);
+                var xmlContent = await reader.ReadToEndAsync();
+                inputMessages = ParseXmlInput(xmlContent);
+
+                // Extract threadId from XML if present
+                using var xmlReader = XmlReader.Create(new System.IO.StringReader(xmlContent));
+                while (xmlReader.Read())
                 {
-                    var msg = JsonSerializer.Deserialize<Dictionary<string, object>>(item.GetRawText());
-                    if (msg != null)
+                    if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "thread")
                     {
-                        inputMessages.Add(msg);
+                        var threadIdAttr = xmlReader.GetAttribute("thread-id");
+                        if (!string.IsNullOrEmpty(threadIdAttr))
+                        {
+                            threadId = threadIdAttr;
+                        }
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // Parse JSON input
+                using var jsonDoc = await JsonDocument.ParseAsync(context.Request.Body);
+                var root = jsonDoc.RootElement;
+
+                agentId = root.TryGetProperty("agentId", out var agentIdProp) ? agentIdProp.GetString() ?? "agent" : "agent";
+                threadId = root.TryGetProperty("threadId", out var threadIdProp) ? threadIdProp.GetString() ?? threadId : threadId;
+
+                // Parse input messages array
+                if (root.TryGetProperty("input", out var inputArray) && inputArray.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var item in inputArray.EnumerateArray())
+                    {
+                        var msg = JsonSerializer.Deserialize<Dictionary<string, object>>(item.GetRawText());
+                        if (msg != null)
+                        {
+                            inputMessages.Add(msg);
+                        }
                     }
                 }
             }

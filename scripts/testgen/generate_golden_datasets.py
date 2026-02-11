@@ -43,6 +43,17 @@ import subprocess
 import signal
 import atexit
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file at repo root
+# This ensures FOUNDRY_ENDPOINT, FOUNDRY_API_KEY, etc. are available
+repo_root = Path(__file__).parent.parent.parent
+env_file = repo_root / ".env"
+if env_file.exists():
+    load_dotenv(env_file)
+    print(f"✅ Loaded environment variables from {env_file}")
+else:
+    print(f"⚠️  No .env file found at {env_file}")
 
 
 class GoldenDatasetGenerator:
@@ -121,7 +132,7 @@ class GoldenDatasetGenerator:
         dir_name = sample_dir_map.get(sample_name)
         if not dir_name:
             # Try to find by pattern
-            samples_dir = self.repo_root / "dotnet" / "samples" / "agents-protocol-abstractions"
+            samples_dir = self.repo_root / "dotnet" / "samples" / "agents"
             if not samples_dir.exists():
                 return None
 
@@ -131,7 +142,7 @@ class GoldenDatasetGenerator:
                     return d
             return None
 
-        bot_dir = self.repo_root / "dotnet" / "samples" / "agents-protocol-abstractions" / dir_name
+        bot_dir = self.repo_root / "dotnet" / "samples" / "agents" / dir_name
         return bot_dir if bot_dir.exists() else None
 
     def _start_dotnet_bot(self, sample_name: str, port: int) -> Optional[subprocess.Popen]:
@@ -833,7 +844,7 @@ Note: LLM recording is ALWAYS enabled. Recordings are saved to test-data/llm-rec
     args = parser.parse_args()
 
     # Resolve paths
-    repo_root = Path(__file__).parent.parent
+    repo_root = Path(__file__).parent.parent.parent  # Go up 3 levels: testgen -> scripts -> repo
     config_path = args.config or repo_root / "agent-config.json"
     inputs_dir = args.inputs or repo_root / "test-data" / "input"
     results_dir = args.results or repo_root / "test-data" / "results"

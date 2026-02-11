@@ -26,12 +26,9 @@ public class BasicM365Agent : AgentApplication
 {
     private readonly HttpClient _httpClient;
     private readonly Random _random = new();
-    private readonly ChatClient? _chatClient;
+    private readonly TestingChatClient _testingClient;
     private readonly Dictionary<string, List<ChatMessage>> _conversationHistory = new();
-    private readonly LLMRecorder? _recorder;
-    private readonly LLMPlayer? _player;
     private readonly string _model;
-    private readonly bool _useRecordings;
 
     public BasicM365Agent(AgentApplicationOptions options, HttpClient httpClient) : base(options)
     {
@@ -51,9 +48,14 @@ public class BasicM365Agent : AgentApplication
         // Use: python3 scripts/ci/start_samples.py basic-m365 --lang dotnet --ui
         // ============================================================================
 
-        // Check if we should use LLM recordings (test mode)
+        // Check mode from environment variables
         var useRecordings = Environment.GetEnvironmentVariable("USE_LLM_RECORDINGS");
-        _useRecordings = !string.IsNullOrEmpty(useRecordings) && useRecordings.Equals("true", StringComparison.OrdinalIgnoreCase);
+        var recordLlm = Environment.GetEnvironmentVariable("RECORD_LLM");
+
+        bool playbackMode = !string.IsNullOrEmpty(useRecordings) &&
+                           useRecordings.Equals("true", StringComparison.OrdinalIgnoreCase);
+        bool recordMode = !string.IsNullOrEmpty(recordLlm) &&
+                         recordLlm.Equals("true", StringComparison.OrdinalIgnoreCase);
 
         // Find recordings directory (navigate up to repo root)
         var repoRoot = Path.GetFullPath(Path.Combine(
@@ -62,41 +64,37 @@ public class BasicM365Agent : AgentApplication
         ));
         var recordingsDir = Path.Combine(repoRoot, "test-data", "llm-recordings", "basic-m365");
 
-        if (_useRecordings)
+        // Create real ChatClient if needed (for normal or recording mode)
+        ChatClient? realClient = null;
+        if (!playbackMode)
         {
-            // Test mode: Use recorded LLM responses
-            _model = "gpt-5-nano"; // Default model for recordings
-            _player = new LLMPlayer(recordingsDir);
-            Console.WriteLine($"▶️  LLM Playback enabled: {recordingsDir}");
-            Console.WriteLine("   Using recorded LLM responses (test mode)");
-        }
-        else
-        {
-            // Generation mode: Use real LLM and optionally record
             var endpoint = Environment.GetEnvironmentVariable("FOUNDRY_ENDPOINT")
                 ?? throw new InvalidOperationException("FOUNDRY_ENDPOINT environment variable is required");
             var apiKey = Environment.GetEnvironmentVariable("FOUNDRY_API_KEY")
                 ?? throw new InvalidOperationException("FOUNDRY_API_KEY environment variable is required");
             _model = Environment.GetEnvironmentVariable("FOUNDRY_MODEL_DEPLOYMENT") ?? "gpt-5-nano";
 
-            // Create ChatClient for Foundry
-            _chatClient = new ChatClient(
+            realClient = new ChatClient(
                 credential: new ApiKeyCredential(apiKey),
                 model: _model,
                 options: new OpenAIClientOptions()
                 {
                     Endpoint = new Uri($"{endpoint}/openai/v1/")
                 });
-
-            // Check if LLM recording is enabled
-            var recordLlm = Environment.GetEnvironmentVariable("RECORD_LLM");
-            if (!string.IsNullOrEmpty(recordLlm) && recordLlm.Equals("true", StringComparison.OrdinalIgnoreCase))
-            {
-                Directory.CreateDirectory(recordingsDir);
-                _recorder = new LLMRecorder(recordingsDir);
-                Console.WriteLine($"📹 LLM Recording enabled: {recordingsDir}");
-            }
         }
+        else
+        {
+            _model = "gpt-5-nano"; // Default model for playback
+        }
+
+        // Create testing client that handles recording/playback transparently
+        _testingClient = new TestingChatClient(
+            realClient,
+            recordingsDir,
+            _model,
+            recordMode,
+            playbackMode
+        );
 
         OnConversationUpdate(ConversationUpdateEvents.MembersAdded, WelcomeMessageAsync);
         OnActivity(ActivityTypes.Message, OnMessageAsync, rank: RouteRank.Last);
@@ -164,23 +162,23 @@ public class BasicM365Agent : AgentApplication
         var tools = new List<ChatTool>
         {
             ChatTool.CreateFunctionTool(
-                functionName: "GetWeatherAsync",
-                functionDescription: "Get the weather for a given location.",
+                functionName: "get_weather",
+                functionDescription: "Get the weather for a given location",
                 functionParameters: BinaryData.FromString("""
                 {
                     "type": "object",
                     "properties": {
                         "location": {
                             "type": "string",
-                            "description": "The location to get the weather for."
+                            "description": "The location to get the weather for"
                         }
                     },
                     "required": ["location"]
                 }
                 """)),
             ChatTool.CreateFunctionTool(
-                functionName: "GetCurrentTime",
-                functionDescription: "Get the current UTC time.",
+                functionName: "get_current_time",
+                functionDescription: "Get the current UTC time",
                 functionParameters: BinaryData.FromString("""
                 {
                     "type": "object",
@@ -204,29 +202,11 @@ public class BasicM365Agent : AgentApplication
         {
             iteration++;
 
-            // Get completion from LLM (either real or replayed)
-            ChatCompletion completion;
-            if (_useRecordings && _player != null)
-            {
-                // Test mode: Replay recorded response
-                completion = await _player.ReplayAsync(_model, _conversationHistory[conversationId], chatOptions.Tools, cancellationToken);
-            }
-            else if (_chatClient != null)
-            {
-                // Generation mode: Use real LLM
-                var completionResult = await _chatClient.CompleteChatAsync(_conversationHistory[conversationId], chatOptions, cancellationToken);
-                completion = completionResult.Value;
-
-                // Record LLM interaction if recorder is enabled
-                if (_recorder != null)
-                {
-                    await _recorder.RecordAsync(_model, _conversationHistory[conversationId], chatOptions.Tools, completion, cancellationToken);
-                }
-            }
-            else
-            {
-                throw new InvalidOperationException("Neither ChatClient nor LLMPlayer is available");
-            }
+            // Get completion from LLM (testing client handles recording/playback transparently)
+            var completion = await _testingClient.CompleteChatAsync(
+                _conversationHistory[conversationId],
+                chatOptions,
+                cancellationToken);
 
             // Check if the model wants to call functions
             if (completion.FinishReason == ChatFinishReason.ToolCalls)
@@ -242,12 +222,12 @@ public class BasicM365Agent : AgentApplication
                     var functionArgs = JsonDocument.Parse(toolCall.FunctionArguments.ToString()).RootElement;
 
                     string functionResult;
-                    if (functionName == "GetWeatherAsync")
+                    if (functionName == "get_weather")
                     {
                         var location = functionArgs.TryGetProperty("location", out var loc) ? loc.GetString() ?? "unknown" : "unknown";
                         functionResult = await GetWeatherAsync(location);
                     }
-                    else if (functionName == "GetCurrentTime")
+                    else if (functionName == "get_current_time")
                     {
                         functionResult = GetCurrentTime();
                     }

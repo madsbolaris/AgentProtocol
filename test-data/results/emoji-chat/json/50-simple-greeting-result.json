@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:28:09.112009Z",
+  "content": {
+    "runId": "6e7e922c-40a4-4930-bac5-0c813c4b6490",
+    "threadId": "e0ee18f0-1340-460f-b141-c1c25a077313",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Hi there! \ud83d\udc4b\ud83d\ude0a Here are some friendly greeting emojis: \ud83d\udc4b\ud83d\ude0a\ud83c\udf1f\u2728\ud83d\udcac",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "b57c96ed82ec5f418a322585e1e29ef7342f24322b7f8b27229f8e68f34a9971",
+  "metadata": {
+    "input_file": "50-simple-greeting.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

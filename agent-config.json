@@ -17,6 +17,24 @@
       "baseUrl": "http://localhost",
       "port": 3983,
       "language": "typescript"
+    },
+    "dotnet-emoji-chat": {
+      "name": "EmojiChatBot (.NET)",
+      "baseUrl": "http://localhost",
+      "port": 3984,
+      "language": "dotnet"
+    },
+    "python-emoji-chat": {
+      "name": "EmojiChatBot (Python)",
+      "baseUrl": "http://localhost",
+      "port": 3985,
+      "language": "python"
+    },
+    "typescript-emoji-chat": {
+      "name": "EmojiChatBot (TypeScript)",
+      "baseUrl": "http://localhost",
+      "port": 3986,
+      "language": "typescript"
     }
   }
 }

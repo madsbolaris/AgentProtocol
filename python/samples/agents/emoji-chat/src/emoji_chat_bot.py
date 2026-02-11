@@ -33,9 +33,9 @@ from microsoft.agents.hosting import (
 )
 
 try:
-    from .llm_recorder import LLMRecorder, LLMPlayer
+    from .testing_chat_client import TestingChatClient
 except ImportError:
-    from llm_recorder import LLMRecorder, LLMPlayer
+    from testing_chat_client import TestingChatClient
 
 # Set up logging
 logging.basicConfig(
@@ -65,23 +65,24 @@ class EmojiBot:
         # ============================================================================
 
         self.conversation_history = []
-        self.use_recordings = os.environ.get("USE_LLM_RECORDINGS", "").lower() == "true"
         self.model = "gpt-5-nano"
-        self.client = None
-        self.recorder = None
-        self.player = None
+        self.testing_client = None
 
         # Find recordings directory (navigate up to repo root)
-        repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent
-        recordings_dir = repo_root / "test-data" / "llm-recordings" / "emoji-bot"
+        # From: python/samples/agents/emoji-chat/src/emoji_chat_bot.py → repo root (6 levels up)
+        repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
+        recordings_dir = repo_root / "test-data" / "llm-recordings" / "emoji-chat"
 
-        if self.use_recordings:
-            # Test mode: Use recorded LLM responses
-            self.player = LLMPlayer(str(recordings_dir))
-            logger.info(f"▶️  LLM Playback enabled: {recordings_dir}")
-            logger.info("   Using recorded LLM responses (test mode)")
-        else:
-            # Generation mode: Use real LLM and optionally record
+        # Determine recording/playback mode
+        use_recordings = os.environ.get("USE_LLM_RECORDINGS", "").lower() == "true"
+        playback_mode = use_recordings
+
+        record_llm = os.environ.get("RECORD_LLM", "").lower() == "true"
+        record_mode = record_llm
+
+        # Create real OpenAI client if not in playback mode
+        real_client = None
+        if not playback_mode:
             endpoint = os.environ.get("FOUNDRY_ENDPOINT")
             api_key = os.environ.get("FOUNDRY_API_KEY")
 
@@ -90,21 +91,11 @@ class EmojiBot:
 
                 try:
                     from openai import AsyncOpenAI
-                    self.client = AsyncOpenAI(
+                    real_client = AsyncOpenAI(
                         api_key=api_key,
                         base_url=f"{endpoint}/openai/v1/"
                     )
-
-                    # Check if LLM recording is enabled
-                    record_llm = os.environ.get("RECORD_LLM", "").lower() == "true"
-                    if record_llm:
-                        recordings_dir.mkdir(parents=True, exist_ok=True)
-                        self.recorder = LLMRecorder(str(recordings_dir))
-                        logger.info(f"🔴 LLM Recording enabled: {recordings_dir}")
-                        logger.info(f"   Model: {self.model}")
-                    else:
-                        logger.info(f"🤖 Using LLM: {self.model} (recording disabled)")
-
+                    logger.info(f"🤖 Using LLM: {self.model}")
                 except ImportError:
                     logger.error("⚠️  OpenAI package not installed!")
                     logger.error("   Install with: pip install openai")
@@ -114,6 +105,18 @@ class EmojiBot:
                 logger.warning("   Set FOUNDRY_ENDPOINT and FOUNDRY_API_KEY environment variables to use LLM.")
                 logger.warning("   Or set USE_LLM_RECORDINGS=true to use recorded responses.")
                 logger.warning("   EmojiBot will fail without LLM configuration.")
+        else:
+            self.model = "gpt-5-nano"
+
+        # Create TestingChatClient - handles both recording and playback
+        if real_client is not None or playback_mode:
+            self.testing_client = TestingChatClient(
+                real_client=real_client,
+                recordings_dir=str(recordings_dir),
+                model_id=self.model,
+                record_mode=record_mode,
+                playback_mode=playback_mode
+            )
 
     async def handle_user_message(
         self,
@@ -167,28 +170,12 @@ Examples:
 
         # Get LLM response
         try:
-            if self.use_recordings and self.player:
-                # Test mode: Replay recorded response
-                response_text = await self.player.replay_async(
-                    self.model,
-                    self.conversation_history
-                )
-            elif self.client:
-                # Generation mode: Use real LLM
-                response = await self.client.chat.completions.create(
-                    model=self.model,
+            if self.testing_client:
+                # TestingChatClient handles both recording and playback automatically
+                response = await self.testing_client.create_completion(
                     messages=self.conversation_history
                 )
                 response_text = response.choices[0].message.content
-
-                # Record LLM interaction if recorder is enabled
-                if self.recorder:
-                    await self.recorder.record_async(
-                        self.model,
-                        self.conversation_history,
-                        None,
-                        response
-                    )
             else:
                 raise RuntimeError(
                     "LLM is not configured. Please use the startup script: "

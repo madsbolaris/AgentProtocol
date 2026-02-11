@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-02-11T06:28:29.601143Z",
+  "content": {
+    "runId": "b7ddb22c-cc03-4c2b-9966-fc2fed8ad681",
+    "threadId": "e899935c-8a37-4d2a-b685-7de56a42c141",
+    "status": "completed",
+    "error": null,
+    "output": [
+      {
+        "role": "agent",
+        "agentId": null,
+        "completionId": null,
+        "completedAt": "0001-01-01T00:00:00",
+        "completedAtSpecified": false,
+        "contents": [
+          {
+            "kind": "text",
+            "text": "Nice question! I can\u2019t check your exact time, but time vibes: \u23f0\ud83d\udd52\ud83d\udd70\ufe0f\u231a\ufe0f",
+            "audience": null,
+            "encryption": null
+          }
+        ],
+        "messageId": null,
+        "parentMessageId": null,
+        "threadId": null,
+        "text": null,
+        "authorName": null,
+        "userId": null,
+        "createdAt": "0001-01-01T00:00:00",
+        "metadata": null,
+        "rawRepresentation": null
+      }
+    ]
+  },
+  "hash": "16edf66fa9a3fbec30e76a4b961ca4a7481aa5591ecfb790295bc2de2b272ec7",
+  "metadata": {
+    "input_file": "52-time-query.xml",
+    "sample": "emoji-chat",
+    "generator": "dotnet",
+    "canonical": true
+  }
+}

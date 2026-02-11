@@ -14,8 +14,8 @@
 
 import { TurnState, MemoryStorage, TurnContext, AgentApplication } from '@microsoft/agents-hosting'
 import OpenAI from 'openai'
-import * as fs from 'fs'
 import * as path from 'path'
+import { TestingChatClient } from './TestingChatClient'
 
 interface ConversationState {
   messages: OpenAI.Chat.ChatCompletionMessageParam[];
@@ -58,9 +58,8 @@ function cleanupOldStorage(storage: MemoryStorage): void {
 }
 
 // LLM Client setup
-let openaiClient: OpenAI | null = null
+let testingClient: TestingChatClient | null = null
 let model: string = 'gpt-4'
-let useRecordings: boolean = false
 
 // ============================================================================
 // ENVIRONMENT VARIABLES - Set automatically by scripts/ci/start_samples.py
@@ -79,23 +78,21 @@ let useRecordings: boolean = false
 function initLLM() {
   console.log('🔧 Initializing LLM...')
 
-  // Check if we should use LLM recordings (test mode)
-  useRecordings = process.env.USE_LLM_RECORDINGS?.toLowerCase() === 'true'
-  console.log(`   USE_LLM_RECORDINGS: ${process.env.USE_LLM_RECORDINGS}`)
-  console.log(`   useRecordings: ${useRecordings}`)
+  // Check mode from environment variables
+  const useRecordings = process.env.USE_LLM_RECORDINGS?.toLowerCase() === 'true'
+  const recordLlm = process.env.RECORD_LLM?.toLowerCase() === 'true'
 
-  if (useRecordings) {
-    // Test mode: Use recorded LLM responses
-    model = 'gpt-5-nano'  // Default model for recordings
-    console.log('▶️  LLM Playback enabled (using recordings)')
-    console.log('   Using recorded LLM responses (test mode)')
-  } else {
-    // Generation mode: Use real LLM
+  const playbackMode = useRecordings
+  const recordMode = recordLlm
+
+  // Find recordings directory
+  const recordingsDir = path.join(__dirname, '..', '..', '..', '..', '..', '..', 'test-data', 'llm-recordings', 'basic-m365')
+
+  // Create real OpenAI client if needed (for normal or recording mode)
+  let realClient: OpenAI | null = null
+  if (!playbackMode) {
     const endpoint = process.env.FOUNDRY_ENDPOINT
     const apiKey = process.env.FOUNDRY_API_KEY
-
-    console.log(`   FOUNDRY_ENDPOINT: ${endpoint ? endpoint.substring(0, 30) + '...' : 'NOT SET'}`)
-    console.log(`   FOUNDRY_API_KEY: ${apiKey ? '***' + apiKey.substring(apiKey.length - 4) : 'NOT SET'}`)
 
     if (!endpoint || !apiKey) {
       console.log('⚠️  FOUNDRY_ENDPOINT or FOUNDRY_API_KEY not set. LLM features disabled.')
@@ -104,130 +101,33 @@ function initLLM() {
     }
 
     model = process.env.FOUNDRY_MODEL_DEPLOYMENT || 'gpt-4'
-    console.log(`   Model: ${model}`)
 
-    // Create OpenAI client for Foundry
     try {
-      openaiClient = new OpenAI({
+      realClient = new OpenAI({
         apiKey: apiKey,
         baseURL: `${endpoint}/openai/v1/`
       })
-      console.log('✅ OpenAI client created successfully')
     } catch (error) {
       console.error('❌ Error creating OpenAI client:', error)
       return
     }
-
-    // Check if LLM recording is enabled
-    const recordLlm = process.env.RECORD_LLM?.toLowerCase() === 'true'
-    if (recordLlm) {
-      console.log('📹 LLM Recording enabled (not implemented yet)')
-    }
+  } else {
+    model = 'gpt-5-nano'
   }
+
+  // Create TestingChatClient wrapper
+  testingClient = new TestingChatClient(
+    realClient,
+    recordingsDir,
+    model,
+    recordMode,
+    playbackMode
+  )
 }
 
 // Initialize on module load
 initLLM()
 
-// Helper function to hash request (matches .NET implementation)
-function hashRequest(model: string, messages: OpenAI.Chat.ChatCompletionMessageParam[], tools: OpenAI.Chat.ChatCompletionTool[]): string {
-  const crypto = require('crypto')
-
-  // Normalize messages
-  const normalizedMessages = messages.map((msg: any) => {
-    const normalized: any = { role: msg.role }
-    if (msg.content) normalized.content = msg.content
-    if (msg.tool_calls) normalized.tool_calls = msg.tool_calls
-    if (msg.tool_call_id) normalized.tool_call_id = msg.tool_call_id
-    return normalized
-  })
-
-  // Build request dict
-  const requestDict: any = {
-    messages: normalizedMessages,
-    model: model,
-    temperature: 0.0
-  }
-
-  if (tools && tools.length > 0) {
-    requestDict.tools = tools
-  }
-
-  // Serialize to stable JSON (sorted keys)
-  const jsonStr = JSON.stringify(requestDict, Object.keys(requestDict).sort())
-
-  // Hash and truncate to match .NET format
-  const hash = crypto.createHash('sha256').update(jsonStr).digest('hex')
-  return hash.substring(0, 16)
-}
-
-// Replay recorded LLM response
-function replayLLMResponse(messages: OpenAI.Chat.ChatCompletionMessageParam[], tools: OpenAI.Chat.ChatCompletionTool[]): OpenAI.Chat.ChatCompletion {
-  // Generate hash to find recording
-  const hashKey = hashRequest(model, messages, tools)
-
-  // Find response file
-  const recordingsDir = path.join(__dirname, '..', '..', '..', '..', '..', 'test-data', 'llm-recordings', 'basic-m365')
-  const responseFile = path.join(recordingsDir, `${hashKey}.response.json`)
-
-  if (!fs.existsSync(responseFile)) {
-    console.log(`⚠️  No recording found for hash: ${hashKey}`)
-    console.log(`   Expected: ${responseFile}`)
-    // Return a default response
-    return {
-      id: 'mock',
-      object: 'chat.completion',
-      created: Date.now(),
-      model: model,
-      choices: [{
-        index: 0,
-        message: {
-          role: 'assistant',
-          content: 'I can help you with weather and time information!',
-          refusal: null
-        },
-        finish_reason: 'stop',
-        logprobs: null
-      }],
-      usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 }
-    }
-  }
-
-  // Load recording
-  const recordingData = JSON.parse(fs.readFileSync(responseFile, 'utf-8'))
-  const response = recordingData.response
-
-  // Build completion object
-  const completion: OpenAI.Chat.ChatCompletion = {
-    id: response.id,
-    object: 'chat.completion',
-    created: Date.now(),
-    model: response.model,
-    choices: [{
-      index: 0,
-      message: {
-        role: 'assistant',
-        content: response.content && response.content.length > 0 ? response.content[0].text : null,
-        refusal: null,
-        tool_calls: response.toolCalls && response.toolCalls.length > 0
-          ? response.toolCalls.map((tc: any) => ({
-              id: tc.id,
-              type: 'function' as const,
-              function: {
-                name: tc.function.name,
-                arguments: tc.function.arguments
-              }
-            }))
-          : undefined
-      },
-      finish_reason: response.finishReason.toLowerCase() as any,
-      logprobs: null
-    }],
-    usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 }
-  }
-
-  return completion
-}
 
 // Define storage and application
 const storage = new MemoryStorage()
@@ -332,11 +232,8 @@ agentApp.onActivity('message', async (context: TurnContext, state: ApplicationTu
 
   const userMessage = context.activity.text || ''
 
-  // Debug: Check LLM configuration
-  console.log(`🔍 Message handler - openaiClient: ${openaiClient ? 'EXISTS' : 'NULL'}, useRecordings: ${useRecordings}`)
-
   // If LLM is not configured, provide helpful message
-  if (!openaiClient && !useRecordings) {
+  if (!testingClient) {
     console.log('⚠️ LLM not configured')
     await context.sendActivity(
       `Hello! I'm a Basic M365 Agent with LLM capabilities.\n\n` +
@@ -345,8 +242,6 @@ agentApp.onActivity('message', async (context: TurnContext, state: ApplicationTu
     )
     return
   }
-
-  console.log('✅ Proceeding with LLM call')
 
   // Initialize conversation history if needed
   if (!state.conversation.messages) {
@@ -372,14 +267,14 @@ agentApp.onActivity('message', async (context: TurnContext, state: ApplicationTu
     {
       type: 'function',
       function: {
-        name: 'GetWeatherAsync',
-        description: 'Get the weather for a given location.',
+        name: 'get_weather',
+        description: 'Get the weather for a given location',
         parameters: {
           type: 'object',
           properties: {
             location: {
               type: 'string',
-              description: 'The location to get the weather for.'
+              description: 'The location to get the weather for'
             }
           },
           required: ['location']
@@ -389,8 +284,8 @@ agentApp.onActivity('message', async (context: TurnContext, state: ApplicationTu
     {
       type: 'function',
       function: {
-        name: 'GetCurrentTime',
-        description: 'Get the current UTC time.',
+        name: 'get_current_time',
+        description: 'Get the current UTC time',
         parameters: {
           type: 'object',
           properties: {}
@@ -408,21 +303,11 @@ agentApp.onActivity('message', async (context: TurnContext, state: ApplicationTu
     iteration++
 
     try {
-      let completion: OpenAI.Chat.ChatCompletion
-
-      if (useRecordings) {
-        // Test mode: Replay recorded response
-        completion = replayLLMResponse(state.conversation.messages, tools)
-      } else if (openaiClient) {
-        // Generation mode: Use real LLM
-        completion = await openaiClient.chat.completions.create({
-          model: model,
-          messages: state.conversation.messages,
-          tools: tools
-        })
-      } else {
-        throw new Error('Neither OpenAI client nor recordings available')
-      }
+      // Get completion from LLM (transparently handles recording/playback)
+      const completion = await testingClient.createCompletion(
+        state.conversation.messages,
+        tools
+      )
 
       // Check if the model wants to call functions
       if (completion.choices[0].finish_reason === 'tool_calls' && completion.choices[0].message.tool_calls) {
@@ -448,10 +333,10 @@ agentApp.onActivity('message', async (context: TurnContext, state: ApplicationTu
           const functionArgs = JSON.parse(toolCall.function.arguments)
 
           let functionResult: string
-          if (functionName === 'GetWeatherAsync') {
+          if (functionName === 'get_weather') {
             const location = functionArgs.location || 'unknown'
             functionResult = await getWeatherAsync(location)
-          } else if (functionName === 'GetCurrentTime') {
+          } else if (functionName === 'get_current_time') {
             functionResult = getCurrentTime()
           } else {
             functionResult = 'Unknown function'

@@ -37,11 +37,8 @@ namespace EmojiChatBot;
 /// </summary>
 public class EmojiBotAgent : AgentProtocolApplication<EmojiContext>
 {
-    private readonly ChatClient? _chatClient;
-    private readonly LLMRecorder? _recorder;
-    private readonly LLMPlayer? _player;
+    private readonly TestingChatClient? _testingClient;
     private readonly string _model = "gpt-5-nano";
-    private readonly bool _useRecordings;
 
     public EmojiBotAgent(AgentProtocolOptions options) : base(options)
     {
@@ -59,28 +56,24 @@ public class EmojiBotAgent : AgentProtocolApplication<EmojiContext>
         // Use: python3 scripts/ci/start_samples.py emoji-chat --lang dotnet --ui
         // ============================================================================
 
-        // Check if we should use LLM recordings (test mode)
+        // Check mode from environment variables
         var useRecordings = Environment.GetEnvironmentVariable("USE_LLM_RECORDINGS");
-        _useRecordings = !string.IsNullOrEmpty(useRecordings) && useRecordings.Equals("true", StringComparison.OrdinalIgnoreCase);
+        var playbackMode = !string.IsNullOrEmpty(useRecordings) && useRecordings.Equals("true", StringComparison.OrdinalIgnoreCase);
+
+        var recordLlm = Environment.GetEnvironmentVariable("RECORD_LLM");
+        var recordMode = !string.IsNullOrEmpty(recordLlm) && recordLlm.Equals("true", StringComparison.OrdinalIgnoreCase);
 
         // Find recordings directory (navigate up to repo root)
         var repoRoot = Path.GetFullPath(Path.Combine(
             Directory.GetCurrentDirectory(),
             "..", "..", "..", ".."
         ));
-        var recordingsDir = Path.Combine(repoRoot, "test-data", "llm-recordings", "emoji-bot");
+        var recordingsDir = Path.Combine(repoRoot, "test-data", "llm-recordings", "emoji-chat");
 
-        if (_useRecordings)
+        // Create real OpenAI client if needed (for normal or recording mode)
+        ChatClient? realClient = null;
+        if (!playbackMode)
         {
-            // Test mode: Use recorded LLM responses
-            _model = "gpt-5-nano"; // Default model for recordings
-            _player = new LLMPlayer(recordingsDir);
-            Console.WriteLine($"▶️  LLM Playback enabled: {recordingsDir}");
-            Console.WriteLine("   Using recorded LLM responses (test mode)");
-        }
-        else
-        {
-            // Generation mode: Use real LLM and optionally record
             var endpoint = Environment.GetEnvironmentVariable("FOUNDRY_ENDPOINT");
             var apiKey = Environment.GetEnvironmentVariable("FOUNDRY_API_KEY");
 
@@ -89,27 +82,13 @@ public class EmojiBotAgent : AgentProtocolApplication<EmojiContext>
                 _model = Environment.GetEnvironmentVariable("FOUNDRY_MODEL_DEPLOYMENT") ?? "gpt-5-nano";
 
                 // Create ChatClient for Foundry
-                _chatClient = new ChatClient(
+                realClient = new ChatClient(
                     credential: new ApiKeyCredential(apiKey),
                     model: _model,
                     options: new OpenAIClientOptions()
                     {
                         Endpoint = new Uri($"{endpoint}/openai/v1/")
                     });
-
-                // Check if LLM recording is enabled
-                var recordLlm = Environment.GetEnvironmentVariable("RECORD_LLM");
-                if (!string.IsNullOrEmpty(recordLlm) && recordLlm.Equals("true", StringComparison.OrdinalIgnoreCase))
-                {
-                    Directory.CreateDirectory(recordingsDir);
-                    _recorder = new LLMRecorder(recordingsDir);
-                    Console.WriteLine($"🔴 LLM Recording enabled: {recordingsDir}");
-                    Console.WriteLine($"   Model: {_model}");
-                }
-                else
-                {
-                    Console.WriteLine($"🤖 Using LLM: {_model} (recording disabled)");
-                }
             }
             else
             {
@@ -118,6 +97,22 @@ public class EmojiBotAgent : AgentProtocolApplication<EmojiContext>
                 Console.WriteLine("   Or set USE_LLM_RECORDINGS=true to use recorded responses.");
                 Console.WriteLine("   EmojiBot will fail without LLM configuration.");
             }
+        }
+        else
+        {
+            _model = "gpt-5-nano"; // Default model for recordings
+        }
+
+        // Create TestingChatClient wrapper (handles both recording and playback)
+        if (realClient != null || playbackMode)
+        {
+            _testingClient = new TestingChatClient(
+                realClient: realClient,
+                recordingsDir: recordingsDir,
+                modelId: _model,
+                recordMode: recordMode,
+                playbackMode: playbackMode
+            );
         }
 
         // Register handler for user messages
@@ -165,54 +160,22 @@ Examples:
 
         string response;
 
-        // Use LLM (either real or replayed)
-        if (_useRecordings && _player != null)
+        // Use TestingChatClient (handles recording/playback automatically)
+        if (_testingClient != null)
         {
-            // Test mode: Replay recorded response
-            var completion = await _player.ReplayAsync(_model, context.Context.ConversationHistory, null, cancellationToken);
+            // Call LLM (transparently handles recording/playback)
+            var chatOptions = new ChatCompletionOptions();
+            var completion = await _testingClient.CompleteChatAsync(
+                context.Context.ConversationHistory,
+                chatOptions,
+                cancellationToken
+            );
+
             response = string.Join("", completion.Content.Select(c => c.Text));
             context.Context.ConversationHistory.Add(new AssistantChatMessage(response));
 
-            // Send response (non-streaming for playback)
+            // Send response
             await context.SendTextAsync(response, cancellationToken);
-        }
-        else if (_chatClient != null)
-        {
-            // Generation mode: Use real LLM with streaming
-            var chatOptions = new ChatCompletionOptions();
-            var streamingResult = _chatClient.CompleteChatStreamingAsync(context.Context.ConversationHistory, chatOptions, cancellationToken);
-
-            var fullResponse = "";
-            var responseBuilder = new System.Text.StringBuilder();
-
-            await foreach (var update in streamingResult)
-            {
-                foreach (var contentPart in update.ContentUpdate)
-                {
-                    if (!string.IsNullOrEmpty(contentPart.Text))
-                    {
-                        responseBuilder.Append(contentPart.Text);
-                        fullResponse += contentPart.Text;
-
-                        // Emit streaming event via callback WITHOUT adding to Responses
-                        // This allows real-time streaming without creating separate messages
-                        await context.EmitStreamChunkAsync(contentPart.Text, cancellationToken);
-                    }
-                }
-            }
-
-            response = fullResponse;
-            context.Context.ConversationHistory.Add(new AssistantChatMessage(response));
-
-            // Add the complete response to the output (needed for both streaming and wait mode)
-            // Use SendMessageAsync instead of SendTextAsync to avoid triggering extra delta events
-            await context.SendMessageAsync(new AgentMessage
-            {
-                Contents = new List<AIContent> { new TextContent { Text = response } }
-            }, cancellationToken);
-
-            // Note: Recording is not supported for streaming mode
-            // The LLMRecorder expects a non-streaming ChatCompletion object
         }
         else
         {

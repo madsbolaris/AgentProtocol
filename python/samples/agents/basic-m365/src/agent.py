@@ -20,6 +20,7 @@ from microsoft_agents.hosting.core import (
     MemoryStorage,
 )
 from openai import AsyncOpenAI
+from testing_chat_client import TestingChatClient
 
 load_dotenv()
 
@@ -75,10 +76,8 @@ AGENT_APP = AgentApplication[TurnState](
 
 # LLM Client and conversation history
 _conversation_history: Dict[str, List[Dict[str, Any]]] = {}
-_openai_client: AsyncOpenAI | None = None
+_testing_client: TestingChatClient | None = None
 _model: str = "gpt-4"
-_use_recordings: bool = False
-_recordings_dir: Path | None = None
 
 # ============================================================================
 # ENVIRONMENT VARIABLES - Set automatically by scripts/ci/start_samples.py
@@ -96,27 +95,22 @@ _recordings_dir: Path | None = None
 
 # Initialize LLM client
 def _init_llm():
-    global _openai_client, _model, _use_recordings, _recordings_dir
+    global _testing_client, _model
 
-    # Check if we should use LLM recordings (test mode)
-    env_value = os.environ.get("USE_LLM_RECORDINGS", "")
-    print(f"🔍 DEBUG: USE_LLM_RECORDINGS env var = '{env_value}'")
-    # TEMP FIX: Force recordings mode for tests
-    use_recordings = True  # env_value.lower() == "true"
-    print(f"🔍 DEBUG: use_recordings = {use_recordings} (FORCED FOR TESTING)")
-    _use_recordings = use_recordings
+    # Check mode from environment variables
+    use_recordings = os.environ.get("USE_LLM_RECORDINGS", "").lower() == "true"
+    record_llm = os.environ.get("RECORD_LLM", "").lower() == "true"
+
+    playback_mode = use_recordings
+    record_mode = record_llm
 
     # Find recordings directory
-    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent
-    _recordings_dir = repo_root / "test-data" / "llm-recordings" / "basic-m365"
+    repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
+    recordings_dir = repo_root / "test-data" / "llm-recordings" / "basic-m365"
 
-    if _use_recordings:
-        # Test mode: Use recorded LLM responses
-        _model = "gpt-5-nano"  # Default model for recordings
-        print(f"▶️  LLM Playback enabled: {_recordings_dir}")
-        print("   Using recorded LLM responses (test mode)")
-    else:
-        # Generation mode: Use real LLM
+    # Create real OpenAI client if needed (for normal or recording mode)
+    real_client = None
+    if not playback_mode:
         endpoint = os.environ.get("FOUNDRY_ENDPOINT")
         api_key = os.environ.get("FOUNDRY_API_KEY")
 
@@ -128,16 +122,21 @@ def _init_llm():
         _model = os.environ.get("FOUNDRY_MODEL_DEPLOYMENT", "gpt-4")
 
         # Create OpenAI client for Foundry
-        _openai_client = AsyncOpenAI(
+        real_client = AsyncOpenAI(
             api_key=api_key,
             base_url=f"{endpoint}/openai/v1/"
         )
+    else:
+        _model = "gpt-5-nano"
 
-        # Check if LLM recording is enabled
-        record_llm = os.environ.get("RECORD_LLM", "").lower() == "true"
-        if record_llm:
-            _recordings_dir.mkdir(parents=True, exist_ok=True)
-            print(f"📹 LLM Recording enabled: {_recordings_dir}")
+    # Create TestingChatClient wrapper
+    _testing_client = TestingChatClient(
+        real_client=real_client,
+        recordings_dir=str(recordings_dir),
+        model_id=_model,
+        record_mode=record_mode,
+        playback_mode=playback_mode
+    )
 
 # Initialize on module load
 _init_llm()
@@ -176,7 +175,7 @@ async def on_message(context: TurnContext, _state: TurnState):
     conversation_id = context.activity.conversation.id
 
     # If LLM is not configured, just echo
-    if not _openai_client and not _use_recordings:
+    if not _testing_client:
         await context.send_activity(f"Echo: {user_message}\n\n(Note: LLM not configured. Set FOUNDRY_ENDPOINT and FOUNDRY_API_KEY to enable LLM features.)")
         return
 
@@ -203,14 +202,14 @@ async def on_message(context: TurnContext, _state: TurnState):
         {
             "type": "function",
             "function": {
-                "name": "GetWeatherAsync",
-                "description": "Get the weather for a given location.",
+                "name": "get_weather",
+                "description": "Get the weather for a given location",
                 "parameters": {
                     "type": "object",
                     "properties": {
                         "location": {
                             "type": "string",
-                            "description": "The location to get the weather for."
+                            "description": "The location to get the weather for"
                         }
                     },
                     "required": ["location"]
@@ -220,8 +219,8 @@ async def on_message(context: TurnContext, _state: TurnState):
         {
             "type": "function",
             "function": {
-                "name": "GetCurrentTime",
-                "description": "Get the current UTC time.",
+                "name": "get_current_time",
+                "description": "Get the current UTC time",
                 "parameters": {
                     "type": "object",
                     "properties": {}
@@ -239,28 +238,11 @@ async def on_message(context: TurnContext, _state: TurnState):
         iteration += 1
 
         try:
-            # Get completion from LLM (either real or replayed)
-            if _use_recordings and _recordings_dir:
-                # Test mode: Replay recorded response
-                completion = await _replay_llm_response(_conversation_history[conversation_id], tools)
-            elif _openai_client:
-                # Generation mode: Use real LLM
-                completion = await _openai_client.chat.completions.create(
-                    model=_model,
-                    messages=_conversation_history[conversation_id],
-                    tools=tools
-                )
-
-                # Record LLM interaction if recorder is enabled
-                record_llm = os.environ.get("RECORD_LLM", "").lower() == "true"
-                if record_llm and _recordings_dir:
-                    await _record_llm_interaction(
-                        _conversation_history[conversation_id],
-                        tools,
-                        completion
-                    )
-            else:
-                raise ValueError("Neither OpenAI client nor recordings available")
+            # Get completion from LLM (transparently handles recording/playback)
+            completion = await _testing_client.create_completion(
+                messages=_conversation_history[conversation_id],
+                tools=tools
+            )
 
             # Check if the model wants to call functions
             if completion.choices[0].finish_reason == "tool_calls":
@@ -287,10 +269,10 @@ async def on_message(context: TurnContext, _state: TurnState):
                     function_name = tool_call.function.name
                     function_args = json.loads(tool_call.function.arguments)
 
-                    if function_name == "GetWeatherAsync":
+                    if function_name == "get_weather":
                         location = function_args.get("location", "unknown")
                         function_result = await get_weather_async(location)
-                    elif function_name == "GetCurrentTime":
+                    elif function_name == "get_current_time":
                         function_result = get_current_time()
                     else:
                         function_result = "Unknown function"
@@ -401,110 +383,6 @@ def get_current_time() -> str:
     return f"🕐 The current UTC time is {now.strftime('%Y-%m-%d %H:%M:%S')}."
 
 
-def _hash_request(model: str, messages: list, tools: list) -> str:
-    """Generate deterministic hash from request parameters (matches .NET implementation)"""
-    import hashlib
-
-    # Normalize messages
-    normalized_messages = []
-    for msg in messages:
-        normalized = {"role": msg["role"]}
-        if "content" in msg and msg["content"]:
-            normalized["content"] = msg["content"]
-        if "tool_calls" in msg:
-            normalized["tool_calls"] = msg["tool_calls"]
-        if "tool_call_id" in msg:
-            normalized["tool_call_id"] = msg["tool_call_id"]
-        normalized_messages.append(normalized)
-
-    # Build request dict
-    request_dict = {
-        "messages": normalized_messages,
-        "model": model,
-        "temperature": 0.0
-    }
-
-    if tools:
-        request_dict["tools"] = tools
-
-    # Serialize to stable JSON (sorted keys)
-    json_str = json.dumps(request_dict, sort_keys=True, separators=(',', ':'))
-
-    # Hash and truncate to match .NET format
-    hash_obj = hashlib.sha256(json_str.encode('utf-8'))
-    return hash_obj.hexdigest()[:16]
-
-
-async def _replay_llm_response(messages: list, tools: list):
-    """Replay recorded LLM response"""
-    global _model, _recordings_dir
-
-    # Generate hash to find recording
-    hash_key = _hash_request(_model, messages, tools)
-
-    # Find response file
-    response_file = _recordings_dir / f"{hash_key}.response.json"
-
-    if not response_file.exists():
-        print(f"⚠️  No recording found for hash: {hash_key}")
-        print(f"   Expected: {response_file}")
-        # Return a default response
-        class MockCompletion:
-            class Choice:
-                class Message:
-                    content = "I can help you with weather and time information!"
-                    tool_calls = None
-                finish_reason = "stop"
-                message = Message()
-            choices = [Choice()]
-        return MockCompletion()
-
-    # Load recording
-    with open(response_file, 'r') as f:
-        recording = json.load(f)
-
-    response_data = recording["response"]
-
-    # Build mock completion object
-    class MockToolCall:
-        def __init__(self, data):
-            self.id = data["id"]
-            self.type = data["type"].lower()
-            self.function = type('obj', (object,), {
-                'name': data["function"]["name"],
-                'arguments': data["function"]["arguments"]
-            })()
-
-    class MockMessage:
-        def __init__(self, data):
-            # Get content
-            if data.get("content") and len(data["content"]) > 0:
-                self.content = data["content"][0].get("text", "")
-            else:
-                self.content = None
-
-            # Get tool calls
-            if data.get("toolCalls") and len(data["toolCalls"]) > 0:
-                self.tool_calls = [MockToolCall(tc) for tc in data["toolCalls"]]
-            else:
-                self.tool_calls = None
-
-    class MockChoice:
-        def __init__(self, data):
-            self.finish_reason = data["finishReason"].lower()
-            self.message = MockMessage(data)
-
-    class MockCompletion:
-        def __init__(self, data):
-            self.choices = [MockChoice(data)]
-
-    return MockCompletion(response_data)
-
-
-async def _record_llm_interaction(messages, tools, completion):
-    """Record LLM interaction for testing"""
-    # Recording is handled by .NET implementation
-    pass
 
 
 @AGENT_APP.error

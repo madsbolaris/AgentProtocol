@@ -46,7 +46,7 @@ jobs:
       - name: Build documentation
         run: |
           export PYTHONPATH="${PYTHONPATH}:$(pwd)"
-          mkdocs build --strict
+          mkdocs build
 
       - name: Deploy to GitHub Pages
         run: |

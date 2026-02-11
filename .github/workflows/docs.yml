@@ -44,9 +44,13 @@ jobs:
             mkdocs-git-revision-date-localized-plugin
 
       - name: Build documentation
-        run: mkdocs build --strict
+        run: |
+          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+          mkdocs build --strict
 
       - name: Deploy to GitHub Pages
-        run: mkdocs gh-deploy --force --clean --verbose
+        run: |
+          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+          mkdocs gh-deploy --force --clean --verbose
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

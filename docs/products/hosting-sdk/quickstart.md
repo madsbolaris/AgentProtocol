@@ -689,7 +689,7 @@ LLM generates tokens → Chunks flow through pipeline → Your middleware proces
 
 ### Your First Middleware
 
-Let's add simple logging to see what's happening. We'll use the **Transform pattern** (async generator with `yield`) because it's simpler to understand:
+Let's build a simple command router that intercepts commands (like `/help`) and handles them without calling the LLM. We'll use **text content middleware** with the **transform pattern** (async generator with `yield`):
 
 === "Python"
 
@@ -699,21 +699,50 @@ Let's add simple logging to see what's happening. We'll use the **Transform patt
     from typing import AsyncIterable
     import os
 
-    # Simple transform pattern - just yield each chunk
-    async def log_text(
+    async def command_router(
         content_stream: AsyncIterable[TextContent],
         thread: IThread
     ) -> AsyncIterable[TextContent]:
+        # Collect first chunk to check for command
+        first_chunk = None
         async for chunk in content_stream:
-            print(f"📝 {chunk.text}")  # For demo - use logging in production (see Best Practices)
-            yield chunk  # Pass to next middleware
+            first_chunk = chunk
+            break
+
+        if not first_chunk:
+            return  # Empty stream
+
+        # Check if message starts with '/'
+        if first_chunk.text.strip().startswith('/'):
+            # Consume rest of stream to get full command
+            full_text = first_chunk.text
+            async for chunk in content_stream:
+                full_text += chunk.text
+
+            command = full_text.strip()
+
+            # Handle commands
+            if command == "/help":
+                yield TextContent(text="Available commands:\n/help - Show this help\n/time - Show current time")
+            elif command == "/time":
+                from datetime import datetime
+                yield TextContent(text=f"Current time: {datetime.now().strftime('%H:%M:%S')}")
+            else:
+                yield TextContent(text=f"Unknown command: {command}")
+
+            return  # Don't call LLM
+
+        # Not a command - pass through to LLM
+        yield first_chunk
+        async for chunk in content_stream:
+            yield chunk
 
     config = AgentConfig(
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
         middleware=[
-            (TextContent, log_text)  # Content middleware (tuple)
+            (TextContent, command_router)  # Content middleware (tuple)
         ]
     )
 
@@ -727,16 +756,65 @@ Let's add simple logging to see what's happening. We'll use the **Transform patt
     using Microsoft.Agents.Protocol.Hosting;
     using System.Runtime.CompilerServices;
 
-    // Simple transform pattern - just yield each chunk
-    async IAsyncEnumerable<TextContent> LogText(
+    async IAsyncEnumerable<TextContent> CommandRouter(
         IAsyncEnumerable<TextContent> contentStream,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        // Collect first chunk
+        TextContent? firstChunk = null;
         await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
         {
-            Console.WriteLine($"📝 {chunk.Text}");  // Log as it streams
-            yield return chunk;  // Pass to next middleware
+            firstChunk = chunk;
+            break;
+        }
+
+        if (firstChunk == null)
+            yield break;  // Empty stream
+
+        // Check if message starts with '/'
+        if (firstChunk.Text.Trim().StartsWith('/'))
+        {
+            // Consume rest to get full command
+            var fullText = firstChunk.Text;
+            await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
+            {
+                fullText += chunk.Text;
+            }
+
+            var command = fullText.Trim();
+
+            // Handle commands
+            if (command == "/help")
+            {
+                yield return new TextContent
+                {
+                    Text = "Available commands:\n/help - Show this help\n/time - Show current time"
+                };
+            }
+            else if (command == "/time")
+            {
+                yield return new TextContent
+                {
+                    Text = $"Current time: {DateTime.Now:HH:mm:ss}"
+                };
+            }
+            else
+            {
+                yield return new TextContent
+                {
+                    Text = $"Unknown command: {command}"
+                };
+            }
+
+            yield break;  // Don't call LLM
+        }
+
+        // Not a command - pass through to LLM
+        yield return firstChunk;
+        await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
+        {
+            yield return chunk;
         }
     }
 
@@ -744,11 +822,11 @@ Let's add simple logging to see what's happening. We'll use the **Transform patt
     {
         Model = "gpt-4",
         Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"] 
+        ApiKey = builder.Configuration["OpenAI:ApiKey"]
             ?? throw new InvalidOperationException("OpenAI:ApiKey not configured"),
         Middleware = new object[]
         {
-            (typeof(TextContent), LogText)
+            (typeof(TextContent), CommandRouter)
         }
     };
 
@@ -763,14 +841,54 @@ Let's add simple logging to see what's happening. We'll use the **Transform patt
     import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
     import { TextContent, IThread } from '@microsoft/agents-protocol';
 
-    // Simple transform pattern - just yield each chunk
-    async function* logText(
+    async function* commandRouter(
         contentStream: AsyncIterable<TextContent>,
         thread: IThread
     ): AsyncIterable<TextContent> {
+        // Collect first chunk
+        let firstChunk: TextContent | null = null;
         for await (const chunk of contentStream) {
-            console.log(`📝 ${chunk.text}`);  // Log as it streams
-            yield chunk;  // Pass to next middleware
+            firstChunk = chunk;
+            break;
+        }
+
+        if (!firstChunk) {
+            return;  // Empty stream
+        }
+
+        // Check if message starts with '/'
+        if (firstChunk.text.trim().startsWith('/')) {
+            // Consume rest to get full command
+            let fullText = firstChunk.text;
+            for await (const chunk of contentStream) {
+                fullText += chunk.text;
+            }
+
+            const command = fullText.trim();
+
+            // Handle commands
+            if (command === '/help') {
+                yield new TextContent({
+                    text: 'Available commands:\n/help - Show this help\n/time - Show current time'
+                });
+            } else if (command === '/time') {
+                const now = new Date();
+                yield new TextContent({
+                    text: `Current time: ${now.toLocaleTimeString()}`
+                });
+            } else {
+                yield new TextContent({
+                    text: `Unknown command: ${command}`
+                });
+            }
+
+            return;  // Don't call LLM
+        }
+
+        // Not a command - pass through to LLM
+        yield firstChunk;
+        for await (const chunk of contentStream) {
+            yield chunk;
         }
     }
 
@@ -784,7 +902,7 @@ Let's add simple logging to see what's happening. We'll use the **Transform patt
         instructions: "You are helpful.",
         apiKey,
         middleware: [
-            [TextContent, logText]  // Content middleware (array)
+            [TextContent, commandRouter]  // Content middleware (array)
         ]
     };
 
@@ -793,195 +911,27 @@ Let's add simple logging to see what's happening. We'll use the **Transform patt
 
 **Example Output:**
 
-When a client sends the message "Hello, how are you?", you'll see:
+When a client sends `/help`:
 
 ```
-📨 Received: Hello, how are you?
-✅ Processed message
+Available commands:
+/help - Show this help
+/time - Show current time
 ```
 
-The middleware logs the incoming message before processing, then logs completion after the LLM generates a response.
+When a client sends `/time`:
 
-### Command Routing Middleware
+```
+Current time: 14:32:15
+```
 
-Route specific commands to custom handlers without calling the LLM:
+When a client sends "Hello, how are you?" (not a command), it passes through to the LLM normally.
 
-!!! note "Why Message Middleware?"
-    Command routing uses **message middleware** (not content middleware) because it needs to:
+**Key Points:**
 
-    - Check text content to detect commands
-    - Make flow control decisions (skip LLM vs continue)
-    - Short-circuit the pipeline with early return
-
-    This is cross-content logic that requires message-level control.
-
-=== "Python"
-
-    ```python
-    from microsoft.agents.protocol import UserMessage, AgentMessage, TextContent
-    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
-
-    async def handle_commands(
-        message: IMessage,
-        thread: IThread,
-        next: Callable[[], Awaitable[None]]
-    ) -> None:
-        if not isinstance(message, UserMessage):
-            await next()
-            return
-
-        # Extract text from message contents
-        text_parts = []
-        async for content in message.content:
-            if isinstance(content, TextContent):
-                text_parts.append(await content.wait())
-        text = "".join(c.text for c in text_parts).strip()
-
-        if text == "/help":
-            # Handle directly - don't call next()
-            response = AgentMessage(content=[
-                TextContent(text="Available commands: /help, /status")
-            ])
-            thread.add_message(response)
-            return
-
-        if text == "/status":
-            response = AgentMessage(content=[
-                TextContent(text=f"Thread ID: {thread.id}")
-            ])
-            thread.add_message(response)
-            return
-
-        # Not a command - continue to LLM
-        await next()
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[handle_commands]
-    )
-    agent = AgentHost(config)
-    ```
-
-=== "C#"
-
-    ```csharp
-    using Microsoft.Agents.Protocol;
-    using Microsoft.Agents.Protocol.Hosting;
-    using System.Linq;
-
-    async Task HandleCommands(
-        IMessage message,
-        IThread thread,
-        Func<Task> next,
-        CancellationToken cancellationToken)
-    {
-        if (message is not UserMessage)
-        {
-            await next();
-            return;
-        }
-
-        // Extract text from message contents
-        var textParts = new List<TextContent>();
-        await foreach (var content in message.Content)
-        {
-            if (content is TextContent textContent)
-            {
-                textParts.Add(await textContent.WaitForCompletionAsync());
-            }
-        }
-        var text = string.Join("", textParts.Select(c => c.Text)).Trim();
-
-        if (text == "/help")
-        {
-            var response = new AgentMessage
-            {
-                Content = new[] { new TextContent { Text = "Available commands: /help, /status" } }
-            };
-            thread.AddMessage(response);
-            return;  // Don't call next()
-        }
-
-        if (text == "/status")
-        {
-            var response = new AgentMessage
-            {
-                Content = new[] { new TextContent { Text = $"Thread ID: {thread.Id}" } }
-            };
-            thread.AddMessage(response);
-            return;
-        }
-
-        await next();  // Not a command - continue to LLM
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = [HandleCommands]
-    };
-
-    builder.Services.AddDefaultAgent(agentOptions);
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { UserMessage, AgentMessage, TextContent, IMessage, IThread } from '@microsoft/agents-protocol';
-    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
-
-    async function handleCommands(
-        message: IMessage,
-        thread: IThread,
-        next: () => Promise<void>
-    ): Promise<void> {
-        if (!(message instanceof UserMessage)) {
-            await next();
-            return;
-        }
-
-        // Extract text from message contents
-        const textParts: TextContent[] = [];
-        for await (const content of message.content) {
-            if (content instanceof TextContent) {
-                textParts.push(await content.value);
-            }
-        }
-        const text = textParts.map(c => c.text).join("").trim();
-
-        if (text === "/help") {
-            const response = new AgentMessage({
-                content: [new TextContent({ text: "Available commands: /help, /status" })]
-            });
-            thread.addMessage(response);
-            return;  // Don't call next()
-        }
-
-        if (text === "/status") {
-            const response = new AgentMessage({
-                content: [new TextContent({ text: `Thread ID: ${thread.id}` })]
-            });
-            thread.addMessage(response);
-            return;
-        }
-
-        await next();  // Not a command - continue to LLM
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [handleCommands]
-    };
-    const agent = new AgentHost(config);
-    ```
-
-**Key insight:** By **not calling `next()`**, you short-circuit the pipeline. The message never reaches the LLM.
+- ✅ **Content middleware can do command routing** - no need for message middleware
+- ✅ **Flow control** - consume the stream and return different content to skip the LLM
+- ✅ **Simple pattern** - uses familiar async generator syntax with `yield`
 
 ### Middleware Execution Order
 

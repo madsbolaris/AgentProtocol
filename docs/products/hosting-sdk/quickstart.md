@@ -898,124 +898,6 @@ Wait for complete content before making routing decisions:
 - Content validation - check complete message before processing
 - Language detection - analyze full text to detect language
 
-#### Message Middleware
-
-Process complete messages with simple yield pattern:
-
-=== "Python"
-
-    ```python
-    from microsoft.agents.protocol import IMessage, IThread
-    from typing import AsyncIterable
-    import logging
-
-    async def log_message(
-        message: IMessage,
-        thread: IThread
-    ) -> AsyncIterable[IMessage]:
-        # Message is already complete - no need to wait
-        logging.info(f"Message from {message.role}: {message.id}")
-        yield message
-
-    async def validate_message(
-        message: IMessage,
-        thread: IThread
-    ) -> AsyncIterable[IMessage]:
-        # Filter out messages without content
-        if message.content:
-            yield message
-        else:
-            logging.warning(f"Skipped empty message: {message.id}")
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[log_message, validate_message]
-    )
-    ```
-
-=== "C#"
-
-    ```csharp
-    using Microsoft.Extensions.Logging;
-    using System.Runtime.CompilerServices;
-
-    async IAsyncEnumerable<IMessage> LogMessage(
-        IMessage message,
-        IThread thread,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        // Message is already complete - no need to wait
-        _logger.LogInformation("Message from {Role}: {MessageId}", message.Role, message.Id);
-        yield return message;
-    }
-
-    async IAsyncEnumerable<IMessage> ValidateMessage(
-        IMessage message,
-        IThread thread,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        // Filter out messages without content
-        if (message.Content.Any())
-        {
-            yield return message;
-        }
-        else
-        {
-            _logger.LogWarning("Skipped empty message: {MessageId}", message.Id);
-        }
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[] { LogMessage, ValidateMessage }
-    };
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { IMessage, IThread } from '@microsoft/agents-protocol';
-    import { logger } from './logger';
-
-    async function* logMessage(
-        message: IMessage,
-        thread: IThread
-    ): AsyncIterable<IMessage> {
-        // Message is already complete - no need to wait
-        logger.info(`Message from ${message.role}: ${message.id}`);
-        yield message;
-    }
-
-    async function* validateMessage(
-        message: IMessage,
-        thread: IThread
-    ): AsyncIterable<IMessage> {
-        // Filter out messages without content
-        if (message.content && message.content.length > 0) {
-            yield message;
-        } else {
-            logger.warn(`Skipped empty message: ${message.id}`);
-        }
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [logMessage, validateMessage]
-    };
-    ```
-
-**When to use:**
-- Logging - record message metadata
-- Filtering - skip messages that don't meet criteria
-- Validation - check message structure before processing
-
 ### Streaming Processing
 
 Process content chunk-by-chunk as it streams in real-time. This is the most common pattern for transforming or observing streaming data.
@@ -1183,213 +1065,6 @@ Transform each chunk as it flows through:
 - Framework automatically chains these generators together
 - Each middleware receives the stream from the previous one
 - Simple and clean - no inner functions needed
-
-#### Message Middleware
-
-Process messages as they arrive:
-
-=== "Python"
-
-    ```python
-    from typing import AsyncIterable
-    import logging
-
-    # Example 1: Log messages for debugging/analytics
-    async def log_for_debugging(
-        message: IMessage,
-        thread: IThread
-    ) -> AsyncIterable[IMessage]:
-        logging.info(
-            f"thread={thread.id} role={message.role} "
-            f"user={thread.metadata.get('user_id')} msg_id={message.id}"
-        )
-        yield message
-
-    # Example 2: Content moderation - block inappropriate content
-    async def content_moderation(
-        message: IMessage,
-        thread: IThread
-    ) -> AsyncIterable[IMessage]:
-        if message.role == "user":
-            if await moderation_api.is_safe(message):
-                yield message
-            else:
-                logging.warning(f"Blocked unsafe message: {message.id}")
-        else:
-            yield message
-
-    # Example 3: Rate limiting per user
-    async def rate_limit(
-        message: IMessage,
-        thread: IThread
-    ) -> AsyncIterable[IMessage]:
-        if message.role == "user":
-            user_id = thread.metadata.get("user_id")
-            if await rate_limiter.check_limit(user_id):
-                yield message
-            else:
-                logging.warning(f"Rate limit exceeded: {user_id}")
-        else:
-            yield message
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[
-            log_for_debugging,
-            rate_limit,
-            content_moderation,
-        ]
-    )
-    ```
-
-=== "C#"
-
-    ```csharp
-    using System.Runtime.CompilerServices;
-    using Microsoft.Extensions.Logging;
-
-    // Example 1: Log messages for debugging/analytics
-    async IAsyncEnumerable<IMessage> LogForDebugging(
-        IMessage message,
-        IThread thread,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation(
-            "thread={ThreadId} role={Role} user={UserId} msg_id={MessageId}",
-            thread.Id, message.Role, thread.Metadata["user_id"], message.Id
-        );
-        yield return message;
-    }
-
-    // Example 2: Content moderation
-    async IAsyncEnumerable<IMessage> ContentModeration(
-        IMessage message,
-        IThread thread,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        if (message.Role == "user")
-        {
-            if (await _moderationApi.IsSafe(message))
-                yield return message;
-            else
-                _logger.LogWarning("Blocked unsafe message: {MessageId}", message.Id);
-        }
-        else
-        {
-            yield return message;
-        }
-    }
-
-    // Example 3: Rate limiting
-    async IAsyncEnumerable<IMessage> RateLimit(
-        IMessage message,
-        IThread thread,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        if (message.Role == "user")
-        {
-            var userId = thread.Metadata["user_id"];
-            if (await _rateLimiter.CheckLimit(userId))
-                yield return message;
-            else
-                _logger.LogWarning("Rate limit exceeded: {UserId}", userId);
-        }
-        else
-        {
-            yield return message;
-        }
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
-        {
-            LogForDebugging,
-            RateLimit,
-            ContentModeration
-        }
-    };
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { logger } from './logger';
-
-    // Example 1: Log messages for debugging/analytics
-    async function* logForDebugging(
-        message: IMessage,
-        thread: IThread
-    ): AsyncIterable<IMessage> {
-        logger.info({
-            thread: thread.id,
-            role: message.role,
-            user: thread.metadata.user_id,
-            msg_id: message.id
-        });
-        yield message;
-    }
-
-    // Example 2: Content moderation
-    async function* contentModeration(
-        message: IMessage,
-        thread: IThread
-    ): AsyncIterable<IMessage> {
-        if (message.role === "user") {
-            if (await moderationApi.isSafe(message)) {
-                yield message;
-            } else {
-                logger.warn(`Blocked unsafe message: ${message.id}`);
-            }
-        } else {
-            yield message;
-        }
-    }
-
-    // Example 3: Rate limiting
-    async function* rateLimit(
-        message: IMessage,
-        thread: IThread
-    ): AsyncIterable<IMessage> {
-        if (message.role === "user") {
-            const userId = thread.metadata.user_id;
-            if (await rateLimiter.checkLimit(userId)) {
-                yield message;
-            } else {
-                logger.warn(`Rate limit exceeded: ${userId}`);
-            }
-        } else {
-            yield message;
-        }
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [
-            logForDebugging,
-            rateLimit,
-            contentModeration,
-        ]
-    };
-    ```
-
-**When to use:**
-- Logging - record message metadata
-- Moderation - filter inappropriate content
-- Rate limiting - control request frequency
-
-**How it works:**
-- Middleware is an async generator that yields items
-- **Yield messages**: Pass whole messages to next middleware
-- **Yield content**: Framework unwraps and passes content items
-- **Filter**: Don't yield to skip the message
 
 ### Wrap Pattern: Before and After
 
@@ -1618,9 +1293,403 @@ Wrap stream processing with before/after logic:
 - Code after `await next()` runs after the stream completes
 - Can transform the stream by creating a new generator and passing it to `next()`
 
-#### Message Middleware
+**Understanding execution order:**
 
-Wrap message processing with before/after logic:
+Middleware execute in the order you register them, forming a chain where each can run code before and after the next:
+
+=== "Python"
+
+    ```python
+    async def log_middleware(message, thread, next):
+        print("1. Before log")
+        await next()
+        print("4. After log")
+
+    async def command_middleware(message, thread, next):
+        print("2. Before command")
+        await next()
+        print("3. After command")
+
+    config = AgentConfig(
+        model="gpt-4",
+        instructions="You are helpful.",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        middleware=[log_middleware, command_middleware]  # Execute in order
+    )
+
+    # When a message arrives:
+    # 1. Before log
+    # 2. Before command
+    # [LLM processes]
+    # 3. After command
+    # 4. After log
+    ```
+
+=== "C#"
+
+    ```csharp
+    async Task LogMiddleware(IMessage msg, IThread thread, Func<Task> next, CancellationToken ct)
+    {
+        Console.WriteLine("1. Before log");
+        await next();
+        Console.WriteLine("4. After log");
+    }
+
+    async Task CommandMiddleware(IMessage msg, IThread thread, Func<Task> next, CancellationToken ct)
+    {
+        Console.WriteLine("2. Before command");
+        await next();
+        Console.WriteLine("3. After command");
+    }
+
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Middleware = new object[]
+        {
+            (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)LogMiddleware,
+            (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)CommandMiddleware
+        }
+    };
+
+    // When a message arrives:
+    // 1. Before log
+    // 2. Before command
+    // [LLM processes]
+    // 3. After command
+    // 4. After log
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    async function logMiddleware(message: IMessage, thread: IThread, next: () => Promise<void>) {
+        console.log("1. Before log");
+        await next();
+        console.log("4. After log");
+    }
+
+    async function commandMiddleware(message: IMessage, thread: IThread, next: () => Promise<void>) {
+        console.log("2. Before command");
+        await next();
+        console.log("3. After command");
+    }
+
+    const config: AgentConfig = {
+        model: "gpt-4",
+        instructions: "You are helpful.",
+        apiKey: process.env.OPENAI_API_KEY!,
+        middleware: [logMiddleware, commandMiddleware]  // Execute in order
+    };
+
+    // When a message arrives:
+    // 1. Before log
+    // 2. Before command
+    // [LLM processes]
+    # 3. After command
+    // 4. After log
+    ```
+
+**Visual:**
+
+```
+┌─────────────────┐
+│  User Message   │
+└────────┬────────┘
+         │
+    [Middleware 1] ← Before
+         │
+    [Middleware 2] ← Before
+         │
+       [LLM]
+         │
+    [Middleware 2] ← After
+         │
+    [Middleware 1] ← After
+         │
+┌────────▼────────┐
+│    Response     │
+└─────────────────┘
+```
+
+### Message Middleware (Advanced)
+
+Message middleware runs once per message and works at a higher level than content middleware. Use it for cross-cutting concerns like logging, authentication, and rate limiting.
+
+You can use all three patterns with message middleware:
+
+**Buffered pattern** - Process complete messages:
+
+=== "Python"
+
+    ```python
+    from microsoft.agents.protocol import IMessage, IThread
+    from typing import AsyncIterable
+    import logging
+
+    async def log_message(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        logging.info(f"Message from {message.role}: {message.id}")
+        yield message
+
+    async def validate_message(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        if message.content:
+            yield message
+        else:
+            logging.warning(f"Skipped empty message: {message.id}")
+
+    config = AgentConfig(
+        model="gpt-4",
+        instructions="You are helpful.",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        middleware=[log_message, validate_message]
+    )
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Extensions.Logging;
+    using System.Runtime.CompilerServices;
+
+    async IAsyncEnumerable<IMessage> LogMessage(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Message from {Role}: {MessageId}", message.Role, message.Id);
+        yield return message;
+    }
+
+    async IAsyncEnumerable<IMessage> ValidateMessage(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        if (message.Content.Any())
+            yield return message;
+        else
+            _logger.LogWarning("Skipped empty message: {MessageId}", message.Id);
+    }
+
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Middleware = new object[] { LogMessage, ValidateMessage }
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { IMessage, IThread } from '@microsoft/agents-protocol';
+    import { logger } from './logger';
+
+    async function* logMessage(
+        message: IMessage,
+        thread: IThread
+    ): AsyncIterable<IMessage> {
+        logger.info(`Message from ${message.role}: ${message.id}`);
+        yield message;
+    }
+
+    async function* validateMessage(
+        message: IMessage,
+        thread: IThread
+    ): AsyncIterable<IMessage> {
+        if (message.content && message.content.length > 0) {
+            yield message;
+        } else {
+            logger.warn(`Skipped empty message: ${message.id}`);
+        }
+    }
+
+    const config: AgentConfig = {
+        model: "gpt-4",
+        instructions: "You are helpful.",
+        apiKey: process.env.OPENAI_API_KEY!,
+        middleware: [logMessage, validateMessage]
+    };
+    ```
+
+**Streaming pattern** - Process messages as they arrive:
+
+=== "Python"
+
+    ```python
+    from typing import AsyncIterable
+    import logging
+
+    async def log_for_debugging(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        logging.info(
+            f"thread={thread.id} role={message.role} "
+            f"user={thread.metadata.get('user_id')} msg_id={message.id}"
+        )
+        yield message
+
+    async def content_moderation(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        if message.role == "user":
+            if await moderation_api.is_safe(message):
+                yield message
+            else:
+                logging.warning(f"Blocked unsafe message: {message.id}")
+        else:
+            yield message
+
+    async def rate_limit(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        if message.role == "user":
+            user_id = thread.metadata.get("user_id")
+            if await rate_limiter.check_limit(user_id):
+                yield message
+            else:
+                logging.warning(f"Rate limit exceeded: {user_id}")
+        else:
+            yield message
+
+    config = AgentConfig(
+        model="gpt-4",
+        instructions="You are helpful.",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        middleware=[log_for_debugging, rate_limit, content_moderation]
+    )
+    ```
+
+=== "C#"
+
+    ```csharp
+    using System.Runtime.CompilerServices;
+    using Microsoft.Extensions.Logging;
+
+    async IAsyncEnumerable<IMessage> LogForDebugging(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation(
+            "thread={ThreadId} role={Role} user={UserId} msg_id={MessageId}",
+            thread.Id, message.Role, thread.Metadata["user_id"], message.Id
+        );
+        yield return message;
+    }
+
+    async IAsyncEnumerable<IMessage> ContentModeration(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        if (message.Role == "user")
+        {
+            if (await _moderationApi.IsSafe(message))
+                yield return message;
+            else
+                _logger.LogWarning("Blocked unsafe message: {MessageId}", message.Id);
+        }
+        else
+            yield return message;
+    }
+
+    async IAsyncEnumerable<IMessage> RateLimit(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        if (message.Role == "user")
+        {
+            var userId = thread.Metadata["user_id"];
+            if (await _rateLimiter.CheckLimit(userId))
+                yield return message;
+            else
+                _logger.LogWarning("Rate limit exceeded: {UserId}", userId);
+        }
+        else
+            yield return message;
+    }
+
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Middleware = new object[] { LogForDebugging, RateLimit, ContentModeration }
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { logger } from './logger';
+
+    async function* logForDebugging(
+        message: IMessage,
+        thread: IThread
+    ): AsyncIterable<IMessage> {
+        logger.info({
+            thread: thread.id,
+            role: message.role,
+            user: thread.metadata.user_id,
+            msg_id: message.id
+        });
+        yield message;
+    }
+
+    async function* contentModeration(
+        message: IMessage,
+        thread: IThread
+    ): AsyncIterable<IMessage> {
+        if (message.role === "user") {
+            if (await moderationApi.isSafe(message)) {
+                yield message;
+            } else {
+                logger.warn(`Blocked unsafe message: ${message.id}`);
+            }
+        } else {
+            yield message;
+        }
+    }
+
+    async function* rateLimit(
+        message: IMessage,
+        thread: IThread
+    ): AsyncIterable<IMessage> {
+        if (message.role === "user") {
+            const userId = thread.metadata.user_id;
+            if (await rateLimiter.checkLimit(userId)) {
+                yield message;
+            } else {
+                logger.warn(`Rate limit exceeded: ${userId}`);
+            }
+        } else {
+            yield message;
+        }
+    }
+
+    const config: AgentConfig = {
+        model: "gpt-4",
+        instructions: "You are helpful.",
+        apiKey: process.env.OPENAI_API_KEY!,
+        middleware: [logForDebugging, rateLimit, contentModeration]
+    };
+    ```
+
+**Wrap pattern** - Add before/after logic:
 
 === "Python"
 
@@ -1705,16 +1774,20 @@ Wrap message processing with before/after logic:
     };
     ```
 
-**When to use:**
-- Timing - measure processing duration
-- Logging - before/after processing events
-- Resource cleanup - acquire resources before, release after
+**When to use message middleware:**
 
-**How it works:**
-- Middleware receives a `next` callback
-- Call `await next()` to invoke the rest of the middleware chain
-- Code before `await next()` runs before processing
-- Code after `await next()` runs after processing completes
+- Cross-cutting concerns - logging, monitoring, analytics
+- Authentication/authorization - verify user permissions
+- Rate limiting - control request frequency per user
+- Content moderation - filter inappropriate content
+- Message routing - direct messages to different handlers
+
+**Key differences from content middleware:**
+
+- Runs once per message (not per chunk)
+- Has access to full message metadata
+- Can work with all content types in the message
+- Higher level of abstraction
 
 ### Error Handling
 
@@ -1813,127 +1886,6 @@ Use the wrap pattern with try/catch to handle errors gracefully in your middlewa
 - Log errors for debugging and monitoring
 - Provide user-friendly error messages
 - Consider different error types and handle them appropriately
-
-### Middleware Execution Order
-
-Middleware execute in the order you register them. With the wrap pattern, you can see how they form a chain:
-
-=== "Python"
-
-    ```python
-    async def log_middleware(message, thread, next):
-        print("1. Before log")
-        await next()
-        print("4. After log")
-
-    async def command_middleware(message, thread, next):
-        print("2. Before command")
-        await next()
-        print("3. After command")
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[log_middleware, command_middleware]  # Execute in order
-    )
-
-    # When a message arrives:
-    # 1. Before log
-    # 2. Before command
-    # [LLM processes]
-    # 3. After command
-    # 4. After log
-    ```
-
-=== "C#"
-
-    ```csharp
-    async Task LogMiddleware(IMessage msg, IThread thread, Func<Task> next, CancellationToken ct)
-    {
-        Console.WriteLine("1. Before log");
-        await next();
-        Console.WriteLine("4. After log");
-    }
-
-    async Task CommandMiddleware(IMessage msg, IThread thread, Func<Task> next, CancellationToken ct)
-    {
-        Console.WriteLine("2. Before command");
-        await next();
-        Console.WriteLine("3. After command");
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
-        {
-            (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)LogMiddleware,
-            (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)CommandMiddleware
-        }
-    };
-
-    // When a message arrives:
-    // 1. Before log
-    // 2. Before command
-    // [LLM processes]
-    // 3. After command
-    // 4. After log
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    async function logMiddleware(message: IMessage, thread: IThread, next: () => Promise<void>) {
-        console.log("1. Before log");
-        await next();
-        console.log("4. After log");
-    }
-
-    async function commandMiddleware(message: IMessage, thread: IThread, next: () => Promise<void>) {
-        console.log("2. Before command");
-        await next();
-        console.log("3. After command");
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [logMiddleware, commandMiddleware]  // Execute in order
-    };
-
-    // When a message arrives:
-    // 1. Before log
-    // 2. Before command
-    // [LLM processes]
-    // 3. After command
-    // 4. After log
-    ```
-
-**Visual:**
-
-```
-┌─────────────────┐
-│  User Message   │
-└────────┬────────┘
-         │
-    [Middleware 1] ← Before
-         │
-    [Middleware 2] ← Before
-         │
-       [LLM]
-         │
-    [Middleware 2] ← After
-         │
-    [Middleware 1] ← After
-         │
-┌────────▼────────┐
-│    Response     │
-└─────────────────┘
-```
 
 ## Step 5: Content Types
 

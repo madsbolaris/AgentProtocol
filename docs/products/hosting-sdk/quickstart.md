@@ -43,6 +43,83 @@ Build production-ready AI agents that handle conversations, call tools, and scal
     OPENAI_API_KEY=sk-...
     ```
 
+
+**TypeScript Best Practices for Production:**
+
+The TypeScript examples are simplified. In production, follow these practices:
+
+```typescript
+// ✅ Type-safe error handling
+try {
+    // ... operation
+} catch (error) {
+    // error is 'unknown' by default - check type before accessing properties
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Error: ${message}`);
+}
+
+// Or create a helper:
+function getErrorMessage(error: unknown): string {
+    if (error instanceof Error) return error.message;
+    return String(error);
+}
+
+// ✅ Use async file operations, not sync
+import { readdir } from 'fs/promises';  // Not fs.readdirSync
+
+async function listFiles(path: string): Promise<string[]> {
+    const files = await readdir(path);  // Non-blocking
+    return files;
+}
+
+// ✅ Proper type annotations for async generators
+async function* myMiddleware(
+    contentStream: AsyncIterable<TextContent>,
+    thread: IThread
+): AsyncIterable<TextContent> {  // Explicit return type
+    for await (const chunk of contentStream) {
+        yield chunk;
+    }
+}
+
+// ✅ Use AbortSignal for cancellation
+async function fetchWithCancellation(
+    url: string,
+    signal?: AbortSignal
+): Promise<Response> {
+    return fetch(url, {
+        signal,  // Allows cancellation
+        timeout: 10000
+    });
+}
+
+// ✅ Validate environment variables
+const apiKey = process.env.OPENAI_API_KEY;
+if (!apiKey) {
+    throw new Error("OPENAI_API_KEY environment variable is required");
+}
+
+// ✅ Create immutable transformations (don't mutate inputs)
+async function* uppercaseContent(
+    contentStream: AsyncIterable<TextContent>,
+    thread: IThread
+): AsyncIterable<TextContent> {
+    for await (const chunk of contentStream) {
+        // Create new object instead of mutating
+        yield { ...chunk, text: chunk.text.toUpperCase() };
+    }
+}
+```
+
+**Key patterns:**
+- **Error handling**: Always check `error instanceof Error` before accessing `.message`
+- **Async I/O**: Use `fs/promises`, not sync methods that block the event loop
+- **Type safety**: Add explicit return types to async generators
+- **Cancellation**: Use `AbortSignal` for long-running operations
+- **Immutability**: Create new objects instead of mutating stream chunks
+
+
+
 ### Installation
 
 === "Python"
@@ -91,6 +168,77 @@ Create your first agent in under 2 minutes.
     if __name__ == "__main__":
         agent.run()  # Starts server on http://localhost:5000
     ```
+
+**Python Best Practices for Production:**
+
+The examples above use `print()` for simplicity. In production, follow these practices:
+
+```python
+# ✅ Complete imports with proper PEP 8 ordering
+# Standard library
+import asyncio
+import logging
+import os
+from datetime import datetime, timezone
+from typing import AsyncIterable, Callable, Awaitable
+
+# Third-party
+import httpx  # pip install httpx
+
+# SDK imports
+from microsoft.agents import AgentConfig
+from microsoft.agents.protocol import IMessage, IThread, TextContent
+from microsoft.agents.protocol.hosting import AgentHost
+
+# ✅ Use logging module instead of print()
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# ✅ Use structured logging in middleware
+async def log_for_production(
+    message: IMessage,
+    thread: IThread
+) -> AsyncIterable[IMessage]:
+    logger.info(
+        "Processing message",
+        extra={
+            "thread_id": thread.id,
+            "role": message.role,
+            "user_id": thread.metadata.get("user_id")
+        }
+    )
+    yield message
+
+# ✅ Use async HTTP client (not sync requests library)
+http_client = httpx.AsyncClient(timeout=10.0)  # Reuse client
+
+async def fetch_data_async(url: str) -> dict:
+    async with http_client as client:
+        response = await client.get(url)
+        response.raise_for_status()
+        return response.json()
+
+# ✅ Tool functions can be sync or async
+def get_weather_sync(location: str) -> str:
+    """Sync tools for simple operations"""
+    return f"Weather in {location}: sunny"
+
+async def get_weather_async(location: str) -> str:
+    """Async tools for I/O operations"""
+    async with httpx.AsyncClient() as client:
+        # Call real weather API
+        response = await client.get(f"https://api.weather.com?q={location}")
+        return response.json()["description"]
+```
+
+**When to use sync vs async tools:**
+- **Sync tools**: Simple calculations, string operations, no I/O
+- **Async tools**: HTTP requests, database queries, file I/O
+
+
 
 === "C#"
 
@@ -262,6 +410,67 @@ Agents become powerful when they can call functions to get real-time data or tak
         .AddDefaultAgent(agentOptions);
     ```
 
+**C# Best Practices for Production:**
+
+The C# examples are simplified for clarity. In production, follow these practices:
+
+```csharp
+// ✅ Use IHttpClientFactory instead of new HttpClient()
+// In Program.cs or Startup.cs:
+builder.Services.AddHttpClient("WeatherClient", client =>
+{
+    client.BaseAddress = new Uri("https://api.weather.com");
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
+
+// In your function:
+async Task<string> GetWeatherAsync(
+    string location,
+    IHttpClientFactory httpClientFactory)
+{
+    var client = httpClientFactory.CreateClient("WeatherClient");
+    var url = $"/v1/current?location={Uri.EscapeDataString(location)}";
+    var response = await client.GetStringAsync(url);
+    return $"Weather in {location}: {response}";
+}
+
+// ✅ Always use [EnumeratorCancellation] with IAsyncEnumerable
+using System.Runtime.CompilerServices;
+
+async IAsyncEnumerable<TextContent> MyMiddleware(
+    IAsyncEnumerable<TextContent> contentStream,
+    IThread thread,
+    [EnumeratorCancellation] CancellationToken cancellationToken = default)
+{
+    await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
+    {
+        yield return chunk;
+    }
+}
+
+// ✅ Use null-safety and configuration validation
+var apiKey = builder.Configuration["OpenAI:ApiKey"]
+    ?? throw new InvalidOperationException("OpenAI:ApiKey not configured");
+
+var agentOptions = new AgentOptions
+{
+    Model = "gpt-4",
+    Instructions = "You are helpful.",
+    ApiKey = apiKey  // Already validated
+};
+
+// ✅ Use ConfigureAwait(false) in library code
+await next().ConfigureAwait(false);
+```
+
+**Key patterns:**
+- **HttpClient**: Use `IHttpClientFactory`, never `new HttpClient()` in loops
+- **Cancellation**: Always add `[EnumeratorCancellation]` to async enumerables
+- **Null-safety**: Validate configuration values with `??` or `?? throw`
+- **ConfigureAwait**: Use `.ConfigureAwait(false)` to avoid capturing sync context
+
+
+
 === "TypeScript"
 
     ```typescript
@@ -335,9 +544,11 @@ Tools should handle errors gracefully and return error messages that the LLM can
             {
                 try
                 {
+                    // ⚠️ Production: Use IHttpClientFactory, not 'new HttpClient()'
+                    // This example simplified for clarity
                     using var client = new HttpClient();
-                    var response = await client.GetStringAsync(
-                        $"https://api.weather.com/v1/current?location={location}");
+                    var url = $"https://api.weather.com/v1/current?location={Uri.EscapeDataString(location)}";
+                    var response = await client.GetStringAsync(url);
                     return $"Weather in {location}: {response}";
                 }
                 catch (HttpRequestException ex)
@@ -365,7 +576,8 @@ Tools should handle errors gracefully and return error messages that the LLM can
             const data = await response.json();
             return `Weather in ${location}: ${data.temp}°F`;
         } catch (error) {
-            return `Sorry, couldn't fetch weather: ${error.message}`;
+            const errorMsg = error instanceof Error ? error.message : String(error);
+            return `Sorry, couldn't fetch weather: ${errorMsg}`;
         }
     }
     ```
@@ -593,20 +805,125 @@ Clients provide function implementations when sending messages:
 Middleware lets you intercept and modify messages **before and after** they're processed. Think of it as a pipeline where you control each stage.
 
 This is **the most powerful feature** of the SDK. You can:
-- Log all messages
+- Log all messages for debugging
 - Route messages to different handlers
-- Validate/sanitize inputs
-- Add authentication
-- Transform LLM outputs
-- Implement custom logic
+- Validate/sanitize inputs for safety
+- Add authentication and authorization
+- Transform LLM outputs (e.g., uppercase, remove PII)
+- Implement rate limiting and abuse prevention
 
-### What is Middleware?
+### What is Middleware? (Simple Analogy)
 
-Middleware is a function that:
-1. **Receives** a message and the current thread
+**Think of middleware like airport security checkpoints:**
+
+When you travel, your luggage goes through multiple checkpoints:
+1. Check-in counter (validates your ticket)
+2. Security screening (scans for prohibited items)
+3. Customs (inspects contents)
+4. Baggage claim (delivers to you)
+
+Each checkpoint:
+- **Receives** your luggage from the previous step
+- **Inspects or modifies** it (opens, scans, tags)
+- **Passes it along** to the next checkpoint (or stops if there's a problem)
+
+**Middleware works the same way with messages:**
+
+```text
+User Message
+    ↓
+[Middleware 1: Authentication] ← Verify user
+    ↓
+[Middleware 2: Rate Limiting]  ← Check usage limits
+    ↓
+[Middleware 3: Logging]        ← Record for debugging
+    ↓
+Agent processes message
+    ↓
+[Middleware 3: Logging]        ← Record response
+    ↓
+[Middleware 2: Rate Limiting]  ← Update counters
+    ↓
+[Middleware 1: Authentication] ← Done
+    ↓
+Response to User
+```
+
+Notice middleware runs **twice**: once on the way in, once on the way out (the "onion model").
+
+### Middleware Function Structure
+
+A middleware function:
+1. **Receives** a message and the current thread context
 2. **Optionally processes** the message (logs, validates, modifies)
-3. **Calls `next()`** to continue processing (or doesn't, to stop)
+3. **Calls `next()`** to continue to the next middleware (or doesn't call it to stop)
 4. **Optionally processes again** after `next()` returns (post-processing)
+
+**Familiar Pattern:** If you've used Express.js, Koa, or ASP.NET Core, this `next()` callback pattern will look familiar.
+
+### Framework Comparison
+
+If you've used other middleware frameworks, here's how the concepts map:
+
+| Express.js | Koa | ASP.NET Core | Hosting SDK (Wrap Pattern) |
+| ---------- | --- | ------------ | --------------------------- |
+| `app.use(fn)` | `app.use(fn)` | `app.Use(middleware)` | `middleware=[fn]` |
+| `(req, res, next) => {}` | `(ctx, next) => {}` | `(context, next) => {}` | `(message, thread, next) => {}` |
+| `next()` | `await next()` | `await next()` | `await next()` |
+| Onion model | Onion model | Onion model | Onion model (before/after) |
+| N/A | N/A | N/A | **Transform pattern** (async generators) |
+
+**Key similarities:**
+- ✅ `next()` callback pattern works the same way (Wrap pattern)
+- ✅ Middleware runs in array order
+- ✅ Not calling `next()` short-circuits the pipeline
+- ✅ Code before `await next()` runs before processing
+- ✅ Code after `await next()` runs after processing
+
+**Unique to Hosting SDK:**
+- ✨ **Transform pattern** (async generators with `yield`) - novel for streaming AI workloads
+- ✨ **Two middleware types**: Message middleware (once per message) and Content middleware (per streaming chunk)
+- ✨ **Granularity control**: Yield messages, content, or chunks - framework handles it
+
+**Best practices from Express/Koa apply here:**
+- Order matters: authentication → rate limiting → logging → business logic
+- Early middleware should be fast (authentication, validation)
+- Error handling middleware typically goes first (to catch all errors)
+- Logging middleware can go early (to log all requests) or late (to log results)
+
+
+
+### Understanding Streaming (Important!)
+
+**Before we write middleware, you need to understand how agent responses work.**
+
+The Agent Protocol uses **streaming by default**. When you call the LLM, it doesn't return a single response—it returns **chunks** as they're generated.
+
+**Key concepts:**
+
+1. **Streaming is the default**: All LLM responses are streamed, not returned as a single blob
+2. **Content middleware**: Process chunks as they stream (not just whole messages)
+3. **AsyncIterables**: Content comes as async streams you can iterate over with `async for`
+4. **Granularity control**: Yield messages, content, or chunks - framework handles it
+
+**Mental model:**
+
+```text
+LLM generates tokens → Chunks flow through pipeline → Your middleware processes each chunk → Client receives stream
+```
+
+**What this means for middleware:**
+
+- You'll see types like `AsyncIterable[TextContent]` - this is a stream of chunks
+- Use `async for chunk in stream:` to process each chunk
+- Use `yield chunk` to pass it to the next middleware
+- The framework automatically handles the streaming complexity
+
+> **Note on Async Programming**: This SDK uses async/await extensively. If you're new to async programming, key concepts:
+> - `async def` / `async function` - function can pause and resume
+> - `await` - wait for async operation to complete
+> - `AsyncIterable` - stream of items you loop over with `async for`
+> - `yield` - produce one item in a stream
 
 ### Your First Middleware
 
@@ -615,7 +932,7 @@ Let's add simple logging to see what's happening:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol.hosting import AgentHostBuilder
+    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
     from microsoft.agents.protocol import TextContent, IThread
     from typing import Callable, Awaitable, AsyncIterable
     import os
@@ -637,13 +954,16 @@ Let's add simple logging to see what's happening:
         await next(process())  # Continue processing
         print(f"✅ Processed message")
 
-    agent = (
-        AgentHostBuilder()
-            .use_model("gpt-4", "You are helpful.")
-            .use_api_key(os.getenv("OPENAI_API_KEY"))
-            .on_content(TextContent, log_text)
-            .build()
+    config = AgentConfig(
+        model="gpt-4",
+        instructions="You are helpful.",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        middleware=[
+            (TextContent, log_text)  # Content middleware (tuple)
+        ]
     )
+
+    agent = AgentHost(config)
     ```
 
 === "C#"
@@ -673,19 +993,26 @@ Let's add simple logging to see what's happening:
         Console.WriteLine($"✅ Processed message");
     }
 
-    var agent = new AgentHostBuilder()
-        .UseModel("gpt-4", "You are helpful.")
-        .UseApiKey(builder.Configuration["OpenAI:ApiKey"])
-        .OnContent<TextContent>(LogText)
-        .Build();
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Middleware = new object[]
+        {
+            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)LogText)
+        }
+    };
 
-    builder.Services.AddAgentHost(agent);
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { AgentHostBuilder } from '@microsoft/agents-protocol-hosting';
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
     import { TextContent, IThread } from '@microsoft/agents-protocol';
 
     async function logText(
@@ -707,11 +1034,16 @@ Let's add simple logging to see what's happening:
         console.log(`✅ Processed message`);
     }
 
-    const agent = new AgentHostBuilder()
-        .useModel("gpt-4", "You are helpful.")
-        .useApiKey(process.env.OPENAI_API_KEY!)
-        .onContent(TextContent, logText)
-        .build();
+    const config: AgentConfig = {
+        model: "gpt-4",
+        instructions: "You are helpful.",
+        apiKey: process.env.OPENAI_API_KEY!,
+        middleware: [
+            [TextContent, logText]  // Content middleware (array)
+        ]
+    };
+
+    const agent = new AgentHost(config);
     ```
 
 **Example Output:**
@@ -742,7 +1074,7 @@ Route specific commands to custom handlers without calling the LLM:
 
     ```python
     from microsoft.agents.protocol import UserMessage, AgentMessage, TextContent
-    from microsoft.agents.protocol.hosting import AgentHostBuilder
+    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
 
     async def handle_commands(
         message: IMessage,
@@ -778,13 +1110,13 @@ Route specific commands to custom handlers without calling the LLM:
         # Not a command - continue to LLM
         await next()
 
-    agent = (
-        AgentHostBuilder()
-            .use_model("gpt-4", "You are helpful.")
-            .use_api_key(os.getenv("OPENAI_API_KEY"))
-            .on_message(handle_commands)
-            .build()
+    config = AgentConfig(
+        model="gpt-4",
+        instructions="You are helpful.",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        middleware=[handle_commands]
     )
+    agent = AgentHost(config)
     ```
 
 === "C#"
@@ -840,20 +1172,22 @@ Route specific commands to custom handlers without calling the LLM:
         await next();  // Not a command - continue to LLM
     }
 
-    var agent = new AgentHostBuilder()
-        .UseModel("gpt-4", "You are helpful.")
-        .UseApiKey(builder.Configuration["OpenAI:ApiKey"])
-        .OnMessage(HandleCommands)
-        .Build();
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Middleware = [HandleCommands]
+    };
 
-    builder.Services.AddAgentHost(agent);
+    builder.Services.AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
 
     ```typescript
     import { UserMessage, AgentMessage, TextContent, IMessage, IThread } from '@microsoft/agents-protocol';
-    import { AgentHostBuilder } from '@microsoft/agents-protocol-hosting';
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
 
     async function handleCommands(
         message: IMessage,
@@ -893,11 +1227,13 @@ Route specific commands to custom handlers without calling the LLM:
         await next();  // Not a command - continue to LLM
     }
 
-    const agent = new AgentHostBuilder()
-        .useModel("gpt-4", "You are helpful.")
-        .useApiKey(process.env.OPENAI_API_KEY!)
-        .onMessage(handleCommands)
-        .build();
+    const config: AgentConfig = {
+        model: "gpt-4",
+        instructions: "You are helpful.",
+        apiKey: process.env.OPENAI_API_KEY!,
+        middleware: [handleCommands]
+    };
+    const agent = new AgentHost(config);
     ```
 
 **Key insight:** By **not calling `next()`**, you short-circuit the pipeline. The message never reaches the LLM.
@@ -1184,7 +1520,8 @@ Wrap processing in try/catch to handle errors gracefully:
         try {
             await next();
         } catch (error) {
-            console.error(`❌ Error: ${error.message}`);
+            const errorMsg = error instanceof Error ? error.message : String(error);
+            console.error(`❌ Error: ${errorMsg}  `);
             const errorMsg = new AgentMessage({
                 content: [new TextContent({ text: "Sorry, something went wrong." })]
             });
@@ -1200,272 +1537,55 @@ Wrap processing in try/catch to handle errors gracefully:
     };
     ```
 
-### Choosing Middleware Type
 
-The Agent Protocol provides two types of middleware for different use cases:
+### Content Middleware
 
-#### Content Middleware (Recommended for Most Cases)
+Content middleware processes individual chunks as they stream from the LLM. Start here - it's simpler than message middleware.
 
-Use **content middleware** when processing a **single content type**:
+#### Pattern 1: Transform Chunks (Recommended)
 
-**Benefits:**
-
-- ✅ Simpler API - get typed content directly
-- ✅ Automatic type filtering - only see `TextContent`, `FunctionCallContent`, etc.
-- ✅ Clear intent - explicitly handle one type
-
-**Use cases:**
-
-- Log text messages
-- Validate function calls
-- Transform function results
-- Process images
-
-**Example:**
-
-=== "Python"
-
-    ```python
-    async def log_text(
-        content_chunks: AsyncIterable[TextContent],
-        thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
-    ) -> None:
-        complete_text = await content_chunks.wait()
-        print(f"📨 Received: {complete_text.text}")
-
-        async def process():
-            yield complete_text
-        await next(process())
-
-    # Register for TextContent only
-    agent = (
-        AgentHostBuilder()
-            .use_model("gpt-4", "You are helpful.")
-            .on_content(TextContent, log_text)
-            .build()
-    )
-    ```
-
-=== "C#"
-
-    ```csharp
-    async Task LogText(
-        IAsyncEnumerable<TextContent> contentChunks,
-        IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
-        CancellationToken ct)
-    {
-        var completeText = await contentChunks.WaitForCompletionAsync();
-        Console.WriteLine($"📨 Received: {completeText.Text}");
-
-        async IAsyncEnumerable<TextContent> Process()
-        {
-            yield return completeText;
-        }
-        await next(Process());
-    }
-
-    // Register for TextContent only
-    var agent = new AgentHostBuilder()
-        .UseModel("gpt-4", "You are helpful.")
-        .OnContent<TextContent>(LogText)
-        .Build();
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    async function logText(
-        contentChunks: AsyncIterable<TextContent>,
-        thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
-    ): Promise<void> {
-        const completeText = await contentChunks.value;
-        console.log(`📨 Received: ${completeText.text}`);
-
-        async function* process() {
-            yield completeText;
-        }
-        await next(process());
-    }
-
-    // Register for TextContent only
-    const agent = new AgentHostBuilder()
-        .useModel("gpt-4", "You are helpful.")
-        .onContent(TextContent, logText)
-        .build();
-    ```
-
-#### Message Middleware (Advanced)
-
-Use **message middleware** when you need **cross-content-type logic**:
-
-**When to use:**
-
-- ⚠️ More complex - manual type checking required
-- ⚠️ Access to full message - can see all content types
-- ⚠️ Flow control - can skip/modify message processing
-
-**Use cases:**
-
-- Command routing (check text, then decide action)
-- Rate limiting (count ALL content types)
-- Error handling (wrap entire message processing)
-- Metrics (track message-level statistics)
-
-**Example:**
-
-=== "Python"
-
-    ```python
-    async def command_router(
-        message: IMessage,
-        thread: IThread,
-        next: Callable[[], Awaitable[None]]
-    ) -> None:
-        # Check text content to detect commands
-        text_parts = []
-        async for content in message.content:
-            if isinstance(content, TextContent):
-                text_parts.append(await content.wait())
-        text = "".join(c.text for c in text_parts).strip()
-
-        if text.startswith("/help"):
-            # Handle command directly - skip LLM
-            await thread.send_text("Available commands: /help, /status")
-            return
-
-        # Not a command - continue to LLM
-        await next()
-
-    agent = (
-        AgentHostBuilder()
-            .use_model("gpt-4", "You are helpful.")
-            .on_message(command_router)
-            .build()
-    )
-    ```
-
-=== "C#"
-
-    ```csharp
-    async Task CommandRouter(
-        IMessage message,
-        IThread thread,
-        Func<Task> next,
-        CancellationToken ct)
-    {
-        // Check text content to detect commands
-        var textParts = new List<TextContent>();
-        await foreach (var content in message.Content)
-        {
-            if (content is TextContent textContent)
-            {
-                textParts.Add(await textContent.WaitForCompletionAsync());
-            }
-        }
-        var text = string.Join("", textParts.Select(c => c.Text)).Trim();
-
-        if (text.StartsWith("/help"))
-        {
-            // Handle command directly - skip LLM
-            await thread.SendTextAsync("Available commands: /help, /status");
-            return;
-        }
-
-        // Not a command - continue to LLM
-        await next();
-    }
-
-    var agent = new AgentHostBuilder()
-        .UseModel("gpt-4", "You are helpful.")
-        .OnMessage(CommandRouter)
-        .Build();
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    async function commandRouter(
-        message: IMessage,
-        thread: IThread,
-        next: () => Promise<void>
-    ): Promise<void> {
-        // Check text content to detect commands
-        const textParts: TextContent[] = [];
-        for await (const content of message.content) {
-            if (content instanceof TextContent) {
-                textParts.push(await content.value);
-            }
-        }
-        const text = textParts.map(c => c.text).join("").trim();
-
-        if (text.startsWith("/help")) {
-            // Handle command directly - skip LLM
-            await thread.sendText("Available commands: /help, /status");
-            return;
-        }
-
-        // Not a command - continue to LLM
-        await next();
-    }
-
-    const agent = new AgentHostBuilder()
-        .useModel("gpt-4", "You are helpful.")
-        .onMessage(commandRouter)
-        .build();
-    ```
-
-**Rule of thumb:** Start with content middleware for simple, single-type operations. Only use message middleware when you need to inspect multiple content types or control message flow.
-
----
-
-### Understanding the Streaming Model
-
-The Agent Protocol uses **streaming by default**. When you call the LLM, it doesn't return a single response—it returns **chunks** as they're generated.
-
-**Key concepts:**
-
-1. **Streaming is the default**: All LLM responses are streamed, not returned as a single blob
-2. **Content middleware**: Process chunks as they stream (not just whole messages)
-3. **AsyncIterables**: Content comes as async streams you can iterate over
-
-**Mental model:**
-
-```
-LLM generates tokens → Chunks flow through pipeline → Your middleware processes each chunk → Client receives stream
-```
-
-### Processing LLM Output
-
-To process content as it streams from the LLM, use **content middleware** in the unified `middleware` array:
+Use this for the common case: transforming, filtering, or logging individual chunks.
 
 === "Python"
 
     ```python
     from microsoft.agents.protocol import TextContent
-    from typing import AsyncIterable, Callable, Awaitable
+    from typing import AsyncIterable
 
+    # Example 1: Log each chunk
     async def log_text_content(
         content_stream: AsyncIterable[TextContent],
-        thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
-    ) -> None:
-        async def process_and_forward():
-            async for chunk in content_stream:
-                print(f"📝 LLM generated: {chunk.text}")
-                yield chunk  # Forward to next middleware
+        thread: IThread
+    ) -> AsyncIterable[TextContent]:
+        async for chunk in content_stream:
+            print(f"📝 {chunk.text}")
+            yield chunk
 
-        await next(process_and_forward())
+    # Example 2: Transform text
+    async def uppercase_content(
+        content_stream: AsyncIterable[TextContent],
+        thread: IThread
+    ) -> AsyncIterable[TextContent]:
+        async for chunk in content_stream:
+            chunk.text = chunk.text.upper()
+            yield chunk
+
+    # Example 3: Filter chunks
+    async def filter_empty(
+        content_stream: AsyncIterable[TextContent],
+        thread: IThread
+    ) -> AsyncIterable[TextContent]:
+        async for chunk in content_stream:
+            if chunk.text.strip():
+                yield chunk
 
     config = AgentConfig(
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
         middleware=[
-            log_middleware,                     # Message middleware (plain function)
-            (TextContent, log_text_content),    # Content middleware (tuple)
+            (TextContent, log_text_content),
+            (TextContent, uppercase_content),
         ]
     )
     ```
@@ -1474,23 +1594,45 @@ To process content as it streams from the LLM, use **content middleware** in the
 
     ```csharp
     using Microsoft.Agents.Protocol;
+    using System.Runtime.CompilerServices;
 
-    async Task LogTextContent(
+    // Example 1: Log each chunk
+    async IAsyncEnumerable<TextContent> LogTextContent(
         IAsyncEnumerable<TextContent> contentStream,
         IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
-        CancellationToken cancellationToken)
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        async IAsyncEnumerable<TextContent> ProcessAndForward()
+        await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
         {
-            await foreach (var chunk in contentStream)
-            {
-                Console.WriteLine($"📝 LLM generated: {chunk.Text}");
-                yield return chunk;  // Forward to next middleware
-            }
+            Console.WriteLine($"📝 {chunk.Text}");
+            yield return chunk;
         }
+    }
 
-        await next(ProcessAndForward());
+    // Example 2: Transform text
+    async IAsyncEnumerable<TextContent> UppercaseContent(
+        IAsyncEnumerable<TextContent> contentStream,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
+        {
+            chunk.Text = chunk.Text.ToUpper();
+            yield return chunk;
+        }
+    }
+
+    // Example 3: Filter chunks
+    async IAsyncEnumerable<TextContent> FilterEmpty(
+        IAsyncEnumerable<TextContent> contentStream,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
+        {
+            if (!string.IsNullOrWhiteSpace(chunk.Text))
+                yield return chunk;
+        }
     }
 
     var agentOptions = new AgentOptions
@@ -1500,8 +1642,8 @@ To process content as it streams from the LLM, use **content middleware** in the
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Middleware = new object[]
         {
-            (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)LogMiddleware,  // Message middleware
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)LogTextContent)  // Content middleware (tuple)
+            (typeof(TextContent), LogTextContent),
+            (typeof(TextContent), UppercaseContent)
         }
     };
     ```
@@ -1511,19 +1653,38 @@ To process content as it streams from the LLM, use **content middleware** in the
     ```typescript
     import { TextContent } from '@microsoft/agents-protocol';
 
-    async function logTextContent(
+    // Example 1: Log each chunk
+    async function* logTextContent(
         contentStream: AsyncIterable<TextContent>,
-        thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
-    ): Promise<void> {
-        async function* processAndForward() {
-            for await (const chunk of contentStream) {
-                console.log(`📝 LLM generated: ${chunk.text}`);
-                yield chunk;  // Forward to next middleware
+        thread: IThread
+    ): AsyncIterable<TextContent> {
+        for await (const chunk of contentStream) {
+            console.log(`📝 ${chunk.text}`);
+            yield chunk;
+        }
+    }
+
+    // Example 2: Transform text
+    async function* uppercaseContent(
+        contentStream: AsyncIterable<TextContent>,
+        thread: IThread
+    ): AsyncIterable<TextContent> {
+        for await (const chunk of contentStream) {
+            chunk.text = chunk.text.toUpperCase();
+            yield chunk;
+        }
+    }
+
+    // Example 3: Filter chunks
+    async function* filterEmpty(
+        contentStream: AsyncIterable<TextContent>,
+        thread: IThread
+    ): AsyncIterable<TextContent> {
+        for await (const chunk of contentStream) {
+            if (chunk.text.trim()) {
+                yield chunk;
             }
         }
-
-        await next(processAndForward());
     }
 
     const config: AgentConfig = {
@@ -1531,76 +1692,148 @@ To process content as it streams from the LLM, use **content middleware** in the
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
         middleware: [
-            logMiddleware,                      // Message middleware (plain function)
-            [TextContent, logTextContent],      // Content middleware (array)
+            [TextContent, logTextContent],
+            [TextContent, uppercaseContent],
         ]
     };
     ```
 
-**Key differences from message middleware:**
+**How it works:**
+- Middleware is an async generator that yields transformed chunks
+- Framework automatically chains these generators together
+- Each middleware receives the stream from the previous one
+- Simple and clean - no inner functions needed
 
-| Aspect | Message Middleware | Content Middleware |
-|--------|-------------------|-------------------|
-| **When** | Once per message | Multiple times (per chunk) |
-| **Input** | Single message | Stream of content chunks |
-| **Output** | None (mutates thread) | Stream of content chunks |
-| **Pattern** | `await next()` | `await next(async_generator)` |
-| **Registration** | Plain function | Tuple: `(ContentType, function)` |
+#### Pattern 2: Wrap Stream (Advanced)
 
-### Message-level chunks
-
-You can also process entire messages as they're generated (not just content):
+Use this when you need to do something **before** the stream starts or **after** it completes.
 
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import AgentMessage
+    from typing import Callable, Awaitable
+    import time
 
-    async def process_all_chunks(
-        message: IMessage,
+    # Example 1: Time the stream
+    async def time_streaming(
+        content_stream: AsyncIterable[TextContent],
         thread: IThread,
-        next: Callable[[], Awaitable[None]]
+        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
     ) -> None:
-        if isinstance(message, AgentMessage):
-            print(f"🤖 Agent message received")
-            async for content in message.content:
-                if isinstance(content, TextContent):
-                    complete_text = await content.wait()
-                    print(f"  Text: {complete_text.text}")
+        start = time.time()
+        print(f"🚀 Starting stream")
 
-        await next()
+        await next(content_stream)
+
+        print(f"✅ Stream completed in {time.time() - start:.2f}s")
+
+    # Example 2: Error handling
+    async def catch_errors(
+        content_stream: AsyncIterable[TextContent],
+        thread: IThread,
+        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+    ) -> None:
+        try:
+            await next(content_stream)
+        except Exception as e:
+            print(f"❌ Streaming error: {e}")
+            thread.add_message(AgentMessage(content=[
+                TextContent(text="Sorry, something went wrong.")
+            ]))
+
+    # Example 3: Buffer and log complete response
+    async def buffer_stream(
+        content_stream: AsyncIterable[TextContent],
+        thread: IThread,
+        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+    ) -> None:
+        chunks = []
+
+        async def collect():
+            async for chunk in content_stream:
+                chunks.append(chunk)
+                yield chunk
+
+        await next(collect())
+
+        full_text = "".join(c.text for c in chunks)
+        print(f"📊 Complete response ({len(chunks)} chunks): {full_text}")
 
     config = AgentConfig(
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[process_all_chunks]  # Message middleware
+        middleware=[
+            (TextContent, time_streaming),
+            (TextContent, catch_errors),
+        ]
     )
     ```
 
 === "C#"
 
     ```csharp
-    async Task ProcessAllChunks(
-        IMessage message,
+    using System.Diagnostics;
+
+    // Example 1: Time the stream
+    async Task TimeStreaming(
+        IAsyncEnumerable<TextContent> contentStream,
         IThread thread,
-        Func<Task> next,
-        CancellationToken cancellationToken)
+        Func<IAsyncEnumerable<TextContent>, Task> next,
+        CancellationToken cancellationToken = default)
     {
-        if (message is AgentMessage agentMsg)
+        var sw = Stopwatch.StartNew();
+        Console.WriteLine("🚀 Starting stream");
+
+        await next(contentStream);
+
+        sw.Stop();
+        Console.WriteLine($"✅ Stream completed in {sw.ElapsedMilliseconds}ms");
+    }
+
+    // Example 2: Error handling
+    async Task CatchErrors(
+        IAsyncEnumerable<TextContent> contentStream,
+        IThread thread,
+        Func<IAsyncEnumerable<TextContent>, Task> next,
+        CancellationToken cancellationToken = default)
+    {
+        try
         {
-            Console.WriteLine($"🤖 Agent message received");
-            await foreach (var content in agentMsg.Content)
+            await next(contentStream);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Streaming error: {ex.Message}");
+            thread.AddMessage(new AgentMessage
             {
-                if (content is TextContent textContent)
-                {
-                    var completeText = await textContent.WaitForCompletionAsync();
-                    Console.WriteLine($"  Text: {completeText.Text}");
-                }
+                Content = new[] { new TextContent { Text = "Sorry, something went wrong." } }
+            });
+        }
+    }
+
+    // Example 3: Buffer and log complete response
+    async Task BufferStream(
+        IAsyncEnumerable<TextContent> contentStream,
+        IThread thread,
+        Func<IAsyncEnumerable<TextContent>, Task> next,
+        CancellationToken cancellationToken = default)
+    {
+        var chunks = new List<TextContent>();
+
+        async IAsyncEnumerable<TextContent> Collect()
+        {
+            await foreach (var chunk in contentStream)
+            {
+                chunks.Add(chunk);
+                yield return chunk;
             }
         }
 
-        await next();
+        await next(Collect());
+
+        var fullText = string.Join("", chunks.Select(c => c.Text));
+        Console.WriteLine($"📊 Complete response ({chunks.Count} chunks): {fullText}");
     }
 
     var agentOptions = new AgentOptions
@@ -1610,7 +1843,8 @@ You can also process entire messages as they're generated (not just content):
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Middleware = new object[]
         {
-            (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)ProcessAllChunks
+            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)TimeStreaming),
+            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)CatchErrors)
         }
     };
     ```
@@ -1618,33 +1852,334 @@ You can also process entire messages as they're generated (not just content):
 === "TypeScript"
 
     ```typescript
-    import { AgentMessage, TextContent } from '@microsoft/agents-protocol';
-
-    async function processAllChunks(
-        message: IMessage,
+    // Example 1: Time the stream
+    async function timeStreaming(
+        contentStream: AsyncIterable<TextContent>,
         thread: IThread,
-        next: () => Promise<void>
+        next: (stream: AsyncIterable<TextContent>) => Promise<void>
     ): Promise<void> {
-        if (message instanceof AgentMessage) {
-            console.log(`🤖 Agent message received`);
-            for await (const content of message.content) {
-                if (content instanceof TextContent) {
-                    const completeText = await content.value;
-                    console.log(`  Text: ${completeText.text}`);
-                }
+        const start = Date.now();
+        console.log("🚀 Starting stream");
+
+        await next(contentStream);
+
+        console.log(`✅ Stream completed in ${Date.now() - start}ms`);
+    }
+
+    // Example 2: Error handling
+    async function catchErrors(
+        contentStream: AsyncIterable<TextContent>,
+        thread: IThread,
+        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+    ): Promise<void> {
+        try {
+            await next(contentStream);
+        } catch (error) {
+            console.error(`❌ Streaming error: ${error}`);
+            thread.addMessage({
+                role: 'agent',
+                content: [{ type: 'text', text: 'Sorry, something went wrong.' }]
+            });
+        }
+    }
+
+    // Example 3: Buffer and log complete response
+    async function bufferStream(
+        contentStream: AsyncIterable<TextContent>,
+        thread: IThread,
+        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+    ): Promise<void> {
+        const chunks: TextContent[] = [];
+
+        async function* collect() {
+            for await (const chunk of contentStream) {
+                chunks.push(chunk);
+                yield chunk;
             }
         }
 
-        await next();
+        await next(collect());
+
+        const fullText = chunks.map(c => c.text).join('');
+        console.log(`📊 Complete response (${chunks.length} chunks): ${fullText}`);
     }
 
     const config: AgentConfig = {
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [processAllChunks]  // Message middleware
+        middleware: [
+            [TextContent, timeStreaming],
+            [TextContent, catchErrors],
+        ]
     };
     ```
+
+**How it works:**
+- Middleware receives a `next` callback parameter
+- Call `await next(stream)` to invoke the rest of the middleware chain
+- Code before `await next()` runs before streaming starts
+- Code after `await next()` runs after the stream completes
+- Can transform the stream by creating a new generator and passing it to `next()`
+
+#### Choosing the Right Pattern
+
+| Use Case | Pattern | Example |
+|----------|---------|---------|
+| Log each chunk | **Transform** | `async for chunk: print(chunk); yield chunk` |
+| Modify chunk text | **Transform** | `chunk.text = transform(chunk.text); yield chunk` |
+| Filter chunks | **Transform** | `if condition: yield chunk` |
+| Time the entire stream | **Wrap** | `start=now(); await next(stream); print(elapsed)` |
+| Error handling | **Wrap** | `try: await next(stream); except: handle()` |
+| Buffer all chunks | **Wrap** | `collect chunks; await next(stream); process()` |
+
+**Rule of thumb:**
+- Only care about individual chunks? → **Transform Pattern**
+- Need before/after the entire stream? → **Wrap Pattern**
+
+### Message Middleware
+
+Message middleware runs once per message - when a user sends a message or when the agent generates a response.
+
+#### Pattern 1: Transform Pattern (Recommended)
+
+Use this for real-world scenarios like logging, moderation, rate limiting, and enrichment:
+
+=== "Python"
+
+    ```python
+    from typing import AsyncIterable
+    import logging
+
+    # Example 1: Log messages for debugging/analytics
+    async def log_for_debugging(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        logging.info(
+            f"thread={thread.id} role={message.role} "
+            f"user={thread.metadata.get('user_id')} msg_id={message.id}"
+        )
+        yield message
+
+    # Example 2: Content moderation - block inappropriate content
+    async def content_moderation(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        if message.role == "user":
+            if await moderation_api.is_safe(message):
+                yield message
+            else:
+                logging.warning(f"Blocked unsafe message: {message.id}")
+        else:
+            yield message
+
+    # Example 3: Rate limiting per user
+    async def rate_limit(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        if message.role == "user":
+            user_id = thread.metadata.get("user_id")
+            if await rate_limiter.check_limit(user_id):
+                yield message
+            else:
+                logging.warning(f"Rate limit exceeded: {user_id}")
+        else:
+            yield message
+
+    # Example 4: Yield content from message (filter images)
+    async def filter_images(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[Content]:
+        # Only forward text content, skip images
+        async for content in message.content:
+            if content.type == "text":
+                yield content
+
+    config = AgentConfig(
+        model="gpt-4",
+        instructions="You are helpful.",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        middleware=[
+            log_for_debugging,
+            rate_limit,
+            content_moderation,
+        ]
+    )
+    ```
+
+=== "C#"
+
+    ```csharp
+    using System.Runtime.CompilerServices;
+    using Microsoft.Extensions.Logging;
+
+    // Example 1: Log messages for debugging/analytics
+    async IAsyncEnumerable<IMessage> LogForDebugging(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation(
+            "thread={ThreadId} role={Role} user={UserId} msg_id={MessageId}",
+            thread.Id, message.Role, thread.Metadata["user_id"], message.Id
+        );
+        yield return message;
+    }
+
+    // Example 2: Content moderation
+    async IAsyncEnumerable<IMessage> ContentModeration(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        if (message.Role == "user")
+        {
+            if (await _moderationApi.IsSafe(message))
+                yield return message;
+            else
+                _logger.LogWarning("Blocked unsafe message: {MessageId}", message.Id);
+        }
+        else
+        {
+            yield return message;
+        }
+    }
+
+    // Example 3: Rate limiting
+    async IAsyncEnumerable<IMessage> RateLimit(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        if (message.Role == "user")
+        {
+            var userId = thread.Metadata["user_id"];
+            if (await _rateLimiter.CheckLimit(userId))
+                yield return message;
+            else
+                _logger.LogWarning("Rate limit exceeded: {UserId}", userId);
+        }
+        else
+        {
+            yield return message;
+        }
+    }
+
+    // Example 4: Yield content (filter images)
+    async IAsyncEnumerable<IContent> FilterImages(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await foreach (var content in message.Content.WithCancellation(cancellationToken))
+        {
+            if (content.Type == "text")
+                yield return content;
+        }
+    }
+
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Middleware = new object[]
+        {
+            LogForDebugging,
+            RateLimit,
+            ContentModeration
+        }
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { logger } from './logger';
+
+    // Example 1: Log messages for debugging/analytics
+    async function* logForDebugging(
+        message: IMessage,
+        thread: IThread
+    ): AsyncIterable<IMessage> {
+        logger.info({
+            thread: thread.id,
+            role: message.role,
+            user: thread.metadata.user_id,
+            msg_id: message.id
+        });
+        yield message;
+    }
+
+    // Example 2: Content moderation
+    async function* contentModeration(
+        message: IMessage,
+        thread: IThread
+    ): AsyncIterable<IMessage> {
+        if (message.role === "user") {
+            if (await moderationApi.isSafe(message)) {
+                yield message;
+            } else {
+                logger.warn(`Blocked unsafe message: ${message.id}`);
+            }
+        } else {
+            yield message;
+        }
+    }
+
+    // Example 3: Rate limiting
+    async function* rateLimit(
+        message: IMessage,
+        thread: IThread
+    ): AsyncIterable<IMessage> {
+        if (message.role === "user") {
+            const userId = thread.metadata.user_id;
+            if (await rateLimiter.checkLimit(userId)) {
+                yield message;
+            } else {
+                logger.warn(`Rate limit exceeded: ${userId}`);
+            }
+        } else {
+            yield message;
+        }
+    }
+
+    // Example 4: Yield content (filter images)
+    async function* filterImages(
+        message: IMessage,
+        thread: IThread
+    ): AsyncIterable<Content> {
+        for await (const content of message.content) {
+            if (content.type === "text") {
+                yield content;
+            }
+        }
+    }
+
+    const config: AgentConfig = {
+        model: "gpt-4",
+        instructions: "You are helpful.",
+        apiKey: process.env.OPENAI_API_KEY!,
+        middleware: [
+            logForDebugging,
+            rateLimit,
+            contentModeration,
+        ]
+    };
+    ```
+
+**How it works:**
+- Middleware is an async generator that yields items
+- **Yield messages**: Pass whole messages to next middleware
+- **Yield content**: Framework unwraps and passes content items
+- **Yield chunks**: Framework unwraps and passes individual chunks
+- **Filter**: Don't yield to skip the message
+
+**Flexibility:** Work at any level - messages, content, or chunks - and the framework handles the plumbing.
 
 ### Post-process after LLM
 
@@ -3088,7 +3623,7 @@ Here's a production-ready agent with multiple middleware:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol.hosting import AgentHostBuilder
+    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
     from microsoft.agents.protocol import (
         IMessage, IThread, UserMessage, AgentMessage, TextContent,
         FunctionCallContent, FunctionResultContent
@@ -3192,20 +3727,22 @@ Here's a production-ready agent with multiple middleware:
         """Get current time"""
         return time.strftime("%Y-%m-%d %H:%M:%S")
 
-    # Configure agent with builder pattern
-    agent = (
-        AgentHostBuilder()
-            .use_model("gpt-4", "You are a helpful assistant with access to weather and time information.")
-            .use_api_key(os.getenv("OPENAI_API_KEY"))
-            .use_storage(SqlStorageProvider(os.getenv("DATABASE_URL")))
-            .use_functions([get_weather, get_time])
-            .on_content(TextContent, log_text)                      # Content middleware - log incoming text
-            .on_message(handle_commands)                            # Message middleware - command routing
-            .on_content(TextContent, log_text_chunks)               # Content middleware - stream LLM text
-            .on_content(FunctionCallContent, log_function_calls)    # Content middleware - log function calls
-            .on_content(FunctionResultContent, log_function_results) # Content middleware - log function results
-            .build()
+    # Configure agent with new pattern
+    config = AgentConfig(
+        model="gpt-4",
+        instructions="You are a helpful assistant with access to weather and time information.",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        storage=SqlStorageProvider(os.getenv("DATABASE_URL")),
+        functions=[get_weather, get_time],
+        middleware=[
+            (TextContent, log_text),                      # Content middleware - log incoming text
+            handle_commands,                              # Message middleware - command routing
+            (TextContent, log_text_chunks),               # Content middleware - stream LLM text
+            (FunctionCallContent, log_function_calls),    # Content middleware - log function calls
+            (FunctionResultContent, log_function_results) # Content middleware - log function results
+        ]
     )
+    agent = AgentHost(config)
 
     if __name__ == "__main__":
         agent.run()
@@ -3331,24 +3868,29 @@ Here's a production-ready agent with multiple middleware:
     string GetWeather(string location) => $"Weather in {location}: Sunny, 72°F";
     string GetTime() => DateTime.Now.ToString("O");
 
-    // Configure agent with builder pattern
-    var agent = new AgentHostBuilder()
-        .UseModel("gpt-4", "You are a helpful assistant with access to weather and time information.")
-        .UseApiKey(builder.Configuration["OpenAI:ApiKey"])
-        .UseStorage(new SqlStorageProvider(builder.Configuration["DatabaseUrl"]))
-        .UseFunctions(new[]
+    // Configure agent with new pattern
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are a helpful assistant with access to weather and time information.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Storage = new SqlStorageProvider(builder.Configuration["DatabaseUrl"]),
+        Functions = new[]
         {
             ("get_weather", "Get current weather", (Func<string, string>)GetWeather),
             ("get_time", "Get current time", (Func<string>)GetTime)
-        })
-        .OnContent<TextContent>(LogText)                        // Content middleware - log incoming text
-        .OnMessage(HandleCommands)                              // Message middleware - command routing
-        .OnContent<TextContent>(LogTextChunks)                  // Content middleware - stream LLM text
-        .OnContent<FunctionCallContent>(LogFunctionCalls)       // Content middleware - log function calls
-        .OnContent<FunctionResultContent>(LogFunctionResults)   // Content middleware - log function results
-        .Build();
+        },
+        Middleware =
+        [
+            (typeof(TextContent), LogText),                       // Content middleware - log incoming text
+            HandleCommands,                                       // Message middleware - command routing
+            (typeof(TextContent), LogTextChunks),                 // Content middleware - stream LLM text
+            (typeof(FunctionCallContent), LogFunctionCalls),      // Content middleware - log function calls
+            (typeof(FunctionResultContent), LogFunctionResults)   // Content middleware - log function results
+        ]
+    };
 
-    builder.Services.AddAgentHost(agent);
+    builder.Services.AddDefaultAgent(agentOptions);
 
     var app = builder.Build();
     app.MapAgentProtocol();
@@ -3358,7 +3900,7 @@ Here's a production-ready agent with multiple middleware:
 === "TypeScript"
 
     ```typescript
-    import { AgentHostBuilder } from '@microsoft/agents-protocol-hosting';
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
     import {
         IMessage, IThread, UserMessage, AgentMessage, TextContent,
         FunctionCallContent, FunctionResultContent
@@ -3467,21 +4009,25 @@ Here's a production-ready agent with multiple middleware:
         return new Date().toISOString();
     }
 
-    // Configure agent with builder pattern
-    const agent = new AgentHostBuilder()
-        .useModel("gpt-4", "You are a helpful assistant with access to weather and time information.")
-        .useApiKey(process.env.OPENAI_API_KEY!)
-        .useStorage(new SqlStorageProvider(process.env.DATABASE_URL!))
-        .useFunctions([
+    // Configure agent with new pattern
+    const config: AgentConfig = {
+        model: "gpt-4",
+        instructions: "You are a helpful assistant with access to weather and time information.",
+        apiKey: process.env.OPENAI_API_KEY!,
+        storage: new SqlStorageProvider(process.env.DATABASE_URL!),
+        functions: [
             { name: "get_weather", description: "Get current weather", fn: getWeather },
             { name: "get_time", description: "Get current time", fn: getTime }
-        ])
-        .onContent(TextContent, logText)                        // Content middleware - log incoming text
-        .onMessage(handleCommands)                              // Message middleware - command routing
-        .onContent(TextContent, logTextChunks)                  // Content middleware - stream LLM text
-        .onContent(FunctionCallContent, logFunctionCalls)       // Content middleware - log function calls
-        .onContent(FunctionResultContent, logFunctionResults)   // Content middleware - log function results
-        .build();
+        ],
+        middleware: [
+            [TextContent, logText],                        // Content middleware - log incoming text
+            handleCommands,                                // Message middleware - command routing
+            [TextContent, logTextChunks],                  // Content middleware - stream LLM text
+            [FunctionCallContent, logFunctionCalls],       // Content middleware - log function calls
+            [FunctionResultContent, logFunctionResults]    // Content middleware - log function results
+        ]
+    };
+    const agent = new AgentHost(config);
 
     agent.listen(5000);
     ```
@@ -3517,65 +4063,442 @@ You now know the fundamentals of the Agent Protocol Hosting SDK. Here are some n
 
 ## Appendix: Middleware Patterns Summary
 
-### Message Middleware
-
-Process entire messages (once per message):
-
-```python
-async def my_middleware(message: IMessage, thread: IThread, next: Callable[[], Awaitable[None]]) -> None:
-    # Before processing
-    print(f"Message: {text}")
-
-    await next()  # Continue to next middleware/LLM
-
-    # After processing
-    print("Done")
-
-# Register as plain function
-config = AgentConfig(middleware=[my_middleware])
-```
+This section provides quick reference templates for both middleware patterns.
 
 ### Content Middleware
 
-Process streaming content (multiple times per message):
+Content middleware processes streaming chunks from the LLM. Choose between transform (recommended) and wrap (advanced) patterns.
 
-```python
-async def my_content_middleware(
-    content_stream: AsyncIterable[TextContent],
-    thread: IThread,
-    next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
-) -> None:
-    async def process():
+#### Transform Pattern (Recommended)
+
+Use when transforming, filtering, or logging chunks:
+
+=== "Python"
+
+    ```python
+    async def my_content_middleware(
+        content_stream: AsyncIterable[TextContent],
+        thread: IThread
+    ) -> AsyncIterable[TextContent]:
         async for chunk in content_stream:
+            # Process chunk
             print(f"Chunk: {chunk.text}")
             yield chunk  # Forward to next middleware
 
-    await next(process())
+    # Register as tuple: (ContentType, function)
+    config = AgentConfig(middleware=[
+        (TextContent, my_content_middleware)
+    ])
+    ```
 
-# Register as tuple: (ContentType, function)
-config = AgentConfig(middleware=[
-    (TextContent, my_content_middleware)  # Tuple notation
-])
-```
+=== "C#"
+
+    ```csharp
+    async IAsyncEnumerable<TextContent> MyContentMiddleware(
+        IAsyncEnumerable<TextContent> contentStream,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
+        {
+            // Process chunk
+            Console.WriteLine($"Chunk: {chunk.Text}");
+            yield return chunk; // Forward to next middleware
+        }
+    }
+
+    // Register as tuple
+    var agentOptions = new AgentOptions
+    {
+        Middleware = new object[]
+        {
+            (typeof(TextContent), MyContentMiddleware)
+        }
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    async function* myContentMiddleware(
+        contentStream: AsyncIterable<TextContent>,
+        thread: IThread
+    ): AsyncIterable<TextContent> {
+        for await (const chunk of contentStream) {
+            // Process chunk
+            console.log(`Chunk: ${chunk.text}`);
+            yield chunk; // Forward to next middleware
+        }
+    }
+
+    // Register as tuple
+    const config = new AgentConfig({
+        middleware: [
+            [TextContent, myContentMiddleware]
+        ]
+    });
+    ```
+
+#### Wrap Pattern (Advanced)
+
+Use when adding before/after logic (timing, error handling):
+
+=== "Python"
+
+    ```python
+    async def my_content_middleware(
+        content_stream: AsyncIterable[TextContent],
+        thread: IThread,
+        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+    ) -> None:
+        # Before streaming
+        print("Starting stream")
+
+        await next(content_stream)  # Continue to next middleware
+
+        # After streaming
+        print("Stream complete")
+
+    # Register as tuple
+    config = AgentConfig(middleware=[
+        (TextContent, my_content_middleware)
+    ])
+    ```
+
+=== "C#"
+
+    ```csharp
+    async Task MyContentMiddleware(
+        IAsyncEnumerable<TextContent> contentStream,
+        IThread thread,
+        Func<IAsyncEnumerable<TextContent>, Task> next,
+        CancellationToken cancellationToken = default)
+    {
+        // Before streaming
+        Console.WriteLine("Starting stream");
+
+        await next(contentStream); // Continue to next middleware
+
+        // After streaming
+        Console.WriteLine("Stream complete");
+    }
+
+    // Register as tuple
+    var agentOptions = new AgentOptions
+    {
+        Middleware = new object[]
+        {
+            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)MyContentMiddleware)
+        }
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    async function myContentMiddleware(
+        contentStream: AsyncIterable<TextContent>,
+        thread: IThread,
+        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+    ): Promise<void> {
+        // Before streaming
+        console.log("Starting stream");
+
+        await next(contentStream); // Continue to next middleware
+
+        // After streaming
+        console.log("Stream complete");
+    }
+
+    // Register as tuple
+    const config = new AgentConfig({
+        middleware: [
+            [TextContent, myContentMiddleware]
+        ]
+    });
+    ```
+
+### Message Middleware
+
+Message middleware processes entire messages (user or agent). The framework handles different yield granularities automatically.
+
+#### Transform Pattern (Recommended)
+
+Use for logging, moderation, rate limiting, or filtering:
+
+=== "Python"
+
+    ```python
+    # Yield the message (most common)
+    async def my_message_middleware(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[IMessage]:
+        print(f"Message from {message.role}")
+        yield message  # Framework handles streaming
+
+    # Or yield content to filter by type
+    async def filter_images(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[Content]:
+        async for content in message.content:
+            if isinstance(content, TextContent):
+                yield content  # Only yield text
+
+    # Or yield chunks for fine-grained control
+    async def track_tokens(
+        message: IMessage,
+        thread: IThread
+    ) -> AsyncIterable[Chunk]:
+        token_count = 0
+        async for content in message.content:
+            async for chunk in content:
+                token_count += len(chunk.text.split())
+                yield chunk
+        print(f"Tokens: {token_count}")
+
+    # Register as plain function
+    config = AgentConfig(middleware=[my_message_middleware])
+    ```
+
+=== "C#"
+
+    ```csharp
+    // Yield the message (most common)
+    async IAsyncEnumerable<IMessage> MyMessageMiddleware(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        Console.WriteLine($"Message from {message.Role}");
+        yield return message; // Framework handles streaming
+    }
+
+    // Or yield content to filter by type
+    async IAsyncEnumerable<Content> FilterImages(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await foreach (var content in message.Content.WithCancellation(cancellationToken))
+        {
+            if (content is TextContent textContent)
+            {
+                yield return textContent; // Only yield text
+            }
+        }
+    }
+
+    // Or yield chunks for fine-grained control
+    async IAsyncEnumerable<Chunk> TrackTokens(
+        IMessage message,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var tokenCount = 0;
+        await foreach (var content in message.Content.WithCancellation(cancellationToken))
+        {
+            await foreach (var chunk in content.WithCancellation(cancellationToken))
+            {
+                tokenCount += chunk.Text.Split().Length;
+                yield return chunk;
+            }
+        }
+        Console.WriteLine($"Tokens: {tokenCount}");
+    }
+
+    // Register as plain function
+    var agentOptions = new AgentOptions
+    {
+        Middleware = new object[] { MyMessageMiddleware }
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // Yield the message (most common)
+    async function* myMessageMiddleware(
+        message: IMessage,
+        thread: IThread
+    ): AsyncIterable<IMessage> {
+        console.log(`Message from ${message.role}`);
+        yield message; // Framework handles streaming
+    }
+
+    // Or yield content to filter by type
+    async function* filterImages(
+        message: IMessage,
+        thread: IThread
+    ): AsyncIterable<Content> {
+        for await (const content of message.content) {
+            if (content instanceof TextContent) {
+                yield content; // Only yield text
+            }
+        }
+    }
+
+    // Or yield chunks for fine-grained control
+    async function* trackTokens(
+        message: IMessage,
+        thread: IThread
+    ): AsyncIterable<Chunk> {
+        let tokenCount = 0;
+        for await (const content of message.content) {
+            for await (const chunk of content) {
+                tokenCount += chunk.text.split(' ').length;
+                yield chunk;
+            }
+        }
+        console.log(`Tokens: ${tokenCount}`);
+    }
+
+    // Register as plain function
+    const config = new AgentConfig({
+        middleware: [myMessageMiddleware]
+    });
+    ```
+
+#### Wrap Pattern (Advanced)
+
+Use when adding before/after logic (timing, error handling):
+
+=== "Python"
+
+    ```python
+    async def my_message_middleware(
+        message: IMessage,
+        thread: IThread,
+        next: Callable[[], Awaitable[None]]
+    ) -> None:
+        # Before processing
+        print(f"Processing message from {message.role}")
+
+        await next()  # Continue to next middleware/LLM
+
+        # After processing
+        print("Processing complete")
+
+    # Register as plain function
+    config = AgentConfig(middleware=[my_message_middleware])
+    ```
+
+=== "C#"
+
+    ```csharp
+    async Task MyMessageMiddleware(
+        IMessage message,
+        IThread thread,
+        Func<Task> next,
+        CancellationToken cancellationToken = default)
+    {
+        // Before processing
+        Console.WriteLine($"Processing message from {message.Role}");
+
+        await next(); // Continue to next middleware/LLM
+
+        // After processing
+        Console.WriteLine("Processing complete");
+    }
+
+    // Register as plain function
+    var agentOptions = new AgentOptions
+    {
+        Middleware = new object[]
+        {
+            (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)MyMessageMiddleware
+        }
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    async function myMessageMiddleware(
+        message: IMessage,
+        thread: IThread,
+        next: () => Promise<void>
+    ): Promise<void> {
+        // Before processing
+        console.log(`Processing message from ${message.role}`);
+
+        await next(); // Continue to next middleware/LLM
+
+        // After processing
+        console.log("Processing complete");
+    }
+
+    // Register as plain function
+    const config = new AgentConfig({
+        middleware: [myMessageMiddleware]
+    });
+    ```
+
+### Choosing the Right Pattern
+
+| Use Case | Pattern | Example |
+| -------- | ------- | ------- |
+| Transform/filter data | Transform | Uppercase text, filter images, remove PII |
+| Log streaming chunks | Transform | Log each chunk as it streams |
+| Add metadata | Transform | Enrich messages with user context |
+| Rate limiting | Transform | Check limits, then yield message |
+| Content moderation | Transform | Validate safety, then yield |
+| Timing/metrics | Wrap | Measure time before/after |
+| Error handling | Wrap | Try/catch around processing |
+| Buffering | Wrap | Collect all chunks, then process |
 
 ### Unified Middleware Array
 
-Mix both types in a single array:
+Mix both types and patterns in a single array:
 
-```python
-config = AgentConfig(
-    middleware=[
-        message_middleware_1,                   # Message middleware
-        (TextContent, content_middleware_1),    # Content middleware (tuple)
-        message_middleware_2,                   # Message middleware
-        (ImageContent, content_middleware_2),   # Content middleware (tuple)
-    ]
-)
-```
+=== "Python"
+
+    ```python
+    config = AgentConfig(
+        middleware=[
+            log_message,                        # Message middleware (transform or wrap)
+            rate_limit,                         # Message middleware (transform or wrap)
+            (TextContent, uppercase_content),   # Content middleware (transform or wrap)
+            (ImageContent, filter_images),      # Content middleware (transform or wrap)
+        ]
+    )
+    ```
+
+=== "C#"
+
+    ```csharp
+    var agentOptions = new AgentOptions
+    {
+        Middleware = new object[]
+        {
+            (Func<IMessage, IThread, CancellationToken, IAsyncEnumerable<IMessage>>)LogMessage,
+            (Func<IMessage, IThread, CancellationToken, IAsyncEnumerable<IMessage>>)RateLimit,
+            (typeof(TextContent), UppercaseContent),
+            (typeof(ImageContent), FilterImages)
+        }
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    const config = new AgentConfig({
+        middleware: [
+            logMessage,                    // Message middleware (transform or wrap)
+            rateLimit,                     // Message middleware (transform or wrap)
+            [TextContent, uppercaseContent], // Content middleware (transform or wrap)
+            [ImageContent, filterImages]     // Content middleware (transform or wrap)
+        ]
+    });
+    ```
 
 **Key points:**
-- Message middleware: plain function
-- Content middleware: tuple `(ContentType, function)`
-- Execution order: array order
-- Stop processing: don't call `next()`
-- Transform content: yield modified chunks
+
+- **Message middleware**: Plain function, runs once per message
+- **Content middleware**: Tuple `(ContentType, function)`, runs for streaming chunks
+- **Transform pattern**: Return `AsyncIterable`, yield items (recommended for 90% of cases)
+- **Wrap pattern**: Accept `next` parameter, call `await next()` (advanced, 10% of cases)
+- **Execution order**: Array order
+- **Granularity**: Yield messages, content, or chunks - framework handles it
+- **Stop processing**: Don't yield/call `next()`

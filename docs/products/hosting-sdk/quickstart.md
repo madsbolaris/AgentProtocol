@@ -44,81 +44,6 @@ Build production-ready AI agents that handle conversations, call tools, and scal
     ```
 
 
-**TypeScript Best Practices for Production:**
-
-The TypeScript examples are simplified. In production, follow these practices:
-
-```typescript
-// ✅ Type-safe error handling
-try {
-    // ... operation
-} catch (error) {
-    // error is 'unknown' by default - check type before accessing properties
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(`Error: ${message}`);
-}
-
-// Or create a helper:
-function getErrorMessage(error: unknown): string {
-    if (error instanceof Error) return error.message;
-    return String(error);
-}
-
-// ✅ Use async file operations, not sync
-import { readdir } from 'fs/promises';  // Not fs.readdirSync
-
-async function listFiles(path: string): Promise<string[]> {
-    const files = await readdir(path);  // Non-blocking
-    return files;
-}
-
-// ✅ Proper type annotations for async generators
-async function* myMiddleware(
-    contentStream: AsyncIterable<TextContent>,
-    thread: IThread
-): AsyncIterable<TextContent> {  // Explicit return type
-    for await (const chunk of contentStream) {
-        yield chunk;
-    }
-}
-
-// ✅ Use AbortSignal for cancellation
-async function fetchWithCancellation(
-    url: string,
-    signal?: AbortSignal
-): Promise<Response> {
-    return fetch(url, {
-        signal,  // Allows cancellation
-        timeout: 10000
-    });
-}
-
-// ✅ Validate environment variables
-const apiKey = process.env.OPENAI_API_KEY;
-if (!apiKey) {
-    throw new Error("OPENAI_API_KEY environment variable is required");
-}
-
-// ✅ Create immutable transformations (don't mutate inputs)
-async function* uppercaseContent(
-    contentStream: AsyncIterable<TextContent>,
-    thread: IThread
-): AsyncIterable<TextContent> {
-    for await (const chunk of contentStream) {
-        // Create new object instead of mutating
-        yield { ...chunk, text: chunk.text.toUpperCase() };
-    }
-}
-```
-
-**Key patterns:**
-- **Error handling**: Always check `error instanceof Error` before accessing `.message`
-- **Async I/O**: Use `fs/promises`, not sync methods that block the event loop
-- **Type safety**: Add explicit return types to async generators
-- **Cancellation**: Use `AbortSignal` for long-running operations
-- **Immutability**: Create new objects instead of mutating stream chunks
-
-
 
 ### Installation
 
@@ -169,79 +94,6 @@ Create your first agent in under 2 minutes.
         agent.run()  # Starts server on http://localhost:5000
     ```
 
-**Python Best Practices for Production:**
-
-> ⚠️ **Important**: The examples in this guide use `print()` for simplicity and clarity. In production code, always use the `logging` module for proper log levels, filtering, and formatting.
-
-In production, follow these practices:
-
-```python
-# ✅ Complete imports with proper PEP 8 ordering
-# Standard library
-import asyncio
-import logging
-import os
-from datetime import datetime, timezone
-from typing import AsyncIterable, Callable, Awaitable
-
-# Third-party
-import httpx  # pip install httpx
-
-# SDK imports
-from microsoft.agents import AgentConfig
-from microsoft.agents.protocol import IMessage, IThread, TextContent
-from microsoft.agents.protocol.hosting import AgentHost
-
-# ✅ Use logging module instead of print()
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
-# ✅ Use structured logging in middleware
-async def log_for_production(
-    message: IMessage,
-    thread: IThread
-) -> AsyncIterable[IMessage]:
-    logger.info(
-        "Processing message",
-        extra={
-            "thread_id": thread.id,
-            "role": message.role,
-            "user_id": thread.metadata.get("user_id")
-        }
-    )
-    yield message
-
-# ✅ Use async HTTP client (not sync requests library)
-http_client = httpx.AsyncClient(timeout=10.0)  # Reuse client
-
-async def fetch_data_async(url: str) -> dict:
-    async with http_client as client:
-        response = await client.get(url)
-        response.raise_for_status()
-        return response.json()
-
-# ✅ Tool functions can be sync or async
-def get_weather_sync(location: str) -> str:
-    """Sync tools for simple operations"""
-    return f"Weather in {location}: sunny"
-
-async def get_weather_async(location: str) -> str:
-    """Async tools for I/O operations"""
-    async with httpx.AsyncClient() as client:
-        # Call real weather API
-        response = await client.get(f"https://api.weather.com?q={location}")
-        return response.json()["description"]
-```
-
-**When to use sync vs async tools:**
-- **Sync tools**: Simple calculations, string operations, no I/O
-- **Async tools**: HTTP requests, database queries, file I/O
-
-
-
 === "C#"
 
     ```csharp
@@ -279,37 +131,6 @@ async def get_weather_async(location: str) -> str:
 
     const agent = new AgentHost(config);
     agent.listen(5000);
-    ```
-
-**Run it:**
-
-=== "Python"
-
-    ```bash
-    python agent.py
-
-    # Output:
-    # ✓ Agent host started on http://localhost:5000
-    # ✓ Ready to receive messages
-    ```
-
-=== "C#"
-
-    ```bash
-    dotnet run
-
-    # Output:
-    # info: Microsoft.Hosting.Lifetime[14]
-    #       Now listening on: http://localhost:5000
-    ```
-
-=== "TypeScript"
-
-    ```bash
-    node agent.js
-
-    # Output:
-    # ✓ Agent host started on http://localhost:5000
     ```
 
 **Test it:**
@@ -412,147 +233,6 @@ Agents become powerful when they can call functions to get real-time data or tak
         .AddDefaultAgent(agentOptions);
     ```
 
-**C# Best Practices for Production:**
-
-The C# examples are simplified for clarity. In production, follow these practices:
-
-```csharp
-// ✅ Use IHttpClientFactory instead of new HttpClient()
-// In Program.cs or Startup.cs:
-builder.Services.AddHttpClient("WeatherClient", client =>
-{
-    client.BaseAddress = new Uri("https://api.weather.com");
-    client.Timeout = TimeSpan.FromSeconds(10);
-});
-
-// In your function:
-async Task<string> GetWeatherAsync(
-    string location,
-    IHttpClientFactory httpClientFactory)
-{
-    var client = httpClientFactory.CreateClient("WeatherClient");
-    var url = $"/v1/current?location={Uri.EscapeDataString(location)}";
-    var response = await client.GetStringAsync(url);
-    return $"Weather in {location}: {response}";
-}
-
-// ✅ Always use [EnumeratorCancellation] with IAsyncEnumerable
-using System.Runtime.CompilerServices;
-
-async IAsyncEnumerable<TextContent> MyMiddleware(
-    IAsyncEnumerable<TextContent> contentStream,
-    IThread thread,
-    [EnumeratorCancellation] CancellationToken cancellationToken = default)
-{
-    await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
-    {
-        yield return chunk;
-    }
-}
-
-// ✅ Use null-safety and configuration validation
-var apiKey = builder.Configuration["OpenAI:ApiKey"]
-    ?? throw new InvalidOperationException("OpenAI:ApiKey not configured");
-
-var agentOptions = new AgentOptions
-{
-    Model = "gpt-4",
-    Instructions = "You are helpful.",
-    ApiKey = apiKey  // Already validated
-};
-
-// ✅ Use ConfigureAwait(false) in library code
-await next().ConfigureAwait(false);
-```
-
-**Key patterns:**
-- **HttpClient**: Use `IHttpClientFactory`, never `new HttpClient()` in loops
-- **Cancellation**: Always add `[EnumeratorCancellation]` to async enumerables
-- **Null-safety**: Validate configuration values with `??` or `?? throw`
-- **ConfigureAwait**: Use `.ConfigureAwait(false)` to avoid capturing sync context
-
-
-
-**Advanced C# Features:**
-
-```csharp
-// ✅ Enable Nullable Reference Types (C# 8+)
-// Add to your .csproj file:
-<PropertyGroup>
-    <Nullable>enable</Nullable>
-</PropertyGroup>
-
-// Then use nullable annotations:
-public async Task<string?> GetOptionalDataAsync()  // Returns string or null
-{
-    // Compiler helps prevent NullReferenceException
-}
-
-// ✅ Avoid Common Async Anti-Patterns
-
-// ❌ NEVER use .Result or .Wait() - causes deadlocks
-var result = SomeAsyncMethod().Result;  // BAD - blocks thread
-SomeAsyncMethod().Wait();              // BAD - blocks thread
-
-// ✅ Always use await
-var result = await SomeAsyncMethod();  // GOOD - non-blocking
-
-// ❌ NEVER use async void (except for event handlers)
-async void ProcessMessage()  // BAD - exceptions can't be caught
-{
-    await SomeAsyncMethod();
-}
-
-// ✅ Always return Task
-async Task ProcessMessageAsync()  // GOOD - exceptions propagate properly
-{
-    await SomeAsyncMethod();
-}
-
-// ✅ Dependency Injection Service Lifetimes
-
-// Middleware classes with DI
-public class RateLimitMiddleware
-{
-    private readonly IMemoryCache _cache;
-    private readonly ILogger<RateLimitMiddleware> _logger;
-
-    // Constructor injection
-    public RateLimitMiddleware(IMemoryCache cache, ILogger<RateLimitMiddleware> logger)
-    {
-        _cache = cache;
-        _logger = logger;
-    }
-
-    public async IAsyncEnumerable<IMessage> ProcessAsync(
-        IMessage message,
-        IThread thread,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var userId = thread.Metadata.GetValueOrDefault("user_id")?.ToString();
-        // Use _cache and _logger here
-        yield return message;
-    }
-}
-
-// Register with appropriate lifetime:
-builder.Services.AddMemoryCache();  // Singleton
-builder.Services.AddScoped<RateLimitMiddleware>();  // Scoped per request
-
-// Service lifetime guide:
-// - Singleton: Shared across entire app (caches, configurations)
-// - Scoped: One instance per request/thread (database contexts, user state)
-// - Transient: New instance every time (stateless services)
-```
-
-**Avoid these mistakes:**
-- ❌ Don't use `.Result` or `.Wait()` on async methods (causes deadlocks)
-- ❌ Don't use `async void` except for event handlers (exceptions can't be caught)
-- ❌ Don't ignore `CancellationToken` (prevents graceful shutdown)
-- ❌ Don't register middleware as Singleton if it has scoped dependencies
-
-
-
 === "TypeScript"
 
     ```typescript
@@ -586,7 +266,6 @@ builder.Services.AddScoped<RateLimitMiddleware>();  // Scoped per request
 - LLM decides when to call functions
 - SDK executes functions and returns results to LLM
 - LLM generates final response
-
 
 ### Error Handling in Tools
 
@@ -2251,6 +1930,642 @@ Use this for real-world scenarios like logging, moderation, rate limiting, and e
 
 ---
 
+## Step 5: Content Types
+
+The Agent Protocol supports multiple content types, not just text.
+
+### Multimodal Content
+
+Messages can contain text, images, audio, and more:
+
+=== "Python"
+
+    ```python
+    from microsoft.agents.protocol import (
+        UserMessage,
+        TextContent,
+        ImageContent,
+        AudioContent,
+        FileContent
+    )
+
+    # Text only
+    msg1 = UserMessage(content=[
+        TextContent(text="Hello!")
+    ])
+
+    # Text + Image
+    msg2 = UserMessage(content=[
+        TextContent(text="What's in this image?"),
+        ImageContent(url="https://example.com/photo.jpg")
+    ])
+
+    # Audio
+    msg3 = UserMessage(content=[
+        AudioContent(url="https://example.com/audio.mp3")
+    ])
+
+    # File attachment
+    msg4 = UserMessage(content=[
+        TextContent(text="Analyze this CSV"),
+        FileContent(url="https://example.com/data.csv", mime_type="text/csv")
+    ])
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol;
+
+    // Text only
+    var msg1 = new UserMessage
+    {
+        Content = new IContent[]
+        {
+            new TextContent { Text = "Hello!" }
+        }
+    };
+
+    // Text + Image
+    var msg2 = new UserMessage
+    {
+        Content = new IContent[]
+        {
+            new TextContent { Text = "What's in this image?" },
+            new ImageContent { Url = "https://example.com/photo.jpg" }
+        }
+    };
+
+    // Audio
+    var msg3 = new UserMessage
+    {
+        Content = new IContent[]
+        {
+            new AudioContent { Url = "https://example.com/audio.mp3" }
+        }
+    };
+
+    // File attachment
+    var msg4 = new UserMessage
+    {
+        Content = new IContent[]
+        {
+            new TextContent { Text = "Analyze this CSV" },
+            new FileContent { Url = "https://example.com/data.csv", MimeType = "text/csv" }
+        }
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import {
+        UserMessage,
+        TextContent,
+        ImageContent,
+        AudioContent,
+        FileContent
+    } from '@microsoft/agents-protocol';
+
+    // Text only
+    const msg1 = new UserMessage({
+        content: [new TextContent({ text: "Hello!" })]
+    });
+
+    // Text + Image
+    const msg2 = new UserMessage({
+        content: [
+            new TextContent({ text: "What's in this image?" }),
+            new ImageContent({ url: "https://example.com/photo.jpg" })
+        ]
+    });
+
+    // Audio
+    const msg3 = new UserMessage({
+        content: [new AudioContent({ url: "https://example.com/audio.mp3" })]
+    });
+
+    // File attachment
+    const msg4 = new UserMessage({
+        content: [
+            new TextContent({ text: "Analyze this CSV" }),
+            new FileContent({ url: "https://example.com/data.csv", mimeType: "text/csv" })
+        ]
+    });
+    ```
+
+### Processing Multimodal Content in Middleware
+
+Use content middleware to process specific content types:
+
+=== "Python"
+
+    ```python
+    from microsoft.agents.protocol import ImageContent
+    from typing import AsyncIterable, Callable, Awaitable
+
+    async def process_images(
+        content_stream: AsyncIterable[ImageContent],
+        thread: IThread,
+        next: Callable[[AsyncIterable[ImageContent]], Awaitable[None]]
+    ) -> None:
+        async def transform():
+            async for image in content_stream:
+                print(f"🖼️ Processing image: {image.url}")
+                # Could resize, compress, add watermark, etc.
+                yield image
+
+        await next(transform())
+
+    config = AgentConfig(
+        model="gpt-4-vision",
+        instructions="You can see images.",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        middleware=[
+            (ImageContent, process_images),  # Content middleware (tuple)
+        ]
+    )
+    ```
+
+=== "C#"
+
+    ```csharp
+    async Task ProcessImages(
+        IAsyncEnumerable<ImageContent> contentStream,
+        IThread thread,
+        Func<IAsyncEnumerable<ImageContent>, Task> next,
+        CancellationToken cancellationToken)
+    {
+        async IAsyncEnumerable<ImageContent> Transform()
+        {
+            await foreach (var image in contentStream)
+            {
+                Console.WriteLine($"🖼️ Processing image: {image.Url}");
+                // Could resize, compress, add watermark, etc.
+                yield return image;
+            }
+        }
+
+        await next(Transform());
+    }
+
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4-vision",
+        Instructions = "You can see images.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Middleware = new object[]
+        {
+            (typeof(ImageContent), (Func<IAsyncEnumerable<ImageContent>, IThread, Func<IAsyncEnumerable<ImageContent>, Task>, CancellationToken, Task>)ProcessImages)  // Tuple
+        }
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { ImageContent } from '@microsoft/agents-protocol';
+
+    async function processImages(
+        contentStream: AsyncIterable<ImageContent>,
+        thread: IThread,
+        next: (stream: AsyncIterable<ImageContent>) => Promise<void>
+    ): Promise<void> {
+        async function* transform() {
+            for await (const image of contentStream) {
+                console.log(`🖼️ Processing image: ${image.url}`);
+                // Could resize, compress, add watermark, etc.
+                yield image;
+            }
+        }
+
+        await next(transform());
+    }
+
+    const config: AgentConfig = {
+        model: "gpt-4-vision",
+        instructions: "You can see images.",
+        apiKey: process.env.OPENAI_API_KEY!,
+        middleware: [
+            [ImageContent, processImages],  // Content middleware (array)
+        ]
+    };
+    ```
+
+### Special Messages
+
+The protocol includes special message types for richer interactions:
+
+=== "Python"
+
+    ```python
+    from microsoft.agents.protocol import (
+        TypingIndicatorContent,
+        MessageReactionContent,
+        MessageDeleteContent,
+        MessageUpdateContent
+    )
+    from typing import AsyncIterable, Callable, Awaitable
+
+    async def handle_reactions(
+        content_stream: AsyncIterable[MessageReactionContent],
+        thread: IThread,
+        next: Callable[[AsyncIterable[MessageReactionContent]], Awaitable[None]]
+    ) -> None:
+        async def process():
+            async for reaction in content_stream:
+                print(f"👍 User reacted with: {reaction.emoji}")
+                yield reaction
+
+        await next(process())
+
+    config = AgentConfig(
+        model="gpt-4",
+        instructions="You are helpful.",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        middleware=[
+            (MessageReactionContent, handle_reactions),  # Content middleware (tuple)
+        ]
+    )
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol;
+
+    async Task HandleReactions(
+        IAsyncEnumerable<MessageReactionContent> contentStream,
+        IThread thread,
+        Func<IAsyncEnumerable<MessageReactionContent>, Task> next,
+        CancellationToken cancellationToken)
+    {
+        async IAsyncEnumerable<MessageReactionContent> Process()
+        {
+            await foreach (var reaction in contentStream)
+            {
+                Console.WriteLine($"👍 User reacted with: {reaction.Emoji}");
+                yield return reaction;
+            }
+        }
+
+        await next(Process());
+    }
+
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Middleware = new object[]
+        {
+            (typeof(MessageReactionContent), (Func<IAsyncEnumerable<MessageReactionContent>, IThread, Func<IAsyncEnumerable<MessageReactionContent>, Task>, CancellationToken, Task>)HandleReactions)  // Tuple
+        }
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { MessageReactionContent } from '@microsoft/agents-protocol';
+
+    async function handleReactions(
+        contentStream: AsyncIterable<MessageReactionContent>,
+        thread: IThread,
+        next: (stream: AsyncIterable<MessageReactionContent>) => Promise<void>
+    ): Promise<void> {
+        async function* process() {
+            for await (const reaction of contentStream) {
+                console.log(`👍 User reacted with: ${reaction.emoji}`);
+                yield reaction;
+            }
+        }
+
+        await next(process());
+    }
+
+    const config: AgentConfig = {
+        model: "gpt-4",
+        instructions: "You are helpful.",
+        apiKey: process.env.OPENAI_API_KEY!,
+        middleware: [
+            [MessageReactionContent, handleReactions],  // Content middleware (array)
+        ]
+    };
+    ```
+
+---
+
+## Step 6: Persistent Conversations
+
+By default, conversations are stored in memory. For production, use durable storage.
+
+### In-Memory Storage (Default)
+
+=== "Python"
+
+    ```python
+    # Default - no configuration needed
+    config = AgentConfig(
+        model="gpt-4",
+        instructions="You are helpful.",
+        api_key=os.getenv("OPENAI_API_KEY")
+    )
+    # Conversations stored in memory (lost on restart)
+    ```
+
+=== "C#"
+
+    ```csharp
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"]
+    };
+    // Default: in-memory storage
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    const config: AgentConfig = {
+        model: "gpt-4",
+        instructions: "You are helpful.",
+        apiKey: process.env.OPENAI_API_KEY!
+    };
+    // Default: in-memory storage
+    ```
+
+### Client Example: Testing Persistence
+
+Here's how clients interact with persistent conversations:
+
+=== "Python"
+
+    ```python
+    from microsoft.agents.protocol import AgentProtocolClient
+
+    client = AgentProtocolClient("http://localhost:5000")
+
+    # First message - creates a new thread
+    response1 = await client.complete("My name is Alice")
+    print(f"Thread ID: {response1.thread_id}")
+    print(f"Response: {response1.text}")
+
+    # Second message - uses same thread
+    response2 = await client.complete(
+        "What's my name?",
+        thread_id=response1.thread_id
+    )
+    print(f"Response: {response2.text}")
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol.Client;
+
+    var client = new AgentProtocolClient("http://localhost:5000");
+
+    // First message - creates a new thread
+    var response1 = await client.CompleteAsync("My name is Alice");
+    Console.WriteLine($"Thread ID: {response1.ThreadId}");
+    Console.WriteLine($"Response: {response1.Text}");
+
+    // Second message - uses same thread
+    var response2 = await client.CompleteAsync(
+        "What's my name?",
+        threadId: response1.ThreadId
+    );
+    Console.WriteLine($"Response: {response2.Text}");
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { AgentProtocolClient } from '@microsoft/agents-protocol-client';
+
+    const client = new AgentProtocolClient("http://localhost:5000");
+
+    // First message - creates a new thread
+    const response1 = await client.complete("My name is Alice");
+    console.log(`Thread ID: ${response1.threadId}`);
+    console.log(`Response: ${response1.text}`);
+
+    // Second message - uses same thread
+    const response2 = await client.complete(
+        "What's my name?",
+        { threadId: response1.threadId }
+    );
+    console.log(`Response: ${response2.text}`);
+    ```
+
+**Output:**
+
+First message:
+
+```xml
+<agent thread-id="thread_abc123">
+  Nice to meet you, Alice! How can I help you today?
+</agent>
+```
+
+Thread ID: `thread_abc123`
+
+Second message (same thread):
+
+```xml
+<agent thread-id="thread_abc123">
+  Your name is Alice.
+</agent>
+```
+
+!!! success "What this demonstrates"
+    - The agent remembers "Alice" from the first message
+    - Same thread ID used for both messages
+    - Conversation context automatically maintained
+    - Works with both in-memory and durable storage
+
+**When to use:**
+- Development and testing
+- Stateless agents (no conversation history needed)
+- Short-lived demos
+
+**Limitations:**
+- Lost on restart
+- Not shared across workers
+- Limited by memory
+
+### Durable Storage
+
+For production, use database-backed storage:
+
+=== "Python"
+
+    ```python
+    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
+    from microsoft.agents.protocol.storage import SqlStorageProvider
+    import os
+
+    config = AgentConfig(
+        model="gpt-4",
+        instructions="You are helpful.",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        storage=SqlStorageProvider(os.getenv("DATABASE_URL"))
+    )
+
+    agent = AgentHost(config)
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol.Hosting;
+    using Microsoft.Agents.Protocol.Storage;
+
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Storage = new SqlStorageProvider(builder.Configuration["DatabaseUrl"])
+    };
+
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
+    import { SqlStorageProvider } from '@microsoft/agents-protocol-storage';
+
+    const config: AgentConfig = {
+        model: "gpt-4",
+        instructions: "You are helpful.",
+        apiKey: process.env.OPENAI_API_KEY!,
+        storage: new SqlStorageProvider(process.env.DATABASE_URL!)
+    };
+
+    const agent = new AgentHost(config);
+    ```
+
+**Supported storage providers:**
+- `SqlStorageProvider` - PostgreSQL, MySQL, SQL Server
+- `CosmosDbStorageProvider` - Azure Cosmos DB
+- `MongoDbStorageProvider` - MongoDB
+- `RedisStorageProvider` - Redis
+- Custom providers (implement `IStorageProvider`)
+
+**What's stored:**
+- Thread metadata (ID, created time, etc.)
+- Message history (all messages in conversation)
+- Function call results
+- Thread state (custom key-value data)
+
+### Production Defaults
+
+Enable production features with one line:
+
+=== "Python"
+
+    ```python
+    config = AgentConfig(
+        model="gpt-4",
+        instructions="You are helpful.",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        production=True  # Enables all production features
+    )
+    ```
+
+=== "C#"
+
+    ```csharp
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Production = true  // Enables all production features
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    const config: AgentConfig = {
+        model: "gpt-4",
+        instructions: "You are helpful.",
+        apiKey: process.env.OPENAI_API_KEY!,
+        production: true  // Enables all production features
+    };
+    ```
+
+**What `production=True` does:**
+
+1. **Durable storage**: Automatically configures database storage
+2. **Error handling**: Graceful error responses
+3. **Rate limiting**: Protects against abuse
+4. **Logging**: Structured logs for monitoring
+5. **Metrics**: Performance tracking
+6. **Health checks**: `/health` endpoint
+
+**You still need to provide:**
+- Database connection string (via environment variable)
+- Monitoring service credentials (optional)
+
+### Resource Management
+
+The SDK automatically handles resource management:
+
+=== "Python"
+
+    ```python
+    # Automatic cleanup when agent stops
+    agent = AgentHost(config)
+
+    try:
+        agent.run()
+    finally:
+        agent.close()  # Closes connections, flushes logs
+    ```
+
+=== "C#"
+
+    ```csharp
+    // ASP.NET Core handles cleanup automatically
+    var app = builder.Build();
+    app.MapAgentProtocol();
+    await app.RunAsync();  // Graceful shutdown on Ctrl+C
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // Automatic cleanup on process exit
+    const agent = new AgentHost(config);
+    agent.listen(5000);
+
+    process.on('SIGTERM', async () => {
+        await agent.close();  // Graceful shutdown
+        process.exit(0);
+    });
+    ```
+
+**What's cleaned up:**
+- Database connections
+- HTTP clients
+- Pending requests
+- Background tasks
+
+---
+
+
+---
+
 ## Production Agent Patterns
 
 The middleware examples above cover basic patterns. This section covers **agent-specific patterns** essential for production systems.
@@ -3225,638 +3540,6 @@ Process function calls before they execute:
 
 ---
 
-## Step 5: Content Types
-
-The Agent Protocol supports multiple content types, not just text.
-
-### Multimodal Content
-
-Messages can contain text, images, audio, and more:
-
-=== "Python"
-
-    ```python
-    from microsoft.agents.protocol import (
-        UserMessage,
-        TextContent,
-        ImageContent,
-        AudioContent,
-        FileContent
-    )
-
-    # Text only
-    msg1 = UserMessage(content=[
-        TextContent(text="Hello!")
-    ])
-
-    # Text + Image
-    msg2 = UserMessage(content=[
-        TextContent(text="What's in this image?"),
-        ImageContent(url="https://example.com/photo.jpg")
-    ])
-
-    # Audio
-    msg3 = UserMessage(content=[
-        AudioContent(url="https://example.com/audio.mp3")
-    ])
-
-    # File attachment
-    msg4 = UserMessage(content=[
-        TextContent(text="Analyze this CSV"),
-        FileContent(url="https://example.com/data.csv", mime_type="text/csv")
-    ])
-    ```
-
-=== "C#"
-
-    ```csharp
-    using Microsoft.Agents.Protocol;
-
-    // Text only
-    var msg1 = new UserMessage
-    {
-        Content = new IContent[]
-        {
-            new TextContent { Text = "Hello!" }
-        }
-    };
-
-    // Text + Image
-    var msg2 = new UserMessage
-    {
-        Content = new IContent[]
-        {
-            new TextContent { Text = "What's in this image?" },
-            new ImageContent { Url = "https://example.com/photo.jpg" }
-        }
-    };
-
-    // Audio
-    var msg3 = new UserMessage
-    {
-        Content = new IContent[]
-        {
-            new AudioContent { Url = "https://example.com/audio.mp3" }
-        }
-    };
-
-    // File attachment
-    var msg4 = new UserMessage
-    {
-        Content = new IContent[]
-        {
-            new TextContent { Text = "Analyze this CSV" },
-            new FileContent { Url = "https://example.com/data.csv", MimeType = "text/csv" }
-        }
-    };
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import {
-        UserMessage,
-        TextContent,
-        ImageContent,
-        AudioContent,
-        FileContent
-    } from '@microsoft/agents-protocol';
-
-    // Text only
-    const msg1 = new UserMessage({
-        content: [new TextContent({ text: "Hello!" })]
-    });
-
-    // Text + Image
-    const msg2 = new UserMessage({
-        content: [
-            new TextContent({ text: "What's in this image?" }),
-            new ImageContent({ url: "https://example.com/photo.jpg" })
-        ]
-    });
-
-    // Audio
-    const msg3 = new UserMessage({
-        content: [new AudioContent({ url: "https://example.com/audio.mp3" })]
-    });
-
-    // File attachment
-    const msg4 = new UserMessage({
-        content: [
-            new TextContent({ text: "Analyze this CSV" }),
-            new FileContent({ url: "https://example.com/data.csv", mimeType: "text/csv" })
-        ]
-    });
-    ```
-
-### Processing Multimodal Content in Middleware
-
-Use content middleware to process specific content types:
-
-=== "Python"
-
-    ```python
-    from microsoft.agents.protocol import ImageContent
-    from typing import AsyncIterable, Callable, Awaitable
-
-    async def process_images(
-        content_stream: AsyncIterable[ImageContent],
-        thread: IThread,
-        next: Callable[[AsyncIterable[ImageContent]], Awaitable[None]]
-    ) -> None:
-        async def transform():
-            async for image in content_stream:
-                print(f"🖼️ Processing image: {image.url}")
-                # Could resize, compress, add watermark, etc.
-                yield image
-
-        await next(transform())
-
-    config = AgentConfig(
-        model="gpt-4-vision",
-        instructions="You can see images.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[
-            (ImageContent, process_images),  # Content middleware (tuple)
-        ]
-    )
-    ```
-
-=== "C#"
-
-    ```csharp
-    async Task ProcessImages(
-        IAsyncEnumerable<ImageContent> contentStream,
-        IThread thread,
-        Func<IAsyncEnumerable<ImageContent>, Task> next,
-        CancellationToken cancellationToken)
-    {
-        async IAsyncEnumerable<ImageContent> Transform()
-        {
-            await foreach (var image in contentStream)
-            {
-                Console.WriteLine($"🖼️ Processing image: {image.Url}");
-                // Could resize, compress, add watermark, etc.
-                yield return image;
-            }
-        }
-
-        await next(Transform());
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4-vision",
-        Instructions = "You can see images.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
-        {
-            (typeof(ImageContent), (Func<IAsyncEnumerable<ImageContent>, IThread, Func<IAsyncEnumerable<ImageContent>, Task>, CancellationToken, Task>)ProcessImages)  // Tuple
-        }
-    };
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { ImageContent } from '@microsoft/agents-protocol';
-
-    async function processImages(
-        contentStream: AsyncIterable<ImageContent>,
-        thread: IThread,
-        next: (stream: AsyncIterable<ImageContent>) => Promise<void>
-    ): Promise<void> {
-        async function* transform() {
-            for await (const image of contentStream) {
-                console.log(`🖼️ Processing image: ${image.url}`);
-                // Could resize, compress, add watermark, etc.
-                yield image;
-            }
-        }
-
-        await next(transform());
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4-vision",
-        instructions: "You can see images.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [
-            [ImageContent, processImages],  // Content middleware (array)
-        ]
-    };
-    ```
-
-### Special Messages
-
-The protocol includes special message types for richer interactions:
-
-=== "Python"
-
-    ```python
-    from microsoft.agents.protocol import (
-        TypingIndicatorContent,
-        MessageReactionContent,
-        MessageDeleteContent,
-        MessageUpdateContent
-    )
-    from typing import AsyncIterable, Callable, Awaitable
-
-    async def handle_reactions(
-        content_stream: AsyncIterable[MessageReactionContent],
-        thread: IThread,
-        next: Callable[[AsyncIterable[MessageReactionContent]], Awaitable[None]]
-    ) -> None:
-        async def process():
-            async for reaction in content_stream:
-                print(f"👍 User reacted with: {reaction.emoji}")
-                yield reaction
-
-        await next(process())
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[
-            (MessageReactionContent, handle_reactions),  # Content middleware (tuple)
-        ]
-    )
-    ```
-
-=== "C#"
-
-    ```csharp
-    using Microsoft.Agents.Protocol;
-
-    async Task HandleReactions(
-        IAsyncEnumerable<MessageReactionContent> contentStream,
-        IThread thread,
-        Func<IAsyncEnumerable<MessageReactionContent>, Task> next,
-        CancellationToken cancellationToken)
-    {
-        async IAsyncEnumerable<MessageReactionContent> Process()
-        {
-            await foreach (var reaction in contentStream)
-            {
-                Console.WriteLine($"👍 User reacted with: {reaction.Emoji}");
-                yield return reaction;
-            }
-        }
-
-        await next(Process());
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
-        {
-            (typeof(MessageReactionContent), (Func<IAsyncEnumerable<MessageReactionContent>, IThread, Func<IAsyncEnumerable<MessageReactionContent>, Task>, CancellationToken, Task>)HandleReactions)  // Tuple
-        }
-    };
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { MessageReactionContent } from '@microsoft/agents-protocol';
-
-    async function handleReactions(
-        contentStream: AsyncIterable<MessageReactionContent>,
-        thread: IThread,
-        next: (stream: AsyncIterable<MessageReactionContent>) => Promise<void>
-    ): Promise<void> {
-        async function* process() {
-            for await (const reaction of contentStream) {
-                console.log(`👍 User reacted with: ${reaction.emoji}`);
-                yield reaction;
-            }
-        }
-
-        await next(process());
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [
-            [MessageReactionContent, handleReactions],  // Content middleware (array)
-        ]
-    };
-    ```
-
----
-
-## Step 6: Persistent Conversations
-
-By default, conversations are stored in memory. For production, use durable storage.
-
-### In-Memory Storage (Default)
-
-=== "Python"
-
-    ```python
-    # Default - no configuration needed
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY")
-    )
-    # Conversations stored in memory (lost on restart)
-    ```
-
-=== "C#"
-
-    ```csharp
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"]
-    };
-    // Default: in-memory storage
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!
-    };
-    // Default: in-memory storage
-    ```
-
-### Client Example: Testing Persistence
-
-Here's how clients interact with persistent conversations:
-
-=== "Python"
-
-    ```python
-    from microsoft.agents.protocol import AgentProtocolClient
-
-    client = AgentProtocolClient("http://localhost:5000")
-
-    # First message - creates a new thread
-    response1 = await client.complete("My name is Alice")
-    print(f"Thread ID: {response1.thread_id}")
-    print(f"Response: {response1.text}")
-
-    # Second message - uses same thread
-    response2 = await client.complete(
-        "What's my name?",
-        thread_id=response1.thread_id
-    )
-    print(f"Response: {response2.text}")
-    ```
-
-=== "C#"
-
-    ```csharp
-    using Microsoft.Agents.Protocol.Client;
-
-    var client = new AgentProtocolClient("http://localhost:5000");
-
-    // First message - creates a new thread
-    var response1 = await client.CompleteAsync("My name is Alice");
-    Console.WriteLine($"Thread ID: {response1.ThreadId}");
-    Console.WriteLine($"Response: {response1.Text}");
-
-    // Second message - uses same thread
-    var response2 = await client.CompleteAsync(
-        "What's my name?",
-        threadId: response1.ThreadId
-    );
-    Console.WriteLine($"Response: {response2.Text}");
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { AgentProtocolClient } from '@microsoft/agents-protocol-client';
-
-    const client = new AgentProtocolClient("http://localhost:5000");
-
-    // First message - creates a new thread
-    const response1 = await client.complete("My name is Alice");
-    console.log(`Thread ID: ${response1.threadId}`);
-    console.log(`Response: ${response1.text}`);
-
-    // Second message - uses same thread
-    const response2 = await client.complete(
-        "What's my name?",
-        { threadId: response1.threadId }
-    );
-    console.log(`Response: ${response2.text}`);
-    ```
-
-**Output:**
-
-First message:
-
-```xml
-<agent thread-id="thread_abc123">
-  Nice to meet you, Alice! How can I help you today?
-</agent>
-```
-
-Thread ID: `thread_abc123`
-
-Second message (same thread):
-
-```xml
-<agent thread-id="thread_abc123">
-  Your name is Alice.
-</agent>
-```
-
-!!! success "What this demonstrates"
-    - The agent remembers "Alice" from the first message
-    - Same thread ID used for both messages
-    - Conversation context automatically maintained
-    - Works with both in-memory and durable storage
-
-**When to use:**
-- Development and testing
-- Stateless agents (no conversation history needed)
-- Short-lived demos
-
-**Limitations:**
-- Lost on restart
-- Not shared across workers
-- Limited by memory
-
-### Durable Storage
-
-For production, use database-backed storage:
-
-=== "Python"
-
-    ```python
-    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
-    from microsoft.agents.protocol.storage import SqlStorageProvider
-    import os
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        storage=SqlStorageProvider(os.getenv("DATABASE_URL"))
-    )
-
-    agent = AgentHost(config)
-    ```
-
-=== "C#"
-
-    ```csharp
-    using Microsoft.Agents.Protocol.Hosting;
-    using Microsoft.Agents.Protocol.Storage;
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Storage = new SqlStorageProvider(builder.Configuration["DatabaseUrl"])
-    };
-
-    builder.Services
-        .AddAgentHost()
-        .AddDefaultAgent(agentOptions);
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
-    import { SqlStorageProvider } from '@microsoft/agents-protocol-storage';
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        storage: new SqlStorageProvider(process.env.DATABASE_URL!)
-    };
-
-    const agent = new AgentHost(config);
-    ```
-
-**Supported storage providers:**
-- `SqlStorageProvider` - PostgreSQL, MySQL, SQL Server
-- `CosmosDbStorageProvider` - Azure Cosmos DB
-- `MongoDbStorageProvider` - MongoDB
-- `RedisStorageProvider` - Redis
-- Custom providers (implement `IStorageProvider`)
-
-**What's stored:**
-- Thread metadata (ID, created time, etc.)
-- Message history (all messages in conversation)
-- Function call results
-- Thread state (custom key-value data)
-
-### Production Defaults
-
-Enable production features with one line:
-
-=== "Python"
-
-    ```python
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        production=True  # Enables all production features
-    )
-    ```
-
-=== "C#"
-
-    ```csharp
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Production = true  // Enables all production features
-    };
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        production: true  // Enables all production features
-    };
-    ```
-
-**What `production=True` does:**
-
-1. **Durable storage**: Automatically configures database storage
-2. **Error handling**: Graceful error responses
-3. **Rate limiting**: Protects against abuse
-4. **Logging**: Structured logs for monitoring
-5. **Metrics**: Performance tracking
-6. **Health checks**: `/health` endpoint
-
-**You still need to provide:**
-- Database connection string (via environment variable)
-- Monitoring service credentials (optional)
-
-### Resource Management
-
-The SDK automatically handles resource management:
-
-=== "Python"
-
-    ```python
-    # Automatic cleanup when agent stops
-    agent = AgentHost(config)
-
-    try:
-        agent.run()
-    finally:
-        agent.close()  # Closes connections, flushes logs
-    ```
-
-=== "C#"
-
-    ```csharp
-    // ASP.NET Core handles cleanup automatically
-    var app = builder.Build();
-    app.MapAgentProtocol();
-    await app.RunAsync();  // Graceful shutdown on Ctrl+C
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    // Automatic cleanup on process exit
-    const agent = new AgentHost(config);
-    agent.listen(5000);
-
-    process.on('SIGTERM', async () => {
-        await agent.close();  // Graceful shutdown
-        process.exit(0);
-    });
-    ```
-
-**What's cleaned up:**
-- Database connections
-- HTTP clients
-- Pending requests
-- Background tasks
-
----
 
 ## Advanced: Stream Flow Control
 

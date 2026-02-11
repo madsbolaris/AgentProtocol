@@ -48,7 +48,7 @@ Build production-ready AI agents that handle conversations, call tools, and scal
 === "Python"
 
     ```bash
-    pip install microsoft-agents-hosting
+    pip install microsoft-agents-protocol-hosting
     pip install python-dotenv  # For loading .env
     ```
 
@@ -61,7 +61,7 @@ Build production-ready AI agents that handle conversations, call tools, and scal
 === "TypeScript"
 
     ```bash
-    npm install @microsoft/agents-hosting
+    npm install @microsoft/agents-protocol-hosting
     npm install dotenv
     ```
 
@@ -74,7 +74,7 @@ Create your first agent in under 2 minutes.
 === "Python"
 
     ```python
-    from microsoft.agents.hosting import AgentHost, AgentConfig
+    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
     import os
     from dotenv import load_dotenv
 
@@ -118,7 +118,7 @@ Create your first agent in under 2 minutes.
 === "TypeScript"
 
     ```typescript
-    import { AgentHost, AgentConfig } from '@microsoft/agents-hosting';
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
     import 'dotenv/config';
 
     const config: AgentConfig = {
@@ -336,7 +336,7 @@ Agents become powerful when they can call functions to get real-time data or tak
 === "Python"
 
     ```python
-    from microsoft.agents.hosting import AgentHost, AgentConfig
+    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
     import os
     from datetime import datetime, timezone
 
@@ -386,7 +386,7 @@ Agents become powerful when they can call functions to get real-time data or tak
 === "TypeScript"
 
     ```typescript
-    import { AgentHost, AgentConfig } from '@microsoft/agents-hosting';
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
 
     function getWeather(location: string): string {
         // In production, call a real weather API
@@ -511,7 +511,7 @@ Configure your agent to accept client-provided functions:
 === "Python"
 
     ```python
-    from microsoft.agents.hosting import AgentHost, AgentConfig
+    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
 
     config = AgentConfig(
         model="gpt-4",
@@ -740,7 +740,7 @@ Let's add simple logging to see what's happening:
 === "Python"
 
     ```python
-    from microsoft.agents.hosting import AgentHost, AgentConfig
+    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
     from microsoft.agents.protocol import IMessage, IThread
     from typing import Callable, Awaitable
     import os
@@ -800,7 +800,7 @@ Let's add simple logging to see what's happening:
 === "TypeScript"
 
     ```typescript
-    import { AgentHost, AgentConfig } from '@microsoft/agents-hosting';
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
     import { IMessage, IThread } from '@microsoft/agents-protocol';
 
     async function logMessages(
@@ -1391,7 +1391,7 @@ To process content as it streams from the LLM, use **content middlewares** with 
         apiKey: process.env.OPENAI_API_KEY!,
         middlewares: [
             logMiddleware,                      // Message middleware (plain function)
-            [TextContent, logTextContent],      // Content middleware (array/tuple)
+            [TextContent, logTextContent],      // Content middleware (array)
         ]
     };
     ```
@@ -1587,7 +1587,7 @@ Transform LLM output before it reaches the client:
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
         middlewares: [
-            [TextContent, addEmojis],  // Content middleware as array/tuple
+            [TextContent, addEmojis],  // Content middleware (array)
         ]
     };
     ```
@@ -2216,8 +2216,8 @@ For production, use database-backed storage:
 === "Python"
 
     ```python
-    from microsoft.agents.hosting import AgentHost, AgentConfig
-    from microsoft.agents.storage import SqlStorageProvider
+    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
+    from microsoft.agents.protocol.storage import SqlStorageProvider
     import os
 
     config = AgentConfig(
@@ -2234,7 +2234,7 @@ For production, use database-backed storage:
 
     ```csharp
     using Microsoft.Agents.Protocol.Hosting;
-    using Microsoft.Agents.Storage;
+    using Microsoft.Agents.Protocol.Storage;
 
     var agentOptions = new AgentOptions
     {
@@ -2252,8 +2252,8 @@ For production, use database-backed storage:
 === "TypeScript"
 
     ```typescript
-    import { AgentHost, AgentConfig } from '@microsoft/agents-hosting';
-    import { SqlStorageProvider } from '@microsoft/agents-storage';
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
+    import { SqlStorageProvider } from '@microsoft/agents-protocol-storage';
 
     const config: AgentConfig = {
         model: "gpt-4",
@@ -2936,12 +2936,12 @@ Here's a production-ready agent with multiple middlewares:
 === "Python"
 
     ```python
-    from microsoft.agents.hosting import AgentHost, AgentConfig
+    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
     from microsoft.agents.protocol import (
         IMessage, IThread, UserMessage, TextContent,
         FunctionCallContent, FunctionResultContent
     )
-    from microsoft.agents.storage import SqlStorageProvider
+    from microsoft.agents.protocol.storage import SqlStorageProvider
     from typing import Callable, Awaitable, AsyncIterable
     import os
     import time
@@ -3038,7 +3038,7 @@ Here's a production-ready agent with multiple middlewares:
     ```csharp
     using Microsoft.Agents.Protocol;
     using Microsoft.Agents.Protocol.Hosting;
-    using Microsoft.Agents.Storage;
+    using Microsoft.Agents.Protocol.Storage;
 
     var builder = WebApplication.CreateBuilder(args);
 
@@ -3156,12 +3156,12 @@ Here's a production-ready agent with multiple middlewares:
 === "TypeScript"
 
     ```typescript
-    import { AgentHost, AgentConfig } from '@microsoft/agents-hosting';
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
     import {
         IMessage, IThread, UserMessage, TextContent,
         FunctionCallContent, FunctionResultContent
     } from '@microsoft/agents-protocol';
-    import { SqlStorageProvider } from '@microsoft/agents-storage';
+    import { SqlStorageProvider } from '@microsoft/agents-protocol-storage';
     import 'dotenv/config';
 
     // Message middlewares

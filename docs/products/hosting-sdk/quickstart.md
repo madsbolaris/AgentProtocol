@@ -99,10 +99,16 @@ Create your first agent in under 2 minutes.
 
     var builder = WebApplication.CreateBuilder(args);
 
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"]
+    };
+
     builder.Services
         .AddAgentHost()
-        .AddDefaultAgent(a => a.UseModel("gpt-4", "You are helpful.",
-            apiKey: builder.Configuration["OpenAI:ApiKey"]));
+        .AddDefaultAgent(agentOptions);
 
     var app = builder.Build();
     app.MapAgentProtocol();
@@ -353,15 +359,21 @@ Agents become powerful when they can call functions to get real-time data or tak
 
     var builder = WebApplication.CreateBuilder(args);
 
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Functions = new[]
+        {
+            ("get_weather", "Get current weather for a location", (Func<string, string>)((string location) => $"The weather in {location} is sunny and 72°F")),
+            ("get_time", "Get current time in UTC", (Func<string>)(() => DateTime.UtcNow.ToString("O")))
+        }
+    };
+
     builder.Services
         .AddAgentHost()
-        .AddDefaultAgent(a => a
-            .UseModel("gpt-4", "You are helpful.",
-                apiKey: builder.Configuration["OpenAI:ApiKey"])
-            .AddFunction("get_weather", "Get current weather for a location",
-                (string location) => $"The weather in {location} is sunny and 72°F")
-            .AddFunction("get_time", "Get current time in UTC",
-                () => DateTime.UtcNow.ToString("O")));
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -426,21 +438,33 @@ Tools should handle errors gracefully and return error messages that the LLM can
 === "C#"
 
     ```csharp
-    .AddFunction("get_weather", "Get current weather",
-        async (string location) =>
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Functions = new[]
         {
-            try
+            ("get_weather", "Get current weather", (Func<string, Task<string>>)(async (string location) =>
             {
-                using var client = new HttpClient();
-                var response = await client.GetStringAsync(
-                    $"https://api.weather.com/v1/current?location={location}");
-                return $"Weather in {location}: {response}";
-            }
-            catch (HttpRequestException ex)
-            {
-                return $"Sorry, couldn't fetch weather: {ex.Message}";
-            }
-        })
+                try
+                {
+                    using var client = new HttpClient();
+                    var response = await client.GetStringAsync(
+                        $"https://api.weather.com/v1/current?location={location}");
+                    return $"Weather in {location}: {response}";
+                }
+                catch (HttpRequestException ex)
+                {
+                    return $"Sorry, couldn't fetch weather: {ex.Message}";
+                }
+            }))
+        }
+    };
+
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -498,12 +522,17 @@ Allow clients to provide their own function implementations that the agent can c
 === "C#"
 
     ```csharp
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        AcceptClientFunctions = true  // ✅ Client can provide any function
+    };
+
     builder.Services
         .AddAgentHost()
-        .AddDefaultAgent(a => a
-            .UseModel("gpt-4", "You are helpful.",
-                apiKey: builder.Configuration["OpenAI:ApiKey"])
-            .AcceptClientFunctions());  // ✅ Client can provide any function
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -537,13 +566,17 @@ Allow clients to provide their own function implementations that the agent can c
 === "C#"
 
     ```csharp
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        ClientFunctions = new[] { "get_local_file", "get_system_info" }  // Only allow these
+    };
+
     builder.Services
         .AddAgentHost()
-        .AddDefaultAgent(a => a
-            .UseModel("gpt-4", "You are helpful.",
-                apiKey: builder.Configuration["OpenAI:ApiKey"])
-            .AcceptClientFunction("get_local_file")  // Allow this function
-            .AcceptClientFunction("get_system_info"));  // And this one
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -733,20 +766,25 @@ Each middleware can:
 === "C#"
 
     ```csharp
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        OnMessage = async (message, thread, next, ct) =>
+        {
+            // Wait for message completion (buffers all content chunks)
+            var text = await message.WaitForCompletionAsync(ct);
+            await thread.LogAsync($"Received: {text}", ct);
+
+            // Call next() to continue the pipeline
+            await next();
+        }
+    };
+
     builder.Services
         .AddAgentHost()
-        .AddDefaultAgent(a => a
-            .UseModel("gpt-4", "You are helpful.",
-                apiKey: builder.Configuration["OpenAI:ApiKey"])
-            .OnMessage(async (message, thread, next, ct) =>
-            {
-                // Wait for message completion (buffers all content chunks)
-                var text = await message.WaitForCompletionAsync(ct);
-                await thread.LogAsync($"Received: {text}", ct);
-
-                // Call next() to continue the pipeline
-                await next();
-            }));
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -814,29 +852,39 @@ Each middleware can:
 === "C#"
 
     ```csharp
-    .OnMessage(async (message, thread, next, ct) =>
+    var agentOptions = new AgentOptions
     {
-        // Wait for message completion and extract text
-        var text = (await message.WaitForCompletionAsync(ct)).GetText();
-
-        if (text.StartsWith("/help"))
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        OnMessage = async (message, thread, next, ct) =>
         {
-            await thread.SendTextAsync(
-                "Available commands:\n" +
-                "/help - Show this message\n" +
-                "/reset - Start new conversation", ct);
-            return;  // Don't call next() - we handled it
-        }
+            // Wait for message completion and extract text
+            var text = (await message.WaitForCompletionAsync(ct)).GetText();
 
-        if (text.StartsWith("/reset"))
-        {
-            await thread.SendTextAsync("Conversation reset!", ct);
-            return;  // Don't call next()
-        }
+            if (text.StartsWith("/help"))
+            {
+                await thread.SendTextAsync(
+                    "Available commands:\n" +
+                    "/help - Show this message\n" +
+                    "/reset - Start new conversation", ct);
+                return;  // Don't call next() - we handled it
+            }
 
-        // Not a command, pass to LLM
-        await next();
-    })
+            if (text.StartsWith("/reset"))
+            {
+                await thread.SendTextAsync("Conversation reset!", ct);
+                return;  // Don't call next()
+            }
+
+            // Not a command, pass to LLM
+            await next();
+        }
+    };
+
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -927,18 +975,28 @@ A key advantage of `next()` is that middleware can run code **after** downstream
 === "C#"
 
     ```csharp
-    .OnMessage(async (message, thread, next, ct) =>
+    var agentOptions = new AgentOptions
     {
-        var start = DateTime.UtcNow;
-        await thread.LogAsync("Request started", ct);
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        OnMessage = async (message, thread, next, ct) =>
+        {
+            var start = DateTime.UtcNow;
+            await thread.LogAsync("Request started", ct);
 
-        // Process downstream middlewares and LLM
-        await next();
+            // Process downstream middlewares and LLM
+            await next();
 
-        // This runs AFTER the LLM responds!
-        var duration = DateTime.UtcNow - start;
-        await thread.LogAsync($"Request completed in {duration.TotalSeconds:F2}s", ct);
-    })
+            // This runs AFTER the LLM responds!
+            var duration = DateTime.UtcNow - start;
+            await thread.LogAsync($"Request completed in {duration.TotalSeconds:F2}s", ct);
+        }
+    };
+
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -989,21 +1047,31 @@ Middleware can catch and handle errors from downstream processing:
 === "C#"
 
     ```csharp
-    .OnMessage(async (message, thread, next, ct) =>
+    var agentOptions = new AgentOptions
     {
-        try
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        OnMessage = async (message, thread, next, ct) =>
         {
-            await next();  // Process downstream middlewares and LLM
+            try
+            {
+                await next();  // Process downstream middlewares and LLM
+            }
+            catch (Exception e)
+            {
+                // Log the error for debugging
+                await thread.LogAsync($"Error: {e.Message}", ct);
+                // Send user-friendly message
+                await thread.SendTextAsync("Sorry, something went wrong. Please try again.", ct);
+                // Error is handled - don't re-throw
+            }
         }
-        catch (Exception e)
-        {
-            // Log the error for debugging
-            await thread.LogAsync($"Error: {e.Message}", ct);
-            // Send user-friendly message
-            await thread.SendTextAsync("Sorry, something went wrong. Please try again.", ct);
-            // Error is handled - don't re-throw
-        }
-    })
+    };
+
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -1099,26 +1167,38 @@ You can also add middlewares **after** the model to process content generated by
 === "C#"
 
     ```csharp
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        MessageMiddlewares = new[] { log_middleware },
+        ContentMiddlewares = new Dictionary<Type, Delegate[]>
+        {
+            [typeof(TextContent)] = new Delegate[]
+            {
+                async (IAsyncEnumerable<TextContent> chunks, IThread thread, Func<IAsyncEnumerable<TextContent>, Task> next, CancellationToken ct) =>
+                {
+                    // Transform chunks as they stream
+                    async IAsyncEnumerable<TextContent> Transform()
+                    {
+                        await foreach (var chunk in chunks.WithCancellation(ct))
+                        {
+                            var filtered = chunk.Text.Replace("bad_word", "[filtered]");
+                            yield return new TextContent { Text = filtered };
+                        }
+                    }
+
+                    // Pass transformed chunks downstream
+                    await next(Transform());
+                }
+            }
+        }
+    };
+
     builder.Services
         .AddAgentHost()
-        .AddDefaultAgent(a => a
-            .UseModel("gpt-4", "You are helpful.")
-            .OnMessage(log_middleware)
-            .OnContent(async (chunks, thread, next, ct) =>
-            {
-                // Transform chunks as they stream
-                async IAsyncEnumerable<TextContent> Transform()
-                {
-                    await foreach (var chunk in chunks.WithCancellation(ct))
-                    {
-                        var filtered = chunk.Text.Replace("bad_word", "[filtered]");
-                        yield return new TextContent { Text = filtered };
-                    }
-                }
-
-                // Pass transformed chunks downstream
-                await next(Transform());
-            }));
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -1178,33 +1258,43 @@ When you need message-level logic across different content types and their chunk
 === "C#"
 
     ```csharp
-    .OnMessage(async (message, thread, next, ct) =>
+    var agentOptions = new AgentOptions
     {
-        async IAsyncEnumerable<IChunk> TransformChunks()
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        OnMessage = async (message, thread, next, ct) =>
         {
-            await foreach (var chunk in message.Chunks().WithCancellation(ct))
+            async IAsyncEnumerable<IChunk> TransformChunks()
             {
-                // chunk contains metadata: ContentType, ContentIndex, etc.
-                switch (chunk)
+                await foreach (var chunk in message.Chunks().WithCancellation(ct))
                 {
-                    case TextChunk textChunk:
-                        yield return textChunk with {
-                            Text = textChunk.Text.Replace("bad_word", "[filtered]")
-                        };
-                        break;
-                    case ImageChunk imageChunk:
-                        yield return ProcessImageChunk(imageChunk);
-                        break;
-                    default:
-                        yield return chunk;
-                        break;
+                    // chunk contains metadata: ContentType, ContentIndex, etc.
+                    switch (chunk)
+                    {
+                        case TextChunk textChunk:
+                            yield return textChunk with {
+                                Text = textChunk.Text.Replace("bad_word", "[filtered]")
+                            };
+                            break;
+                        case ImageChunk imageChunk:
+                            yield return ProcessImageChunk(imageChunk);
+                            break;
+                        default:
+                            yield return chunk;
+                            break;
+                    }
                 }
             }
-        }
 
-        // Framework routes chunks back to correct content based on metadata
-        await next(TransformChunks());
-    })
+            // Framework routes chunks back to correct content based on metadata
+            await next(TransformChunks());
+        }
+    };
+
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -1247,15 +1337,31 @@ When you need message-level logic across different content types and their chunk
 === "C#"
 
     ```csharp
-    .OnContent(async (chunks, thread, next, ct) =>
+    var agentOptions = new AgentOptions
     {
-        // First, pass chunks through to downstream/client
-        await next(chunks);
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        ContentMiddlewares = new Dictionary<Type, Delegate[]>
+        {
+            [typeof(TextContent)] = new Delegate[]
+            {
+                async (IAsyncEnumerable<TextContent> chunks, IThread thread, Func<IAsyncEnumerable<TextContent>, Task> next, CancellationToken ct) =>
+                {
+                    // First, pass chunks through to downstream/client
+                    await next(chunks);
 
-        // Now this runs AFTER all chunks have been sent
-        await thread.LogAsync("LLM finished responding", ct);
-        await metrics.RecordCompletionAsync(ct);
-    })
+                    // Now this runs AFTER all chunks have been sent
+                    await thread.LogAsync("LLM finished responding", ct);
+                    await metrics.RecordCompletionAsync(ct);
+                }
+            }
+        }
+    };
+
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -1348,52 +1454,68 @@ When you need message-level logic across different content types and their chunk
     ```csharp
     using Microsoft.Agents.Protocol;
 
-    builder.Services
-        .AddAgentHost()
-        .AddDefaultAgent(a => a
-            .UseModel("gpt-4", "You are helpful.")
-            // Intercept function calls before execution
-            .OnContent(async (chunks, thread, next, ct) =>
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Functions = new[]
+        {
+            ("get_weather", "Get weather", (Func<string, string>)GetWeather),
+            ("delete_data", "Delete data", (Func<string, string>)DeleteData)
+        },
+        ContentMiddlewares = new Dictionary<Type, Delegate[]>
+        {
+            [typeof(FunctionCallContent)] = new Delegate[]
             {
-                async IAsyncEnumerable<IContent> Validated()
+                async (IAsyncEnumerable<FunctionCallContent> chunks, IThread thread, Func<IAsyncEnumerable<IContent>, Task> next, CancellationToken ct) =>
                 {
-                    await foreach (var chunk in chunks.WithCancellation(ct))
+                    async IAsyncEnumerable<IContent> Validated()
                     {
-                        await thread.LogAsync($"Function call: {chunk.Name}({chunk.Arguments})", ct);
+                        await foreach (var chunk in chunks.WithCancellation(ct))
+                        {
+                            await thread.LogAsync($"Function call: {chunk.Name}({chunk.Arguments})", ct);
 
-                        if (chunk.Name == "delete_data" && !thread.User.IsAdmin)
-                        {
-                            yield return new FunctionResultContent
+                            if (chunk.Name == "delete_data" && !thread.User.IsAdmin)
                             {
-                                CallId = chunk.Id,
-                                Error = "Permission denied: admin access required"
-                            };
+                                yield return new FunctionResultContent
+                                {
+                                    CallId = chunk.Id,
+                                    Error = "Permission denied: admin access required"
+                                };
+                            }
+                            else
+                            {
+                                yield return chunk;
+                            }
                         }
-                        else
+                    }
+
+                    await next(Validated());
+                }
+            },
+            [typeof(FunctionResultContent)] = new Delegate[]
+            {
+                async (IAsyncEnumerable<FunctionResultContent> chunks, IThread thread, Func<IAsyncEnumerable<FunctionResultContent>, Task> next, CancellationToken ct) =>
+                {
+                    async IAsyncEnumerable<FunctionResultContent> Transformed()
+                    {
+                        await foreach (var chunk in chunks.WithCancellation(ct))
                         {
+                            await cache.SetAsync(chunk.CallId, chunk.Result, ct);
                             yield return chunk;
                         }
                     }
-                }
 
-                await next(Validated());
-            })
-            .AddFunction("get_weather", "Get weather", GetWeather)
-            .AddFunction("delete_data", "Delete data", DeleteData)
-            // Transform function results after execution
-            .OnContent(async (chunks, thread, next, ct) =>
-            {
-                async IAsyncEnumerable<FunctionResultContent> Transformed()
-                {
-                    await foreach (var chunk in chunks.WithCancellation(ct))
-                    {
-                        await cache.SetAsync(chunk.CallId, chunk.Result, ct);
-                        yield return chunk;
-                    }
+                    await next(Transformed());
                 }
+            }
+        }
+    };
 
-                await next(Transformed());
-            }));
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -1483,11 +1605,16 @@ Handle images, audio, files, and other media from users.
 === "C#"
 
     ```csharp
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4-vision",
+        Instructions = "You can analyze images.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"]
+    };
+
     builder.Services
         .AddAgentHost()
-        .AddDefaultAgent(a => a
-            .UseModel("gpt-4-vision", "You can analyze images.",
-                apiKey: builder.Configuration["OpenAI:ApiKey"]));
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -1545,19 +1672,35 @@ If you need to process different content types:
 === "C#"
 
     ```csharp
-    .OnContent(async (chunks, thread, next, ct) =>
+    var agentOptions = new AgentOptions
     {
-        async IAsyncEnumerable<ImageContent> Process()
+        Model = "gpt-4-vision",
+        Instructions = "You can analyze images.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        ContentMiddlewares = new Dictionary<Type, Delegate[]>
         {
-            await foreach (var chunk in chunks.WithCancellation(ct))
+            [typeof(ImageContent)] = new Delegate[]
             {
-                await thread.LogAsync($"Image received: {chunk.Uri}", ct);
-                yield return chunk;  // Forward unchanged
+                async (IAsyncEnumerable<ImageContent> chunks, IThread thread, Func<IAsyncEnumerable<ImageContent>, Task> next, CancellationToken ct) =>
+                {
+                    async IAsyncEnumerable<ImageContent> Process()
+                    {
+                        await foreach (var chunk in chunks.WithCancellation(ct))
+                        {
+                            await thread.LogAsync($"Image received: {chunk.Uri}", ct);
+                            yield return chunk;  // Forward unchanged
+                        }
+                    }
+
+                    await next(Process());
+                }
             }
         }
+    };
 
-        await next(Process());
-    })
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -1617,30 +1760,42 @@ Handle reactions, typing indicators, and other events using the same `next()` pa
 === "C#"
 
     ```csharp
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        ContentMiddlewares = new Dictionary<Type, Delegate[]>
+        {
+            [typeof(MessageReactionContent)] = new Delegate[]
+            {
+                async (IAsyncEnumerable<MessageReactionContent> chunks, IThread thread, Func<IAsyncEnumerable<MessageReactionContent>, Task> next, CancellationToken ct) =>
+                {
+                    await foreach (var chunk in chunks.WithCancellation(ct))
+                    {
+                        if (chunk.Reaction == "👍")
+                        {
+                            await thread.SendTextAsync("Thanks for the feedback!", ct);
+                            return;  // Don't call next()
+                        }
+                    }
+                    // Acknowledged
+                }
+            },
+            [typeof(TypingIndicatorContent)] = new Delegate[]
+            {
+                (IAsyncEnumerable<TypingIndicatorContent> chunks, IThread thread, Func<IAsyncEnumerable<TypingIndicatorContent>, Task> next, CancellationToken ct) =>
+                {
+                    // Just acknowledge silently
+                    return Task.CompletedTask;
+                }
+            }
+        }
+    };
+
     builder.Services
         .AddAgentHost()
-        .AddDefaultAgent(a => a
-            .UseModel("gpt-4", "You are helpful.",
-                apiKey: builder.Configuration["OpenAI:ApiKey"])
-
-            .OnContent(async (chunks, thread, next, ct) =>
-            {
-                await foreach (var chunk in chunks.WithCancellation(ct))
-                {
-                    if (chunk.Reaction == "👍")
-                    {
-                        await thread.SendTextAsync("Thanks for the feedback!", ct);
-                        return;  // Don't call next()
-                    }
-                }
-                // Acknowledged
-            })
-
-            .OnContent((chunks, thread, next, ct) =>
-            {
-                // Just acknowledge silently
-                return Task.CompletedTask;
-            }));
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -1707,11 +1862,16 @@ Maintain context across multiple messages automatically.
 
     ```csharp
     // Threads are managed automatically!
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"]
+    };
+
     builder.Services
         .AddAgentHost()
-        .AddDefaultAgent(a => a
-            .UseModel("gpt-4", "You are helpful.",
-                apiKey: builder.Configuration["OpenAI:ApiKey"]));
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -1838,11 +1998,17 @@ By default, conversations are in-memory (lost on restart). For production:
         builder.Configuration.GetConnectionString("AgentProtocol")
     );
 
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Storage = storage
+    };
+
     builder.Services
         .AddAgentHost()
-        .UseStorage(storage)
-        .AddDefaultAgent(a => a.UseModel("gpt-4", "You are helpful.",
-            apiKey: builder.Configuration["OpenAI:ApiKey"]));
+        .AddDefaultAgent(agentOptions);
     ```
 
 ### Production Defaults
@@ -1865,11 +2031,17 @@ One-line production configuration:
 === "C#"
 
     ```csharp
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Production = true  // Enables: durable storage, queues, retries, observability
+    };
+
     builder.Services
         .AddAgentHost()
-        .UseProductionDefaults(builder.Configuration)
-        .AddDefaultAgent(a => a.UseModel("gpt-4", "You are helpful.",
-            apiKey: builder.Configuration["OpenAI:ApiKey"]));
+        .AddDefaultAgent(agentOptions);
     ```
 
 This enables:
@@ -1903,22 +2075,29 @@ Earlier examples created resources like `HttpClient` inline for simplicity. In p
     // Register in Program.cs
     builder.Services.AddHttpClient();
 
-    // Access from agent builder's DI container
+    // Access from service provider
+    var sp = builder.Services.BuildServiceProvider();
+    var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Functions = new[]
+        {
+            ("weather", "Get weather", (Func<string, Task<string>>)(async (string city) =>
+            {
+                var client = httpClientFactory.CreateClient();
+                var response = await client.GetStringAsync($"https://api.weather.com/{city}");
+                return response;
+            }))
+        }
+    };
+
     builder.Services
         .AddAgentHost()
-        .AddDefaultAgent((a, sp) =>
-        {
-            var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
-
-            a.UseModel("gpt-4", "You are helpful.",
-                apiKey: builder.Configuration["OpenAI:ApiKey"])
-             .AddFunction("weather", "Get weather", async (string city) =>
-             {
-                 var client = httpClientFactory.CreateClient();
-                 var response = await client.GetStringAsync($"https://api.weather.com/{city}");
-                 return response;
-             });
-        });
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "Python"
@@ -2044,13 +2223,29 @@ If you don't need to read chunks, just pass them through to the next middleware:
 === "C#"
 
     ```csharp
-    .OnContent(async (chunks, thread, next, ct) =>
+    var agentOptions = new AgentOptions
     {
-        await thread.LogAsync("Received text stream", ct);
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        ContentMiddlewares = new Dictionary<Type, Delegate[]>
+        {
+            [typeof(TextContent)] = new Delegate[]
+            {
+                async (IAsyncEnumerable<TextContent> chunks, IThread thread, Func<IAsyncEnumerable<TextContent>, Task> next, CancellationToken ct) =>
+                {
+                    await thread.LogAsync("Received text stream", ct);
 
-        // Pass chunks through unread
-        await next(chunks);
-    })
+                    // Pass chunks through unread
+                    await next(chunks);
+                }
+            }
+        }
+    };
+
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -2084,19 +2279,35 @@ Read chunks for logging/monitoring while forwarding them unchanged:
 === "C#"
 
     ```csharp
-    .OnContent(async (chunks, thread, next, ct) =>
+    var agentOptions = new AgentOptions
     {
-        async IAsyncEnumerable<TextContent> ForwardWithLogging()
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        ContentMiddlewares = new Dictionary<Type, Delegate[]>
         {
-            await foreach (var chunk in chunks.WithCancellation(ct))
+            [typeof(TextContent)] = new Delegate[]
             {
-                await thread.LogAsync($"Chunk: {chunk.Text}", ct);
-                yield return chunk;  // Forward unchanged
+                async (IAsyncEnumerable<TextContent> chunks, IThread thread, Func<IAsyncEnumerable<TextContent>, Task> next, CancellationToken ct) =>
+                {
+                    async IAsyncEnumerable<TextContent> ForwardWithLogging()
+                    {
+                        await foreach (var chunk in chunks.WithCancellation(ct))
+                        {
+                            await thread.LogAsync($"Chunk: {chunk.Text}", ct);
+                            yield return chunk;  // Forward unchanged
+                        }
+                    }
+
+                    await next(ForwardWithLogging());
+                }
             }
         }
+    };
 
-        await next(ForwardWithLogging());
-    })
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -2134,18 +2345,34 @@ Transform each chunk as it arrives:
 === "C#"
 
     ```csharp
-    .OnContent(async (chunks, thread, next, ct) =>
+    var agentOptions = new AgentOptions
     {
-        async IAsyncEnumerable<TextContent> Transform()
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        ContentMiddlewares = new Dictionary<Type, Delegate[]>
         {
-            await foreach (var chunk in chunks.WithCancellation(ct))
+            [typeof(TextContent)] = new Delegate[]
             {
-                yield return new TextContent { Text = chunk.Text.ToUpper() };
+                async (IAsyncEnumerable<TextContent> chunks, IThread thread, Func<IAsyncEnumerable<TextContent>, Task> next, CancellationToken ct) =>
+                {
+                    async IAsyncEnumerable<TextContent> Transform()
+                    {
+                        await foreach (var chunk in chunks.WithCancellation(ct))
+                        {
+                            yield return new TextContent { Text = chunk.Text.ToUpper() };
+                        }
+                    }
+
+                    await next(Transform());
+                }
             }
         }
+    };
 
-        await next(Transform());
-    })
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -2199,40 +2426,56 @@ Buffer and process at natural boundaries like sentences:
 === "C#"
 
     ```csharp
-    .OnContent(async (chunks, thread, next, ct) =>
+    var agentOptions = new AgentOptions
     {
-        async IAsyncEnumerable<TextContent> FilterBySentence()
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        ContentMiddlewares = new Dictionary<Type, Delegate[]>
         {
-            var buffer = "";
-
-            await foreach (var chunk in chunks.WithCancellation(ct))
+            [typeof(TextContent)] = new Delegate[]
             {
-                buffer += chunk.Text;
-
-                // Process complete sentences
-                while (buffer.Contains(". "))
+                async (IAsyncEnumerable<TextContent> chunks, IThread thread, Func<IAsyncEnumerable<TextContent>, Task> next, CancellationToken ct) =>
                 {
-                    var parts = buffer.Split(new[] { ". " }, 2, StringSplitOptions.None);
-                    var sentence = parts[0] + ". ";
-                    buffer = parts[1];
+                    async IAsyncEnumerable<TextContent> FilterBySentence()
+                    {
+                        var buffer = "";
 
-                    var filtered = ContainsProfanity(sentence)
-                        ? "[filtered]. "
-                        : sentence;
-                    yield return new TextContent { Text = filtered };
+                        await foreach (var chunk in chunks.WithCancellation(ct))
+                        {
+                            buffer += chunk.Text;
+
+                            // Process complete sentences
+                            while (buffer.Contains(". "))
+                            {
+                                var parts = buffer.Split(new[] { ". " }, 2, StringSplitOptions.None);
+                                var sentence = parts[0] + ". ";
+                                buffer = parts[1];
+
+                                var filtered = ContainsProfanity(sentence)
+                                    ? "[filtered]. "
+                                    : sentence;
+                                yield return new TextContent { Text = filtered };
+                            }
+                        }
+
+                        // Flush remaining buffer
+                        if (!string.IsNullOrWhiteSpace(buffer))
+                        {
+                            var cleaned = ContainsProfanity(buffer) ? "[filtered]" : buffer;
+                            yield return new TextContent { Text = cleaned };
+                        }
+                    }
+
+                    await next(FilterBySentence());
                 }
             }
-
-            // Flush remaining buffer
-            if (!string.IsNullOrWhiteSpace(buffer))
-            {
-                var cleaned = ContainsProfanity(buffer) ? "[filtered]" : buffer;
-                yield return new TextContent { Text = cleaned };
-            }
         }
+    };
 
-        await next(FilterBySentence());
-    })
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -2300,30 +2543,46 @@ Sometimes you need all chunks before deciding how to proceed:
 === "C#"
 
     ```csharp
-    .OnContent(async (chunks, thread, next, ct) =>
+    var agentOptions = new AgentOptions
     {
-        // Collect all chunks
-        var fullText = "";
-        await foreach (var chunk in chunks.WithCancellation(ct))
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        ContentMiddlewares = new Dictionary<Type, Delegate[]>
         {
-            fullText += chunk.Text;
-        }
-
-        // Make decision based on complete content
-        async IAsyncEnumerable<TextContent> Result()
-        {
-            if (IsInappropriate(fullText))
+            [typeof(TextContent)] = new Delegate[]
             {
-                yield return new TextContent { Text = "[Content filtered by policy]" };
-            }
-            else
-            {
-                yield return new TextContent { Text = fullText };
+                async (IAsyncEnumerable<TextContent> chunks, IThread thread, Func<IAsyncEnumerable<TextContent>, Task> next, CancellationToken ct) =>
+                {
+                    // Collect all chunks
+                    var fullText = "";
+                    await foreach (var chunk in chunks.WithCancellation(ct))
+                    {
+                        fullText += chunk.Text;
+                    }
+
+                    // Make decision based on complete content
+                    async IAsyncEnumerable<TextContent> Result()
+                    {
+                        if (IsInappropriate(fullText))
+                        {
+                            yield return new TextContent { Text = "[Content filtered by policy]" };
+                        }
+                        else
+                        {
+                            yield return new TextContent { Text = fullText };
+                        }
+                    }
+
+                    await next(Result());
+                }
             }
         }
+    };
 
-        await next(Result());
-    })
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
     ```
 
 === "TypeScript"
@@ -2420,46 +2679,62 @@ Here's a full agent with all concepts using the `next()` pattern:
 
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services
-        .AddAgentHost()
-        .AddDefaultAgent(a => a
-            .UseModel("gpt-4", "You are helpful.",
-                apiKey: builder.Configuration["OpenAI:ApiKey"])
+    // Define middleware functions
+    async Task LogMessages(IMessage message, IThread thread, Func<Task> next, CancellationToken ct)
+    {
+        var text = (await message.WaitForCompletionAsync(ct)).GetText();
+        await thread.LogAsync($"Thread {thread.ThreadId}: {text}", ct);
+        await next();
+    }
 
-            .OnMessage(async (message, thread, next, ct) =>
-            {
-                var text = (await message.WaitForCompletionAsync(ct)).GetText();
-                await thread.LogAsync($"Thread {thread.ThreadId}: {text}", ct);
-                await next();
-            })
+    async Task HandleCommands(IMessage message, IThread thread, Func<Task> next, CancellationToken ct)
+    {
+        var text = (await message.WaitForCompletionAsync(ct)).GetText();
+        if (text == "/help")
+        {
+            await thread.SendTextAsync("Ask me about weather or time!", ct);
+            return;  // Don't call next()
+        }
+        await next();
+    }
 
-            .OnMessage(async (message, thread, next, ct) =>
+    // Tools
+    string GetWeather(string location) => $"Weather in {location}: sunny, 72°F";
+    string GetTime() => DateTime.UtcNow.ToString("O");
+
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        MessageMiddlewares = new[] { LogMessages, HandleCommands },
+        Functions = new[]
+        {
+            ("get_weather", "Get current weather", (Func<string, string>)GetWeather),
+            ("get_time", "Get current time", (Func<string>)GetTime)
+        },
+        ContentMiddlewares = new Dictionary<Type, Delegate[]>
+        {
+            [typeof(MessageReactionContent)] = new Delegate[]
             {
-                var text = (await message.WaitForCompletionAsync(ct)).GetText();
-                if (text == "/help")
+                async (IAsyncEnumerable<MessageReactionContent> chunks, IThread thread, Func<IAsyncEnumerable<MessageReactionContent>, Task> next, CancellationToken ct) =>
                 {
-                    await thread.SendTextAsync("Ask me about weather or time!", ct);
-                    return;  // Don't call next()
-                }
-                await next();
-            })
-
-            .AddFunction("get_weather", "Get current weather",
-                (string location) => $"Weather in {location}: sunny, 72°F")
-            .AddFunction("get_time", "Get current time",
-                () => DateTime.UtcNow.ToString("O"))
-
-            .OnContent(async (chunks, thread, next, ct) =>
-            {
-                await foreach (var chunk in chunks.WithCancellation(ct))
-                {
-                    if (chunk.Reaction == "👍")
+                    await foreach (var chunk in chunks.WithCancellation(ct))
                     {
-                        await thread.SendTextAsync("Glad you liked it!", ct);
-                        return;
+                        if (chunk.Reaction == "👍")
+                        {
+                            await thread.SendTextAsync("Glad you liked it!", ct);
+                            return;
+                        }
                     }
                 }
-            }));
+            }
+        }
+    };
+
+    builder.Services
+        .AddAgentHost()
+        .AddDefaultAgent(agentOptions);
 
     var app = builder.Build();
     app.MapAgentProtocol();

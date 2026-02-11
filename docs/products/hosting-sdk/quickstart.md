@@ -539,7 +539,6 @@ Clients provide function implementations when sending messages:
 
 ```xml
 <thread thread-id="thread_abc123">
-  <user>Send an email to bob@example.com with subject 'Meeting' and list my local files</user>
   <agent>
     <function-call call-id="call_001" name="send_email">
       {"to":"bob@example.com","subject":"Meeting","body":""}

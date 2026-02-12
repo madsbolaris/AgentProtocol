@@ -620,9 +620,9 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"]
             ?? throw new InvalidOperationException("OpenAI:ApiKey not configured"),
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(TextContent), CommandRouter)
+            CommandRouter  // Type inferred from method signature
         }
     };
 
@@ -758,9 +758,9 @@ Transform each chunk as it flows through:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(TextContent), UppercaseContent)
+            UppercaseContent  // Type inferred from method signature
         }
     };
     ```
@@ -847,9 +847,9 @@ Use the `next()` callback pattern when you need to execute code **before** the m
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)TimeStreaming)
+            TimeStreaming  // Type inferred from method signature
         }
     };
     ```
@@ -935,7 +935,7 @@ Message middleware runs once per message and works at a higher level than conten
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)TimingMiddleware
         }
@@ -1022,7 +1022,7 @@ Use the wrap pattern with try/catch to handle errors gracefully in your middlewa
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)ErrorMiddleware
             // ... other middleware
@@ -1137,9 +1137,9 @@ Use content middleware to process specific content types. This allows you to aug
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(MessageReactionContent), (Func<IAsyncEnumerable<MessageReactionContent>, IThread, Func<IAsyncEnumerable<MessageReactionContent>, Task>, CancellationToken, Task>)HandleReactions)
+            HandleReactions  // Type inferred from method signature
         }
     };
     ```
@@ -2278,9 +2278,9 @@ Transform LLM output before it reaches the client:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)AddEmojis)  // Content middleware (tuple)
+            AddEmojis  // Type inferred from method signature  // Content middleware (tuple)
         }
     };
     ```
@@ -2409,10 +2409,10 @@ Process function calls before they execute:
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Functions = new[] { ("get_weather", "Get weather", GetWeather) },
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(FunctionCallContent), (Func<IAsyncEnumerable<FunctionCallContent>, IThread, Func<IAsyncEnumerable<FunctionCallContent>, Task>, CancellationToken, Task>)LogFunctionCalls),     // Tuple
-            (typeof(FunctionResultContent), (Func<IAsyncEnumerable<FunctionResultContent>, IThread, Func<IAsyncEnumerable<FunctionResultContent>, Task>, CancellationToken, Task>)LogFunctionResults)  // Tuple
+            LogFunctionCalls,     // Tuple
+            LogFunctionResults  // Tuple
         }
     };
     ```
@@ -2566,9 +2566,9 @@ Collect chunks and send them in larger batches:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)BatchContent)  // Tuple
+            BatchContent  // Tuple
         }
     };
     ```
@@ -2667,9 +2667,9 @@ Remove unwanted content:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)FilterProfanity)  // Tuple
+            FilterProfanity  // Tuple
         }
     };
     ```
@@ -2761,9 +2761,9 @@ Send chunks to multiple destinations:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)TeeToAnalytics)  // Tuple
+            TeeToAnalytics  // Tuple
         }
     };
     ```
@@ -2853,9 +2853,9 @@ Slow down chunk delivery:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)RateLimit)  // Tuple
+            RateLimit  // Tuple
         }
     };
     ```
@@ -2972,9 +2972,9 @@ Combine chunks in complex ways:
         Model = "gpt-4",
         Instructions = "You are helpful.",
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)MarkdownToHtml)  // Tuple
+            MarkdownToHtml  // Tuple
         }
     };
     ```
@@ -3289,11 +3289,11 @@ Here's a production-ready agent with multiple middleware:
         },
         Middleware =
         [
-            (typeof(TextContent), LogText),                       // Content middleware - log incoming text
+            LogText,                       // Content middleware - log incoming text
             HandleCommands,                                       // Message middleware - command routing
-            (typeof(TextContent), LogTextChunks),                 // Content middleware - stream LLM text
-            (typeof(FunctionCallContent), LogFunctionCalls),      // Content middleware - log function calls
-            (typeof(FunctionResultContent), LogFunctionResults)   // Content middleware - log function results
+            LogTextChunks,                 // Content middleware - stream LLM text
+            LogFunctionCalls,      // Content middleware - log function calls
+            LogFunctionResults   // Content middleware - log function results
         ]
     };
 
@@ -3517,9 +3517,9 @@ Use when transforming, filtering, or logging chunks:
     // Register as tuple
     var agentOptions = new AgentOptions
     {
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(TextContent), MyContentMiddleware)
+            MyContentMiddleware
         }
     };
     ```
@@ -3593,9 +3593,9 @@ Use when adding before/after logic (timing, error handling):
     // Register as tuple
     var agentOptions = new AgentOptions
     {
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)MyContentMiddleware)
+            MyContentMiddleware
         }
     };
     ```
@@ -3718,7 +3718,7 @@ Use for logging, moderation, rate limiting, or filtering:
     // Register as plain function
     var agentOptions = new AgentOptions
     {
-        Middleware = new object[] { MyMessageMiddleware }
+        Middleware = new MiddlewareCollection { MyMessageMiddleware }
     };
     ```
 
@@ -3812,7 +3812,7 @@ Use when adding before/after logic (timing, error handling):
     // Register as plain function
     var agentOptions = new AgentOptions
     {
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
             (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)MyMessageMiddleware
         }
@@ -3969,12 +3969,12 @@ Mix both types and patterns in a single array:
     ```csharp
     var agentOptions = new AgentOptions
     {
-        Middleware = new object[]
+        Middleware = new MiddlewareCollection
         {
             (Func<IMessage, IThread, CancellationToken, IAsyncEnumerable<IMessage>>)LogMessage,
             (Func<IMessage, IThread, CancellationToken, IAsyncEnumerable<IMessage>>)RateLimit,
-            (typeof(TextContent), UppercaseContent),
-            (typeof(ImageContent), FilterImages)
+            UppercaseContent,
+            FilterImages
         }
     };
     ```

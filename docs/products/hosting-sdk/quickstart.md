@@ -538,7 +538,7 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
     async def command_router(
         content_stream: AsyncIterable[TextContent],
         thread: IThread
-    ) -> AsyncIterable[TextContent]:
+    ) -> AsyncIterable[IStreamable]:
         # Wait for all chunks to assemble into complete text
         complete_text = await content_stream.wait()
 
@@ -569,7 +569,7 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
     using Microsoft.Agents.Protocol.Hosting;
     using System.Runtime.CompilerServices;
 
-    async IAsyncEnumerable<TextContent> CommandRouter(
+    async IAsyncEnumerable<IStreamable> CommandRouter(
         IAsyncEnumerable<TextContent> contentStream,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -617,7 +617,7 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
     import { TextContent, IThread } from '@microsoft/agents-protocol';
 
     async function* commandRouter(
-        contentStream: AsyncIterable<IStreamable>,
+        contentStream: AsyncIterable<TextContent>,
         thread: IThread
     ): AsyncIterable<IStreamable> {
         // Wait for all chunks to assemble into complete text
@@ -667,10 +667,6 @@ When a client sends "Hello, how are you?" (not a command), it passes through to 
 
 Process content chunk-by-chunk as it streams in real-time. This is the most common pattern for transforming or observing streaming data.
 
-#### Content Middleware
-
-Transform each chunk as it flows through:
-
 === "Python"
 
     ```python
@@ -680,7 +676,7 @@ Transform each chunk as it flows through:
     async def uppercase_content(
         content_stream: AsyncIterable[TextContent],
         thread: IThread
-    ) -> AsyncIterable[TextContent]:
+    ) -> AsyncIterable[IStreamable]:
         async for chunk in content_stream:
             chunk.text = chunk.text.upper()
             yield chunk
@@ -700,7 +696,7 @@ Transform each chunk as it flows through:
     ```csharp
     using System.Runtime.CompilerServices;
 
-    async IAsyncEnumerable<TextContent> UppercaseContent(
+    async IAsyncEnumerable<IStreamable> UppercaseContent(
         IAsyncEnumerable<TextContent> contentStream,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -1068,7 +1064,7 @@ Use content middleware to process specific content types. This allows you to aug
         Func<IAsyncEnumerable<MessageReactionContent>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<MessageReactionContent> Process()
+        async IAsyncEnumerable<IStreamable> Process()
         {
             await foreach (var reaction in contentStream)
             {
@@ -1476,7 +1472,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def enforce_tool_permissions(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         user_role = thread.metadata.get("user_role", "guest")
         allowed_tools = ROLE_PERMISSIONS.get(user_role, [])
         
@@ -1535,7 +1531,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def inject_rag_context(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.role == "user":
             # Extract text from message
             text_parts = []
@@ -1594,7 +1590,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
             self,
             message: IMessage,
             thread: IThread
-        ) -> AsyncIterable[IMessage]:
+        ) -> AsyncIterable[IStreamable]:
             # Count tokens in current message
             text_parts = []
             async for content in message.content:
@@ -1673,7 +1669,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def route_to_specialist(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.role == "user":
             # Extract text
             text_parts = []
@@ -1744,7 +1740,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def track_conversation_state(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         # Load or initialize state
         state_dict = thread.metadata.get("conversation_state")
         
@@ -1798,7 +1794,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def reflection_middleware(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.role == "agent":
             # Extract agent response
             text_parts = []
@@ -1870,7 +1866,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def planning_middleware(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.role == "user":
             # Extract user request
             text_parts = []
@@ -2007,7 +2003,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def human_in_the_loop_middleware(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.role == "agent" and message.tool_calls:
             # Check if any tool calls require approval
             pending_approvals = []
@@ -2221,7 +2217,7 @@ Transform LLM output before it reaches the client:
         Func<IAsyncEnumerable<TextContent>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<TextContent> Transform()
+        async IAsyncEnumerable<IStreamable> Transform()
         {
             await foreach (var chunk in contentStream)
             {
@@ -2336,7 +2332,7 @@ Process function calls before they execute:
         var completeCall = await contentChunks.WaitForCompletionAsync();
         Console.WriteLine($"🔧 Function call: {completeCall.Name}({completeCall.Arguments})");
 
-        async IAsyncEnumerable<FunctionCallContent> Process()
+        async IAsyncEnumerable<IStreamable> Process()
         {
             yield return completeCall;
         }
@@ -2354,7 +2350,7 @@ Process function calls before they execute:
         var completeResult = await contentChunks.WaitForCompletionAsync();
         Console.WriteLine($"✅ Function result: {completeResult.Result}");
 
-        async IAsyncEnumerable<FunctionResultContent> Process()
+        async IAsyncEnumerable<IStreamable> Process()
         {
             yield return completeResult;
         }
@@ -2498,7 +2494,7 @@ Collect chunks and send them in larger batches:
         Func<IAsyncEnumerable<TextContent>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<TextContent> Batched()
+        async IAsyncEnumerable<IStreamable> Batched()
         {
             var buffer = new List<string>();
 
@@ -2609,7 +2605,7 @@ Remove unwanted content:
         Func<IAsyncEnumerable<TextContent>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<TextContent> Filtered()
+        async IAsyncEnumerable<IStreamable> Filtered()
         {
             await foreach (var chunk in contentStream)
             {
@@ -2703,7 +2699,7 @@ Send chunks to multiple destinations:
         Func<IAsyncEnumerable<TextContent>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<TextContent> Forwarding()
+        async IAsyncEnumerable<IStreamable> Forwarding()
         {
             await foreach (var chunk in contentStream)
             {
@@ -2795,7 +2791,7 @@ Slow down chunk delivery:
         Func<IAsyncEnumerable<TextContent>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<TextContent> Throttled()
+        async IAsyncEnumerable<IStreamable> Throttled()
         {
             await foreach (var chunk in contentStream)
             {
@@ -2898,7 +2894,7 @@ Combine chunks in complex ways:
         Func<IAsyncEnumerable<TextContent>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<TextContent> Transformed()
+        async IAsyncEnumerable<IStreamable> Transformed()
         {
             var buffer = new List<string>();
 
@@ -3134,7 +3130,7 @@ Here's a production-ready agent with multiple middleware:
         var completeText = await contentChunks.WaitForCompletionAsync();
         Console.WriteLine($"📨 [{thread.Id}] Received: {completeText.Text}");
 
-        async IAsyncEnumerable<TextContent> Process()
+        async IAsyncEnumerable<IStreamable> Process()
         {
             yield return completeText;
         }
@@ -3183,7 +3179,7 @@ Here's a production-ready agent with multiple middleware:
         Func<IAsyncEnumerable<TextContent>, Task> next,
         CancellationToken ct)
     {
-        async IAsyncEnumerable<TextContent> Process()
+        async IAsyncEnumerable<IStreamable> Process()
         {
             await foreach (var chunk in contentChunks)
             {
@@ -3205,7 +3201,7 @@ Here's a production-ready agent with multiple middleware:
         var completeCall = await contentChunks.WaitForCompletionAsync();
         Console.WriteLine($"🔧 Calling: {completeCall.Name}({completeCall.Arguments})");
 
-        async IAsyncEnumerable<FunctionCallContent> Process()
+        async IAsyncEnumerable<IStreamable> Process()
         {
             yield return completeCall;
         }
@@ -3223,7 +3219,7 @@ Here's a production-ready agent with multiple middleware:
         var completeResult = await contentChunks.WaitForCompletionAsync();
         Console.WriteLine($"✅ Result: {completeResult.Result}");
 
-        async IAsyncEnumerable<FunctionResultContent> Process()
+        async IAsyncEnumerable<IStreamable> Process()
         {
             yield return completeResult;
         }
@@ -3445,7 +3441,7 @@ Use when transforming, filtering, or logging chunks:
     async def my_content_middleware(
         content_stream: AsyncIterable[TextContent],
         thread: IThread
-    ) -> AsyncIterable[TextContent]:
+    ) -> AsyncIterable[IStreamable]:
         async for chunk in content_stream:
             # Process chunk
             print(f"Chunk: {chunk.text}")
@@ -3460,7 +3456,7 @@ Use when transforming, filtering, or logging chunks:
 === "C#"
 
     ```csharp
-    async IAsyncEnumerable<TextContent> MyContentMiddleware(
+    async IAsyncEnumerable<IStreamable> MyContentMiddleware(
         IAsyncEnumerable<TextContent> contentStream,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -3599,7 +3595,7 @@ Use for logging, moderation, rate limiting, or filtering:
     async def my_message_middleware(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         print(f"Message from {message.role}")
         yield message  # Framework handles streaming
 
@@ -3632,7 +3628,7 @@ Use for logging, moderation, rate limiting, or filtering:
 
     ```csharp
     // Yield the message (most common)
-    async IAsyncEnumerable<IMessage> MyMessageMiddleware(
+    async IAsyncEnumerable<IStreamable> MyMessageMiddleware(
         IMessage message,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)

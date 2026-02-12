@@ -613,10 +613,10 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         thread: IThread
     ): AsyncIterable<IStreamable> {
         // Check if it's the /help command
-        if (content.text.trim() === '/help') {
+        if (content.text.trim() === "/help") {
             // Handle command - return result without calling LLM
             yield new TextContent({
-                text: 'Available commands:\n/help - Show this help'
+                text: "Available commands:\n/help - Show this help"
             });
         } else {
             // Pass through to LLM

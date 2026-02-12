@@ -499,15 +499,13 @@ Clients provide function implementations when sending messages:
     <function-call call-id="call_001" name="send_email">
       {"to":"bob@example.com","subject":"Meeting","body":""}
     </function-call>
-  </agent>
-  <tool call-id="call_001">
-    Email sent successfully
-  </tool>
-  <agent>
     <function-call call-id="call_002" name="get_local_files">
       {}
     </function-call>
   </agent>
+  <tool call-id="call_001">
+    Email sent successfully
+  </tool>
   <tool call-id="call_002">
     Found 15 files: file1.txt, file2.py, README.md, config.json, package.json
   </tool>

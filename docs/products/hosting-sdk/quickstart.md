@@ -260,13 +260,6 @@ Agents become powerful when they can call functions to get real-time data or tak
     const agent = new AgentHost(config);
     ```
 
-**What this does:**
-
-- SDK generates JSON schema from function signatures
-- LLM decides when to call functions
-- SDK executes functions and returns results to LLM
-- LLM generates final response
-
 ### Error Handling in Tools
 
 Tools should handle errors gracefully and return error messages that the LLM can explain to the user:
@@ -524,25 +517,11 @@ Clients provide function implementations when sending messages:
 </thread>
 ```
 
-!!! tip "What this shows"
-    - Client provides function implementations when sending the message
-    - Agent calls back to client to execute functions (send_email, get_local_files)
-    - Client executes functions locally and returns results
-    - Agent receives results and generates final response
-
 ---
 
 ## Step 4: Understanding Middleware
 
 Middleware lets you intercept and modify messages **before and after** they're processed. Think of it as a pipeline where you control each stage.
-
-This is **the most powerful feature** of the SDK. You can:
-- Log all messages for debugging
-- Route messages to different handlers
-- Validate/sanitize inputs for safety
-- Add authentication and authorization
-- Transform LLM outputs (e.g., uppercase, remove PII)
-- Implement rate limiting and abuse prevention
 
 ### Your First Middleware
 
@@ -638,33 +617,20 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
     import { TextContent, IThread } from '@microsoft/agents-protocol';
 
     async function* commandRouter(
-        contentStream: AsyncIterable<TextContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread
-    ): AsyncIterable<TextContent> {
+    ): AsyncIterable<IStreamable> {
         // Wait for all chunks to assemble into complete text
         const completeText = await contentStream.value;
 
-        // Check if it's a command
-        const command = completeText.text.trim();
-
-        if (command.startsWith('/')) {
-            // Handle commands - return result without calling LLM
-            if (command === '/help') {
-                yield new TextContent({
-                    text: 'Available commands:\n/help - Show this help\n/time - Show current time'
-                });
-            } else if (command === '/time') {
-                const now = new Date();
-                yield new TextContent({
-                    text: `Current time: ${now.toLocaleTimeString()}`
-                });
-            } else {
-                yield new TextContent({
-                    text: `Unknown command: ${command}`
-                });
-            }
+        // Check if it's the /help command
+        if (completeText.text.trim() === '/help') {
+            // Handle command - return result without calling LLM
+            yield new TextContent({
+                text: 'Available commands:\n/help - Show this help'
+            });
         } else {
-            // Not a command - pass through to LLM
+            // Pass through to LLM
             yield completeText;
         }
     }
@@ -679,7 +645,7 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         instructions: "You are helpful.",
         apiKey,
         middleware: [
-            [TextContent, commandRouter]  // Content middleware (array)
+            [TextContent, commandRouter]
         ]
     };
 
@@ -693,13 +659,6 @@ When a client sends `/help`:
 ```
 Available commands:
 /help - Show this help
-/time - Show current time
-```
-
-When a client sends `/time`:
-
-```
-Current time: 14:32:15
 ```
 
 When a client sends "Hello, how are you?" (not a command), it passes through to the LLM normally.

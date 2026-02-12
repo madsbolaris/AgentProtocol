@@ -343,11 +343,6 @@ Tools should handle errors gracefully and return error messages that the LLM can
     }
     ```
 
-**Best practices:**
-- Catch exceptions and return user-friendly error messages
-- Let the LLM explain the error to the user in natural language
-- Log errors for debugging but don't expose internal details to users
-
 ---
 
 ## Step 3: Client-Provided Functions
@@ -401,12 +396,6 @@ Configure your agent to accept client-provided functions:
 
     const agent = new AgentHost(config);
     ```
-
-**What happens now:**
-- Clients can register their own functions
-- Agent calls back to client to execute functions
-- Client returns results to agent
-- Agent continues processing
 
 ### Client Implementation
 
@@ -541,25 +530,6 @@ Clients provide function implementations when sending messages:
     - Client executes functions locally and returns results
     - Agent receives results and generates final response
 
-**Flow:**
-
-```
-1. Client sends message with function schemas
-2. Agent processes with LLM
-3. LLM decides to call client function
-4. Agent sends function_call_request to client
-5. Client executes function locally
-6. Client sends function_call_result back
-7. Agent continues with LLM
-8. Agent returns final response
-```
-
-**Security considerations:**
-- Only enable `allow_client_functions` if you trust clients
-- Client functions execute in client's environment (not server)
-- Validate function results before using them
-- Consider rate limiting function calls
-
 ---
 
 ## Step 4: Understanding Middleware
@@ -576,7 +546,7 @@ This is **the most powerful feature** of the SDK. You can:
 
 ### Your First Middleware
 
-Let's build a simple command router that intercepts commands (like `/help`) and handles them without calling the LLM. We'll use **text content middleware** with the **transform pattern** (async generator with `yield`):
+Let's build a simple command router that intercepts commands (like `/help`) and handles them without calling the LLM.
 
 === "Python"
 
@@ -593,20 +563,12 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         # Wait for all chunks to assemble into complete text
         complete_text = await content_stream.wait()
 
-        # Check if it's a command
-        command = complete_text.text.strip()
-
-        if command.startswith('/'):
-            # Handle commands - return result without calling LLM
-            if command == "/help":
-                yield TextContent(text="Available commands:\n/help - Show this help\n/time - Show current time")
-            elif command == "/time":
-                from datetime import datetime
-                yield TextContent(text=f"Current time: {datetime.now().strftime('%H:%M:%S')}")
-            else:
-                yield TextContent(text=f"Unknown command: {command}")
+        # Check if it's the /help command
+        if complete_text.text.strip() == "/help":
+            # Handle command - return result without calling LLM
+            yield TextContent(text="Available commands:\n/help - Show this help")
         else:
-            # Not a command - pass through to LLM
+            # Pass through to LLM
             yield complete_text
 
     config = AgentConfig(
@@ -614,7 +576,7 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
         middleware=[
-            (TextContent, command_router)  # Content middleware (tuple)
+            (TextContent, command_router)
         ]
     )
 
@@ -636,37 +598,18 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         // Wait for all chunks to assemble into complete text
         var completeText = await contentStream.WaitForCompletionAsync();
 
-        // Check if it's a command
-        var command = completeText.Text.Trim();
-
-        if (command.StartsWith('/'))
+        // Check if it's the /help command
+        if (completeText.Text.Trim() == "/help")
         {
-            // Handle commands - return result without calling LLM
-            if (command == "/help")
+            // Handle command - return result without calling LLM
+            yield return new TextContent
             {
-                yield return new TextContent
-                {
-                    Text = "Available commands:\n/help - Show this help\n/time - Show current time"
-                };
-            }
-            else if (command == "/time")
-            {
-                yield return new TextContent
-                {
-                    Text = $"Current time: {DateTime.Now:HH:mm:ss}"
-                };
-            }
-            else
-            {
-                yield return new TextContent
-                {
-                    Text = $"Unknown command: {command}"
-                };
-            }
+                Text = "Available commands:\n/help - Show this help"
+            };
         }
         else
         {
-            // Not a command - pass through to LLM
+            // Pass through to LLM
             yield return completeText;
         }
     }
@@ -701,28 +644,16 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         // Wait for all chunks to assemble into complete text
         const completeText = await contentStream.value;
 
-        // Check if it's a command
-        const command = completeText.text.trim();
-
-        if (command.startsWith('/')) {
-            // Handle commands - return result without calling LLM
-            if (command === '/help') {
-                yield new TextContent({
-                    text: 'Available commands:\n/help - Show this help\n/time - Show current time'
-                });
-            } else if (command === '/time') {
-                const now = new Date();
-                yield new TextContent({
-                    text: `Current time: ${now.toLocaleTimeString()}`
-                });
-            } else {
-                yield new TextContent({
-                    text: `Unknown command: ${command}`
-                });
-            }
+        // Check if it's the /help command
+        if (completeText.text.trim() === '/help') {
+            // Handle command - return result without calling LLM
+            yield new TextContent({
+                text: 'Available commands:\n/help - Show this help'
+            });
         } else {
-            // Not a command - pass through to LLM
+            // Pass through to LLM
             yield completeText;
+        }
         }
     }
 
@@ -750,153 +681,9 @@ When a client sends `/help`:
 ```
 Available commands:
 /help - Show this help
-/time - Show current time
-```
-
-When a client sends `/time`:
-
-```
-Current time: 14:32:15
 ```
 
 When a client sends "Hello, how are you?" (not a command), it passes through to the LLM normally.
-
-**Key Points:**
-
-- ✅ **Content middleware can do command routing** - no need for message middleware
-- ✅ **Flow control** - consume the stream and return different content to skip the LLM
-- ✅ **Simple pattern** - uses familiar async generator syntax with `yield`
-
-### Buffered Processing (Wait Pattern)
-
-Sometimes you need to wait for all chunks to arrive before processing. Use the `.wait()` helper to buffer streaming content into a single complete item.
-
-#### Content Middleware
-
-Wait for complete content before making routing decisions:
-
-=== "Python"
-
-    ```python
-    from microsoft.agents.protocol import TextContent, IThread
-    from typing import AsyncIterable
-
-    async def content_router(
-        content_stream: AsyncIterable[TextContent],
-        thread: IThread
-    ) -> AsyncIterable[TextContent]:
-        # Wait for all chunks to assemble into complete text
-        complete_text = await content_stream.wait()
-
-        # Now you have the full content to analyze
-        if complete_text.text.strip().startswith('/'):
-            # Handle as command
-            if complete_text.text == "/help":
-                yield TextContent(text="Available commands...")
-            else:
-                yield TextContent(text=f"Unknown command: {complete_text.text}")
-        else:
-            # Pass through to LLM
-            yield complete_text
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[
-            (TextContent, content_router)
-        ]
-    )
-    ```
-
-=== "C#"
-
-    ```csharp
-    using Microsoft.Agents.Protocol;
-    using Microsoft.Agents.Protocol.Hosting;
-    using System.Runtime.CompilerServices;
-
-    async IAsyncEnumerable<TextContent> ContentRouter(
-        IAsyncEnumerable<TextContent> contentStream,
-        IThread thread,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        // Wait for all chunks to assemble into complete text
-        var completeText = await contentStream.WaitForCompletionAsync();
-
-        // Now you have the full content to analyze
-        if (completeText.Text.Trim().StartsWith('/'))
-        {
-            // Handle as command
-            if (completeText.Text == "/help")
-            {
-                yield return new TextContent { Text = "Available commands..." };
-            }
-            else
-            {
-                yield return new TextContent { Text = $"Unknown command: {completeText.Text}" };
-            }
-        }
-        else
-        {
-            // Pass through to LLM
-            yield return completeText;
-        }
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
-        {
-            (typeof(TextContent), ContentRouter)
-        }
-    };
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { TextContent, IThread } from '@microsoft/agents-protocol';
-    import { AgentConfig } from '@microsoft/agents-protocol-hosting';
-
-    async function* contentRouter(
-        contentStream: AsyncIterable<TextContent>,
-        thread: IThread
-    ): AsyncIterable<TextContent> {
-        // Wait for all chunks to assemble into complete text
-        const completeText = await contentStream.value;
-
-        // Now you have the full content to analyze
-        if (completeText.text.trim().startsWith('/')) {
-            // Handle as command
-            if (completeText.text === '/help') {
-                yield new TextContent({ text: 'Available commands...' });
-            } else {
-                yield new TextContent({ text: `Unknown command: ${completeText.text}` });
-            }
-        } else {
-            // Pass through to LLM
-            yield completeText;
-        }
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [
-            [TextContent, contentRouter]
-        ]
-    };
-    ```
-
-**When to use:**
-- Command routing - need full text to determine if it's a command
-- Content validation - check complete message before processing
-- Language detection - analyze full text to detect language
 
 ### Streaming Processing
 
@@ -912,15 +699,6 @@ Transform each chunk as it flows through:
     from microsoft.agents.protocol import TextContent
     from typing import AsyncIterable
 
-    # Example 1: Log each chunk
-    async def log_text_content(
-        content_stream: AsyncIterable[TextContent],
-        thread: IThread
-    ) -> AsyncIterable[TextContent]:
-        async for chunk in content_stream:
-            print(f"📝 {chunk.text}")
-            yield chunk
-
     # Example 2: Transform text
     async def uppercase_content(
         content_stream: AsyncIterable[TextContent],
@@ -930,22 +708,12 @@ Transform each chunk as it flows through:
             chunk.text = chunk.text.upper()
             yield chunk
 
-    # Example 3: Filter chunks
-    async def filter_empty(
-        content_stream: AsyncIterable[TextContent],
-        thread: IThread
-    ) -> AsyncIterable[TextContent]:
-        async for chunk in content_stream:
-            if chunk.text.strip():
-                yield chunk
-
     config = AgentConfig(
         model="gpt-4",
         instructions="You are helpful.",
         api_key=os.getenv("OPENAI_API_KEY"),
         middleware=[
             (TextContent, log_text_content),
-            (TextContent, uppercase_content),
         ]
     )
     ```

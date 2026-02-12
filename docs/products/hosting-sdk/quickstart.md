@@ -138,7 +138,7 @@ Create your first agent in under 2 minutes.
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import AgentProtocolClient
+    from microsoft.agents.protocol import AgentProtocolClient, IStreamable
 
     async def test():
         client = AgentProtocolClient("http://localhost:5000")
@@ -162,7 +162,7 @@ Create your first agent in under 2 minutes.
 === "TypeScript"
 
     ```typescript
-    import { AgentProtocolClient } from '@microsoft/agents-protocol';
+    import { AgentProtocolClient, IStreamable } from '@microsoft/agents-protocol';
 
     const client = new AgentProtocolClient("http://localhost:5000");
     const response = await client.completeChat("Hello!");
@@ -405,7 +405,7 @@ Clients provide function implementations when sending messages:
 
     ```python
     import asyncio
-    from microsoft.agents.protocol import AgentProtocolClient, ToolCollection
+    from microsoft.agents.protocol import AgentProtocolClient, ToolCollection, IStreamable
     import os
 
     async def main():
@@ -552,14 +552,14 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
 
     ```python
     from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
-    from microsoft.agents.protocol import TextContent, IThread
+    from microsoft.agents.protocol import TextContent, IThread, IStreamable
     from typing import AsyncIterable
     import os
 
     async def command_router(
-        content_stream: AsyncIterable[TextContent],
+        content_stream: AsyncIterable[IStreamable],
         thread: IThread
-    ) -> AsyncIterable[TextContent]:
+    ) -> AsyncIterable[IStreamable]:
         # Wait for all chunks to assemble into complete text
         complete_text = await content_stream.wait()
 
@@ -590,8 +590,8 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
     using Microsoft.Agents.Protocol.Hosting;
     using System.Runtime.CompilerServices;
 
-    async IAsyncEnumerable<TextContent> CommandRouter(
-        IAsyncEnumerable<TextContent> contentStream,
+    async IAsyncEnumerable<IStreamable> CommandRouter(
+        IAsyncEnumerable<IStreamable> contentStream,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -635,25 +635,37 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
 
     ```typescript
     import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
-    import { TextContent, IThread } from '@microsoft/agents-protocol';
+    import { TextContent, IThread, IStreamable } from '@microsoft/agents-protocol';
 
     async function* commandRouter(
-        contentStream: AsyncIterable<TextContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread
-    ): AsyncIterable<TextContent> {
+    ): AsyncIterable<IStreamable> {
         // Wait for all chunks to assemble into complete text
         const completeText = await contentStream.value;
 
-        // Check if it's the /help command
-        if (completeText.text.trim() === '/help') {
-            // Handle command - return result without calling LLM
-            yield new TextContent({
-                text: 'Available commands:\n/help - Show this help'
-            });
+        // Check if it's a command
+        const command = completeText.text.trim();
+
+        if (command.startsWith('/')) {
+            // Handle commands - return result without calling LLM
+            if (command === '/help') {
+                yield new TextContent({
+                    text: 'Available commands:\n/help - Show this help\n/time - Show current time'
+                });
+            } else if (command === '/time') {
+                const now = new Date();
+                yield new TextContent({
+                    text: `Current time: ${now.toLocaleTimeString()}`
+                });
+            } else {
+                yield new TextContent({
+                    text: `Unknown command: ${command}`
+                });
+            }
         } else {
-            // Pass through to LLM
+            // Not a command - pass through to LLM
             yield completeText;
-        }
         }
     }
 
@@ -681,6 +693,13 @@ When a client sends `/help`:
 ```
 Available commands:
 /help - Show this help
+/time - Show current time
+```
+
+When a client sends `/time`:
+
+```
+Current time: 14:32:15
 ```
 
 When a client sends "Hello, how are you?" (not a command), it passes through to the LLM normally.
@@ -696,14 +715,13 @@ Transform each chunk as it flows through:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import TextContent
+    from microsoft.agents.protocol import TextContent, IStreamable
     from typing import AsyncIterable
 
-    # Example 2: Transform text
     async def uppercase_content(
-        content_stream: AsyncIterable[TextContent],
+        content_stream: AsyncIterable[IStreamable],
         thread: IThread
-    ) -> AsyncIterable[TextContent]:
+    ) -> AsyncIterable[IStreamable]:
         async for chunk in content_stream:
             chunk.text = chunk.text.upper()
             yield chunk
@@ -723,22 +741,8 @@ Transform each chunk as it flows through:
     ```csharp
     using System.Runtime.CompilerServices;
 
-    // Example 1: Log each chunk
-    async IAsyncEnumerable<TextContent> LogTextContent(
-        IAsyncEnumerable<TextContent> contentStream,
-        IThread thread,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
-        {
-            Console.WriteLine($"📝 {chunk.Text}");
-            yield return chunk;
-        }
-    }
-
-    // Example 2: Transform text
-    async IAsyncEnumerable<TextContent> UppercaseContent(
-        IAsyncEnumerable<TextContent> contentStream,
+    async IAsyncEnumerable<IStreamable> UppercaseContent(
+        IAsyncEnumerable<IStreamable> contentStream,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -749,19 +753,6 @@ Transform each chunk as it flows through:
         }
     }
 
-    // Example 3: Filter chunks
-    async IAsyncEnumerable<TextContent> FilterEmpty(
-        IAsyncEnumerable<TextContent> contentStream,
-        IThread thread,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
-        {
-            if (!string.IsNullOrWhiteSpace(chunk.Text))
-                yield return chunk;
-        }
-    }
-
     var agentOptions = new AgentOptions
     {
         Model = "gpt-4",
@@ -769,7 +760,6 @@ Transform each chunk as it flows through:
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Middleware = new object[]
         {
-            (typeof(TextContent), LogTextContent),
             (typeof(TextContent), UppercaseContent)
         }
     };
@@ -778,37 +768,13 @@ Transform each chunk as it flows through:
 === "TypeScript"
 
     ```typescript
-    // Example 1: Log each chunk
-    async function* logTextContent(
-        contentStream: AsyncIterable<TextContent>,
-        thread: IThread
-    ): AsyncIterable<TextContent> {
-        for await (const chunk of contentStream) {
-            console.log(`📝 ${chunk.text}`);
-            yield chunk;
-        }
-    }
-
-    // Example 2: Transform text
     async function* uppercaseContent(
-        contentStream: AsyncIterable<TextContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread
-    ): AsyncIterable<TextContent> {
+    ): AsyncIterable<IStreamable> {
         for await (const chunk of contentStream) {
             chunk.text = chunk.text.toUpperCase();
             yield chunk;
-        }
-    }
-
-    // Example 3: Filter chunks
-    async function* filterEmpty(
-        contentStream: AsyncIterable<TextContent>,
-        thread: IThread
-    ): AsyncIterable<TextContent> {
-        for await (const chunk of contentStream) {
-            if (chunk.text.trim()) {
-                yield chunk;
-            }
         }
     }
 
@@ -817,30 +783,14 @@ Transform each chunk as it flows through:
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
         middleware: [
-            [TextContent, logTextContent],
             [TextContent, uppercaseContent],
         ]
     };
     ```
 
-**When to use:**
-- Real-time transformation - modify text as it streams
-- Logging - observe chunks as they flow through
-- Filtering - remove unwanted chunks
-
-**How it works:**
-- Middleware is an async generator that yields transformed chunks
-- Framework automatically chains these generators together
-- Each middleware receives the stream from the previous one
-- Simple and clean - no inner functions needed
-
-### Wrap Pattern: Before and After
+### Before and After Middleware
 
 Use the `next()` callback pattern when you need to execute code **before** the middleware chain starts and **after** it completes. This is essential for timing, error handling, and resource management.
-
-#### Content Middleware
-
-Wrap stream processing with before/after logic:
 
 === "Python"
 
@@ -850,9 +800,9 @@ Wrap stream processing with before/after logic:
 
     # Example 1: Time the stream
     async def time_streaming(
-        content_stream: AsyncIterable[TextContent],
+        content_stream: AsyncIterable[IStreamable],
         thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+        next: Callable[[AsyncIterable[IStreamable]], Awaitable[None]]
     ) -> None:
         start = time.time()
         print(f"🚀 Starting stream")
@@ -860,38 +810,6 @@ Wrap stream processing with before/after logic:
         await next(content_stream)
 
         print(f"✅ Stream completed in {time.time() - start:.2f}s")
-
-    # Example 2: Error handling
-    async def catch_errors(
-        content_stream: AsyncIterable[TextContent],
-        thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
-    ) -> None:
-        try:
-            await next(content_stream)
-        except Exception as e:
-            print(f"❌ Streaming error: {e}")
-            thread.add_message(AgentMessage(content=[
-                TextContent(text="Sorry, something went wrong.")
-            ]))
-
-    # Example 3: Buffer and log complete response
-    async def buffer_stream(
-        content_stream: AsyncIterable[TextContent],
-        thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
-    ) -> None:
-        chunks = []
-
-        async def collect():
-            async for chunk in content_stream:
-                chunks.append(chunk)
-                yield chunk
-
-        await next(collect())
-
-        full_text = "".join(c.text for c in chunks)
-        print(f"📊 Complete response ({len(chunks)} chunks): {full_text}")
 
     config = AgentConfig(
         model="gpt-4",
@@ -909,11 +827,10 @@ Wrap stream processing with before/after logic:
     ```csharp
     using System.Diagnostics;
 
-    // Example 1: Time the stream
     async Task TimeStreaming(
-        IAsyncEnumerable<TextContent> contentStream,
+        IAsyncEnumerable<IStreamable> contentStream,
         IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
+        Func<IAsyncEnumerable<IStreamable>, Task> next,
         CancellationToken cancellationToken = default)
     {
         var sw = Stopwatch.StartNew();
@@ -925,51 +842,6 @@ Wrap stream processing with before/after logic:
         Console.WriteLine($"✅ Stream completed in {sw.ElapsedMilliseconds}ms");
     }
 
-    // Example 2: Error handling
-    async Task CatchErrors(
-        IAsyncEnumerable<TextContent> contentStream,
-        IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
-        CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            await next(contentStream);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"❌ Streaming error: {ex.Message}");
-            thread.AddMessage(new AgentMessage
-            {
-                Content = new[] { new TextContent { Text = "Sorry, something went wrong." } }
-            });
-        }
-    }
-
-    // Example 3: Buffer and log complete response
-    async Task BufferStream(
-        IAsyncEnumerable<TextContent> contentStream,
-        IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
-        CancellationToken cancellationToken = default)
-    {
-        var chunks = new List<TextContent>();
-
-        async IAsyncEnumerable<TextContent> Collect()
-        {
-            await foreach (var chunk in contentStream)
-            {
-                chunks.Add(chunk);
-                yield return chunk;
-            }
-        }
-
-        await next(Collect());
-
-        var fullText = string.Join("", chunks.Select(c => c.Text));
-        Console.WriteLine($"📊 Complete response ({chunks.Count} chunks): {fullText}");
-    }
-
     var agentOptions = new AgentOptions
     {
         Model = "gpt-4",
@@ -977,8 +849,7 @@ Wrap stream processing with before/after logic:
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Middleware = new object[]
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)TimeStreaming),
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)CatchErrors)
+            (typeof(TextContent), (Func<IAsyncEnumerable<IStreamable>, IThread, Func<IAsyncEnumerable<IStreamable>, Task>, CancellationToken, Task>)TimeStreaming)
         }
     };
     ```
@@ -986,11 +857,10 @@ Wrap stream processing with before/after logic:
 === "TypeScript"
 
     ```typescript
-    // Example 1: Time the stream
     async function timeStreaming(
-        contentStream: AsyncIterable<TextContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+        next: (stream: AsyncIterable<IStreamable>) => Promise<void>
     ): Promise<void> {
         const start = Date.now();
         console.log("🚀 Starting stream");
@@ -1000,187 +870,15 @@ Wrap stream processing with before/after logic:
         console.log(`✅ Stream completed in ${Date.now() - start}ms`);
     }
 
-    // Example 2: Error handling
-    async function catchErrors(
-        contentStream: AsyncIterable<TextContent>,
-        thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
-    ): Promise<void> {
-        try {
-            await next(contentStream);
-        } catch (error) {
-            console.error(`❌ Streaming error: ${error}`);
-            thread.addMessage({
-                role: 'agent',
-                content: [{ type: 'text', text: 'Sorry, something went wrong.' }]
-            });
-        }
-    }
-
-    // Example 3: Buffer and log complete response
-    async function bufferStream(
-        contentStream: AsyncIterable<TextContent>,
-        thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
-    ): Promise<void> {
-        const chunks: TextContent[] = [];
-
-        async function* collect() {
-            for await (const chunk of contentStream) {
-                chunks.push(chunk);
-                yield chunk;
-            }
-        }
-
-        await next(collect());
-
-        const fullText = chunks.map(c => c.text).join('');
-        console.log(`📊 Complete response (${chunks.length} chunks): ${fullText}`);
-    }
-
     const config: AgentConfig = {
         model: "gpt-4",
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
         middleware: [
             [TextContent, timeStreaming],
-            [TextContent, catchErrors],
         ]
     };
     ```
-
-**When to use:**
-- Timing - measure stream duration
-- Error handling - catch streaming errors
-- Buffering - collect all chunks for post-processing
-
-**How it works:**
-- Middleware receives a `next` callback parameter
-- Call `await next(stream)` to invoke the rest of the middleware chain
-- Code before `await next()` runs before streaming starts
-- Code after `await next()` runs after the stream completes
-- Can transform the stream by creating a new generator and passing it to `next()`
-
-**Understanding execution order:**
-
-Middleware execute in the order you register them, forming a chain where each can run code before and after the next:
-
-=== "Python"
-
-    ```python
-    async def log_middleware(message, thread, next):
-        print("1. Before log")
-        await next()
-        print("4. After log")
-
-    async def command_middleware(message, thread, next):
-        print("2. Before command")
-        await next()
-        print("3. After command")
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[log_middleware, command_middleware]  # Execute in order
-    )
-
-    # When a message arrives:
-    # 1. Before log
-    # 2. Before command
-    # [LLM processes]
-    # 3. After command
-    # 4. After log
-    ```
-
-=== "C#"
-
-    ```csharp
-    async Task LogMiddleware(IMessage msg, IThread thread, Func<Task> next, CancellationToken ct)
-    {
-        Console.WriteLine("1. Before log");
-        await next();
-        Console.WriteLine("4. After log");
-    }
-
-    async Task CommandMiddleware(IMessage msg, IThread thread, Func<Task> next, CancellationToken ct)
-    {
-        Console.WriteLine("2. Before command");
-        await next();
-        Console.WriteLine("3. After command");
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new object[]
-        {
-            (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)LogMiddleware,
-            (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)CommandMiddleware
-        }
-    };
-
-    // When a message arrives:
-    // 1. Before log
-    // 2. Before command
-    // [LLM processes]
-    // 3. After command
-    // 4. After log
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    async function logMiddleware(message: IMessage, thread: IThread, next: () => Promise<void>) {
-        console.log("1. Before log");
-        await next();
-        console.log("4. After log");
-    }
-
-    async function commandMiddleware(message: IMessage, thread: IThread, next: () => Promise<void>) {
-        console.log("2. Before command");
-        await next();
-        console.log("3. After command");
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [logMiddleware, commandMiddleware]  // Execute in order
-    };
-
-    // When a message arrives:
-    // 1. Before log
-    // 2. Before command
-    // [LLM processes]
-    # 3. After command
-    // 4. After log
-    ```
-
-**Visual:**
-
-```
-┌─────────────────┐
-│  User Message   │
-└────────┬────────┘
-         │
-    [Middleware 1] ← Before
-         │
-    [Middleware 2] ← Before
-         │
-       [LLM]
-         │
-    [Middleware 2] ← After
-         │
-    [Middleware 1] ← After
-         │
-┌────────▼────────┐
-│    Response     │
-└─────────────────┘
-```
 
 ### Message Middleware (Advanced)
 
@@ -1193,21 +891,21 @@ You can use all three patterns with message middleware:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import IMessage, IThread
+    from microsoft.agents.protocol import IMessage, IThread, IStreamable
     from typing import AsyncIterable
     import logging
 
     async def log_message(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         logging.info(f"Message from {message.role}: {message.id}")
         yield message
 
     async def validate_message(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.content:
             yield message
         else:
@@ -1227,7 +925,7 @@ You can use all three patterns with message middleware:
     using Microsoft.Extensions.Logging;
     using System.Runtime.CompilerServices;
 
-    async IAsyncEnumerable<IMessage> LogMessage(
+    async IAsyncEnumerable<IStreamable> LogMessage(
         IMessage message,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -1236,7 +934,7 @@ You can use all three patterns with message middleware:
         yield return message;
     }
 
-    async IAsyncEnumerable<IMessage> ValidateMessage(
+    async IAsyncEnumerable<IStreamable> ValidateMessage(
         IMessage message,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -1259,13 +957,13 @@ You can use all three patterns with message middleware:
 === "TypeScript"
 
     ```typescript
-    import { IMessage, IThread } from '@microsoft/agents-protocol';
+    import { IMessage, IThread, IStreamable } from '@microsoft/agents-protocol';
     import { logger } from './logger';
 
     async function* logMessage(
         message: IMessage,
         thread: IThread
-    ): AsyncIterable<IMessage> {
+    ): AsyncIterable<IStreamable> {
         logger.info(`Message from ${message.role}: ${message.id}`);
         yield message;
     }
@@ -1273,7 +971,7 @@ You can use all three patterns with message middleware:
     async function* validateMessage(
         message: IMessage,
         thread: IThread
-    ): AsyncIterable<IMessage> {
+    ): AsyncIterable<IStreamable> {
         if (message.content && message.content.length > 0) {
             yield message;
         } else {
@@ -1300,7 +998,7 @@ You can use all three patterns with message middleware:
     async def log_for_debugging(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         logging.info(
             f"thread={thread.id} role={message.role} "
             f"user={thread.metadata.get('user_id')} msg_id={message.id}"
@@ -1310,7 +1008,7 @@ You can use all three patterns with message middleware:
     async def content_moderation(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.role == "user":
             if await moderation_api.is_safe(message):
                 yield message
@@ -1322,7 +1020,7 @@ You can use all three patterns with message middleware:
     async def rate_limit(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.role == "user":
             user_id = thread.metadata.get("user_id")
             if await rate_limiter.check_limit(user_id):
@@ -1346,7 +1044,7 @@ You can use all three patterns with message middleware:
     using System.Runtime.CompilerServices;
     using Microsoft.Extensions.Logging;
 
-    async IAsyncEnumerable<IMessage> LogForDebugging(
+    async IAsyncEnumerable<IStreamable> LogForDebugging(
         IMessage message,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -1358,7 +1056,7 @@ You can use all three patterns with message middleware:
         yield return message;
     }
 
-    async IAsyncEnumerable<IMessage> ContentModeration(
+    async IAsyncEnumerable<IStreamable> ContentModeration(
         IMessage message,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -1374,7 +1072,7 @@ You can use all three patterns with message middleware:
             yield return message;
     }
 
-    async IAsyncEnumerable<IMessage> RateLimit(
+    async IAsyncEnumerable<IStreamable> RateLimit(
         IMessage message,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -1408,7 +1106,7 @@ You can use all three patterns with message middleware:
     async function* logForDebugging(
         message: IMessage,
         thread: IThread
-    ): AsyncIterable<IMessage> {
+    ): AsyncIterable<IStreamable> {
         logger.info({
             thread: thread.id,
             role: message.role,
@@ -1421,7 +1119,7 @@ You can use all three patterns with message middleware:
     async function* contentModeration(
         message: IMessage,
         thread: IThread
-    ): AsyncIterable<IMessage> {
+    ): AsyncIterable<IStreamable> {
         if (message.role === "user") {
             if (await moderationApi.isSafe(message)) {
                 yield message;
@@ -1436,7 +1134,7 @@ You can use all three patterns with message middleware:
     async function* rateLimit(
         message: IMessage,
         thread: IThread
-    ): AsyncIterable<IMessage> {
+    ): AsyncIterable<IStreamable> {
         if (message.role === "user") {
             const userId = thread.metadata.user_id;
             if (await rateLimiter.checkLimit(userId)) {
@@ -1666,7 +1364,7 @@ Messages can contain text, images, audio, and more:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import (
+    from microsoft.agents.protocol import (, IStreamable
         UserMessage,
         TextContent,
         ImageContent,
@@ -1786,13 +1484,13 @@ Use content middleware to process specific content types:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import ImageContent
+    from microsoft.agents.protocol import ImageContent, IStreamable
     from typing import AsyncIterable, Callable, Awaitable
 
     async def process_images(
-        content_stream: AsyncIterable[ImageContent],
+        content_stream: AsyncIterable[IStreamable],
         thread: IThread,
-        next: Callable[[AsyncIterable[ImageContent]], Awaitable[None]]
+        next: Callable[[AsyncIterable[IStreamable]], Awaitable[None]]
     ) -> None:
         async def transform():
             async for image in content_stream:
@@ -1816,12 +1514,12 @@ Use content middleware to process specific content types:
 
     ```csharp
     async Task ProcessImages(
-        IAsyncEnumerable<ImageContent> contentStream,
+        IAsyncEnumerable<IStreamable> contentStream,
         IThread thread,
-        Func<IAsyncEnumerable<ImageContent>, Task> next,
+        Func<IAsyncEnumerable<IStreamable>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<ImageContent> Transform()
+        async IAsyncEnumerable<IStreamable> Transform()
         {
             await foreach (var image in contentStream)
             {
@@ -1841,7 +1539,7 @@ Use content middleware to process specific content types:
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Middleware = new object[]
         {
-            (typeof(ImageContent), (Func<IAsyncEnumerable<ImageContent>, IThread, Func<IAsyncEnumerable<ImageContent>, Task>, CancellationToken, Task>)ProcessImages)  // Tuple
+            (typeof(ImageContent), (Func<IAsyncEnumerable<IStreamable>, IThread, Func<IAsyncEnumerable<IStreamable>, Task>, CancellationToken, Task>)ProcessImages)  // Tuple
         }
     };
     ```
@@ -1849,12 +1547,12 @@ Use content middleware to process specific content types:
 === "TypeScript"
 
     ```typescript
-    import { ImageContent } from '@microsoft/agents-protocol';
+    import { ImageContent, IStreamable } from '@microsoft/agents-protocol';
 
     async function processImages(
-        contentStream: AsyncIterable<ImageContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread,
-        next: (stream: AsyncIterable<ImageContent>) => Promise<void>
+        next: (stream: AsyncIterable<IStreamable>) => Promise<void>
     ): Promise<void> {
         async function* transform() {
             for await (const image of contentStream) {
@@ -1884,7 +1582,7 @@ The protocol includes special message types for richer interactions:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import (
+    from microsoft.agents.protocol import (, IStreamable
         TypingIndicatorContent,
         MessageReactionContent,
         MessageDeleteContent,
@@ -1952,7 +1650,7 @@ The protocol includes special message types for richer interactions:
 === "TypeScript"
 
     ```typescript
-    import { MessageReactionContent } from '@microsoft/agents-protocol';
+    import { MessageReactionContent, IStreamable } from '@microsoft/agents-protocol';
 
     async function handleReactions(
         contentStream: AsyncIterable<MessageReactionContent>,
@@ -2029,7 +1727,7 @@ Here's how clients interact with persistent conversations:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import AgentProtocolClient
+    from microsoft.agents.protocol import AgentProtocolClient, IStreamable
 
     client = AgentProtocolClient("http://localhost:5000")
 
@@ -2314,7 +2012,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def enforce_tool_permissions(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         user_role = thread.metadata.get("user_role", "guest")
         allowed_tools = ROLE_PERMISSIONS.get(user_role, [])
         
@@ -2373,7 +2071,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def inject_rag_context(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.role == "user":
             # Extract text from message
             text_parts = []
@@ -2432,7 +2130,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
             self,
             message: IMessage,
             thread: IThread
-        ) -> AsyncIterable[IMessage]:
+        ) -> AsyncIterable[IStreamable]:
             # Count tokens in current message
             text_parts = []
             async for content in message.content:
@@ -2511,7 +2209,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def route_to_specialist(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.role == "user":
             # Extract text
             text_parts = []
@@ -2582,7 +2280,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def track_conversation_state(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         # Load or initialize state
         state_dict = thread.metadata.get("conversation_state")
         
@@ -2636,7 +2334,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def reflection_middleware(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.role == "agent":
             # Extract agent response
             text_parts = []
@@ -2708,7 +2406,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def planning_middleware(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.role == "user":
             # Extract user request
             text_parts = []
@@ -2845,7 +2543,7 @@ The middleware examples above cover basic patterns. This section covers **agent-
     async def human_in_the_loop_middleware(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         if message.role == "agent" and message.tool_calls:
             # Check if any tool calls require approval
             pending_approvals = []
@@ -3024,13 +2722,13 @@ Transform LLM output before it reaches the client:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import TextContent
+    from microsoft.agents.protocol import TextContent, IStreamable
     from typing import AsyncIterable
 
     async def add_emojis(
-        content_stream: AsyncIterable[TextContent],
+        content_stream: AsyncIterable[IStreamable],
         thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+        next: Callable[[AsyncIterable[IStreamable]], Awaitable[None]]
     ) -> None:
         async def transform():
             async for chunk in content_stream:
@@ -3054,12 +2752,12 @@ Transform LLM output before it reaches the client:
 
     ```csharp
     async Task AddEmojis(
-        IAsyncEnumerable<TextContent> contentStream,
+        IAsyncEnumerable<IStreamable> contentStream,
         IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
+        Func<IAsyncEnumerable<IStreamable>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<TextContent> Transform()
+        async IAsyncEnumerable<IStreamable> Transform()
         {
             await foreach (var chunk in contentStream)
             {
@@ -3077,7 +2775,7 @@ Transform LLM output before it reaches the client:
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Middleware = new object[]
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)AddEmojis)  // Content middleware (tuple)
+            (typeof(TextContent), (Func<IAsyncEnumerable<IStreamable>, IThread, Func<IAsyncEnumerable<IStreamable>, Task>, CancellationToken, Task>)AddEmojis)  // Content middleware (tuple)
         }
     };
     ```
@@ -3086,9 +2784,9 @@ Transform LLM output before it reaches the client:
 
     ```typescript
     async function addEmojis(
-        contentStream: AsyncIterable<TextContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+        next: (stream: AsyncIterable<IStreamable>) => Promise<void>
     ): Promise<void> {
         async function* transform() {
             for await (const chunk of contentStream) {
@@ -3116,7 +2814,7 @@ Process function calls before they execute:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import FunctionCallContent, FunctionResultContent
+    from microsoft.agents.protocol import FunctionCallContent, FunctionResultContent, IStreamable
     from typing import AsyncIterable, Callable, Awaitable
 
     async def log_function_calls(
@@ -3217,7 +2915,7 @@ Process function calls before they execute:
 === "TypeScript"
 
     ```typescript
-    import { FunctionCallContent, FunctionResultContent } from '@microsoft/agents-protocol';
+    import { FunctionCallContent, FunctionResultContent, IStreamable } from '@microsoft/agents-protocol';
 
     async function logFunctionCalls(
         contentChunks: AsyncIterable<FunctionCallContent>,
@@ -3293,13 +2991,13 @@ Collect chunks and send them in larger batches:
 === "Python"
 
     ```python
-    from microsoft.agents.protocol import TextContent
+    from microsoft.agents.protocol import TextContent, IStreamable
     from typing import AsyncIterable, Callable, Awaitable
 
     async def batch_content(
-        content_stream: AsyncIterable[TextContent],
+        content_stream: AsyncIterable[IStreamable],
         thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+        next: Callable[[AsyncIterable[IStreamable]], Awaitable[None]]
     ) -> None:
         async def batched():
             buffer = []
@@ -3331,12 +3029,12 @@ Collect chunks and send them in larger batches:
 
     ```csharp
     async Task BatchContent(
-        IAsyncEnumerable<TextContent> contentStream,
+        IAsyncEnumerable<IStreamable> contentStream,
         IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
+        Func<IAsyncEnumerable<IStreamable>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<TextContent> Batched()
+        async IAsyncEnumerable<IStreamable> Batched()
         {
             var buffer = new List<string>();
 
@@ -3365,7 +3063,7 @@ Collect chunks and send them in larger batches:
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Middleware = new object[]
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)BatchContent)  // Tuple
+            (typeof(TextContent), (Func<IAsyncEnumerable<IStreamable>, IThread, Func<IAsyncEnumerable<IStreamable>, Task>, CancellationToken, Task>)BatchContent)  // Tuple
         }
     };
     ```
@@ -3374,9 +3072,9 @@ Collect chunks and send them in larger batches:
 
     ```typescript
     async function batchContent(
-        contentStream: AsyncIterable<TextContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+        next: (stream: AsyncIterable<IStreamable>) => Promise<void>
     ): Promise<void> {
         async function* batched() {
             const buffer: string[] = [];
@@ -3416,9 +3114,9 @@ Remove unwanted content:
 
     ```python
     async def filter_profanity(
-        content_stream: AsyncIterable[TextContent],
+        content_stream: AsyncIterable[IStreamable],
         thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+        next: Callable[[AsyncIterable[IStreamable]], Awaitable[None]]
     ) -> None:
         async def filtered():
             async for chunk in content_stream:
@@ -3442,12 +3140,12 @@ Remove unwanted content:
 
     ```csharp
     async Task FilterProfanity(
-        IAsyncEnumerable<TextContent> contentStream,
+        IAsyncEnumerable<IStreamable> contentStream,
         IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
+        Func<IAsyncEnumerable<IStreamable>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<TextContent> Filtered()
+        async IAsyncEnumerable<IStreamable> Filtered()
         {
             await foreach (var chunk in contentStream)
             {
@@ -3466,7 +3164,7 @@ Remove unwanted content:
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Middleware = new object[]
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)FilterProfanity)  // Tuple
+            (typeof(TextContent), (Func<IAsyncEnumerable<IStreamable>, IThread, Func<IAsyncEnumerable<IStreamable>, Task>, CancellationToken, Task>)FilterProfanity)  // Tuple
         }
     };
     ```
@@ -3475,9 +3173,9 @@ Remove unwanted content:
 
     ```typescript
     async function filterProfanity(
-        contentStream: AsyncIterable<TextContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+        next: (stream: AsyncIterable<IStreamable>) => Promise<void>
     ): Promise<void> {
         async function* filtered() {
             for await (const chunk of contentStream) {
@@ -3508,9 +3206,9 @@ Send chunks to multiple destinations:
 
     ```python
     async def tee_to_analytics(
-        content_stream: AsyncIterable[TextContent],
+        content_stream: AsyncIterable[IStreamable],
         thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+        next: Callable[[AsyncIterable[IStreamable]], Awaitable[None]]
     ) -> None:
         async def forwarding():
             async for chunk in content_stream:
@@ -3536,12 +3234,12 @@ Send chunks to multiple destinations:
 
     ```csharp
     async Task TeeToAnalytics(
-        IAsyncEnumerable<TextContent> contentStream,
+        IAsyncEnumerable<IStreamable> contentStream,
         IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
+        Func<IAsyncEnumerable<IStreamable>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<TextContent> Forwarding()
+        async IAsyncEnumerable<IStreamable> Forwarding()
         {
             await foreach (var chunk in contentStream)
             {
@@ -3560,7 +3258,7 @@ Send chunks to multiple destinations:
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Middleware = new object[]
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)TeeToAnalytics)  // Tuple
+            (typeof(TextContent), (Func<IAsyncEnumerable<IStreamable>, IThread, Func<IAsyncEnumerable<IStreamable>, Task>, CancellationToken, Task>)TeeToAnalytics)  // Tuple
         }
     };
     ```
@@ -3569,9 +3267,9 @@ Send chunks to multiple destinations:
 
     ```typescript
     async function teeToAnalytics(
-        contentStream: AsyncIterable<TextContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+        next: (stream: AsyncIterable<IStreamable>) => Promise<void>
     ): Promise<void> {
         async function* forwarding() {
             for await (const chunk of contentStream) {
@@ -3603,9 +3301,9 @@ Slow down chunk delivery:
     import asyncio
 
     async def rate_limit(
-        content_stream: AsyncIterable[TextContent],
+        content_stream: AsyncIterable[IStreamable],
         thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+        next: Callable[[AsyncIterable[IStreamable]], Awaitable[None]]
     ) -> None:
         async def throttled():
             async for chunk in content_stream:
@@ -3628,12 +3326,12 @@ Slow down chunk delivery:
 
     ```csharp
     async Task RateLimit(
-        IAsyncEnumerable<TextContent> contentStream,
+        IAsyncEnumerable<IStreamable> contentStream,
         IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
+        Func<IAsyncEnumerable<IStreamable>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<TextContent> Throttled()
+        async IAsyncEnumerable<IStreamable> Throttled()
         {
             await foreach (var chunk in contentStream)
             {
@@ -3652,7 +3350,7 @@ Slow down chunk delivery:
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Middleware = new object[]
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)RateLimit)  // Tuple
+            (typeof(TextContent), (Func<IAsyncEnumerable<IStreamable>, IThread, Func<IAsyncEnumerable<IStreamable>, Task>, CancellationToken, Task>)RateLimit)  // Tuple
         }
     };
     ```
@@ -3661,9 +3359,9 @@ Slow down chunk delivery:
 
     ```typescript
     async function rateLimit(
-        contentStream: AsyncIterable<TextContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+        next: (stream: AsyncIterable<IStreamable>) => Promise<void>
     ): Promise<void> {
         async function* throttled() {
             for await (const chunk of contentStream) {
@@ -3693,9 +3391,9 @@ Combine chunks in complex ways:
 
     ```python
     async def markdown_to_html(
-        content_stream: AsyncIterable[TextContent],
+        content_stream: AsyncIterable[IStreamable],
         thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+        next: Callable[[AsyncIterable[IStreamable]], Awaitable[None]]
     ) -> None:
         async def transformed():
             buffer = []
@@ -3731,12 +3429,12 @@ Combine chunks in complex ways:
 
     ```csharp
     async Task MarkdownToHtml(
-        IAsyncEnumerable<TextContent> contentStream,
+        IAsyncEnumerable<IStreamable> contentStream,
         IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
+        Func<IAsyncEnumerable<IStreamable>, Task> next,
         CancellationToken cancellationToken)
     {
-        async IAsyncEnumerable<TextContent> Transformed()
+        async IAsyncEnumerable<IStreamable> Transformed()
         {
             var buffer = new List<string>();
 
@@ -3780,9 +3478,9 @@ Combine chunks in complex ways:
 
     ```typescript
     async function markdownToHtml(
-        contentStream: AsyncIterable<TextContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+        next: (stream: AsyncIterable<IStreamable>) => Promise<void>
     ): Promise<void> {
         async function* transformed() {
             const buffer: string[] = [];
@@ -3828,7 +3526,7 @@ Here's a production-ready agent with multiple middleware:
 
     ```python
     from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
-    from microsoft.agents.protocol import (
+    from microsoft.agents.protocol import (, IStreamable
         IMessage, IThread, UserMessage, AgentMessage, TextContent,
         FunctionCallContent, FunctionResultContent
     )
@@ -3839,9 +3537,9 @@ Here's a production-ready agent with multiple middleware:
 
     # Content middleware for logging incoming text
     async def log_text(
-        content_chunks: AsyncIterable[TextContent],
+        content_chunks: AsyncIterable[IStreamable],
         thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+        next: Callable[[AsyncIterable[IStreamable]], Awaitable[None]]
     ) -> None:
         # Wait for complete text content
         complete_text = await content_chunks.wait()
@@ -3884,9 +3582,9 @@ Here's a production-ready agent with multiple middleware:
 
     # Content middleware for streaming LLM text chunks
     async def log_text_chunks(
-        content_chunks: AsyncIterable[TextContent],
+        content_chunks: AsyncIterable[IStreamable],
         thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+        next: Callable[[AsyncIterable[IStreamable]], Awaitable[None]]
     ) -> None:
         async def process():
             async for chunk in content_chunks:
@@ -3963,16 +3661,16 @@ Here's a production-ready agent with multiple middleware:
 
     // Content middleware for logging incoming text
     async Task LogText(
-        IAsyncEnumerable<TextContent> contentChunks,
+        IAsyncEnumerable<IStreamable> contentChunks,
         IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
+        Func<IAsyncEnumerable<IStreamable>, Task> next,
         CancellationToken ct)
     {
         // Wait for complete text content
         var completeText = await contentChunks.WaitForCompletionAsync();
         Console.WriteLine($"📨 [{thread.Id}] Received: {completeText.Text}");
 
-        async IAsyncEnumerable<TextContent> Process()
+        async IAsyncEnumerable<IStreamable> Process()
         {
             yield return completeText;
         }
@@ -4016,12 +3714,12 @@ Here's a production-ready agent with multiple middleware:
 
     // Content middleware for streaming LLM text chunks
     async Task LogTextChunks(
-        IAsyncEnumerable<TextContent> contentChunks,
+        IAsyncEnumerable<IStreamable> contentChunks,
         IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
+        Func<IAsyncEnumerable<IStreamable>, Task> next,
         CancellationToken ct)
     {
-        async IAsyncEnumerable<TextContent> Process()
+        async IAsyncEnumerable<IStreamable> Process()
         {
             await foreach (var chunk in contentChunks)
             {
@@ -4114,9 +3812,9 @@ Here's a production-ready agent with multiple middleware:
 
     // Content middleware for logging incoming text
     async function logText(
-        contentChunks: AsyncIterable<TextContent>,
+        contentChunks: AsyncIterable<IStreamable>,
         thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+        next: (stream: AsyncIterable<IStreamable>) => Promise<void>
     ) {
         // Wait for complete text content
         const completeText = await contentChunks.value;
@@ -4159,9 +3857,9 @@ Here's a production-ready agent with multiple middleware:
 
     // Content middleware for streaming LLM text chunks
     async function logTextChunks(
-        contentChunks: AsyncIterable<TextContent>,
+        contentChunks: AsyncIterable<IStreamable>,
         thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+        next: (stream: AsyncIterable<IStreamable>) => Promise<void>
     ) {
         async function* process() {
             for await (const chunk of contentChunks) {
@@ -4281,9 +3979,9 @@ Use when transforming, filtering, or logging chunks:
 
     ```python
     async def my_content_middleware(
-        content_stream: AsyncIterable[TextContent],
+        content_stream: AsyncIterable[IStreamable],
         thread: IThread
-    ) -> AsyncIterable[TextContent]:
+    ) -> AsyncIterable[IStreamable]:
         async for chunk in content_stream:
             # Process chunk
             print(f"Chunk: {chunk.text}")
@@ -4298,8 +3996,8 @@ Use when transforming, filtering, or logging chunks:
 === "C#"
 
     ```csharp
-    async IAsyncEnumerable<TextContent> MyContentMiddleware(
-        IAsyncEnumerable<TextContent> contentStream,
+    async IAsyncEnumerable<IStreamable> MyContentMiddleware(
+        IAsyncEnumerable<IStreamable> contentStream,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -4325,9 +4023,9 @@ Use when transforming, filtering, or logging chunks:
 
     ```typescript
     async function* myContentMiddleware(
-        contentStream: AsyncIterable<TextContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread
-    ): AsyncIterable<TextContent> {
+    ): AsyncIterable<IStreamable> {
         for await (const chunk of contentStream) {
             // Process chunk
             console.log(`Chunk: ${chunk.text}`);
@@ -4351,9 +4049,9 @@ Use when adding before/after logic (timing, error handling):
 
     ```python
     async def my_content_middleware(
-        content_stream: AsyncIterable[TextContent],
+        content_stream: AsyncIterable[IStreamable],
         thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
+        next: Callable[[AsyncIterable[IStreamable]], Awaitable[None]]
     ) -> None:
         # Before streaming
         print("Starting stream")
@@ -4373,9 +4071,9 @@ Use when adding before/after logic (timing, error handling):
 
     ```csharp
     async Task MyContentMiddleware(
-        IAsyncEnumerable<TextContent> contentStream,
+        IAsyncEnumerable<IStreamable> contentStream,
         IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
+        Func<IAsyncEnumerable<IStreamable>, Task> next,
         CancellationToken cancellationToken = default)
     {
         // Before streaming
@@ -4392,7 +4090,7 @@ Use when adding before/after logic (timing, error handling):
     {
         Middleware = new object[]
         {
-            (typeof(TextContent), (Func<IAsyncEnumerable<TextContent>, IThread, Func<IAsyncEnumerable<TextContent>, Task>, CancellationToken, Task>)MyContentMiddleware)
+            (typeof(TextContent), (Func<IAsyncEnumerable<IStreamable>, IThread, Func<IAsyncEnumerable<IStreamable>, Task>, CancellationToken, Task>)MyContentMiddleware)
         }
     };
     ```
@@ -4401,9 +4099,9 @@ Use when adding before/after logic (timing, error handling):
 
     ```typescript
     async function myContentMiddleware(
-        contentStream: AsyncIterable<TextContent>,
+        contentStream: AsyncIterable<IStreamable>,
         thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
+        next: (stream: AsyncIterable<IStreamable>) => Promise<void>
     ): Promise<void> {
         // Before streaming
         console.log("Starting stream");
@@ -4437,7 +4135,7 @@ Use for logging, moderation, rate limiting, or filtering:
     async def my_message_middleware(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[IMessage]:
+    ) -> AsyncIterable[IStreamable]:
         print(f"Message from {message.role}")
         yield message  # Framework handles streaming
 
@@ -4445,7 +4143,7 @@ Use for logging, moderation, rate limiting, or filtering:
     async def filter_images(
         message: IMessage,
         thread: IThread
-    ) -> AsyncIterable[Content]:
+    ) -> AsyncIterable[IStreamable]:
         async for content in message.content:
             if isinstance(content, TextContent):
                 yield content  # Only yield text
@@ -4470,7 +4168,7 @@ Use for logging, moderation, rate limiting, or filtering:
 
     ```csharp
     // Yield the message (most common)
-    async IAsyncEnumerable<IMessage> MyMessageMiddleware(
+    async IAsyncEnumerable<IStreamable> MyMessageMiddleware(
         IMessage message,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -4480,7 +4178,7 @@ Use for logging, moderation, rate limiting, or filtering:
     }
 
     // Or yield content to filter by type
-    async IAsyncEnumerable<Content> FilterImages(
+    async IAsyncEnumerable<IStreamable> FilterImages(
         IMessage message,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -4526,7 +4224,7 @@ Use for logging, moderation, rate limiting, or filtering:
     async function* myMessageMiddleware(
         message: IMessage,
         thread: IThread
-    ): AsyncIterable<IMessage> {
+    ): AsyncIterable<IStreamable> {
         console.log(`Message from ${message.role}`);
         yield message; // Framework handles streaming
     }
@@ -4535,7 +4233,7 @@ Use for logging, moderation, rate limiting, or filtering:
     async function* filterImages(
         message: IMessage,
         thread: IThread
-    ): AsyncIterable<Content> {
+    ): AsyncIterable<IStreamable> {
         for await (const content of message.content) {
             if (content instanceof TextContent) {
                 yield content; // Only yield text
@@ -4768,8 +4466,8 @@ Mix both types and patterns in a single array:
     {
         Middleware = new object[]
         {
-            (Func<IMessage, IThread, CancellationToken, IAsyncEnumerable<IMessage>>)LogMessage,
-            (Func<IMessage, IThread, CancellationToken, IAsyncEnumerable<IMessage>>)RateLimit,
+            (Func<IMessage, IThread, CancellationToken, IAsyncEnumerable<IStreamable>>)LogMessage,
+            (Func<IMessage, IThread, CancellationToken, IAsyncEnumerable<IStreamable>>)RateLimit,
             (typeof(TextContent), UppercaseContent),
             (typeof(ImageContent), FilterImages)
         }

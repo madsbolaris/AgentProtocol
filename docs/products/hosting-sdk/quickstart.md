@@ -534,19 +534,16 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
     import os
 
     async def command_router(
-        content_stream: AsyncIterable[TextContent],
+        content: TextContent,
         thread: IThread
     ) -> AsyncIterable[IStreamable]:
-        # Wait for all chunks to assemble into complete text
-        complete_text = await content_stream.wait()
-
         # Check if it's the /help command
-        if complete_text.text.strip() == "/help":
+        if content.text.strip() == "/help":
             # Handle command - return result without calling LLM
             yield TextContent(text="Available commands:\n/help - Show this help")
         else:
             # Pass through to LLM
-            yield complete_text
+            yield content
 
     config = AgentConfig(
         model="gpt-4",
@@ -568,15 +565,12 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
     using System.Runtime.CompilerServices;
 
     async IAsyncEnumerable<IStreamable> CommandRouter(
-        IAsyncEnumerable<TextContent> contentStream,
+        TextContent content,
         IThread thread,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        // Wait for all chunks to assemble into complete text
-        var completeText = await contentStream.WaitForCompletionAsync();
-
         // Check if it's the /help command
-        if (completeText.Text.Trim() == "/help")
+        if (content.Text.Trim() == "/help")
         {
             // Handle command - return result without calling LLM
             yield return new TextContent
@@ -587,7 +581,7 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
         else
         {
             // Pass through to LLM
-            yield return completeText;
+            yield return content;
         }
     }
 
@@ -615,21 +609,18 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
     import { TextContent, IThread } from '@microsoft/agents-protocol';
 
     async function* commandRouter(
-        contentStream: AsyncIterable<TextContent>,
+        content: TextContent,
         thread: IThread
     ): AsyncIterable<IStreamable> {
-        // Wait for all chunks to assemble into complete text
-        const completeText = await contentStream.value;
-
         // Check if it's the /help command
-        if (completeText.text.trim() === '/help') {
+        if (content.text.trim() === '/help') {
             // Handle command - return result without calling LLM
             yield new TextContent({
                 text: 'Available commands:\n/help - Show this help'
             });
         } else {
             // Pass through to LLM
-            yield completeText;
+            yield content;
         }
     }
 
@@ -1026,14 +1017,11 @@ Use content middleware to process specific content types. This allows you to aug
     from typing import AsyncIterable, Callable, Awaitable
 
     async def handle_reactions(
-        content_stream: AsyncIterable[MessageReactionContent],
+        reaction: MessageReactionContent,
         thread: IThread,
         next: Callable[[AsyncIterable[MessageReactionContent]], Awaitable[None]]
     ) -> None:
         async def process():
-            # Wait for complete reaction content
-            reaction = await content_stream.wait()
-
             # Convert reaction to a message the agent can understand
             developer_msg = DeveloperMessage(content=[
                 TextContent(text=f"User reacted with {reaction.emoji} to a previous message.")
@@ -1059,16 +1047,13 @@ Use content middleware to process specific content types. This allows you to aug
     using Microsoft.Agents.Protocol;
 
     async Task HandleReactions(
-        IAsyncEnumerable<MessageReactionContent> contentStream,
+        MessageReactionContent reaction,
         IThread thread,
         Func<IAsyncEnumerable<MessageReactionContent>, Task> next,
         CancellationToken cancellationToken)
     {
         async IAsyncEnumerable<IStreamable> Process()
         {
-            // Wait for complete reaction content
-            var reaction = await contentStream.WaitForCompletionAsync();
-
             // Convert reaction to a message the agent can understand
             var developerMsg = new DeveloperMessage
             {
@@ -1105,14 +1090,11 @@ Use content middleware to process specific content types. This allows you to aug
     import { MessageReactionContent, DeveloperMessage, TextContent } from '@microsoft/agents-protocol';
 
     async function handleReactions(
-        contentStream: AsyncIterable<MessageReactionContent>,
+        reaction: MessageReactionContent,
         thread: IThread,
         next: (stream: AsyncIterable<MessageReactionContent>) => Promise<void>
     ): Promise<void> {
         async function* process() {
-            // Wait for complete reaction content
-            const reaction = await contentStream.value;
-
             // Convert reaction to a message the agent can understand
             const developerMsg = new DeveloperMessage({
                 content: [

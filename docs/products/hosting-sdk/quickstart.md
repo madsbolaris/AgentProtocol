@@ -1036,7 +1036,7 @@ Use content middleware to process specific content types. This allows you to aug
                 developer_msg = DeveloperMessage(content=[
                     TextContent(text=f"User reacted with {reaction.emoji} to a previous message.")
                 ])
-                thread.add_message(developer_msg)
+                yield developer_msg  # Yield so LLM can process the notification
                 yield reaction
 
         await next(process())
@@ -1077,7 +1077,7 @@ Use content middleware to process specific content types. This allows you to aug
                         }
                     }
                 };
-                thread.AddMessage(developerMsg);
+                yield return developerMsg;  // Yield so LLM can process the notification
                 yield return reaction;
             }
         }
@@ -1117,7 +1117,7 @@ Use content middleware to process specific content types. This allows you to aug
                         })
                     ]
                 });
-                thread.addMessage(developerMsg);
+                yield developerMsg;  // Yield so LLM can process the notification
                 yield reaction;
             }
         }

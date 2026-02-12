@@ -1031,13 +1031,15 @@ Use content middleware to process specific content types. This allows you to aug
         next: Callable[[AsyncIterable[MessageReactionContent]], Awaitable[None]]
     ) -> None:
         async def process():
-            async for reaction in content_stream:
-                # Convert reaction to a message the agent can understand
-                developer_msg = DeveloperMessage(content=[
-                    TextContent(text=f"User reacted with {reaction.emoji} to a previous message.")
-                ])
-                yield reaction
-                yield developer_msg  # Yield so LLM can process the notification
+            # Wait for complete reaction content
+            reaction = await content_stream.wait()
+
+            # Convert reaction to a message the agent can understand
+            developer_msg = DeveloperMessage(content=[
+                TextContent(text=f"User reacted with {reaction.emoji} to a previous message.")
+            ])
+            yield reaction
+            yield developer_msg  # Yield so LLM can process the notification
 
         await next(process())
 
@@ -1064,22 +1066,22 @@ Use content middleware to process specific content types. This allows you to aug
     {
         async IAsyncEnumerable<IStreamable> Process()
         {
-            await foreach (var reaction in contentStream)
+            // Wait for complete reaction content
+            var reaction = await contentStream.WaitForCompletionAsync();
+
+            // Convert reaction to a message the agent can understand
+            var developerMsg = new DeveloperMessage
             {
-                // Convert reaction to a message the agent can understand
-                var developerMsg = new DeveloperMessage
+                Content = new[]
                 {
-                    Content = new[]
+                    new TextContent
                     {
-                        new TextContent
-                        {
-                            Text = $"User reacted with {reaction.Emoji} to a previous message."
-                        }
+                        Text = $"User reacted with {reaction.Emoji} to a previous message."
                     }
-                };
-                yield return reaction;
-                yield return developerMsg;  // Yield so LLM can process the notification
-            }
+                }
+            };
+            yield return reaction;
+            yield return developerMsg;  // Yield so LLM can process the notification
         }
 
         await next(Process());
@@ -1108,18 +1110,19 @@ Use content middleware to process specific content types. This allows you to aug
         next: (stream: AsyncIterable<MessageReactionContent>) => Promise<void>
     ): Promise<void> {
         async function* process() {
-            for await (const reaction of contentStream) {
-                // Convert reaction to a message the agent can understand
-                const developerMsg = new DeveloperMessage({
-                    content: [
-                        new TextContent({
-                            text: `User reacted with ${reaction.emoji} to a previous message.`
-                        })
-                    ]
-                });
-                yield reaction;
-                yield developerMsg;  // Yield so LLM can process the notification
-            }
+            // Wait for complete reaction content
+            const reaction = await contentStream.value;
+
+            // Convert reaction to a message the agent can understand
+            const developerMsg = new DeveloperMessage({
+                content: [
+                    new TextContent({
+                        text: `User reacted with ${reaction.emoji} to a previous message.`
+                    })
+                ]
+            });
+            yield reaction;
+            yield developerMsg;  // Yield so LLM can process the notification
         }
 
         await next(process());

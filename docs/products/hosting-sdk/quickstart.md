@@ -652,6 +652,110 @@ Available commands:
 
 When a client sends "Hello, how are you?" (not a command), it passes through to the LLM normally.
 
+### Processing Multimodal Content in Middleware
+
+Use content middleware to process specific content types. This allows you to augment the LLM's capabilities by converting system events, channel events, or custom content types into messages the agent can understand.
+
+=== "Python"
+
+    ```python
+    from microsoft.agents.protocol import (
+        MessageReactionContent,
+        DeveloperMessage,
+        TextContent
+    )
+    from typing import AsyncIterable
+
+    async def handle_reactions(
+        reaction: MessageReactionContent,
+        thread: IThread
+    ) -> AsyncIterable[IStreamable]:
+        # Convert reaction to a message the agent can understand
+        developer_msg = DeveloperMessage(content=[
+            TextContent(text=f"User reacted with {reaction.emoji} to a previous message.")
+        ])
+        yield reaction
+        yield developer_msg  # Yield so LLM can process the notification
+
+    config = AgentConfig(
+        model="gpt-4",
+        instructions="You are helpful.",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        middleware=[
+            (MessageReactionContent, handle_reactions),
+        ]
+    )
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol;
+    using System.Runtime.CompilerServices;
+
+    async IAsyncEnumerable<IStreamable> HandleReactions(
+        MessageReactionContent reaction,
+        IThread thread,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        // Convert reaction to a message the agent can understand
+        var developerMsg = new DeveloperMessage
+        {
+            Content = new[]
+            {
+                new TextContent
+                {
+                    Text = $"User reacted with {reaction.Emoji} to a previous message."
+                }
+            }
+        };
+        yield return reaction;
+        yield return developerMsg;  // Yield so LLM can process the notification
+    }
+
+    var agentOptions = new AgentOptions
+    {
+        Model = "gpt-4",
+        Instructions = "You are helpful.",
+        ApiKey = builder.Configuration["OpenAI:ApiKey"],
+        Middleware = new MiddlewareCollection
+        {
+            HandleReactions  // Type inferred from method signature
+        }
+    };
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { MessageReactionContent, DeveloperMessage, TextContent } from '@microsoft/agents-protocol';
+
+    async function* handleReactions(
+        reaction: MessageReactionContent,
+        thread: IThread
+    ): AsyncIterable<IStreamable> {
+        // Convert reaction to a message the agent can understand
+        const developerMsg = new DeveloperMessage({
+            content: [
+                new TextContent({
+                    text: `User reacted with ${reaction.emoji} to a previous message.`
+                })
+            ]
+        });
+        yield reaction;
+        yield developerMsg;  // Yield so LLM can process the notification
+    }
+
+    const config: AgentConfig = {
+        model: "gpt-4",
+        instructions: "You are helpful.",
+        apiKey: process.env.OPENAI_API_KEY!,
+        middleware: [
+            [MessageReactionContent, handleReactions],
+        ]
+    };
+    ```
+
 ### Streaming Processing
 
 Process content chunk-by-chunk as it streams in real-time. This is the most common pattern for transforming or observing streaming data.
@@ -999,124 +1103,6 @@ Use the wrap pattern with try/catch to handle errors gracefully in your middlewa
         instructions: "You are helpful.",
         apiKey: process.env.OPENAI_API_KEY!,
         middleware: [errorMiddleware]  // Add first to catch all errors
-    };
-    ```
-
-### Processing Multimodal Content in Middleware
-
-Use content middleware to process specific content types. This allows you to augment the LLM's capabilities by converting system events, channel events, or custom content types into messages the agent can understand.
-
-=== "Python"
-
-    ```python
-    from microsoft.agents.protocol import (
-        MessageReactionContent,
-        DeveloperMessage,
-        TextContent
-    )
-    from typing import AsyncIterable, Callable, Awaitable
-
-    async def handle_reactions(
-        reaction: MessageReactionContent,
-        thread: IThread,
-        next: Callable[[AsyncIterable[MessageReactionContent]], Awaitable[None]]
-    ) -> None:
-        async def process():
-            # Convert reaction to a message the agent can understand
-            developer_msg = DeveloperMessage(content=[
-                TextContent(text=f"User reacted with {reaction.emoji} to a previous message.")
-            ])
-            yield reaction
-            yield developer_msg  # Yield so LLM can process the notification
-
-        await next(process())
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[
-            (MessageReactionContent, handle_reactions),
-        ]
-    )
-    ```
-
-=== "C#"
-
-    ```csharp
-    using Microsoft.Agents.Protocol;
-
-    async Task HandleReactions(
-        MessageReactionContent reaction,
-        IThread thread,
-        Func<IAsyncEnumerable<MessageReactionContent>, Task> next,
-        CancellationToken cancellationToken)
-    {
-        async IAsyncEnumerable<IStreamable> Process()
-        {
-            // Convert reaction to a message the agent can understand
-            var developerMsg = new DeveloperMessage
-            {
-                Content = new[]
-                {
-                    new TextContent
-                    {
-                        Text = $"User reacted with {reaction.Emoji} to a previous message."
-                    }
-                }
-            };
-            yield return reaction;
-            yield return developerMsg;  // Yield so LLM can process the notification
-        }
-
-        await next(Process());
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new MiddlewareCollection
-        {
-            HandleReactions  // Type inferred from method signature
-        }
-    };
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { MessageReactionContent, DeveloperMessage, TextContent } from '@microsoft/agents-protocol';
-
-    async function handleReactions(
-        reaction: MessageReactionContent,
-        thread: IThread,
-        next: (stream: AsyncIterable<MessageReactionContent>) => Promise<void>
-    ): Promise<void> {
-        async function* process() {
-            // Convert reaction to a message the agent can understand
-            const developerMsg = new DeveloperMessage({
-                content: [
-                    new TextContent({
-                        text: `User reacted with ${reaction.emoji} to a previous message.`
-                    })
-                ]
-            });
-            yield reaction;
-            yield developerMsg;  // Yield so LLM can process the notification
-        }
-
-        await next(process());
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [
-            [MessageReactionContent, handleReactions],
-        ]
     };
     ```
 

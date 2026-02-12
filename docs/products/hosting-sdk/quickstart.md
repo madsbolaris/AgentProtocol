@@ -985,7 +985,7 @@ Message middleware runs once per message and works at a higher level than conten
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Middleware = new MiddlewareCollection
         {
-            (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)TimingMiddleware
+            TimingMiddleware  // Type inferred from method signature
         }
     };
     ```
@@ -1072,7 +1072,7 @@ Use the wrap pattern with try/catch to handle errors gracefully in your middlewa
         ApiKey = builder.Configuration["OpenAI:ApiKey"],
         Middleware = new MiddlewareCollection
         {
-            (Func<IMessage, IThread, Func<Task>, CancellationToken, Task>)ErrorMiddleware
+            ErrorMiddleware  // Type inferred from method signature
             // ... other middleware
         }
     };

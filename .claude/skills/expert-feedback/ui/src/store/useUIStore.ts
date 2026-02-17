@@ -54,6 +54,8 @@ interface UIState {
   markAgentHasNewContent: (agentId: string) => void
   addNotification: (notification: Omit<Notification, 'id'>) => void
   removeNotification: (id: string) => void
+  setProjectName: (name: string) => void
+  setProjectBadgeCount: (count: number) => void
   resetToDefaults: () => void
   loadPhase01Data: () => void
 }
@@ -200,6 +202,10 @@ export const useUIStore = create<UIState>()(
           messageHistory: mockData.messageHistory
         })
       },
+
+      // Project management
+      setProjectName: (name) => set({ projectName: name }),
+      setProjectBadgeCount: (count) => set({ projectBadgeCount: count }),
 
       // Reset to defaults
       resetToDefaults: () => set(defaultState),

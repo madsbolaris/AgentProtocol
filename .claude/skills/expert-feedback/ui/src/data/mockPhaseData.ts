@@ -196,17 +196,17 @@ export function loadPhase02MockData(): Phase02MockData {
   return {
     agentStatuses: {
       'typescript-expert': {
-        status: 'running',
+        status: 'pending',
         hasConcerns: false,
         hasNewContent: false
       },
       'python-expert': {
-        status: 'running',
+        status: 'pending',
         hasConcerns: false,
         hasNewContent: false
       },
       'synthesis-agent': {
-        status: 'disabled',
+        status: 'running',
         hasConcerns: false,
       },
       'artifact-generator': {

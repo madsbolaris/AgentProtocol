@@ -13,11 +13,12 @@ Determine if Claude stopped prematurely and needs "continue" vs if human interve
 ### Step 1: Check for incomplete work indicators
 If ANY of these are present, continue immediately (skip question classification):
 - Numeric counts > 0 ("1 remaining", "1,551 differences", "22/37 recordings")
-- Keywords: TODO, PENDING, "Next steps:", "Next Steps (from original plan):", Remaining
+- Keywords: TODO, PENDING, "Next steps:", "Next Steps (from original plan):", Remaining, "What Needs Fixing"
 - Celebration headers with work listed ("Complete! 🎉" but then lists remaining items)
-- "Investigation complete" / "Phase 1 complete" with issues/steps listed
+- "Investigation complete" / "Phase 1 complete" / "Analysis complete" with issues/steps/fixes listed
 - "All X implemented" with "Next Steps" section
 - Status summaries with bullet-pointed next steps
+- Sections titled "What Needs Fixing", "Issues Found", "Problems Identified" with bullet points
 - Partial progress toward measurable goal (46% → need 100%, 16/30 → need 30/30)
 - Errors encountered (continue to FIX them, don't give up)
 
@@ -69,6 +70,8 @@ If ANY of these are present, continue immediately (skip question classification)
 5. **Errors are NOT stop reasons** - Debug and solve, only give up after 3+ failed attempts
 6. **Partial progress = continue to 100%** - Finish measurable goals completely
 7. **Compare to ORIGINAL USER REQUEST** - Is the full original goal complete?
+8. **"Analysis/Investigation complete" with fixes listed = Phase 1 only** - Continue to actually fix the issues
+9. **"What Needs Fixing" sections = Incomplete work** - Items listed need to be fixed, not just documented
 
 ## Return JSON
 

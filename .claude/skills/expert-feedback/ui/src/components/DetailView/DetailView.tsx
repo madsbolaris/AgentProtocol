@@ -52,7 +52,14 @@ export function DetailView({
       <div className="detail-header">
         <div className="detail-header-controls">
           {selectedAgent && (
-            <h2 className="agent-heading">{selectedAgent}</h2>
+            <>
+              <h2 className="agent-heading">{selectedAgent}</h2>
+              <div className="detail-header-metadata">
+                <span className="metadata-time">
+                  {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+            </>
           )}
 
           <div className="view-toggle">

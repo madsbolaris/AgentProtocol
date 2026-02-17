@@ -10,13 +10,31 @@ interface ActionPanelProps {
   title: string
   content?: any
   onSubmit?: (data: any) => void
+  convergencePercent?: number
+  convergenceTarget?: number
+  consensusReached?: boolean
 }
 
-export function ActionPanel({ type, title, content, onSubmit }: ActionPanelProps) {
+export function ActionPanel({ type, title, content, onSubmit, convergencePercent, convergenceTarget, consensusReached }: ActionPanelProps) {
+  const showConvergence = convergencePercent !== undefined && convergenceTarget !== undefined
+
   return (
     <aside className="actions-panel">
       <div className="panel-header">
         <h3>{title}</h3>
+        {showConvergence && (
+          <div className="convergence-badge">
+            <span>Convergence:</span>
+            <div className="convergence-bar">
+              <div
+                className="convergence-fill"
+                data-converged={consensusReached ? 'true' : 'false'}
+                style={{ width: `${convergencePercent}%` }}
+              />
+            </div>
+            <span style={{ fontWeight: 600 }}>{convergencePercent}%</span>
+          </div>
+        )}
       </div>
 
       <div className="panel-content">

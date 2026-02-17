@@ -4,9 +4,11 @@ import { type Question } from '../../types/workspace'
 interface QuestionsPanelProps {
   questions: Question[]
   onSubmit: (answers: Record<string, string | string[]>) => void
+  statusLabel?: string
+  showHeader?: boolean
 }
 
-export function QuestionsPanel({ questions, onSubmit }: QuestionsPanelProps) {
+export function QuestionsPanel({ questions, onSubmit, statusLabel, showHeader = true }: QuestionsPanelProps) {
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
   const [otherValues, setOtherValues] = useState<Record<string, string>>({})
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -155,18 +157,31 @@ export function QuestionsPanel({ questions, onSubmit }: QuestionsPanelProps) {
       return (
         <div className="question-answer">
           <div className="question-options">
-            {q.options.map(option => (
-              <label key={option.value} className="question-option">
-                <input
-                  type="radio"
-                  name={questionId}
-                  value={option.value}
-                  checked={answers[questionId] === option.value}
-                  onChange={(e) => handleRadioAnswer(questionId, e.target.value)}
-                />
-                <span>{option.label}</span>
-              </label>
-            ))}
+            {q.options.map(option => {
+              // Use option-label structure if description exists, otherwise use simpler question-option
+              const hasDescription = option.description && option.description.trim().length > 0
+              const className = hasDescription ? 'option-label' : 'question-option'
+
+              return (
+                <label key={option.value} className={className}>
+                  <input
+                    type="radio"
+                    name={questionId}
+                    value={option.value}
+                    checked={answers[questionId] === option.value}
+                    onChange={(e) => handleRadioAnswer(questionId, e.target.value)}
+                  />
+                  {hasDescription ? (
+                    <div className="option-text">
+                      <strong>{option.label}</strong>
+                      <div className="option-description">{option.description}</div>
+                    </div>
+                  ) : (
+                    <span>{option.label}</span>
+                  )}
+                </label>
+              )
+            })}
             {q.allowOther && (
               <label className="question-option">
                 <input
@@ -246,9 +261,20 @@ export function QuestionsPanel({ questions, onSubmit }: QuestionsPanelProps) {
 
   return (
     <div className="questions-panel">
-      <div className="questions-intro">
-        <p>Experts have questions that need your input before proceeding.</p>
-      </div>
+      {showHeader && (
+        <div className="questions-header">
+          {statusLabel && <div className="questions-header-label">{statusLabel}</div>}
+          <div className="questions-header-title">
+            {questions.length} Question{questions.length !== 1 ? 's' : ''} Need Your Input
+          </div>
+        </div>
+      )}
+
+      {!showHeader && (
+        <div className="questions-intro">
+          <p>Experts have questions that need your input before proceeding.</p>
+        </div>
+      )}
 
       <div className="questions-list">
         {questions.map((q, idx) => {

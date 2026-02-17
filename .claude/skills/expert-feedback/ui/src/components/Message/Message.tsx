@@ -22,12 +22,16 @@ export function Message({ message }: MessageProps) {
   }, [message.content])
 
   const formatTime = (timestamp: number) => {
-    const date = new Date(timestamp)
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    })
+    const now = Date.now()
+    const diff = now - timestamp
+
+    const seconds = Math.floor(diff / 1000)
+    const minutes = Math.floor(seconds / 60)
+    const hours = Math.floor(minutes / 60)
+
+    if (hours > 0) return `${hours}h ${minutes % 60}m`
+    if (minutes > 0) return `${minutes}m ${seconds % 60}s`
+    return `${seconds}s`
   }
 
   return (
@@ -39,9 +43,11 @@ export function Message({ message }: MessageProps) {
              message.role === 'user' ? 'User' :
              'System'}
           </span>
-          <span className="message-time">{formatTime(message.timestamp)}</span>
         </div>
-        <CopyButton text={message.content} />
+        <div className="message-header-right">
+          <span className="message-time">{formatTime(message.timestamp)}</span>
+          <CopyButton text={message.content} />
+        </div>
       </div>
 
       {message.content && (

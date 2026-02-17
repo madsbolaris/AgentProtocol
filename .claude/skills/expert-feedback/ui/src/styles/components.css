@@ -515,6 +515,20 @@
             margin-bottom: 1rem;
         }
 
+        .detail-header-metadata {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .metadata-time {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
         .view-toggle {
             display: inline-flex;
             background: var(--bg-tertiary);
@@ -2017,10 +2031,10 @@
         /* Document Content Styling */
         .document-content {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 2rem;
+            display: block;
+            padding: 0;
             width: 100%;
+            min-height: 0;
         }
 
         .document-content h1 {

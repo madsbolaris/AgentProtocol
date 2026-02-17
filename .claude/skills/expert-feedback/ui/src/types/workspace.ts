@@ -87,6 +87,7 @@ export interface WorkspaceState {
 export interface QuestionOption {
   value: string
   label: string
+  description?: string  // Optional description shown below the label
 }
 
 export interface Question {

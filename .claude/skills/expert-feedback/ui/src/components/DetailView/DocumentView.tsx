@@ -68,32 +68,34 @@ export function DocumentView({ title, content, showDiff = false }: DocumentViewP
         )}
       </div>
 
-      <div className="document-content">
-        {isLoading ? (
-          <div className="iteration-content">
-            <div className="loading-state">
-              <div className="loading-spinner">
-                <i className="fa-solid fa-circle-notch fa-spin"></i>
-              </div>
-              <h3 className="loading-title">{loadingMessage.title}</h3>
-              <p className="loading-description">{loadingMessage.description}</p>
+      {isLoading ? (
+        <div className="iteration-content">
+          <div className="loading-state">
+            <div className="loading-spinner">
+              <i className="fa-solid fa-circle-notch fa-spin"></i>
+            </div>
+            <h3 className="loading-title">{loadingMessage.title}</h3>
+            <p className="loading-description">{loadingMessage.description}</p>
 
-              <div className="loading-skeleton">
-                <div className="skeleton-line w-80"></div>
-                <div className="skeleton-line w-100"></div>
-                <div className="skeleton-line w-90"></div>
-                <div className="skeleton-line w-70"></div>
-              </div>
+            <div className="loading-skeleton">
+              <div className="skeleton-line w-80"></div>
+              <div className="skeleton-line w-100"></div>
+              <div className="skeleton-line w-90"></div>
+              <div className="skeleton-line w-70"></div>
             </div>
           </div>
-        ) : content ? (
+        </div>
+      ) : content ? (
+        <div className="document-content">
           <pre className="document-text">{content}</pre>
-        ) : (
+        </div>
+      ) : (
+        <div className="document-content">
           <div className="empty-state">
             <p>No document content available yet.</p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

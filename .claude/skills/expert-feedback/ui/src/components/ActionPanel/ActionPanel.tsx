@@ -51,6 +51,8 @@ export function ActionPanel({ type, title, content, onSubmit, convergencePercent
           <QuestionsPanel
             questions={content.questions}
             onSubmit={onSubmit || (() => {})}
+            statusLabel={content.statusLabel}
+            showHeader={content.showHeader}
           />
         )}
 

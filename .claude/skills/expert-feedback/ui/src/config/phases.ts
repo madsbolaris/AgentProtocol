@@ -65,8 +65,13 @@ export const phaseConfigs: Record<UIPhase, PhaseConfig> = {
     },
     actionPane: {
       type: 'questions',
-      title: 'Answer Questions',
+      title: 'Actions',
+      convergencePercent: 45,
+      convergenceTarget: 60,
+      consensusReached: false,
       content: {
+        statusLabel: 'Synthesis Complete',
+        showHeader: true,
         questions: [
           {
             id: 'q1',

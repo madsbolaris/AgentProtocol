@@ -112,6 +112,9 @@ export function ConversationalLayout() {
           title={config.actionPane.title}
           content={config.actionPane.content}
           onSubmit={handleActionSubmit}
+          convergencePercent={config.actionPane.convergencePercent}
+          convergenceTarget={config.actionPane.convergenceTarget}
+          consensusReached={config.actionPane.consensusReached}
         />
       </div>
     </div>

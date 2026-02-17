@@ -554,31 +554,16 @@ Clients provide function implementations when sending messages:
 
 Middleware lets you intercept and modify messages **before and after** they're processed. Think of it as a pipeline where you control each stage.
 
-### Middleware Types
+There are two middleware patterns:
 
-There are two types of middleware:
-
-1. **`Middleware<T>`** - Default (80% of cases)
-   - Processes and yields items from a stream
-   - No `next()` callback overhead
-   - Use for transforming, filtering, or augmenting content
-
-2. **`ChainedMiddleware<T>`** - Advanced (20% of cases)
-   - Includes `next()` callback for before/after processing
-   - Use for timing, error handling, resource management
-
-**When to Use Which?**
-
-| Pattern                     | Use Case                                          | Example                                                    |
-|-----------------------------|---------------------------------------------------|------------------------------------------------------------|
-| **`Middleware<T>`**         | Transform content, filter items, augment messages | Content filtering, metadata enrichment, response formatting |
-| **`ChainedMiddleware<T>`**  | Before/after logic, timing, error boundaries      | Performance monitoring, error handling                      |
+1. **Simple middleware** (80% of cases) - Process and transform content as it flows through
+2. **Middleware with `next()`** (20% of cases) - Execute code before and after processing for timing, error handling, etc.
 
 ---
 
 ## Simple Middleware (Default Pattern)
 
-Use simple middleware for 80% of your use cases. These process and yield items without the overhead of a `next()` callback. Perfect for transforming, filtering, or augmenting content.
+Most middleware simply processes items as they flow through. Perfect for transforming, filtering, or augmenting content.
 
 ### Command Routing
 
@@ -742,61 +727,6 @@ Add contextual information to messages before they're processed by the LLM. This
 
 Process content chunk-by-chunk as it streams in real-time. This example transforms text content by uppercasing it, demonstrating how to modify streaming chunks.
 
-**Signature:**
-
-=== "Python"
-
-    ```python
-    from typing import TypeAlias, Callable, AsyncIterable, TypeVar
-
-    T = TypeVar('T', bound=IStreamable)
-
-    # Generic type alias for simple middleware
-    Middleware: TypeAlias = Callable[
-        [AsyncIterable[T], Thread],
-        AsyncIterable[IStreamable]
-    ]
-
-    # Use with specific content type
-    uppercase: Middleware[TextContentChunk] = async def (stream, thread):
-        # Your implementation
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { Thread, IStreamable, TextContentChunk } from '@microsoft/agents-protocol';
-
-    // Generic type alias for simple middleware
-    type Middleware<T extends IStreamable = IStreamable> = (
-        stream: AsyncIterable<T>,
-        thread: Thread
-    ) => AsyncIterable<IStreamable>;
-
-    // Use with specific content type
-    const uppercase: Middleware<TextContentChunk> = async function* (stream, thread) {
-        // Your implementation
-    };
-    ```
-
-=== "C#"
-
-    ```csharp
-    using Microsoft.Agents.Protocol;
-
-    // Generic delegate for simple middleware
-    public delegate IAsyncEnumerable<IStreamable> Middleware<T>(
-        IAsyncEnumerable<T> stream,
-        Thread thread
-    ) where T : IStreamable;
-
-    // Use with specific content type
-    Middleware<TextContentChunk> uppercase = async (stream, thread) =>
-    {
-        // Your implementation
-    };
-    ```
-
 **Example:**
 
 === "Python"
@@ -871,73 +801,6 @@ Use chained middleware for the remaining 20% of cases where you need before/afte
 
 Use the `next()` callback pattern when you need to execute code **before** the middleware chain starts and **after** it completes. This is essential for timing, error handling, and resource management.
 
-**Signature:**
-
-=== "Python"
-
-    ```python
-    from typing import TypeAlias, Callable, Awaitable, AsyncIterable, TypeVar
-
-    T = TypeVar('T', bound=IStreamable)
-
-    # Generic type alias for chained middleware
-    ChainedMiddleware: TypeAlias = Callable[
-        [AsyncIterable[T], Thread,
-         Callable[[AsyncIterable[IStreamable]], Awaitable[AsyncIterable[T]]]],
-        AsyncIterable[IStreamable]
-    ]
-
-    # Use with specific content type
-    time_streaming: ChainedMiddleware[TextContentChunk] = async def (stream, thread, next):
-        # Your implementation
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { Thread, IStreamable, TextContentChunk } from '@microsoft/agents-protocol';
-
-    // Generic type alias for chained middleware
-    type ChainedMiddleware<T extends IStreamable = IStreamable> = (
-        stream: AsyncIterable<T>,
-        thread: Thread,
-        next: (stream: AsyncIterable<IStreamable>) => Promise<AsyncIterable<T>>
-    ) => AsyncIterable<IStreamable>;
-
-    // Use with specific content type
-    const timeStreaming: ChainedMiddleware<TextContentChunk> = async function* (stream, thread, next) {
-        // Your implementation
-    };
-    ```
-
-=== "C#"
-
-    ```csharp
-    using Microsoft.Agents.Protocol;
-
-    // Generic delegate for chained middleware
-    public delegate IAsyncEnumerable<IStreamable> ChainedMiddleware<T>(
-        IAsyncEnumerable<T> stream,
-        Thread thread,
-        Func<IAsyncEnumerable<IStreamable>, Task<IAsyncEnumerable<T>>> next
-    ) where T : IStreamable;
-
-    // Use with specific content type
-    ChainedMiddleware<TextContentChunk> timeStreaming = async (stream, thread, next) =>
-    {
-        // Your implementation
-    };
-    ```
-
-**Type Explanation:**
-
-- **Input**: `AsyncIterable<T>` - Pre-filtered stream of specific type (e.g., `TextContentChunk`)
-- **next() input**: `AsyncIterable<IStreamable>` - Generic streamable content (middleware output becomes next input)
-- **next() output**: `AsyncIterable<T>` - Strongly-typed items for post-processing transformations
-- **Middleware output**: `AsyncIterable<IStreamable>` - Can yield any streamable type
-
-**Key Change**: Constraint expanded from `AIContentChunk` to `IStreamable`, enabling middleware for messages, complete content, and chunks.
-
 === "Python"
 
     ```python
@@ -967,61 +830,6 @@ Use the `next()` callback pattern when you need to execute code **before** the m
 ### Message-Level Middleware
 
 Message middleware runs once per message and works at a higher level than content middleware. Use it for cross-cutting concerns like logging, authentication, and rate limiting.
-
-**Signature:**
-
-=== "Python"
-
-    ```python
-    from typing import TypeAlias, Callable, Awaitable
-
-    # Type alias for message middleware
-    MessageMiddleware: TypeAlias = Callable[
-        [ChatMessage, Thread, Callable[[], Awaitable[None]]],
-        Awaitable[None]
-    ]
-
-    # Use the alias
-    logging: MessageMiddleware = async def (message, thread, next):
-        # Your implementation
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { ChatMessage, Thread } from '@microsoft/agents-protocol';
-
-    // Type alias for message middleware
-    type MessageMiddleware = (
-        message: ChatMessage,
-        thread: Thread,
-        next: () => Promise<void>
-    ) => Promise<void>;
-
-    // Use the alias
-    const logging: MessageMiddleware = async (message, thread, next) => {
-        // Your implementation
-    };
-    ```
-
-=== "C#"
-
-    ```csharp
-    using Microsoft.Agents.Protocol;
-
-    // Delegate for message middleware
-    public delegate Task MessageMiddleware(
-        ChatMessage message,
-        Thread thread,
-        Func<Task> next
-    );
-
-    // Use the alias
-    MessageMiddleware logging = async (message, thread, next) =>
-    {
-        // Your implementation
-    };
-    ```
 
 === "Python"
 

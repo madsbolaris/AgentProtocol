@@ -513,6 +513,19 @@ public class QuickstartTests : IDisposable
                 yield return content;
             }
         }
+
+        var config = new AgentConfig
+        {
+            Model = "gpt-4",
+            Instructions = "You are helpful.",
+            ApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY"),
+            Middleware = new List<object>
+            {
+                new Tuple<Type, Delegate>(typeof(TextContent), ContentFilter)
+            }
+        };
+
+        var agent = new AgentHost(config);
         #endregion
 
         var thread = new Thread { ThreadId = "test_thread" };
@@ -551,6 +564,19 @@ public class QuickstartTests : IDisposable
 
             yield return content; // Pass through original
         }
+
+        var config = new AgentConfig
+        {
+            Model = "gpt-4",
+            Instructions = "You are helpful.",
+            ApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY"),
+            Middleware = new List<object>
+            {
+                new Tuple<Type, Delegate>(typeof(TextContent), MetadataEnricher)
+            }
+        };
+
+        var agent = new AgentHost(config);
         #endregion
 
         var thread = new Thread
@@ -593,6 +619,19 @@ public class QuickstartTests : IDisposable
                 yield return chunk;
             }
         }
+
+        var config = new AgentConfig
+        {
+            Model = "gpt-4",
+            Instructions = "You are helpful.",
+            ApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY"),
+            Middleware = new List<object>
+            {
+                new Tuple<Type, Delegate>(typeof(TextContentChunk), ResponseFormatter)
+            }
+        };
+
+        var agent = new AgentHost(config);
         #endregion
 
         async IAsyncEnumerable<TextContentChunk> MockStream()

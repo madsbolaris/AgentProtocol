@@ -597,15 +597,26 @@ class TestHostingQuickstartSamples:
             thread: Thread
         ):
             """Filter profanity and sensitive information"""
-            # Check for profanity
+            # Filter profanity
             filtered_text = content.text.replace("badword", "***")
 
-            # Check for sensitive patterns (SSN, credit cards)
-            if any(pattern in content.text.lower() for pattern in ["ssn:", "credit card:"]):
+            # Check for sensitive patterns
+            if content.text.lower().startswith("ssn:"):
                 yield TextContent(text="[REDACTED - Sensitive information removed]")
             else:
                 content.text = filtered_text
                 yield content
+
+        config = AgentConfig(
+            model="gpt-4",
+            instructions="You are helpful.",
+            api_key=os.getenv("OPENAI_API_KEY"),
+            middleware=[
+                (TextContent, content_filter)
+            ]
+        )
+
+        agent = AgentHost(config)
         # </snippet>
 
         # Test the filter
@@ -634,7 +645,6 @@ class TestHostingQuickstartSamples:
             """Add contextual metadata to messages"""
             # Get user context from thread metadata
             user_timezone = thread.metadata.get("user_timezone", "UTC")
-            session_start = thread.metadata.get("session_start_time")
 
             # Add context as developer message
             context_msg = DeveloperMessage(
@@ -644,6 +654,17 @@ class TestHostingQuickstartSamples:
             )
             yield context_msg
             yield content  # Pass through original message
+
+        config = AgentConfig(
+            model="gpt-4",
+            instructions="You are helpful.",
+            api_key=os.getenv("OPENAI_API_KEY"),
+            middleware=[
+                (TextContent, metadata_enricher)
+            ]
+        )
+
+        agent = AgentHost(config)
         # </snippet>
 
         # Test the enricher
@@ -673,6 +694,17 @@ class TestHostingQuickstartSamples:
                     chunk.text = f"🤖 **Agent Response:**\n\n{chunk.text}"
                     first_chunk = False
                 yield chunk
+
+        config = AgentConfig(
+            model="gpt-4",
+            instructions="You are helpful.",
+            api_key=os.getenv("OPENAI_API_KEY"),
+            middleware=[
+                (TextContentChunk, response_formatter)
+            ]
+        )
+
+        agent = AgentHost(config)
         # </snippet>
 
         # Test the formatter

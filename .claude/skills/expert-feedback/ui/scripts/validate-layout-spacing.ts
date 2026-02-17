@@ -29,22 +29,27 @@ const SPACING_CHECKS: SpacingCheck[] = [
 ];
 
 async function measureSpacing(page: Page, check: SpacingCheck): Promise<number | null> {
-  return await page.evaluate(({ selector1, selector2, edge1, edge2 }) => {
-    const el1 = document.querySelector(selector1);
-    const el2 = document.querySelector(selector2);
+  try {
+    const spacing = await page.evaluate(({ selector1, selector2, edge1, edge2 }) => {
+      const el1 = document.querySelector(selector1);
+      const el2 = document.querySelector(selector2);
 
-    if (!el1 || !el2) {
-      return null;
-    }
+      if (!el1 || !el2) {
+        return null;
+      }
 
-    const rect1 = el1.getBoundingClientRect();
-    const rect2 = el2.getBoundingClientRect();
+      const rect1 = el1.getBoundingClientRect();
+      const rect2 = el2.getBoundingClientRect();
 
-    const pos1 = edge1 === 'top' ? rect1.top : rect1.bottom;
-    const pos2 = edge2 === 'top' ? rect2.top : rect2.bottom;
+      const pos1 = edge1 === 'top' ? rect1.top : rect1.bottom;
+      const pos2 = edge2 === 'top' ? rect2.top : rect2.bottom;
 
-    return pos2 - pos1;
-  }, { selector1: check.selector1, selector2: check.selector2, edge1: check.edge1, edge2: check.edge2 });
+      return pos2 - pos1;
+    }, { selector1: check.selector1, selector2: check.selector2, edge1: check.edge1, edge2: check.edge2 });
+    return spacing;
+  } catch (e) {
+    return null;
+  }
 }
 
 async function validateLayoutSpacing(prototypeUrl: string, reactUrl: string) {
@@ -59,19 +64,21 @@ async function validateLayoutSpacing(prototypeUrl: string, reactUrl: string) {
 
   for (const check of SPACING_CHECKS) {
     const prototypePage = await context.newPage();
-    await prototypePage.goto(prototypeUrl);
+    await prototypePage.goto(prototypeUrl, { waitUntil: 'networkidle' });
+    await prototypePage.waitForSelector(check.selector1, { timeout: 5000 }).catch(() => null);
     await prototypePage.waitForTimeout(1000);
     const prototypeSpacing = await measureSpacing(prototypePage, check);
     await prototypePage.close();
 
     const reactPage = await context.newPage();
-    await reactPage.goto(reactUrl);
+    await reactPage.goto(reactUrl, { waitUntil: 'networkidle' });
+    await reactPage.waitForSelector(check.selector1, { timeout: 5000 }).catch(() => null);
     await reactPage.waitForTimeout(1000);
     const reactSpacing = await measureSpacing(reactPage, check);
     await reactPage.close();
 
     if (prototypeSpacing === null || reactSpacing === null) {
-      console.log(`⚠️  ${check.name}: Skipped (elements not found)`);
+      console.log(`⚠️  ${check.name}: Skipped (elements not found) - prototype: ${prototypeSpacing}, react: ${reactSpacing}`);
       continue;
     }
 

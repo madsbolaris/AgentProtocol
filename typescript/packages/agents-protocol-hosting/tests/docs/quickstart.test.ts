@@ -836,8 +836,10 @@ describe('Hosting SDK Quickstart Samples', () => {
   });
 
   describe('Content Filter Middleware', () => {
+    /**
+     * @docExample hosting-content-filter
+     */
     it('should filter sensitive content in messages', async () => {
-      // @docExample hosting-content-filter
       // <snippet>
       async function* contentFilter(
           content: TextContent,
@@ -870,8 +872,10 @@ describe('Hosting SDK Quickstart Samples', () => {
   });
 
   describe('Metadata Enrichment Middleware', () => {
+    /**
+     * @docExample hosting-metadata-enrichment
+     */
     it('should enrich messages with metadata', async () => {
-      // @docExample hosting-metadata-enrichment
       // <snippet>
       async function* metadataEnricher(
           content: TextContent,
@@ -909,8 +913,10 @@ describe('Hosting SDK Quickstart Samples', () => {
   });
 
   describe('Response Formatter Middleware', () => {
+    /**
+     * @docExample hosting-response-formatter
+     */
     it('should format response chunks', async () => {
-      // @docExample hosting-response-formatter
       // <snippet>
       async function* responseFormatter(
           stream: AsyncIterable<TextContentChunk>,

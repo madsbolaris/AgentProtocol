@@ -344,10 +344,10 @@ describe('Hosting SDK Quickstart Samples', () => {
       // <snippet>
       import { MessageReactionContent, DeveloperMessage, TextContent } from '@microsoft/agents-protocol';
 
-      const handleReactions: Middleware<MessageReactionContent> = async function*(
+      async function* handleReactions(
           reaction: MessageReactionContent,
           thread: Thread
-      ): AsyncIterable<IStreamable> {
+      ) {
           // Convert reaction to a message the agent can understand
           const developerMsg = new DeveloperMessage({
               content: [
@@ -416,10 +416,10 @@ describe('Hosting SDK Quickstart Samples', () => {
     it('should uppercase streamed content chunks', async () => {
       // Sample from quickstart guide
       // <snippet>
-      const uppercaseContent: Middleware<TextContentChunk> = async function*(
+      async function* uppercaseContent(
           stream: AsyncIterable<TextContentChunk>,
           thread: Thread
-      ): AsyncIterable<IStreamable> {
+      ) {
           for await (const chunk of stream) {
               chunk.text = chunk.text.toUpperCase();
               yield chunk;
@@ -484,11 +484,11 @@ describe('Hosting SDK Quickstart Samples', () => {
       const logs: string[] = [];
 
       // <snippet>
-      const timeStreaming: ChainedMiddleware<TextContentChunk> = async function (
+      async function timeStreaming(
           stream: AsyncIterable<TextContentChunk>,
           thread: Thread,
           next: (stream: AsyncIterable<IStreamable>) => Promise<AsyncIterable<TextContentChunk>>
-      ): Promise<AsyncIterable<IStreamable>> {
+      ) {
           const start = Date.now();
           console.log("🚀 Starting stream");
 
@@ -566,11 +566,11 @@ describe('Hosting SDK Quickstart Samples', () => {
       const logs: string[] = [];
 
       // <snippet>
-      const timingMiddleware: MessageMiddleware = async function (
+      async function timingMiddleware(
           message: ChatMessage,
           thread: Thread,
           next: () => Promise<void>
-      ): Promise<void> {
+      ) {
           const start = Date.now();
           console.log(`⏱️ Processing started for thread ${thread.id}`);
 
@@ -683,11 +683,11 @@ describe('Hosting SDK Quickstart Samples', () => {
       const errors: string[] = [];
 
       // <snippet>
-      const errorMiddleware: MessageMiddleware = async function(
+      async function errorMiddleware(
           message: ChatMessage,
           thread: Thread,
           next: () => Promise<void>
-      ): Promise<void> {
+      ) {
           try {
               await next();
           } catch (error) {
@@ -843,10 +843,10 @@ describe('Hosting SDK Quickstart Samples', () => {
       // <snippet>
       import { TextContent, Thread, IStreamable } from '@microsoft/agents-protocol';
 
-      const contentFilter: Middleware<TextContent> = async function*(
+      async function* contentFilter(
           content: TextContent,
           thread: Thread
-      ): AsyncIterable<IStreamable> {
+      ) {
           // Filter profanity and sensitive information
           const filteredText = content.text.replace(/badword/gi, "***");
 
@@ -892,10 +892,10 @@ describe('Hosting SDK Quickstart Samples', () => {
       // <snippet>
       import { TextContent, DeveloperMessage, Thread, IStreamable } from '@microsoft/agents-protocol';
 
-      const metadataEnricher: Middleware<TextContent> = async function*(
+      async function* metadataEnricher(
           content: TextContent,
           thread: Thread
-      ): AsyncIterable<IStreamable> {
+      ) {
           // Get user context from thread metadata
           const userTimezone = thread.metadata?.get("user_timezone") ?? "UTC";
 
@@ -946,10 +946,10 @@ describe('Hosting SDK Quickstart Samples', () => {
       // <snippet>
       import { TextContentChunk, Thread, IStreamable } from '@microsoft/agents-protocol';
 
-      const responseFormatter: Middleware<TextContentChunk> = async function*(
+      async function* responseFormatter(
           stream: AsyncIterable<TextContentChunk>,
           thread: Thread
-      ): AsyncIterable<IStreamable> {
+      ) {
           let firstChunk = true;
           for await (const chunk of stream) {
               if (firstChunk) {

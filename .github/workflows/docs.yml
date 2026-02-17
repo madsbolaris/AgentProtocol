@@ -43,6 +43,11 @@ jobs:
             mkdocs-section-index \
             mkdocs-git-revision-date-localized-plugin
 
+      - name: Verify custom plugins exist
+        run: |
+          ls -la mkdocs/plugins/mkdocs_plugins/
+          python3 -c "import sys; sys.path.insert(0, 'mkdocs/plugins'); import mkdocs_plugins.hashicorp_cards; print('Module import successful')"
+
       - name: Build documentation
         run: mkdocs build
         env:

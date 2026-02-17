@@ -217,17 +217,30 @@ export function QuestionsPanel({ questions, onSubmit, statusLabel, showHeader = 
       return (
         <div className="question-answer">
           <div className="question-options">
-            {q.options.map(option => (
-              <label key={option.value} className="question-option">
-                <input
-                  type="checkbox"
-                  value={option.value}
-                  checked={selectedValues.includes(option.value)}
-                  onChange={(e) => handleCheckboxAnswer(questionId, e.target.value, e.target.checked)}
-                />
-                <span>{option.label}</span>
-              </label>
-            ))}
+            {q.options.map(option => {
+              // Use option-label structure if description exists, otherwise use simpler question-option
+              const hasDescription = option.description && option.description.trim().length > 0
+              const className = hasDescription ? 'option-label' : 'question-option'
+
+              return (
+                <label key={option.value} className={className}>
+                  <input
+                    type="checkbox"
+                    value={option.value}
+                    checked={selectedValues.includes(option.value)}
+                    onChange={(e) => handleCheckboxAnswer(questionId, e.target.value, e.target.checked)}
+                  />
+                  {hasDescription ? (
+                    <div className="option-text">
+                      <strong>{option.label}</strong>
+                      <div className="option-description">{option.description}</div>
+                    </div>
+                  ) : (
+                    <span>{option.label}</span>
+                  )}
+                </label>
+              )
+            })}
             {q.allowOther && (
               <label className="question-option">
                 <input

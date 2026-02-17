@@ -47,9 +47,6 @@ export function ToolCallBlock({ calls }: ToolCallBlockProps) {
 
   return (
     <div className="tool-calls-block">
-      <div className="tool-calls-header">
-        <i className="fa-solid fa-wrench"></i> Tool Calls ({calls.length})
-      </div>
       {calls.map(call => {
         const inputFormatted = formatInput(call.input)
         const resultSummary = getResultSummary(call)

@@ -841,6 +841,8 @@ describe('Hosting SDK Quickstart Samples', () => {
      */
     it('should filter sensitive content in messages', async () => {
       // <snippet>
+      import { TextContent, Thread, IStreamable } from '@microsoft/agents-protocol';
+
       async function* contentFilter(
           content: TextContent,
           thread: Thread
@@ -856,6 +858,17 @@ describe('Hosting SDK Quickstart Samples', () => {
               yield content;
           }
       }
+
+      const config: AgentConfig = {
+          model: "gpt-4",
+          instructions: "You are helpful.",
+          apiKey: process.env.OPENAI_API_KEY!,
+          middleware: [
+              [TextContent, contentFilter]
+          ]
+      };
+
+      const agent = new AgentHost(config);
       // </snippet>
 
       const thread = { threadId: "test_thread" };
@@ -877,6 +890,8 @@ describe('Hosting SDK Quickstart Samples', () => {
      */
     it('should enrich messages with metadata', async () => {
       // <snippet>
+      import { TextContent, DeveloperMessage, Thread, IStreamable } from '@microsoft/agents-protocol';
+
       async function* metadataEnricher(
           content: TextContent,
           thread: Thread
@@ -894,6 +909,17 @@ describe('Hosting SDK Quickstart Samples', () => {
 
           yield content; // Pass through original
       }
+
+      const config: AgentConfig = {
+          model: "gpt-4",
+          instructions: "You are helpful.",
+          apiKey: process.env.OPENAI_API_KEY!,
+          middleware: [
+              [TextContent, metadataEnricher]
+          ]
+      };
+
+      const agent = new AgentHost(config);
       // </snippet>
 
       const thread = {
@@ -918,6 +944,8 @@ describe('Hosting SDK Quickstart Samples', () => {
      */
     it('should format response chunks', async () => {
       // <snippet>
+      import { TextContentChunk, Thread, IStreamable } from '@microsoft/agents-protocol';
+
       async function* responseFormatter(
           stream: AsyncIterable<TextContentChunk>,
           thread: Thread
@@ -932,6 +960,17 @@ describe('Hosting SDK Quickstart Samples', () => {
               yield chunk;
           }
       }
+
+      const config: AgentConfig = {
+          model: "gpt-4",
+          instructions: "You are helpful.",
+          apiKey: process.env.OPENAI_API_KEY!,
+          middleware: [
+              [TextContentChunk, responseFormatter]
+          ]
+      };
+
+      const agent = new AgentHost(config);
       // </snippet>
 
       async function* mockStream() {

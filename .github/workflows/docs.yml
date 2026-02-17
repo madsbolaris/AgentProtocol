@@ -43,7 +43,7 @@ jobs:
             mkdocs-section-index \
             mkdocs-git-revision-date-localized-plugin
           # Install custom plugins
-          pip install -e mkdocs/plugins
+          pip install -e ./mkdocs/plugins
 
       - name: Build documentation
         run: |

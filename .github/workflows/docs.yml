@@ -8,6 +8,7 @@ on:
     paths:
       - 'docs/**'
       - 'mkdocs.yml'
+      - 'mkdocs/plugins/**'
       - '.github/workflows/docs.yml'
 
   # Allow manual trigger
@@ -42,11 +43,8 @@ jobs:
             mkdocs-awesome-pages-plugin \
             mkdocs-section-index \
             mkdocs-git-revision-date-localized-plugin
-
-      - name: Verify custom plugins exist
-        run: |
-          ls -la mkdocs/plugins/mkdocs_plugins/
-          python3 -c "import sys; sys.path.insert(0, 'mkdocs/plugins'); import mkdocs_plugins.hashicorp_cards; print('Module import successful')"
+          # Install custom plugins package
+          pip install -e ./mkdocs/plugins
 
       - name: Build documentation
         run: mkdocs build

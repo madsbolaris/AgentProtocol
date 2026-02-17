@@ -44,13 +44,12 @@ jobs:
             mkdocs-git-revision-date-localized-plugin
 
       - name: Build documentation
-        run: |
-          export PYTHONPATH="${PYTHONPATH}:$(pwd):$(pwd)/mkdocs/plugins"
-          mkdocs build
+        run: mkdocs build
+        env:
+          PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/mkdocs/plugins
 
       - name: Deploy to GitHub Pages
-        run: |
-          export PYTHONPATH="${PYTHONPATH}:$(pwd):$(pwd)/mkdocs/plugins"
-          mkdocs gh-deploy --force --clean --verbose
+        run: mkdocs gh-deploy --force --clean --verbose
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/mkdocs/plugins

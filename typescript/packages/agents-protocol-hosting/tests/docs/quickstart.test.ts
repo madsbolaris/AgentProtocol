@@ -835,6 +835,115 @@ describe('Hosting SDK Quickstart Samples', () => {
     });
   });
 
+  describe('Content Filter Middleware', () => {
+    it('should filter sensitive content in messages', async () => {
+      // @docExample hosting-content-filter
+      // <snippet>
+      async function* contentFilter(
+          content: TextContent,
+          thread: Thread
+      ): AsyncIterable<IStreamable> {
+          // Filter profanity and sensitive information
+          const filteredText = content.text.replace(/badword/gi, "***");
+
+          // Check for sensitive patterns
+          if (content.text.toLowerCase().includes("ssn:")) {
+              yield { text: "[REDACTED - Sensitive information removed]" };
+          } else {
+              content.text = filteredText;
+              yield content;
+          }
+      }
+      // </snippet>
+
+      const thread = { threadId: "test_thread" };
+      const content = { text: "This contains badword" };
+
+      const result = [];
+      for await (const item of contentFilter(content as any, thread as any)) {
+          result.push(item);
+      }
+
+      expect(result).toHaveLength(1);
+      expect(result[0].text).toContain("***");
+    });
+  });
+
+  describe('Metadata Enrichment Middleware', () => {
+    it('should enrich messages with metadata', async () => {
+      // @docExample hosting-metadata-enrichment
+      // <snippet>
+      async function* metadataEnricher(
+          content: TextContent,
+          thread: Thread
+      ): AsyncIterable<IStreamable> {
+          // Get user context from thread metadata
+          const userTimezone = thread.metadata?.get("user_timezone") ?? "UTC";
+
+          // Add context as developer message
+          yield {
+              role: "developer",
+              contents: [
+                  { text: `[Context: User timezone=${userTimezone}, session_active=true]` }
+              ]
+          };
+
+          yield content; // Pass through original
+      }
+      // </snippet>
+
+      const thread = {
+          threadId: "test_thread",
+          metadata: new Map([["user_timezone", "PST"]])
+      };
+      const content = { text: "Hello" };
+
+      const result = [];
+      for await (const item of metadataEnricher(content as any, thread as any)) {
+          result.push(item);
+      }
+
+      expect(result).toHaveLength(2);
+      expect((result[0] as any).contents[0].text).toContain("PST");
+    });
+  });
+
+  describe('Response Formatter Middleware', () => {
+    it('should format response chunks', async () => {
+      // @docExample hosting-response-formatter
+      // <snippet>
+      async function* responseFormatter(
+          stream: AsyncIterable<TextContentChunk>,
+          thread: Thread
+      ): AsyncIterable<IStreamable> {
+          let firstChunk = true;
+          for await (const chunk of stream) {
+              if (firstChunk) {
+                  // Add branding to first chunk
+                  chunk.text = `🤖 **Agent Response:**\n\n${chunk.text}`;
+                  firstChunk = false;
+              }
+              yield chunk;
+          }
+      }
+      // </snippet>
+
+      async function* mockStream() {
+          yield { text: "Hello" };
+          yield { text: " world" };
+      }
+
+      const thread = { threadId: "test_thread" };
+      const result = [];
+      for await (const item of responseFormatter(mockStream() as any, thread as any)) {
+          result.push(item);
+      }
+
+      expect(result).toHaveLength(2);
+      expect(result[0].text).toContain("🤖");
+    });
+  });
+
   describe('Step 6: Persistent Conversations (In-Memory Storage)', () => {
     /**
      * @docExample hosting-inmemory-storage

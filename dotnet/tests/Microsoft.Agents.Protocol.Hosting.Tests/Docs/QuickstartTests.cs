@@ -490,6 +490,128 @@ public class QuickstartTests : IDisposable
         agentOptions.Middleware.Should().NotBeEmpty();
     }
 
+    [Fact]
+    [DocExample("hosting-content-filter")]
+    public async Task Step4_ContentFilterMiddleware_ConfigurationWorks()
+    {
+        #region Snippet
+        async IAsyncEnumerable<IStreamable> ContentFilter(
+            TextContent content,
+            Thread thread)
+        {
+            // Filter profanity and sensitive information
+            var filteredText = content.Text.Replace("badword", "***");
+
+            // Check for sensitive patterns
+            if (content.Text.Contains("ssn:", StringComparison.OrdinalIgnoreCase))
+            {
+                yield return new TextContent { Text = "[REDACTED - Sensitive information removed]" };
+            }
+            else
+            {
+                content.Text = filteredText;
+                yield return content;
+            }
+        }
+        #endregion
+
+        var thread = new Thread { ThreadId = "test_thread" };
+        var content = new TextContent { Text = "This contains badword" };
+
+        var result = new List<IStreamable>();
+        await foreach (var item in ContentFilter(content, thread))
+        {
+            result.Add(item);
+        }
+
+        Assert.Single(result);
+        Assert.Contains("***", ((TextContent)result[0]).Text);
+    }
+
+    [Fact]
+    [DocExample("hosting-metadata-enrichment")]
+    public async Task Step4_MetadataEnrichmentMiddleware_ConfigurationWorks()
+    {
+        #region Snippet
+        async IAsyncEnumerable<IStreamable> MetadataEnricher(
+            TextContent content,
+            Thread thread)
+        {
+            // Get user context from thread metadata
+            var userTimezone = thread.Metadata?.GetValueOrDefault("user_timezone", "UTC") ?? "UTC";
+
+            // Add context as developer message
+            yield return new DeveloperMessage
+            {
+                Contents = new List<AIContentBase>
+                {
+                    new TextContent { Text = $"[Context: User timezone={userTimezone}, session_active=True]" }
+                }
+            };
+
+            yield return content; // Pass through original
+        }
+        #endregion
+
+        var thread = new Thread
+        {
+            ThreadId = "test_thread",
+            Metadata = new Dictionary<string, object> { ["user_timezone"] = "PST" }
+        };
+        var content = new TextContent { Text = "Hello" };
+
+        var result = new List<IStreamable>();
+        await foreach (var item in MetadataEnricher(content, thread))
+        {
+            result.Add(item);
+        }
+
+        Assert.Equal(2, result.Count);
+        Assert.IsType<DeveloperMessage>(result[0]);
+        var devMsg = (DeveloperMessage)result[0];
+        Assert.Contains("PST", ((TextContent)devMsg.Contents[0]).Text);
+    }
+
+    [Fact]
+    [DocExample("hosting-response-formatter")]
+    public async Task Step4_ResponseFormatterMiddleware_ConfigurationWorks()
+    {
+        #region Snippet
+        async IAsyncEnumerable<IStreamable> ResponseFormatter(
+            IAsyncEnumerable<TextContentChunk> stream,
+            Thread thread)
+        {
+            var firstChunk = true;
+            await foreach (var chunk in stream)
+            {
+                if (firstChunk)
+                {
+                    // Add branding to first chunk
+                    chunk.Text = $"🤖 **Agent Response:**\n\n{chunk.Text}";
+                    firstChunk = false;
+                }
+                yield return chunk;
+            }
+        }
+        #endregion
+
+        async IAsyncEnumerable<TextContentChunk> MockStream()
+        {
+            yield return new TextContentChunk { Text = "Hello" };
+            yield return new TextContentChunk { Text = " world" };
+        }
+
+        var thread = new Thread { ThreadId = "test_thread" };
+        var result = new List<IStreamable>();
+        await foreach (var item in ResponseFormatter(MockStream(), thread))
+        {
+            result.Add(item);
+        }
+
+        Assert.Equal(2, result.Count);
+        Assert.Contains("🤖", ((TextContentChunk)result[0]).Text);
+    }
+
     #endregion
 
     #region Step 6: Persistent Conversations - In-Memory

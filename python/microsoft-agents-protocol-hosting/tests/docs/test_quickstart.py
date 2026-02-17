@@ -584,6 +584,106 @@ class TestHostingQuickstartSamples:
         assert isinstance(error_call, AgentMessage)
         assert "something went wrong" in error_call.contents[0].text
 
+    @pytest.mark.asyncio
+    @pytest.mark.doc_example("hosting-content-filter")
+    async def test_step4_content_filter_middleware(self):
+        """Test content filtering middleware"""
+        # <snippet>
+        async def content_filter(
+            content: TextContent,
+            thread: Thread
+        ) -> AsyncIterable[IStreamable]:
+            """Filter profanity and sensitive information"""
+            # Check for profanity
+            filtered_text = content.text.replace("badword", "***")
+
+            # Check for sensitive patterns (SSN, credit cards)
+            if any(pattern in content.text.lower() for pattern in ["ssn:", "credit card:"]):
+                yield TextContent(text="[REDACTED - Sensitive information removed]")
+            else:
+                content.text = filtered_text
+                yield content
+        # </snippet>
+
+        # Test the filter
+        thread = Thread(thread_id="test_thread")
+        content = TextContent(text="This contains badword and normal text")
+
+        result = [item async for item in content_filter(content, thread)]
+        assert len(result) == 1
+        assert "***" in result[0].text
+
+        # Test sensitive data redaction
+        sensitive_content = TextContent(text="My SSN: 123-45-6789")
+        result2 = [item async for item in content_filter(sensitive_content, thread)]
+        assert len(result2) == 1
+        assert "REDACTED" in result2[0].text
+
+    @pytest.mark.asyncio
+    @pytest.mark.doc_example("hosting-metadata-enrichment")
+    async def test_step4_metadata_enrichment_middleware(self):
+        """Test metadata enrichment middleware"""
+        # <snippet>
+        async def metadata_enricher(
+            content: TextContent,
+            thread: Thread
+        ) -> AsyncIterable[IStreamable]:
+            """Add contextual metadata to messages"""
+            # Get user context from thread metadata
+            user_timezone = thread.metadata.get("user_timezone", "UTC")
+            session_start = thread.metadata.get("session_start_time")
+
+            # Add context as developer message
+            context_msg = DeveloperMessage(
+                contents=[
+                    TextContent(text=f"[Context: User timezone={user_timezone}, session_active=True]")
+                ]
+            )
+            yield context_msg
+            yield content  # Pass through original message
+        # </snippet>
+
+        # Test the enricher
+        thread = Thread(thread_id="test_thread", metadata={"user_timezone": "PST"})
+        content = TextContent(text="Hello")
+
+        result = [item async for item in metadata_enricher(content, thread)]
+        assert len(result) == 2
+        assert isinstance(result[0], DeveloperMessage)
+        assert "PST" in result[0].contents[0].text
+        assert result[1] == content
+
+    @pytest.mark.asyncio
+    @pytest.mark.doc_example("hosting-response-formatter")
+    async def test_step4_response_formatter_middleware(self):
+        """Test response formatting middleware"""
+        # <snippet>
+        async def response_formatter(
+            stream: AsyncIterable[TextContentChunk],
+            thread: Thread
+        ) -> AsyncIterable[IStreamable]:
+            """Format agent responses with branding and markdown"""
+            first_chunk = True
+            async for chunk in stream:
+                if first_chunk:
+                    # Add branding to first chunk
+                    chunk.text = f"🤖 **Agent Response:**\n\n{chunk.text}"
+                    first_chunk = False
+                yield chunk
+        # </snippet>
+
+        # Test the formatter
+        async def mock_stream():
+            yield TextContentChunk(text="Hello")
+            yield TextContentChunk(text=" world")
+
+        thread = Thread(thread_id="test_thread")
+        result = [item async for item in response_formatter(mock_stream(), thread)]
+        assert len(result) == 2
+        assert "🤖" in result[0].text
+        assert "Agent Response" in result[0].text
+        assert result[1].text == " world"
+
     # ========================================================================
     # Step 6: Persistent Conversations (In-Memory Storage)
     # ========================================================================

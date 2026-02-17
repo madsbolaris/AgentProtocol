@@ -569,12 +569,18 @@ There are two types of middleware:
 
 **When to Use Which?**
 
-| Pattern                     | Use Case                                          | Example                                         |
-|-----------------------------|---------------------------------------------------|-------------------------------------------------|
-| **`Middleware<T>`**         | Transform content, filter items, augment messages | Uppercase text, command routing, add context    |
-| **`ChainedMiddleware<T>`**  | Before/after logic, timing, error boundaries      | Performance monitoring, exception handling      |
+| Pattern                     | Use Case                                          | Example                                                    |
+|-----------------------------|---------------------------------------------------|------------------------------------------------------------|
+| **`Middleware<T>`**         | Transform content, filter items, augment messages | Content filtering, metadata enrichment, response formatting |
+| **`ChainedMiddleware<T>`**  | Before/after logic, timing, error boundaries      | Performance monitoring, error handling                      |
 
-### Your First Middleware
+---
+
+## Simple Middleware (Default Pattern)
+
+Use simple middleware for 80% of your use cases. These process and yield items without the overhead of a `next()` callback. Perfect for transforming, filtering, or augmenting content.
+
+### Command Routing
 
 Let's build a simple command router that intercepts commands (like `/help`) and handles them without calling the LLM.
 
@@ -619,9 +625,45 @@ Available commands:
 
 When a client sends "Hello, how are you?" (not a command), it passes through to the LLM normally.
 
-### Processing Multimodal Content in Middleware
+### Content Filtering
 
-Use content middleware to process specific content types. This allows you to augment the LLM's capabilities by converting system events, channel events, or custom content types into messages the agent can understand.
+Filter sensitive information and profanity from user messages before they reach the LLM. This is essential for production systems to protect both the LLM and users.
+
+=== "Python"
+
+    ```python
+    from microsoft.agents.protocol import TextContent, Thread, IStreamable
+    from typing import AsyncIterable
+
+    --8<-- test::quickstart/hosting-content-filter
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol;
+    using System.Runtime.CompilerServices;
+
+    --8<-- test::quickstart/hosting-content-filter
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { TextContent, Thread, IStreamable } from '@microsoft/agents-protocol';
+
+    --8<-- test::quickstart/hosting-content-filter
+    ```
+
+!!! tip "Use Cases"
+    - Filter profanity before sending to LLM
+    - Detect and redact sensitive data (SSN, credit cards, API keys)
+    - Implement content policies for your application
+    - Protect LLM from prompt injection attempts
+
+### Reaction Handling
+
+Process specific content types like message reactions. This allows you to augment the LLM's capabilities by converting system events, channel events, or custom content types into messages the agent can understand.
 
 === "Python"
 
@@ -655,9 +697,50 @@ Use content middleware to process specific content types. This allows you to aug
     --8<-- test::quickstart/hosting-reaction-handler
     ```
 
-### Streaming Processing
+### Metadata Enrichment
 
-Process content chunk-by-chunk as it streams in real-time. This uses the default `Middleware<T>` type without the `next()` callback.
+Add contextual information to messages before they're processed by the LLM. This helps the agent understand user context without explicitly including it in every message.
+
+=== "Python"
+
+    ```python
+    from microsoft.agents.protocol import (
+        TextContent,
+        DeveloperMessage,
+        Thread,
+        IStreamable
+    )
+    from typing import AsyncIterable
+
+    --8<-- test::quickstart/hosting-metadata-enrichment
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol;
+    using System.Runtime.CompilerServices;
+
+    --8<-- test::quickstart/hosting-metadata-enrichment
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { TextContent, DeveloperMessage, Thread, IStreamable } from '@microsoft/agents-protocol';
+
+    --8<-- test::quickstart/hosting-metadata-enrichment
+    ```
+
+!!! tip "Use Cases"
+    - Add user timezone, location, or preferences
+    - Include session context (duration, activity level)
+    - Provide system state information
+    - Enrich with external data (CRM, analytics)
+
+### Streaming Transformation
+
+Process content chunk-by-chunk as it streams in real-time. This example transforms text content by uppercasing it, demonstrating how to modify streaming chunks.
 
 **Signature:**
 
@@ -742,7 +825,49 @@ Process content chunk-by-chunk as it streams in real-time. This uses the default
     --8<-- test::quickstart/hosting-streaming-middleware
     ```
 
-### Before and After Middleware
+### Response Formatting
+
+Format agent responses consistently by adding branding, markdown, or custom styling. This middleware processes streaming chunks as they're generated by the LLM.
+
+=== "Python"
+
+    ```python
+    from microsoft.agents.protocol import TextContentChunk, Thread, IStreamable
+    from typing import AsyncIterable
+
+    --8<-- test::quickstart/hosting-response-formatter
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol;
+    using System.Runtime.CompilerServices;
+
+    --8<-- test::quickstart/hosting-response-formatter
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { TextContentChunk, Thread, IStreamable } from '@microsoft/agents-protocol';
+
+    --8<-- test::quickstart/hosting-response-formatter
+    ```
+
+!!! tip "Use Cases"
+    - Add consistent branding to all responses
+    - Format output with markdown or HTML
+    - Add decorative elements (icons, emojis)
+    - Wrap responses in custom templates
+
+---
+
+## Advanced Middleware with next()
+
+Use chained middleware for the remaining 20% of cases where you need before/after processing. These include the `next()` callback for timing, error handling, and resource management.
+
+### Before and After Processing
 
 Use the `next()` callback pattern when you need to execute code **before** the middleware chain starts and **after** it completes. This is essential for timing, error handling, and resource management.
 
@@ -839,7 +964,7 @@ Use the `next()` callback pattern when you need to execute code **before** the m
     --8<-- test::quickstart/hosting-before-after
     ```
 
-### Message Middleware
+### Message-Level Middleware
 
 Message middleware runs once per message and works at a higher level than content middleware. Use it for cross-cutting concerns like logging, authentication, and rate limiting.
 

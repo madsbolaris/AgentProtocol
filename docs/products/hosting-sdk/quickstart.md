@@ -78,20 +78,8 @@ Create your first agent in under 2 minutes.
     ```python
     from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
     import os
-    from dotenv import load_dotenv
 
-    load_dotenv()  # Load .env file
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are a helpful assistant.",
-        api_key=os.getenv("OPENAI_API_KEY")
-    )
-
-    agent = AgentHost(config)
-
-    if __name__ == "__main__":
-        agent.run()  # Starts server on http://localhost:5000
+    --8<-- test::quickstart/hosting-hello-world
     ```
 
 === "C#"
@@ -99,38 +87,15 @@ Create your first agent in under 2 minutes.
     ```csharp
     using Microsoft.Agents.Protocol.Hosting;
 
-    var builder = WebApplication.CreateBuilder(args);
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"]
-    };
-
-    builder.Services
-        .AddAgentHost()
-        .AddDefaultAgent(agentOptions);
-
-    var app = builder.Build();
-    app.MapAgentProtocol();
-    app.Run();
+    --8<-- test::quickstart/hosting-hello-world
     ```
 
 === "TypeScript"
 
     ```typescript
     import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
-    import 'dotenv/config';
 
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!
-    };
-
-    const agent = new AgentHost(config);
-    agent.listen(5000);
+    --8<-- test::quickstart/hosting-hello-world
     ```
 
 **Test it:**
@@ -179,7 +144,194 @@ Agent: Hello! How can I help you today?
 
 ---
 
-## Step 2: Adding Tools
+## Step 2: Multi-Agent Support
+
+Register multiple specialized agents and route requests to the right agent based on capabilities.
+
+=== "Python"
+
+    ```python
+    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
+    import os
+
+    # Create agent host
+    host = AgentHost()
+
+    # Register a weather expert agent (default)
+    weather_config = AgentConfig(
+        agent_id="weather-agent",
+        model="gpt-4",
+        api_key=os.environ["OPENAI_API_KEY"],
+        instructions="You are a weather expert. Provide accurate weather information and forecasts.",
+        is_default=True  # This agent handles requests without explicit agent_id
+    )
+    host.add_agent(weather_config)
+
+    # Register a travel planning agent
+    travel_config = AgentConfig(
+        agent_id="travel-agent",
+        model="gpt-4",
+        api_key=os.environ["OPENAI_API_KEY"],
+        instructions="You are a travel planning assistant. Help users plan trips and find destinations."
+    )
+    host.add_agent(travel_config)
+
+    # Start the server
+    host.run(port=5000)
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol.Hosting;
+
+    var builder = WebApplication.CreateBuilder(args);
+
+    // Register multiple agents
+    builder.Services
+        .AddAgentHost()
+        .AddAgent("weather-agent", config =>
+        {
+            config.Model = "gpt-4";
+            config.Instructions = "You are a weather expert. Provide accurate weather information and forecasts.";
+            config.IsDefault = true;  // This agent handles requests without explicit agent_id
+        })
+        .AddAgent("travel-agent", config =>
+        {
+            config.Model = "gpt-4";
+            config.Instructions = "You are a travel planning assistant. Help users plan trips and find destinations.";
+        });
+
+    var app = builder.Build();
+    app.MapAgentProtocol();
+    app.Run();
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
+
+    const host = new AgentHost();
+
+    // Register a weather expert agent (default)
+    host.addAgent({
+        agentId: "weather-agent",
+        model: "gpt-4",
+        apiKey: process.env.OPENAI_API_KEY!,
+        instructions: "You are a weather expert. Provide accurate weather information and forecasts.",
+        isDefault: true  // This agent handles requests without explicit agent_id
+    });
+
+    // Register a travel planning agent
+    host.addAgent({
+        agentId: "travel-agent",
+        model: "gpt-4",
+        apiKey: process.env.OPENAI_API_KEY!,
+        instructions: "You are a travel planning assistant. Help users plan trips and find destinations."
+    });
+
+    // Start the server
+    host.listen(5000);
+    ```
+
+**Test it from the client:**
+
+=== "Python"
+
+    ```python
+    import asyncio
+    from microsoft.agents.protocol import AgentProtocolClient
+
+    async def main():
+        client = AgentProtocolClient("http://localhost:5000")
+
+        # Create a conversation (uses default agent: weather-agent)
+        conversation = client.create_conversation()
+
+        # First message goes to default weather agent
+        response1 = await conversation.send("What's the weather in Paris?")
+        print(f"Weather: {response1.text}")
+
+        # Switch to travel agent for same conversation
+        response2 = await conversation.send(
+            "Plan a 3-day trip there",
+            agent_id="travel-agent"
+        )
+        print(f"Travel: {response2.text}")
+
+        # Back to weather agent (uses conversation's default)
+        response3 = await conversation.send("What should I pack?")
+        print(f"Weather: {response3.text}")
+
+    if __name__ == "__main__":
+        asyncio.run(main())
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol.Client;
+
+    var client = new AgentProtocolClient("http://localhost:5000");
+
+    // Create a conversation (uses default agent: weather-agent)
+    var conversation = client.CreateConversation();
+
+    // First message goes to default weather agent
+    var response1 = await conversation.SendAsync("What's the weather in Paris?");
+    Console.WriteLine($"Weather: {response1.Text}");
+
+    // Switch to travel agent for same conversation
+    var response2 = await conversation.SendAsync(
+        "Plan a 3-day trip there",
+        agentId: "travel-agent"
+    );
+    Console.WriteLine($"Travel: {response2.Text}");
+
+    // Back to weather agent (uses conversation's default)
+    var response3 = await conversation.SendAsync("What should I pack?");
+    Console.WriteLine($"Weather: {response3.Text}");
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { AgentProtocolClient } from '@microsoft/agents-protocol-client';
+
+    const client = new AgentProtocolClient("http://localhost:5000");
+
+    // Create a conversation (uses default agent: weather-agent)
+    const conversation = client.createConversation();
+
+    // First message goes to default weather agent
+    const response1 = await conversation.send("What's the weather in Paris?");
+    console.log(`Weather: ${response1.text}`);
+
+    // Switch to travel agent for same conversation
+    const response2 = await conversation.send(
+        "Plan a 3-day trip there",
+        { agentId: "travel-agent" }
+    );
+    console.log(`Travel: ${response2.text}`);
+
+    // Back to weather agent (uses conversation's default)
+    const response3 = await conversation.send("What should I pack?");
+    console.log(`Weather: ${response3.text}`);
+    ```
+
+!!! tip "What this does"
+    - Multiple agents can coexist on the same server
+    - Mark one agent as default with `is_default=True` (or `IsDefault`, `isDefault`)
+    - If no default is set, the first agent added becomes the default
+    - Default agent handles requests that don't specify an `agent_id`
+    - Clients can explicitly route to any agent using `agent_id` parameter
+    - Each agent has its own model, instructions, and tools
+    - Agents can share the same thread for context continuity
+
+---
+
+## Step 3: Adding Tools
 
 Agents become powerful when they can call functions to get real-time data or take actions.
 
@@ -190,23 +342,7 @@ Agents become powerful when they can call functions to get real-time data or tak
     import os
     from datetime import datetime, timezone
 
-    def get_weather(location: str) -> str:
-        """Get current weather for a location"""
-        # In production, call a real weather API
-        return f"The weather in {location} is sunny and 72°F"
-
-    def get_time() -> str:
-        """Get current time in UTC"""
-        return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are a helpful assistant.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        functions=[get_weather, get_time]
-    )
-
-    agent = AgentHost(config)
+    --8<-- test::quickstart/hosting-adding-tools
     ```
 
 === "C#"
@@ -214,23 +350,7 @@ Agents become powerful when they can call functions to get real-time data or tak
     ```csharp
     using Microsoft.Agents.Protocol.Hosting;
 
-    var builder = WebApplication.CreateBuilder(args);
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Functions = new[]
-        {
-            ("get_weather", "Get current weather for a location", (Func<string, string>)((string location) => $"The weather in {location} is sunny and 72°F")),
-            ("get_time", "Get current time in UTC", (Func<string>)(() => DateTime.UtcNow.ToString("O")))
-        }
-    };
-
-    builder.Services
-        .AddAgentHost()
-        .AddDefaultAgent(agentOptions);
+    --8<-- test::quickstart/hosting-adding-tools
     ```
 
 === "TypeScript"
@@ -238,26 +358,7 @@ Agents become powerful when they can call functions to get real-time data or tak
     ```typescript
     import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
 
-    function getWeather(location: string): string {
-        // In production, call a real weather API
-        return `The weather in ${location} is sunny and 72°F`;
-    }
-
-    function getTime(): string {
-        return new Date().toISOString();
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        functions: [
-            { name: "get_weather", description: "Get current weather for a location", fn: getWeather },
-            { name: "get_time", description: "Get current time in UTC", fn: getTime }
-        ]
-    };
-
-    const agent = new AgentHost(config);
+    --8<-- test::quickstart/hosting-adding-tools
     ```
 
 ### Error Handling in Tools
@@ -269,76 +370,28 @@ Tools should handle errors gracefully and return error messages that the LLM can
     ```python
     import httpx
 
-    async def get_weather(location: str) -> str:
-        """Get current weather for a location"""
-        try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"https://api.weather.com/v1/current",
-                    params={"location": location}
-                )
-                response.raise_for_status()
-                return f"Weather in {location}: {response.json()['temp']}°F"
-        except httpx.HTTPError as e:
-            # Return error message - LLM will explain to user
-            return f"Sorry, couldn't fetch weather: {str(e)}"
+    --8<-- test::quickstart/hosting-tool-error-handling
     ```
 
 === "C#"
 
     ```csharp
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Functions = new[]
-        {
-            ("get_weather", "Get current weather", (Func<string, Task<string>>)(async (string location) =>
-            {
-                try
-                {
-                    // ⚠️ Production: Use IHttpClientFactory, not 'new HttpClient()'
-                    // This example simplified for clarity
-                    using var client = new HttpClient();
-                    var url = $"https://api.weather.com/v1/current?location={Uri.EscapeDataString(location)}";
-                    var response = await client.GetStringAsync(url);
-                    return $"Weather in {location}: {response}";
-                }
-                catch (HttpRequestException ex)
-                {
-                    return $"Sorry, couldn't fetch weather: {ex.Message}";
-                }
-            }))
-        }
-    };
+    using Microsoft.Agents.Protocol.Hosting;
 
-    builder.Services
-        .AddAgentHost()
-        .AddDefaultAgent(agentOptions);
+    --8<-- test::quickstart/hosting-tool-error-handling
     ```
 
 === "TypeScript"
 
     ```typescript
-    async function getWeather(location: string): Promise<string> {
-        try {
-            const response = await fetch(
-                `https://api.weather.com/v1/current?location=${location}`
-            );
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            return `Weather in ${location}: ${data.temp}°F`;
-        } catch (error) {
-            const errorMsg = error instanceof Error ? error.message : String(error);
-            return `Sorry, couldn't fetch weather: ${errorMsg}`;
-        }
-    }
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
+
+    --8<-- test::quickstart/hosting-tool-error-handling
     ```
 
 ---
 
-## Step 3: Client-Provided Functions
+## Step 4: Client-Provided Functions
 
 Allow clients to provide their own function implementations that the agent can call.
 
@@ -351,43 +404,23 @@ Configure your agent to accept client-provided functions:
     ```python
     from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
 
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        allow_client_functions=True  # Enable client functions
-    )
-
-    agent = AgentHost(config)
+    --8<-- test::quickstart/hosting-client-functions
     ```
 
 === "C#"
 
     ```csharp
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        AllowClientFunctions = true  // Enable client functions
-    };
+    using Microsoft.Agents.Protocol.Hosting;
 
-    builder.Services
-        .AddAgentHost()
-        .AddDefaultAgent(agentOptions);
+    --8<-- test::quickstart/hosting-client-functions
     ```
 
 === "TypeScript"
 
     ```typescript
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        allowClientFunctions: true  // Enable client functions
-    };
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
 
-    const agent = new AgentHost(config);
+    --8<-- test::quickstart/hosting-client-functions
     ```
 
 ### Client Implementation
@@ -517,9 +550,29 @@ Clients provide function implementations when sending messages:
 
 ---
 
-## Step 4: Understanding Middleware
+## Step 5: Understanding Middleware
 
 Middleware lets you intercept and modify messages **before and after** they're processed. Think of it as a pipeline where you control each stage.
+
+### Middleware Types
+
+There are two types of middleware:
+
+1. **`Middleware<T>`** - Default (80% of cases)
+   - Processes and yields items from a stream
+   - No `next()` callback overhead
+   - Use for transforming, filtering, or augmenting content
+
+2. **`ChainedMiddleware<T>`** - Advanced (20% of cases)
+   - Includes `next()` callback for before/after processing
+   - Use for timing, error handling, resource management
+
+**When to Use Which?**
+
+| Pattern                     | Use Case                                          | Example                                         |
+|-----------------------------|---------------------------------------------------|-------------------------------------------------|
+| **`Middleware<T>`**         | Transform content, filter items, augment messages | Uppercase text, command routing, add context    |
+| **`ChainedMiddleware<T>`**  | Before/after logic, timing, error boundaries      | Performance monitoring, exception handling      |
 
 ### Your First Middleware
 
@@ -529,32 +582,11 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
 
     ```python
     from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
-    from microsoft.agents.protocol import TextContent, IThread
+    from microsoft.agents.protocol import TextContent, Thread, IStreamable
     from typing import AsyncIterable
     import os
 
-    async def command_router(
-        content: TextContent,
-        thread: IThread
-    ) -> AsyncIterable[IStreamable]:
-        # Check if it's the /help command
-        if content.text.strip() == "/help":
-            # Handle command - return result without calling LLM
-            yield TextContent(text="Available commands:\n/help - Show this help")
-        else:
-            # Pass through to LLM
-            yield content
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[
-            (TextContent, command_router)
-        ]
-    )
-
-    agent = AgentHost(config)
+    --8<-- test::quickstart/hosting-command-router
     ```
 
 === "C#"
@@ -564,81 +596,16 @@ Let's build a simple command router that intercepts commands (like `/help`) and 
     using Microsoft.Agents.Protocol.Hosting;
     using System.Runtime.CompilerServices;
 
-    async IAsyncEnumerable<IStreamable> CommandRouter(
-        TextContent content,
-        IThread thread,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        // Check if it's the /help command
-        if (content.Text.Trim() == "/help")
-        {
-            // Handle command - return result without calling LLM
-            yield return new TextContent
-            {
-                Text = "Available commands:\n/help - Show this help"
-            };
-        }
-        else
-        {
-            // Pass through to LLM
-            yield return content;
-        }
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"]
-            ?? throw new InvalidOperationException("OpenAI:ApiKey not configured"),
-        Middleware = new MiddlewareCollection
-        {
-            CommandRouter  // Type inferred from method signature
-        }
-    };
-
-    builder.Services
-        .AddAgentHost()
-        .AddDefaultAgent(agentOptions);
+    --8<-- test::quickstart/hosting-command-router
     ```
 
 === "TypeScript"
 
     ```typescript
     import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
-    import { TextContent, IThread } from '@microsoft/agents-protocol';
+    import { TextContent, Thread, IStreamable } from '@microsoft/agents-protocol';
 
-    async function* commandRouter(
-        content: TextContent,
-        thread: IThread
-    ): AsyncIterable<IStreamable> {
-        // Check if it's the /help command
-        if (content.text.trim() === "/help") {
-            // Handle command - return result without calling LLM
-            yield new TextContent({
-                text: "Available commands:\n/help - Show this help"
-            });
-        } else {
-            // Pass through to LLM
-            yield content;
-        }
-    }
-
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-        throw new Error("OPENAI_API_KEY environment variable is required");
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey,
-        middleware: [
-            [TextContent, commandRouter]
-        ]
-    };
-
-    const agent = new AgentHost(config);
+    --8<-- test::quickstart/hosting-command-router
     ```
 
 **Example Output:**
@@ -662,29 +629,13 @@ Use content middleware to process specific content types. This allows you to aug
     from microsoft.agents.protocol import (
         MessageReactionContent,
         DeveloperMessage,
-        TextContent
+        TextContent,
+        Thread,
+        IStreamable
     )
     from typing import AsyncIterable
 
-    async def handle_reactions(
-        reaction: MessageReactionContent,
-        thread: IThread
-    ) -> AsyncIterable[IStreamable]:
-        # Convert reaction to a message the agent can understand
-        developer_msg = DeveloperMessage(content=[
-            TextContent(text=f"User reacted with {reaction.emoji} to a previous message.")
-        ])
-        yield reaction
-        yield developer_msg  # Yield so LLM can process the notification
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[
-            (MessageReactionContent, handle_reactions),
-        ]
-    )
+    --8<-- test::quickstart/hosting-reaction-handler
     ```
 
 === "C#"
@@ -693,72 +644,77 @@ Use content middleware to process specific content types. This allows you to aug
     using Microsoft.Agents.Protocol;
     using System.Runtime.CompilerServices;
 
-    async IAsyncEnumerable<IStreamable> HandleReactions(
-        MessageReactionContent reaction,
-        IThread thread,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        // Convert reaction to a message the agent can understand
-        var developerMsg = new DeveloperMessage
-        {
-            Content = new[]
-            {
-                new TextContent
-                {
-                    Text = $"User reacted with {reaction.Emoji} to a previous message."
-                }
-            }
-        };
-        yield return reaction;
-        yield return developerMsg;  // Yield so LLM can process the notification
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new MiddlewareCollection
-        {
-            HandleReactions  // Type inferred from method signature
-        }
-    };
+    --8<-- test::quickstart/hosting-reaction-handler
     ```
 
 === "TypeScript"
 
     ```typescript
-    import { MessageReactionContent, DeveloperMessage, TextContent } from '@microsoft/agents-protocol';
+    import { MessageReactionContent, DeveloperMessage, TextContent, Thread, IStreamable } from '@microsoft/agents-protocol';
 
-    async function* handleReactions(
-        reaction: MessageReactionContent,
-        thread: IThread
-    ): AsyncIterable<IStreamable> {
-        // Convert reaction to a message the agent can understand
-        const developerMsg = new DeveloperMessage({
-            content: [
-                new TextContent({
-                    text: `User reacted with ${reaction.emoji} to a previous message.`
-                })
-            ]
-        });
-        yield reaction;
-        yield developerMsg;  // Yield so LLM can process the notification
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [
-            [MessageReactionContent, handleReactions],
-        ]
-    };
+    --8<-- test::quickstart/hosting-reaction-handler
     ```
 
 ### Streaming Processing
 
-Process content chunk-by-chunk as it streams in real-time. This is the most common pattern for transforming or observing streaming data.
+Process content chunk-by-chunk as it streams in real-time. This uses the default `Middleware<T>` type without the `next()` callback.
+
+**Signature:**
+
+=== "Python"
+
+    ```python
+    from typing import TypeAlias, Callable, AsyncIterable, TypeVar
+
+    T = TypeVar('T', bound=IStreamable)
+
+    # Generic type alias for simple middleware
+    Middleware: TypeAlias = Callable[
+        [AsyncIterable[T], Thread],
+        AsyncIterable[IStreamable]
+    ]
+
+    # Use with specific content type
+    uppercase: Middleware[TextContentChunk] = async def (stream, thread):
+        # Your implementation
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { Thread, IStreamable, TextContentChunk } from '@microsoft/agents-protocol';
+
+    // Generic type alias for simple middleware
+    type Middleware<T extends IStreamable = IStreamable> = (
+        stream: AsyncIterable<T>,
+        thread: Thread
+    ) => AsyncIterable<IStreamable>;
+
+    // Use with specific content type
+    const uppercase: Middleware<TextContentChunk> = async function* (stream, thread) {
+        // Your implementation
+    };
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol;
+
+    // Generic delegate for simple middleware
+    public delegate IAsyncEnumerable<IStreamable> Middleware<T>(
+        IAsyncEnumerable<T> stream,
+        Thread thread
+    ) where T : IStreamable;
+
+    // Use with specific content type
+    Middleware<TextContentChunk> uppercase = async (stream, thread) =>
+    {
+        // Your implementation
+    };
+    ```
+
+**Example:**
 
 === "Python"
 
@@ -766,22 +722,7 @@ Process content chunk-by-chunk as it streams in real-time. This is the most comm
     from microsoft.agents.protocol import TextContent
     from typing import AsyncIterable
 
-    async def uppercase_content(
-        content_stream: AsyncIterable[TextContent],
-        thread: IThread
-    ) -> AsyncIterable[IStreamable]:
-        async for chunk in content_stream:
-            chunk.text = chunk.text.upper()
-            yield chunk
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[
-            (TextContent, log_text_content),
-        ]
-    )
+    --8<-- test::quickstart/hosting-streaming-middleware
     ```
 
 === "C#"
@@ -789,56 +730,88 @@ Process content chunk-by-chunk as it streams in real-time. This is the most comm
     ```csharp
     using System.Runtime.CompilerServices;
 
-    async IAsyncEnumerable<IStreamable> UppercaseContent(
-        IAsyncEnumerable<TextContent> contentStream,
-        IThread thread,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        await foreach (var chunk in contentStream.WithCancellation(cancellationToken))
-        {
-            chunk.Text = chunk.Text.ToUpper();
-            yield return chunk;
-        }
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new MiddlewareCollection
-        {
-            UppercaseContent  // Type inferred from method signature
-        }
-    };
+    --8<-- test::quickstart/hosting-streaming-middleware
     ```
 
 === "TypeScript"
 
     ```typescript
-    async function* uppercaseContent(
-        contentStream: AsyncIterable<TextContent>,
-        thread: IThread
-    ): AsyncIterable<TextContent> {
-        for await (const chunk of contentStream) {
-            chunk.text = chunk.text.toUpperCase();
-            yield chunk;
-        }
-    }
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
+    import { TextContent, Thread } from '@microsoft/agents-protocol';
 
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [
-            [TextContent, uppercaseContent],
-        ]
-    };
+    --8<-- test::quickstart/hosting-streaming-middleware
     ```
 
 ### Before and After Middleware
 
 Use the `next()` callback pattern when you need to execute code **before** the middleware chain starts and **after** it completes. This is essential for timing, error handling, and resource management.
+
+**Signature:**
+
+=== "Python"
+
+    ```python
+    from typing import TypeAlias, Callable, Awaitable, AsyncIterable, TypeVar
+
+    T = TypeVar('T', bound=IStreamable)
+
+    # Generic type alias for chained middleware
+    ChainedMiddleware: TypeAlias = Callable[
+        [AsyncIterable[T], Thread,
+         Callable[[AsyncIterable[IStreamable]], Awaitable[AsyncIterable[T]]]],
+        AsyncIterable[IStreamable]
+    ]
+
+    # Use with specific content type
+    time_streaming: ChainedMiddleware[TextContentChunk] = async def (stream, thread, next):
+        # Your implementation
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { Thread, IStreamable, TextContentChunk } from '@microsoft/agents-protocol';
+
+    // Generic type alias for chained middleware
+    type ChainedMiddleware<T extends IStreamable = IStreamable> = (
+        stream: AsyncIterable<T>,
+        thread: Thread,
+        next: (stream: AsyncIterable<IStreamable>) => Promise<AsyncIterable<T>>
+    ) => AsyncIterable<IStreamable>;
+
+    // Use with specific content type
+    const timeStreaming: ChainedMiddleware<TextContentChunk> = async function* (stream, thread, next) {
+        // Your implementation
+    };
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol;
+
+    // Generic delegate for chained middleware
+    public delegate IAsyncEnumerable<IStreamable> ChainedMiddleware<T>(
+        IAsyncEnumerable<T> stream,
+        Thread thread,
+        Func<IAsyncEnumerable<IStreamable>, Task<IAsyncEnumerable<T>>> next
+    ) where T : IStreamable;
+
+    // Use with specific content type
+    ChainedMiddleware<TextContentChunk> timeStreaming = async (stream, thread, next) =>
+    {
+        // Your implementation
+    };
+    ```
+
+**Type Explanation:**
+
+- **Input**: `AsyncIterable<T>` - Pre-filtered stream of specific type (e.g., `TextContentChunk`)
+- **next() input**: `AsyncIterable<IStreamable>` - Generic streamable content (middleware output becomes next input)
+- **next() output**: `AsyncIterable<T>` - Strongly-typed items for post-processing transformations
+- **Middleware output**: `AsyncIterable<IStreamable>` - Can yield any streamable type
+
+**Key Change**: Constraint expanded from `AIContentChunk` to `IStreamable`, enabling middleware for messages, complete content, and chunks.
 
 === "Python"
 
@@ -846,28 +819,7 @@ Use the `next()` callback pattern when you need to execute code **before** the m
     from typing import Callable, Awaitable
     import time
 
-    # Example 1: Time the stream
-    async def time_streaming(
-        content_stream: AsyncIterable[TextContent],
-        thread: IThread,
-        next: Callable[[AsyncIterable[TextContent]], Awaitable[None]]
-    ) -> None:
-        start = time.time()
-        print(f"🚀 Starting stream")
-
-        await next(content_stream)
-
-        print(f"✅ Stream completed in {time.time() - start:.2f}s")
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[
-            (TextContent, time_streaming),
-            (TextContent, catch_errors),
-        ]
-    )
+    --8<-- test::quickstart/hosting-before-after
     ```
 
 === "C#"
@@ -875,87 +827,83 @@ Use the `next()` callback pattern when you need to execute code **before** the m
     ```csharp
     using System.Diagnostics;
 
-    async Task TimeStreaming(
-        IAsyncEnumerable<TextContent> contentStream,
-        IThread thread,
-        Func<IAsyncEnumerable<TextContent>, Task> next,
-        CancellationToken cancellationToken = default)
-    {
-        var sw = Stopwatch.StartNew();
-        Console.WriteLine("🚀 Starting stream");
-
-        await next(contentStream);
-
-        sw.Stop();
-        Console.WriteLine($"✅ Stream completed in {sw.ElapsedMilliseconds}ms");
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new MiddlewareCollection
-        {
-            TimeStreaming  // Type inferred from method signature
-        }
-    };
+    --8<-- test::quickstart/hosting-before-after
     ```
 
 === "TypeScript"
 
     ```typescript
-    async function timeStreaming(
-        contentStream: AsyncIterable<TextContent>,
-        thread: IThread,
-        next: (stream: AsyncIterable<TextContent>) => Promise<void>
-    ): Promise<void> {
-        const start = Date.now();
-        console.log("🚀 Starting stream");
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
+    import { TextContent, Thread } from '@microsoft/agents-protocol';
 
-        await next(contentStream);
-
-        console.log(`✅ Stream completed in ${Date.now() - start}ms`);
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [
-            [TextContent, timeStreaming],
-        ]
-    };
+    --8<-- test::quickstart/hosting-before-after
     ```
 
 ### Message Middleware
 
 Message middleware runs once per message and works at a higher level than content middleware. Use it for cross-cutting concerns like logging, authentication, and rate limiting.
 
+**Signature:**
+
+=== "Python"
+
+    ```python
+    from typing import TypeAlias, Callable, Awaitable
+
+    # Type alias for message middleware
+    MessageMiddleware: TypeAlias = Callable[
+        [ChatMessage, Thread, Callable[[], Awaitable[None]]],
+        Awaitable[None]
+    ]
+
+    # Use the alias
+    logging: MessageMiddleware = async def (message, thread, next):
+        # Your implementation
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { ChatMessage, Thread } from '@microsoft/agents-protocol';
+
+    // Type alias for message middleware
+    type MessageMiddleware = (
+        message: ChatMessage,
+        thread: Thread,
+        next: () => Promise<void>
+    ) => Promise<void>;
+
+    // Use the alias
+    const logging: MessageMiddleware = async (message, thread, next) => {
+        // Your implementation
+    };
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol;
+
+    // Delegate for message middleware
+    public delegate Task MessageMiddleware(
+        ChatMessage message,
+        Thread thread,
+        Func<Task> next
+    );
+
+    // Use the alias
+    MessageMiddleware logging = async (message, thread, next) =>
+    {
+        // Your implementation
+    };
+    ```
+
 === "Python"
 
     ```python
     import time
 
-    async def timing_middleware(
-        message: IMessage,
-        thread: IThread,
-        next: Callable[[], Awaitable[None]]
-    ) -> None:
-        start = time.time()
-        print(f"⏱️ Processing started for thread {thread.id}")
-
-        await next()  # Let other middleware and LLM process
-
-        elapsed = time.time() - start
-        print(f"✅ Completed in {elapsed:.2f}s")
-
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[timing_middleware]
-    )
+    --8<-- test::quickstart/hosting-message-middleware
     ```
 
 === "C#"
@@ -963,56 +911,16 @@ Message middleware runs once per message and works at a higher level than conten
     ```csharp
     using System.Diagnostics;
 
-    async Task TimingMiddleware(
-        IMessage message,
-        IThread thread,
-        Func<Task> next,
-        CancellationToken cancellationToken)
-    {
-        var sw = Stopwatch.StartNew();
-        Console.WriteLine($"⏱️ Processing started for thread {thread.Id}");
-
-        await next();
-
-        sw.Stop();
-        Console.WriteLine($"✅ Completed in {sw.ElapsedMilliseconds}ms");
-    }
-
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new MiddlewareCollection
-        {
-            TimingMiddleware  // Type inferred from method signature
-        }
-    };
+    --8<-- test::quickstart/hosting-message-middleware
     ```
 
 === "TypeScript"
 
     ```typescript
-    async function timingMiddleware(
-        message: IMessage,
-        thread: IThread,
-        next: () => Promise<void>
-    ): Promise<void> {
-        const start = Date.now();
-        console.log(`⏱️ Processing started for thread ${thread.id}`);
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
+    import { ChatMessage, Thread } from '@microsoft/agents-protocol';
 
-        await next();  // Let other middleware and LLM process
-
-        const elapsed = Date.now() - start;
-        console.log(`✅ Completed in ${elapsed}ms`);
-    }
-
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [timingMiddleware]
-    };
+    --8<-- test::quickstart/hosting-message-middleware
     ```
 
 ### Error Handling
@@ -1022,93 +930,31 @@ Use the wrap pattern with try/catch to handle errors gracefully in your middlewa
 === "Python"
 
     ```python
-    async def error_middleware(message, thread, next):
-        try:
-            await next()
-        except Exception as e:
-            print(f"❌ Error processing message: {e}")
-            # Add error message to thread
-            error_msg = AgentMessage(content=[
-                TextContent(text="Sorry, something went wrong. Please try again.")
-            ])
-            thread.add_message(error_msg)
+    from typing import AsyncIterable
 
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        middleware=[error_middleware, other_middleware]  # error_middleware first
-    )
+    --8<-- test::quickstart/hosting-error-handling
     ```
 
 === "C#"
 
     ```csharp
-    async Task ErrorMiddleware(
-        IMessage message,
-        IThread thread,
-        Func<Task> next,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            await next();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"❌ Error: {ex.Message}");
-            var errorMsg = new AgentMessage
-            {
-                Content = new[] { new TextContent { Text = "Sorry, something went wrong." } }
-            };
-            thread.AddMessage(errorMsg);
-        }
-    }
+    using System.Runtime.CompilerServices;
 
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Middleware = new MiddlewareCollection
-        {
-            ErrorMiddleware  // Type inferred from method signature
-            // ... other middleware
-        }
-    };
+    --8<-- test::quickstart/hosting-error-handling
     ```
 
 === "TypeScript"
 
     ```typescript
-    async function errorMiddleware(
-        message: IMessage,
-        thread: IThread,
-        next: () => Promise<void>
-    ): Promise<void> {
-        try {
-            await next();
-        } catch (error) {
-            const errorMsg = error instanceof Error ? error.message : String(error);
-            console.error(`❌ Error: ${errorMsg}`);
-            const errorResponse = new AgentMessage({
-                content: [new TextContent({ text: "Sorry, something went wrong." })]
-            });
-            thread.addMessage(errorResponse);
-        }
-    }
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
+    import { ChatMessage, Thread, AgentMessage, TextContent } from '@microsoft/agents-protocol';
 
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        middleware: [errorMiddleware]  // Add first to catch all errors
-    };
+    --8<-- test::quickstart/hosting-error-handling
     ```
 
 ---
 
-## Step 6: Persistent Conversations
+## Step 7: Persistent Conversations
 
 By default, conversations are stored in memory. For production, use durable storage.
 
@@ -1117,36 +963,26 @@ By default, conversations are stored in memory. For production, use durable stor
 === "Python"
 
     ```python
-    # Default - no configuration needed
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY")
-    )
-    # Conversations stored in memory (lost on restart)
+    from microsoft.agents.protocol.hosting import AgentHost, AgentConfig
+    import os
+
+    --8<-- test::quickstart/hosting-inmemory-storage
     ```
 
 === "C#"
 
     ```csharp
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"]
-    };
-    // Default: in-memory storage
+    using Microsoft.Agents.Protocol.Hosting;
+
+    --8<-- test::quickstart/hosting-inmemory-storage
     ```
 
 === "TypeScript"
 
     ```typescript
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!
-    };
-    // Default: in-memory storage
+    import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
+
+    --8<-- test::quickstart/hosting-inmemory-storage
     ```
 
 ### Client Example: Testing Persistence
@@ -1244,14 +1080,7 @@ For production, use database-backed storage:
     from microsoft.agents.protocol.storage import SqlStorageProvider
     import os
 
-    config = AgentConfig(
-        model="gpt-4",
-        instructions="You are helpful.",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        storage=SqlStorageProvider(os.getenv("DATABASE_URL"))
-    )
-
-    agent = AgentHost(config)
+    --8<-- test::quickstart/hosting-durable-storage
     ```
 
 === "C#"
@@ -1260,17 +1089,7 @@ For production, use database-backed storage:
     using Microsoft.Agents.Protocol.Hosting;
     using Microsoft.Agents.Protocol.Storage;
 
-    var agentOptions = new AgentOptions
-    {
-        Model = "gpt-4",
-        Instructions = "You are helpful.",
-        ApiKey = builder.Configuration["OpenAI:ApiKey"],
-        Storage = new SqlStorageProvider(builder.Configuration["DatabaseUrl"])
-    };
-
-    builder.Services
-        .AddAgentHost()
-        .AddDefaultAgent(agentOptions);
+    --8<-- test::quickstart/hosting-durable-storage
     ```
 
 === "TypeScript"
@@ -1279,12 +1098,5 @@ For production, use database-backed storage:
     import { AgentHost, AgentConfig } from '@microsoft/agents-protocol-hosting';
     import { SqlStorageProvider } from '@microsoft/agents-protocol-storage';
 
-    const config: AgentConfig = {
-        model: "gpt-4",
-        instructions: "You are helpful.",
-        apiKey: process.env.OPENAI_API_KEY!,
-        storage: new SqlStorageProvider(process.env.DATABASE_URL!)
-    };
-
-    const agent = new AgentHost(config);
+    --8<-- test::quickstart/hosting-durable-storage
     ```

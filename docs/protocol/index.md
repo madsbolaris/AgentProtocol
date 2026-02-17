@@ -11,6 +11,10 @@ Complete API documentation for all SDKs.
 - **[XML](xml/)** - XML serialization API reference
 - **[Operations SDK](operations-sdk/)** - Operations and testing API reference
 
+## Core Concepts
+
+- **[Streaming Architecture](streaming-architecture.md)** - Complete vs chunked content, lifecycle stages, and best practices
+
 ## Quick Links
 
 - [Core Models](abstractions/#core-models)

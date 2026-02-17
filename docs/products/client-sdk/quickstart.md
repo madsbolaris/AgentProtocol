@@ -50,7 +50,7 @@ The absolute simplest interaction - one line to get a response.
         # Create client with your endpoint
         client = AgentProtocolClient("http://localhost:5000")
 
-        --8<-- "docs/snippets/python/client-simple-completion_main.py"
+        --8<-- test::quickstart/client-simple-completion
 
     if __name__ == "__main__":
         asyncio.run(main())
@@ -64,7 +64,7 @@ The absolute simplest interaction - one line to get a response.
     // Create client with your endpoint
     var client = new AgentProtocolClient("http://localhost:5000");
 
-    --8<-- "docs/snippets/csharp/client-simple-completion_main.cs"
+    --8<-- test::quickstart/client-simple-completion
     ```
 
 === "TypeScript"
@@ -75,7 +75,7 @@ The absolute simplest interaction - one line to get a response.
     // Create client with your endpoint
     const client = new AgentProtocolClient("http://localhost:5000");
 
-    --8<-- "docs/snippets/typescript/client-simple-completion_main.ts"
+    --8<-- test::quickstart/client-simple-completion
     ```
 
 **Expected Output:**
@@ -86,10 +86,8 @@ The absolute simplest interaction - one line to get a response.
 </agent>
 ```
 
-!!! tip "What this does"
-    - Uses the server's default agent
-    - Creates an ephemeral thread (no state persisted)
-    - Returns the complete response when finished
+!!! note "Default Agent Routing"
+    When you don't specify an `agent_id`, requests are automatically routed to the server's **default agent**. This makes simple use cases straightforward while still supporting [multi-agent architectures](#step-6-multi-agent-conversations) when needed.
 
 ---
 
@@ -188,7 +186,7 @@ Maintain conversation context across multiple turns automatically.
     async def main():
         client = AgentProtocolClient("http://localhost:5000")
 
-        --8<-- "docs/snippets/python/client-conversation_main.py"
+        --8<-- test::quickstart/client-persistent-conversations
 
         # Save thread ID to resume later
         print(f"Thread ID: {conversation.thread_id}")
@@ -204,7 +202,7 @@ Maintain conversation context across multiple turns automatically.
 
     var client = new AgentProtocolClient("http://localhost:5000");
 
-    --8<-- "docs/snippets/csharp/client-conversation_main.cs"
+    --8<-- test::quickstart/client-persistent-conversations
 
     // Save thread ID to resume later
     Console.WriteLine($"Thread ID: {conversation.ThreadId}");
@@ -217,7 +215,7 @@ Maintain conversation context across multiple turns automatically.
 
     const client = new AgentProtocolClient("http://localhost:5000");
 
-    --8<-- "docs/snippets/typescript/client-conversation_main.ts"
+    --8<-- test::quickstart/client-persistent-conversations
     ```
 
 **Output:**
@@ -248,19 +246,19 @@ Second message:
 === "Python"
 
     ```python
-    --8<-- "docs/snippets/python/client-resume-conversation_main.py"
+    --8<-- test::quickstart/client-resume-conversation
     ```
 
 === "C#"
 
     ```csharp
-    --8<-- "docs/snippets/csharp/client-resume-conversation_main.cs"
+    --8<-- test::quickstart/client-resume-conversation
     ```
 
 === "TypeScript"
 
     ```typescript
-    --8<-- "docs/snippets/typescript/client-resume-conversation_main.ts"
+    --8<-- test::quickstart/client-resume-conversation
     ```
 
 ---
@@ -278,7 +276,7 @@ Register tools that agents can call automatically.
     async def main():
         client = AgentProtocolClient("http://localhost:5000")
 
-        --8<-- "docs/snippets/python/client-tools_main.py"
+        --8<-- test::quickstart/client-tools
 
     if __name__ == "__main__":
         asyncio.run(main())
@@ -291,7 +289,7 @@ Register tools that agents can call automatically.
 
     var client = new AgentProtocolClient("http://localhost:5000");
 
-    --8<-- "docs/snippets/csharp/client-tools_main.cs"
+    --8<-- test::quickstart/client-tools
     ```
 
 === "TypeScript"
@@ -301,7 +299,7 @@ Register tools that agents can call automatically.
 
     const client = new AgentProtocolClient("http://localhost:5000");
 
-    --8<-- "docs/snippets/typescript/client-tools_main.ts"
+    --8<-- test::quickstart/client-tools
     ```
 
 **Output:**
@@ -349,7 +347,7 @@ Get tokens as they're generated (typewriter effect).
     async def main():
         client = AgentProtocolClient("http://localhost:5000")
 
-        --8<-- "docs/snippets/python/client-streaming_main.py"
+        --8<-- test::quickstart/client-simple-streaming
 
     if __name__ == "__main__":
         asyncio.run(main())
@@ -362,7 +360,7 @@ Get tokens as they're generated (typewriter effect).
 
     var client = new AgentProtocolClient("http://localhost:5000");
 
-    --8<-- "docs/snippets/csharp/client-streaming_main.cs"
+    --8<-- test::quickstart/client-simple-streaming
     ```
 
 === "TypeScript"
@@ -372,7 +370,7 @@ Get tokens as they're generated (typewriter effect).
 
     const client = new AgentProtocolClient("http://localhost:5000");
 
-    --8<-- "docs/snippets/typescript/client-streaming_main.ts"
+    --8<-- test::quickstart/client-simple-streaming
     ```
 
 **You'll see tokens appear progressively:**
@@ -573,6 +571,201 @@ user: Thanks!
     - **Collaborative agents**: Watch thread for messages from multiple agents
     - **Real-time notifications**: Get notified when anyone posts to the thread
     - **Chat UI**: Build responsive chat interfaces that update in real-time
+
+---
+
+## Step 6: Multi-Agent Conversations
+
+Talk to different specialized agents within the same conversation thread.
+
+### Basic Agent Selection
+
+Select which agent to send each message to:
+
+=== "Python"
+
+    ```python
+    import asyncio
+    from microsoft.agents.protocol import AgentProtocolClient
+
+    async def main():
+        client = AgentProtocolClient("http://localhost:5000")
+
+        # Talk to the weather agent
+        weather_response = await client.complete_chat(
+            "What's the weather in Seattle?",
+            agent_id="weather-agent"
+        )
+        print(f"Weather Agent: {weather_response.text}")
+
+        # Talk to the travel agent in the same thread
+        travel_response = await client.complete_chat(
+            "Book a flight there",
+            agent_id="travel-agent",
+            thread_id=weather_response.thread_id
+        )
+        print(f"Travel Agent: {travel_response.text}")
+
+    if __name__ == "__main__":
+        asyncio.run(main())
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol.Client;
+
+    var client = new AgentProtocolClient("http://localhost:5000");
+
+    // Talk to the weather agent
+    var weatherResponse = await client.CompleteChatAsync(
+        "What's the weather in Seattle?",
+        agentId: "weather-agent"
+    );
+    Console.WriteLine($"Weather Agent: {weatherResponse.Text}");
+
+    // Talk to the travel agent in the same thread
+    var travelResponse = await client.CompleteChatAsync(
+        "Book a flight there",
+        agentId: "travel-agent",
+        threadId: weatherResponse.ThreadId
+    );
+    Console.WriteLine($"Travel Agent: {travelResponse.Text}");
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { AgentProtocolClient } from '@microsoft/agents-protocol-client';
+
+    const client = new AgentProtocolClient("http://localhost:5000");
+
+    // Talk to the weather agent
+    const weatherResponse = await client.completeChat(
+        "What's the weather in Seattle?",
+        { agentId: "weather-agent" }
+    );
+    console.log(`Weather Agent: ${weatherResponse.text}`);
+
+    // Talk to the travel agent in the same thread
+    const travelResponse = await client.completeChat(
+        "Book a flight there",
+        { agentId: "travel-agent", threadId: weatherResponse.threadId }
+    );
+    console.log(`Travel Agent: ${travelResponse.text}`);
+    ```
+
+**Output:**
+
+```xml
+<thread thread-id="thread_abc123">
+  <agent agent-id="weather-agent">
+    The current weather in Seattle is 65°F with partly cloudy skies.
+  </agent>
+  <agent agent-id="travel-agent">
+    I'd be happy to help book a flight to Seattle. What date would you like to travel?
+  </agent>
+</thread>
+```
+
+!!! tip "What this does"
+    - Specify `agent_id` to route messages to different agents
+    - Multiple agents can participate in the same thread
+    - Agents maintain context within the shared conversation
+    - Each agent has its own specialization and tools
+
+### Persistent Conversations with Agent Selection
+
+Use the conversation API with agent selection:
+
+=== "Python"
+
+    ```python
+    import asyncio
+    from microsoft.agents.protocol import AgentProtocolClient
+
+    async def main():
+        client = AgentProtocolClient("http://localhost:5000")
+
+        # Create a conversation with default agent
+        conversation = client.create_conversation(agent_id="weather-agent")
+
+        # First message goes to weather agent
+        response1 = await conversation.send("What's the weather in Paris?")
+        print(f"Weather: {response1.text}")
+
+        # Switch to travel agent for same conversation
+        response2 = await conversation.send(
+            "Plan a 3-day trip there",
+            agent_id="travel-agent"
+        )
+        print(f"Travel: {response2.text}")
+
+        # Back to weather agent (uses conversation's default)
+        response3 = await conversation.send("What should I pack?")
+        print(f"Weather: {response3.text}")
+
+    if __name__ == "__main__":
+        asyncio.run(main())
+    ```
+
+=== "C#"
+
+    ```csharp
+    using Microsoft.Agents.Protocol.Client;
+
+    var client = new AgentProtocolClient("http://localhost:5000");
+
+    // Create a conversation with default agent
+    var conversation = client.CreateConversation(agentId: "weather-agent");
+
+    // First message goes to weather agent
+    var response1 = await conversation.SendAsync("What's the weather in Paris?");
+    Console.WriteLine($"Weather: {response1.Text}");
+
+    // Switch to travel agent for same conversation
+    var response2 = await conversation.SendAsync(
+        "Plan a 3-day trip there",
+        agentId: "travel-agent"
+    );
+    Console.WriteLine($"Travel: {response2.Text}");
+
+    // Back to weather agent (uses conversation's default)
+    var response3 = await conversation.SendAsync("What should I pack?");
+    Console.WriteLine($"Weather: {response3.Text}");
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { AgentProtocolClient } from '@microsoft/agents-protocol-client';
+
+    const client = new AgentProtocolClient("http://localhost:5000");
+
+    // Create a conversation with default agent
+    const conversation = client.createConversation({ agentId: "weather-agent" });
+
+    // First message goes to weather agent
+    const response1 = await conversation.send("What's the weather in Paris?");
+    console.log(`Weather: ${response1.text}`);
+
+    // Switch to travel agent for same conversation
+    const response2 = await conversation.send(
+        "Plan a 3-day trip there",
+        { agentId: "travel-agent" }
+    );
+    console.log(`Travel: ${response2.text}`);
+
+    // Back to weather agent (uses conversation's default)
+    const response3 = await conversation.send("What should I pack?");
+    console.log(`Weather: ${response3.text}`);
+    ```
+
+!!! tip "Use Cases"
+    - **Specialized Teams**: Route to domain experts (weather, travel, finance)
+    - **Escalation Workflows**: Start with basic agent, escalate to specialized agent
+    - **Multi-Domain Queries**: Combine answers from multiple expert agents
+    - **A/B Testing**: Compare responses from different model configurations
 
 ---
 

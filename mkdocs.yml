@@ -1,6 +1,6 @@
-site_name: Agent Framework Documentation
+site_name: Agent Protocol Documentation
 site_description: A unified protocol for building AI agents across multiple platforms and frameworks
-site_author: Agent Framework Contributors
+site_author: Agent Protocol Contributors
 
 # Repository
 repo_name: AgentFramework
@@ -8,7 +8,7 @@ repo_url: https://github.com/madsbolaris/AgentFramework
 edit_uri: edit/main/docs/
 
 # Copyright
-copyright: Copyright &copy; 2024 Agent Framework Contributors
+copyright: Copyright &copy; 2024 Agent Protocol Contributors
 
 # Configuration
 docs_dir: docs
@@ -88,6 +88,8 @@ plugins:
       separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - awesome-pages
   - section-index
+  - test_snippets:
+      cache_snippets: true
   # - test-examples:
   #     snippets_dir: docs/snippets
   #     results_dir: test-data/results
@@ -102,11 +104,12 @@ plugins:
 # Extensions
 markdown_extensions:
   # Custom extensions
-  - hashicorp_cards
+  - mkdocs_plugins.hashicorp_cards
+  - mkdocs_plugins.hashicorp_admonitions
 
   # Python Markdown
   - abbr
-  - admonition
+  # - admonition  # Disabled in favor of hashicorp_admonitions
   - attr_list
   - def_list
   - footnotes
@@ -144,7 +147,7 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
-  - markdown_extensions.hashicorp_tabs
+  - mkdocs_plugins.hashicorp_tabs
 
 # Navigation
 nav:

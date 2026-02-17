@@ -1,0 +1,155 @@
+# Synthesis Refinement - Iteration {{ iteration }}
+
+You previously synthesized expert feedback in iteration {{ iteration - 1 }}. Experts have refined their reviews based on user answers and peer feedback.
+
+## Context
+
+**Iteration:** {{ iteration }}
+**Workspace:** {{ workspace }}
+**Experts:** {{ experts|join(', ') }}
+**Previous Convergence:** {{ previous_convergence }}%
+
+Review previous synthesis: `{{ workspace }}/iteration-{{ iteration - 1 }}/synthesized.md`
+
+---
+
+## User Answered Questions
+
+{% if qa_answers %}
+{% for qa in qa_answers %}
+**Q: {{ qa.question }}**
+**A:** {{ qa.answer }}
+_(Asked by: {{ qa.asked_by|join(', ') }})_
+
+{% endfor %}
+
+Consider:
+- Which concerns do answers resolve?
+- Do answers strengthen/weaken recommendations?
+- Did answers reveal new issues?
+{% else %}
+No questions answered this iteration.
+{% endif %}
+
+---
+
+## Expert Refinements
+
+{% if experts %}
+Read expert updates:
+{% for expert in experts %}
+- `{{ workspace }}/iteration-{{ iteration }}/experts/review-{{ expert }}.md`
+{% endfor %}
+
+Look for:
+- Convergence on common recommendations
+- Position changes
+- New recommendations from user answers
+- Unanswered questions flagged by experts (Section 6.5)
+{% endif %}
+
+---
+
+## Your Task: Update Synthesized Analysis
+
+Focus on what changed since iteration {{ iteration - 1 }}.
+
+### 1. Track Evolution
+
+**Recommendations:**
+- Which gained/lost support?
+- Which are new from user clarifications?
+- Which are dropped?
+
+**Concerns:**
+- Which were addressed by user answers?
+- Which remain unresolved?
+- New concerns from clarifications?
+
+**Expert Agreement:**
+- Where did consensus strengthen/weaken?
+- Position changes?
+
+### 2. Calculate Updated Convergence
+
+Formula: `convergence = (high_agreement_recs / total_recs) × 100`
+
+Agreement levels:
+- High: {{ experts|length - 1 }}+ experts (or all if ≤2)
+- Partial: {{ (experts|length / 2)|round|int }}+ experts
+- Low: < half experts
+
+{% if experts|length == 1 %}
+Consensus logic: `consensus_reached = false` (single expert)
+{% else %}
+Consensus logic: `consensus_reached = (convergence >= 80)`
+{% endif %}
+
+### 3. Validate Answer Quality & Synthesize Questions
+
+**Check Answer Quality:**
+For each Q&A pair from iteration {{ iteration - 1 }}:
+1. Was it answered? (yes/no/partial)
+2. Is answer specific enough?
+3. Does it address core concern?
+4. Check if experts flagged as unanswered (Section 6.5)
+
+**Re-ask if insufficient:**
+- Add more context
+- Provide examples
+- Add follow-up questions
+- Flag as "REQUIRES CLARIFICATION"
+
+**Synthesize New Questions:**
+Review expert refinements for new questions. Deduplicate, merge similar questions, prioritize.
+
+---
+
+## Output Format
+
+### Synthesized Recommendations (UPDATED)
+
+For each recommendation:
+- **ID:** rec-XXX
+- **Title:** [Concise]
+- **Priority:** [critical/high/medium/low]
+- **Expert Support:** X/{{ experts|length }} experts (High/Partial/Low)
+- **Description:** [What changed]
+- **Evolution:** [From iter {{ iteration - 1 }}: gained support / lost support / new / unchanged]
+
+### Convergence Analysis
+
+- **Current:** X%
+- **Previous:** [From previous iteration]%
+- **Trend:** 📈 Improving / 📉 Declining / ➡️ Stable
+- **Consensus:** ✅ Reached / ❌ Not reached
+
+### Synthesized Questions (If Any)
+
+Questions for next iteration:
+- **ID:** q-XXX
+- **Question:** [Clear, specific]
+- **Why:** [Context]
+- **Priority:** [high/medium/low]
+- **Source:** [Which experts asked]
+
+### Decision Signal
+
+Choose ONE:
+- ✅ **CONTINUE**: Consensus reached (≥80%), ready for artifact
+- 🔄 **REFINE**: More iteration needed (convergence < 80%)
+- ⚠️ **BLOCKED**: Unanswered questions must be addressed first
+
+---
+
+## Output File
+
+Create using Write tool: `{{ workspace }}/iteration-{{ iteration }}/synthesized.md`
+
+Include:
+1. Updated recommendations with evolution tracking
+2. Convergence analysis with trend
+3. Synthesized questions (if any)
+4. Decision signal (CONTINUE/REFINE/BLOCKED)
+
+**Format reference:** `.claude/skills/expert-feedback/prompts/synthesis/synthesis-format.md`

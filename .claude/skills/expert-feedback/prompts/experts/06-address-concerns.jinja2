@@ -1,0 +1,71 @@
+# Address Concerns: {{ expert_role }}
+
+Provide updated recommendations to address the concerns raised during artifact review.
+
+---
+
+## Context
+
+**Iteration:** {{ iteration }}
+**Expert Role:** {{ expert_role }}
+
+The user has reviewed the concerns raised by all experts and decided which ones to address. You need to provide specific, actionable recommendations for the concerns you raised that the user agreed should be fixed.
+
+---
+
+## Concerns to Address
+
+The following concerns from your review need to be addressed:
+
+{{ concerns_to_address | tojson(indent=2) }}
+
+---
+
+## Current Artifact
+
+{{ artifact_content }}
+
+---
+
+## Task
+
+For each concern you raised that the user agreed should be addressed, provide:
+
+1. **Concern ID:** Reference the concern (use title or index)
+2. **Recommendation:** Specific, actionable fix (2-4 sentences)
+3. **Rationale:** Why this fix addresses the concern (1-2 sentences)
+
+Make your recommendations:
+- **Specific:** Include code examples, file paths, or concrete steps
+- **Actionable:** Clear enough that someone could implement immediately
+- **Focused:** Address the concern without scope creep
+
+---
+
+## Output Format
+
+**REQUIRED:** Respond with valid JSON only. No markdown, no explanation.
+
+```json
+{
+  "updated_recommendations": [
+    {
+      "concern_id": "Concern title or ID",
+      "recommendation": "Specific, actionable fix with implementation details",
+      "rationale": "Why this addresses the concern effectively"
+    }
+  ],
+  "additional_notes": "Optional: Any context or trade-offs to consider (1-2 sentences)"
+}
+```
+
+**Notes:**
+- If you have no concerns to address (empty list above), return `{"updated_recommendations": [], "additional_notes": "No concerns assigned to this expert"}`
+- Order recommendations by severity (critical first)
+- Be concise but specific
+
+---
+
+## Begin
+
+Provide updated recommendations as JSON.

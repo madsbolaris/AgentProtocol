@@ -86,7 +86,7 @@ function initLLM() {
   const recordMode = recordLlm
 
   // Find recordings directory
-  const recordingsDir = path.join(__dirname, '..', '..', '..', '..', '..', '..', 'test-data', 'llm-recordings', 'basic-m365')
+  const recordingsDir = path.join(__dirname, '..', '..', '..', '..', '..', '..', 'test-data', 'llm-recordings', 'sample', 'basic-m365')
 
   // Create real OpenAI client if needed (for normal or recording mode)
   let realClient: OpenAI | null = null

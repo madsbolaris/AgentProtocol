@@ -1,0 +1,96 @@
+You previously generated an artifact that was reviewed by domain experts. They raised concerns, and the user agreed that some of those concerns should be addressed.
+
+The experts have now provided updated recommendations to address those concerns. Your task is to regenerate the artifact incorporating their feedback.
+
+## Previous Artifact (Version {{artifact_version - 1}})
+
+{{previous_artifact}}
+
+## User-Agreed Concerns
+
+The following concerns were identified and the user agreed they should be addressed:
+
+{% for concern in agreed_concerns %}
+### {{loop.index}}. [{{concern.expert}}] {{concern.title}}
+
+**Severity**: {{concern.severity}}
+
+{{concern.description}}
+
+{% endfor %}
+
+## Updated Recommendations from Experts
+
+After addressing the concerns, experts provided these updated recommendations:
+
+{% for rec in consolidated_recommendations %}
+### {{loop.index}}. {{rec.title}}
+
+{{rec.recommendation}}
+
+{% if rec.rationale %}
+**Rationale**: {{rec.rationale}}
+{% endif %}
+
+{% endfor %}
+
+## Your Task
+
+Generate version {{artifact_version}} of the artifact by:
+
+1. **Incorporating the updated recommendations** - Apply the changes suggested by experts to address the agreed concerns
+2. **Maintaining what works** - Keep aspects of the previous artifact that were not problematic
+3. **Ensuring consistency** - Make sure the regenerated artifact is coherent and complete
+4. **Following the original mode** - This is {{mode | upper}} mode, so maintain the appropriate artifact type and structure
+
+{% if mode == "review" %}
+Generate the updated ADR with the same structure as before:
+- Context
+- Decision
+- Consequences
+- Alternatives Considered (if applicable)
+
+Return your response as JSON:
+```json
+{
+  "adr_markdown": "# [Title]\n\n...",
+  "artifact_type": "adr",
+  "version": {{artifact_version}},
+  "summary": "Brief summary of changes from v{{artifact_version - 1}}"
+}
+```
+{% elif mode == "improve" %}
+Generate the updated improvement plan with the same structure as before:
+- Current State Analysis
+- Recommended Improvements
+- Implementation Strategy
+- Success Metrics
+
+Return your response as JSON:
+```json
+{
+  "plan_markdown": "# [Title]\n\n...",
+  "artifact_type": "plan",
+  "version": {{artifact_version}},
+  "summary": "Brief summary of changes from v{{artifact_version - 1}}"
+}
+```
+{% elif mode == "create" %}
+Generate the updated architecture document with the same structure as before:
+- Architecture Overview
+- Components
+- Data Flow
+- Implementation Considerations
+
+Return your response as JSON:
+```json
+{
+  "architecture_markdown": "# [Title]\n\n...",
+  "artifact_type": "architecture",
+  "version": {{artifact_version}},
+  "summary": "Brief summary of changes from v{{artifact_version - 1}}"
+}
+```
+{% endif %}
+
+This is iteration {{iteration}}, concern iteration {{concern_iteration}} of the expert feedback process. Focus on addressing the specific concerns while maintaining the quality of your previous work.

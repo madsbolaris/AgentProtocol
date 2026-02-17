@@ -1,0 +1,71 @@
+{% extends "base-finalize.jinja2" %}
+
+{% set output_type = "Architecture Decision Record (ADR)" %}
+{% set output_article = "an" %}
+
+{% block mode_specific_guidance %}
+## Multiple ADRs
+
+Create separate ADRs if decisions are logically separable:
+- **Independent subsystems** - Different components/modules
+- **Tactical vs Strategic** - Short vs long-term decisions
+- **Different domains** - Data model vs API vs deployment
+- **Orthogonal concerns** - Security vs performance vs DX
+
+**Numbering:** Sequential (0042, 0043, 0044)
+**Cross-references:** Link in "More Information" section
+**Default:** One comprehensive ADR unless clearly separable
+{% endblock %}
+
+{% block task_description %}
+Analyze expert feedback and determine if ONE or MULTIPLE ADRs are appropriate. Create ADR(s) following MADR template by mapping expert feedback to ADR sections.
+
+**CRITICAL:** Output JSON file, not markdown. Python script renders JSON to markdown later.
+
+**File:** `{{ workspace }}/adr-data.json`
+**Schema:** `.claude/skills/expert-feedback/schemas/adr-output.schema.json`
+
+See `output-templates/adr-format.md` for complete structure and guidelines.
+{% endblock %}
+
+{% block step_3_create %}
+## Step 3: Create ADR JSON Data
+
+**Format:** See `output-templates/adr-format.md` for complete JSON schema.
+
+**Key Fields:**
+- `title` - Short decision title (no ADR number)
+- `status` - "accepted" if convergence >= 80%, else "proposed"
+- `deciders` - ["{{ experts|join('", "') }}", "User"]
+- `date` - YYYY-MM-DD format
+- `technical_story` - "Workspace: {{ workspace }}"
+- `context` - Problem statement, background, constraints
+- `decision_drivers` - From expert concerns/focus areas
+- `considered_options` - Options with pros/cons from experts
+- `decision_outcome` - Chosen option, rationale, implementation notes
+- `consequences` - Good/bad/neutral outcomes from expert feedback
+- `links` - Related ADRs/documents
+{% endblock %}
+
+{% block critical_requirements %}
+## Critical Requirements
+
+1. **Extract from synthesis** - Read all `synthesized-*.md` files
+2. **Map expert feedback** - Capture all major concerns/recommendations
+3. **Set correct status** - "accepted" if {{ convergence_percent }}% >= 80%
+4. **Include all deciders** - {{ experts|join(', ') }} + "User"
+5. **Date format** - YYYY-MM-DD
+6. **Actionable content** - Decision should be implementable
+7. **Valid JSON** - Verify syntax before saving
+{% endblock %}
+
+{% block specific_output %}
+**Create:** `{{ workspace }}/adr-data.json`
+
+**DO NOT create markdown ADR** - Python script handles rendering.
+
+**Verify:**
+- Valid JSON syntax
+- All required fields present
+- Content comprehensive and actionable
+{% endblock %}

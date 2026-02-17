@@ -18,27 +18,32 @@ class AgentProtocolClient:
     Provides access to Agents, Runs, and Threads operations
     """
 
-    def __init__(self, options: AgentProtocolClientOptions):
+    def __init__(self, options_or_url: AgentProtocolClientOptions | str):
         """
         Creates a new instance of the Agent Protocol client
 
         Args:
-            options: Client configuration options
+            options_or_url: Client configuration options or base URL string
         """
-        self._options = options
-        self._own_session = options.session is None
-
-        if options.session:
-            self._session = options.session
+        # Support passing a URL string directly for convenience (as shown in quickstart)
+        if isinstance(options_or_url, str):
+            self._options = AgentProtocolClientOptions(base_url=options_or_url)
         else:
-            timeout = aiohttp.ClientTimeout(total=options.timeout_seconds)
+            self._options = options_or_url
+
+        self._own_session = self._options.session is None
+
+        if self._options.session:
+            self._session = self._options.session
+        else:
+            timeout = aiohttp.ClientTimeout(total=self._options.timeout_seconds)
             headers = {"Accept": "application/json"}
 
-            if options.api_key:
-                headers["Authorization"] = f"Bearer {options.api_key}"
+            if self._options.api_key:
+                headers["Authorization"] = f"Bearer {self._options.api_key}"
 
             self._session = aiohttp.ClientSession(
-                base_url=options.base_url, timeout=timeout, headers=headers
+                base_url=self._options.base_url, timeout=timeout, headers=headers
             )
 
         # Initialize API clients

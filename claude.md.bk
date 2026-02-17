@@ -1,0 +1,73 @@
+# Claude Code Context
+
+## Project Purpose
+
+Building Agent Protocol SDKs (C#, Python, TypeScript) - **design phase only**. No releases yet = no backwards compatibility constraints. Challenge design ideas to improve DX. Docs are aspirational; SDK implementation comes after design is finalized.
+
+**Use expert-feedback skill for design decisions:** Systematically collect feedback from 40+ domain experts via sub-agents. Fully automated workflow - use `/expert-feedback "topic" [experts...]` to start, then it handles everything: spawns sub-agents, Q&A loop, refinement iterations, consensus building, and final recommendations. You only answer questions and approve final recommendations.
+
+## TypeSpec is Source of Truth
+
+**TypeSpec defines the API** - SDKs MUST conform to it. The `messages.tsp` file is most critical. To improve SDK DX, TypeSpec changes may be needed, but **require user approval first** due to profound impacts across the project. **All other changes: continue working without approval.**
+
+## Intermediate Work - Use .workspace
+
+For planning, analysis, or intermediate work on new projects, create dated folders: `.workspace/YYYY/MM/DD/project-name/README.md` (e.g., `.workspace/2026/02/14/refactor-plan/README.md`).
+
+## Repository Structure
+
+- **Languages**: `dotnet/`, `python/`, `typescript/` - Each has Protocol, Client, Hosting, XML, and Runtime SDKs
+  - `samples/` - Same agent samples across all languages (echo-m365, basic-m365, emoji-chat)
+  - `src/` - SDK source code
+  - Tests: `dotnet/tests/` (centralized) vs `python/*/tests/` and `typescript/*/tests/` (per-package)
+- **Documentation**: `docs/` contains product docs and protocol specs, built with `mkdocs.yml` (Material theme)
+
+## Documentation Site - DO NOT TOUCH CSS
+
+**Never modify CSS files.** If the docs site looks wrong, the HTML is broken - existing CSS isn't being applied. Debug by opening `localhost:8001` in a headless browser and inspecting the actual rendered HTML/CSS. **Never assume a fix worked without checking the live site first.**
+
+## Documentation Samples - No Snippet Files
+
+**Code samples are extracted directly from tests** - no intermediate snippet files needed. Custom MkDocs plugin (`mkdocs/plugins/mkdocs_plugins/test_snippets.py`) pulls code from test files at build time.
+
+**Test Locations:**
+
+- C# Client: `dotnet/tests/Microsoft.Agents.Client.Tests/Docs/`
+- Python Client: `python/microsoft-agents-protocol-client/tests/docs/`
+- TypeScript Client: `typescript/packages/agents-protocol-client/tests/docs/`
+- Similar structure for Hosting SDK
+
+**Mark tests with:**
+
+- C#: `[DocExample("snippet-id")]`
+- Python: `@pytest.mark.doc_example("snippet-id")`
+- TypeScript: `@docExample snippet-id`
+
+**Wrap code with:**
+
+- C#: `#region Snippet` / `#endregion`
+- Python/TypeScript: `# <snippet>` / `# </snippet>` or `// <snippet>` / `// </snippet>`
+
+**Use in docs:** `--8<-- test::file-filter/snippet-id` (e.g., `--8<-- test::quickstart/client-simple-completion`)
+
+**Finding samples:** When you see `--8<-- test::quickstart/client-simple-completion` in a doc page, the code is in test files matching "quickstart" (e.g., `QuickstartTests.cs`, `test_quickstart.py`, `quickstart.test.ts`) in the appropriate SDK's `Docs/` or `docs/` folder.
+
+**Benefits:** Single source of truth, always in sync, tests prove samples work.
+
+## Sample Agents
+
+The `*-m365` samples (echo-m365, basic-m365) use the legacy M365 Agents SDK to demonstrate that Agent Protocol can be added with one line. The `emoji-chat` sample is built purely with Agent Protocol SDKs and is the primary test of SDK functionality.
+
+## Recordings & Testing
+
+**Recordings** (`test-data/llm-recordings/`): Hash-based request/response pairs for deterministic SDK tests. **Only C# generates** - Python/TypeScript reference same files. Stored as `{hash}.request.json` + `{hash}.response.json` (hash = method/path/body).
+
+**CRITICAL:** HTTP recording pattern is **WRONG** - must use LLM recording's proxy client pattern (wrap client, not inline intercept). Create `RecordingClient` wrapper that delegates to real client.
+
+**Debug hash mismatches:** Add logging for computed hash, available recordings, and request details. **Never set env vars directly** - use `make test-record` or `make test` instead.
+
+**Golden Datasets** (`test-data/results/`): Expected agent outputs for cross-language compliance tests. Ensures all three SDKs produce identical results. Generated via `scripts/testgen/generate_golden_datasets.py`.
+
+## Scripts Folder - DO NOT RECREATE
+
+The `scripts/` directory has a complete automation suite with Makefile, codegen, testgen, validation, and CI tools. **Use existing scripts - don't recreate them.** Run `cd scripts && make help` to see all available commands.

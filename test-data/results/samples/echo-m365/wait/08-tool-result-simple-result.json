@@ -1,56 +1,32 @@
 {
-  "runId": "run_ad56a1fe8ff348528d4c126e4052f2a3",
+  "runId": "run_fijf1w3kfe",
   "agentId": "echo-agent",
-  "threadId": "thread_4f937e24e82e4fd0a46f7e48a471f97c",
-  "status": "Completed",
+  "threadId": "thread_b3vrljcnlxj",
+  "status": "completed",
   "input": [
     {
-      "messageId": null,
+      "messageId": "msg_9mkion4r0jv",
       "role": "tool",
       "contents": [
         {
           "kind": "text",
-          "text": "{\u0022results\u0022: [{\u0022id\u0022: 123, \u0022name\u0022: \u0022Example Record\u0022}], \u0022count\u0022: 1}",
-          "audience": null
+          "text": "{\"results\": [{\"id\": 123, \"name\": \"Example Record\"}], \"count\": 1}"
         }
-      ],
-      "userId": null,
-      "agentId": null,
-      "authorName": null,
-      "threadId": null,
-      "runId": null,
-      "parentId": null,
-      "createdAt": null,
-      "updatedAt": null,
-      "status": null,
-      "metadata": null
+      ]
     }
   ],
   "output": [
     {
-      "messageId": "msg_3f5008aafcf2460898ee4e24e188cee4",
+      "messageId": "msg_8pnbho1fv9r",
       "role": "agent",
+      "createdAt": "2026-02-09T18:38:53.129Z",
       "contents": [
         {
           "kind": "text",
-          "text": "you said: \n{\u0022results\u0022: [{\u0022id\u0022: 123, \u0022name\u0022: \u0022Example Record\u0022}], \u0022count\u0022: 1}",
-          "audience": null
+          "text": "you said: \n{\"results\": [{\"id\": 123, \"name\": \"Example Record\"}], \"count\": 1}"
         }
-      ],
-      "userId": null,
-      "agentId": null,
-      "authorName": null,
-      "threadId": null,
-      "runId": null,
-      "parentId": null,
-      "createdAt": "2026-02-09T18:38:34.093119Z",
-      "updatedAt": null,
-      "status": null,
-      "metadata": null
+      ]
     }
   ],
-  "usage": null,
-  "error": null,
-  "createdAt": "2026-02-09T18:38:34.09312Z",
-  "completedAt": null
+  "createdAt": "2026-02-09T18:38:53.129Z"
 }

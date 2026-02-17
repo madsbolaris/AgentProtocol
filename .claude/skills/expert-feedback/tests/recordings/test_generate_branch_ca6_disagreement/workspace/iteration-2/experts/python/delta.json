@@ -1,0 +1,13 @@
+{
+  "type": "delta",
+  "iteration": 2,
+  "what_changed": "",
+  "updated_recommendations": {},
+  "new_recommendations": [],
+  "new_concerns": [],
+  "resolved_concerns": [],
+  "updated_assessment": null,
+  "unanswered_questions": [],
+  "new_questions": [],
+  "expert_name": "python"
+}

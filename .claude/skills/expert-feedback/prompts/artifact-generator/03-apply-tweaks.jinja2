@@ -1,0 +1,25 @@
+Your artifact was reviewed and approved overall, but experts suggested some minor improvements.
+
+## Your Current Artifact
+
+You can see your artifact in the conversation history.
+
+## Minor Tweak Suggestions
+
+{{tweak_suggestions}}
+
+## Experts' Feedback
+
+{% for expert, tweaks in expert_tweaks.items() %}
+- **{{expert}}**: {{tweaks}}
+{% endfor %}
+
+## Your Task
+
+These are polish suggestions, not critical issues. Please:
+
+1. Incorporate tweaks that improve clarity or accuracy
+2. Keep changes minimal - don't rewrite
+3. Maintain the artifact's core structure and decisions
+
+This is turn 3 of your artifact generation conversation - just polish, no major changes. The artifact is fundamentally sound; this is about refinement.

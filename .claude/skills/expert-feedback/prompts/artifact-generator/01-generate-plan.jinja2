@@ -1,0 +1,231 @@
+{% extends "base-finalize.jinja2" %}
+
+{% set output_type = "Implementation Plan" %}
+{% set output_article = "an" %}
+
+{% block task_description %}
+Analyze all expert feedback from iteration(s) and create a structured **Implementation Plan** that:
+
+1. Organizes improvements by priority and complexity
+2. Provides clear, actionable steps for each improvement
+3. Estimates time/effort for each item
+4. Identifies dependencies between improvements
+5. Suggests implementation order
+6. Includes concrete code examples where applicable
+{% endblock %}
+
+{% block step_2_analysis %}
+## Step 2: Analyze Expert Feedback
+
+Extract from expert feedback:
+- Common themes and patterns across experts
+- High-priority improvements identified by multiple experts
+- Quick wins (high impact, low complexity)
+- Complex changes requiring careful planning
+- Dependencies between improvements
+- Risk areas and concerns
+- Testing requirements
+{% endblock %}
+
+{% block step_3_create %}
+## Step 3: Create Implementation Plan
+
+Create a markdown file following this structure:
+
+```markdown
+# Implementation Plan: {Title}
+
+**Created:** {{ date }}
+**Status:** Ready for Implementation
+**Estimated Total Time:** {X-Y hours}
+
+## Overview
+
+{Brief summary of what will be improved and why based on expert feedback}
+
+### Key Improvements
+- {List 3-5 major improvements}
+
+### Success Criteria
+- {How to measure if improvements achieved their goals}
+
+## Critical Files
+
+**Files that will be modified/created** (helps Claude Code understand scope):
+
+- `path/to/file1.ext` - {Brief description of changes}
+- `path/to/file2.ext` - {Brief description of changes}
+- `path/to/file3.ext` - {Brief description of changes}
+
+---
+
+## Phases
+
+### Phase 1: {Name} ({time estimate})
+
+**Goal:** {What this phase achieves}
+
+#### 1.1 {Improvement Name} ({time})
+
+**Priority:** {High/Medium/Low}
+**Complexity:** {Low/Medium/High}
+**Expert Consensus:** {Which experts recommended this}
+
+**File(s):** `path/to/file.py`
+
+**Current Situation:**
+{Description of what currently exists and why it needs improvement}
+
+**Proposed Change:**
+{Description of the improvement}
+
+**Current Code (optional, if specific code reference exists):**
+```language
+{current code snippet}
+```
+
+**New Code (optional, if concrete implementation suggested):**
+```language
+{proposed code snippet}
+```
+
+**Why:** {Rationale from expert feedback}
+
+**Benefits:**
+- Benefit 1
+- Benefit 2
+
+**Risks:**
+- Risk 1 (and mitigation)
+
+**Dependencies:** {List any dependencies on other improvements}
+
+**Testing:** {How to validate this change works correctly}
+
+---
+
+{Repeat for each improvement}
+
+---
+
+## Implementation Order
+
+Recommended sequence based on dependencies and priorities:
+
+1. **Phase 1 items** (can be done in parallel)
+   - Item 1.1
+   - Item 1.2
+
+2. **Phase 2 items** (depend on Phase 1)
+   - Item 2.1
+
+3. **Phase 3 items** (depend on Phase 2)
+   - Item 3.1
+
+## Quick Wins
+
+These can be implemented immediately with minimal risk:
+1. {Quick win 1}
+2. {Quick win 2}
+
+## High-Impact Changes
+
+These require more effort but deliver significant value:
+1. {High-impact change 1}
+2. {High-impact change 2}
+
+## Testing Strategy
+
+### Unit Tests
+{Specific test scenarios for improvements}
+
+### Integration Tests
+{How to test interactions between changed components}
+
+### Regression Tests
+{How to ensure existing functionality still works}
+
+## Rollback Plan
+
+If issues arise during implementation:
+1. {Rollback step 1}
+2. {Rollback step 2}
+
+## Success Metrics
+
+Measure success by:
+- Metric 1: {How to measure}
+- Metric 2: {How to measure}
+
+## Risks & Mitigations
+
+| Risk | Impact | Probability | Mitigation |
+|------|--------|-------------|------------|
+| Risk 1 | High | Medium | Mitigation strategy |
+| Risk 2 | Medium | Low | Mitigation strategy |
+
+---
+
+**Experts Consulted:** {{ experts|join(", ") }}
+**Convergence:** {{ convergence_percent }}%
+**Review Workspace:** [{{ workspace }}]({{ workspace }})
+
+---
+
+## 🤖 Implementing with Claude Code
+
+This plan is designed to work with Claude Code's plan mode for streamlined implementation.
+
+**To implement this plan:**
+
+\`\`\`bash
+claude-code "implement the plan at {{ workspace }}/draft-plan.md"
+\`\`\`
+
+Or from within Claude Code:
+\`\`\`
+Read the implementation plan at {{ workspace }}/draft-plan.md and implement it phase by phase
+\`\`\`
+
+**Claude Code will:**
+1. Enter plan mode automatically
+2. Explore the critical files mentioned in each phase
+3. Design the implementation approach
+4. Execute phase by phase with your approval
+5. Run tests after each phase (if specified)
+
+**Plan Mode Hints (for Claude Code):**
+<!-- PLAN MODE: This is an implementation plan -->
+<!-- CRITICAL FILES: {list key files mentioned in Phase 1} -->
+<!-- PHASES: {number of phases} -->
+<!-- COMPLEXITY: {HIGH/MEDIUM/LOW based on overall effort} -->
+<!-- ESTIMATED DURATION: {time estimate} -->
+```
+{% endblock %}
+
+{% block critical_requirements %}
+## Critical Requirements
+
+1. **Organize by priority** - High-impact, low-complexity improvements first
+2. **Show concrete changes** - Include file paths, current state, and proposed changes
+3. **Explain rationale** - Use expert feedback to justify each change
+4. **Estimate time** - Provide realistic time estimates based on complexity
+5. **Identify dependencies** - Show which changes must happen in sequence
+6. **Make actionable** - Each item should be immediately implementable
+7. **Include testing** - Specify how to validate each change
+8. **Address risks** - Identify potential issues and mitigation strategies
+{% endblock %}
+
+{% block specific_output %}
+Create the implementation plan in the **workspace** (temporary location for user approval):
+
+**File path:** `{{ workspace }}/draft-plan.md`
+{% endblock %}
+
+{% block template_specific_notes %}
+- **DO NOT create an ADR** - This is improve mode, not review mode
+- **Use expert feedback extensively** - Reference which experts recommended each change
+- **Be specific** - Provide file paths, line numbers, and concrete code examples
+- **Prioritize ruthlessly** - Not all feedback needs to be implemented immediately
+- **Balance quick wins with long-term improvements**
+{% endblock %}

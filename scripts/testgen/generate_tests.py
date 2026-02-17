@@ -170,7 +170,7 @@ def main():
     output_dir = project_root / args.output_dir
 
     print("=" * 70)
-    print("🧪 Agent Framework Test Generator")
+    print("🧪 Agent Protocol Test Generator")
     print("=" * 70)
     print()
 

@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft. All rights reserved.
 
-# Sample that shows how to create an Agent Framework agent that is hosted using the M365 Agent SDK.
+# Sample that shows how to create an Agent Protocol agent that is hosted using the M365 Agent SDK.
 # The agent can then be consumed from various M365 channels.
 # See the README.md for more information.
 
@@ -40,7 +40,7 @@ from microsoft.agents.protocol.server import add_agent_protocol_routes
 """
 Demo application using Microsoft Agent 365 SDK.
 
-This sample demonstrates how to build an AI agent using the Agent Framework,
+This sample demonstrates how to build an AI agent using the Agent Protocol,
 integrating with Microsoft 365 authentication and hosting components.
 
 The agent provides a simple echo functionality and can be run in either anonymous mode

@@ -1,0 +1,387 @@
+#!/usr/bin/env python3
+"""
+Stop Hook: Continue Analyzer
+
+This hook runs when Claude stops responding and uses an LLM to analyze
+whether Claude stopped prematurely and just needs to be told "continue".
+
+Plays a beep sound ONLY when human intervention is needed (not on auto-continue).
+"""
+
+import json
+import os
+import subprocess
+import sys
+import warnings
+from pathlib import Path
+
+# Suppress deprecation warnings
+warnings.filterwarnings('ignore')
+
+# Add .claude directory to path to import sdk_auth
+claude_dir = Path(__file__).parent.parent
+sys.path.insert(0, str(claude_dir))
+
+from sdk_auth import get_api_key_from_keychain
+
+COUNTER_FILE = "/tmp/stop_hook_counter.json"
+MAX_CONSECUTIVE_BLOCKS = 100  # Maximum auto-continues before forcing stop
+
+def get_session_state(session_id: str) -> dict:
+    """Get the session state including counter, recent reasons, confidence history, and original goal."""
+    try:
+        if os.path.exists(COUNTER_FILE):
+            with open(COUNTER_FILE, 'r') as f:
+                states = json.load(f)
+                return states.get(session_id, {
+                    "count": 0,
+                    "recent_reasons": [],
+                    "recent_confidences": [],
+                    "original_goal": None
+                })
+    except Exception:
+        pass
+    return {"count": 0, "recent_reasons": [], "recent_confidences": [], "original_goal": None}
+
+def increment_session_counter(session_id: str, reason: str, confidence: str) -> tuple:
+    """Increment counter and track recent reasons/confidences. Returns (count, is_spinning, low_confidence_streak)."""
+    try:
+        states = {}
+        if os.path.exists(COUNTER_FILE):
+            with open(COUNTER_FILE, 'r') as f:
+                states = json.load(f)
+
+        state = states.get(session_id, {
+            "count": 0,
+            "recent_reasons": [],
+            "recent_confidences": [],
+            "original_goal": None
+        })
+        state["count"] += 1
+
+        # Keep last 10 reasons
+        state["recent_reasons"].append(reason)
+        if len(state["recent_reasons"]) > 10:
+            state["recent_reasons"] = state["recent_reasons"][-10:]
+
+        # Keep last 10 confidences
+        state["recent_confidences"].append(confidence)
+        if len(state["recent_confidences"]) > 10:
+            state["recent_confidences"] = state["recent_confidences"][-10:]
+
+        # Check if spinning (last 3 reasons are very similar)
+        is_spinning = False
+        if len(state["recent_reasons"]) >= 3:
+            reasons = state["recent_reasons"][-3:]
+            # Simple similarity check: if all 3 contain similar key words
+            key_words = ["incomplete", "task", "work", "continue", "more", "not done"]
+            matches = [sum(1 for word in key_words if word.lower() in r.lower()) for r in reasons]
+            # If all 3 have similar keyword density, probably spinning
+            if len(set(matches)) == 1 and matches[0] > 0:
+                is_spinning = True
+
+        # Check for low confidence streak (3 low or 10 medium in a row)
+        low_confidence_streak = False
+        confidences = state["recent_confidences"]
+
+        if len(confidences) >= 3 and confidences[-3:] == ["low", "low", "low"]:
+            low_confidence_streak = True
+
+        if len(confidences) >= 10 and confidences[-10:] == ["medium"] * 10:
+            low_confidence_streak = True
+
+        states[session_id] = state
+
+        with open(COUNTER_FILE, 'w') as f:
+            json.dump(states, f)
+
+        return state["count"], is_spinning, low_confidence_streak
+    except Exception:
+        return 0, False, False
+
+def reset_session_counter(session_id: str):
+    """Reset the counter for this session (called when allowing stop)."""
+    try:
+        if os.path.exists(COUNTER_FILE):
+            with open(COUNTER_FILE, 'r') as f:
+                states = json.load(f)
+
+            if session_id in states:
+                del states[session_id]
+
+            with open(COUNTER_FILE, 'w') as f:
+                json.dump(states, f)
+    except Exception:
+        pass
+
+def analyze_conversation(transcript_path: str, api_key: str, original_goal: str = None) -> dict:
+    """Use Anthropic SDK to analyze if Claude stopped prematurely."""
+    try:
+        import anthropic
+
+        # Read the transcript (JSONL format - one JSON object per line)
+        messages = []
+        with open(transcript_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    try:
+                        obj = json.loads(line)
+                        if 'message' in obj:
+                            messages.append(obj['message'])
+                    except json.JSONDecodeError:
+                        continue
+
+        # Build conversation summary with token-aware truncation
+        # Opus 4.5: 200K context, reserve 50K for prompt/response, use 150K for conversation
+        MAX_CONVERSATION_TOKENS = 150000
+        CHARS_PER_TOKEN = 3.5  # Conservative estimate
+        MAX_CHARS = int(MAX_CONVERSATION_TOKENS * CHARS_PER_TOKEN)
+
+        conversation_summary = []
+        total_chars = 0
+
+        # Work backwards from most recent messages
+        for msg in reversed(messages):
+            role = msg.get('role', 'unknown')
+
+            if role == 'user':
+                content = msg.get('content', '')
+                if isinstance(content, list):
+                    text_parts = [part.get('text', '') for part in content if part.get('type') == 'text']
+                    content = '\n'.join(text_parts)
+                formatted = f"User: {content}"
+
+            elif role == 'assistant':
+                content = msg.get('content', '')
+                if isinstance(content, list):
+                    text_parts = [part.get('text', '') for part in content if part.get('type') == 'text']
+                    content = '\n'.join(text_parts)
+                formatted = f"Assistant: {content}"
+            else:
+                continue
+
+            # Check if adding this message would exceed our limit
+            msg_chars = len(formatted) + 2  # +2 for \n\n separator
+            if total_chars + msg_chars > MAX_CHARS and conversation_summary:
+                break  # Stop adding older messages
+
+            conversation_summary.insert(0, formatted)  # Insert at beginning (we're going backwards)
+            total_chars += msg_chars
+
+        conversation_text = '\n\n'.join(conversation_summary)
+
+        # Use Anthropic SDK to analyze
+        client = anthropic.Anthropic(api_key=api_key)
+
+        # Load the analysis prompt from external file
+        prompt_file = Path(__file__).parent / "stop_continue_analyzer_prompt.txt"
+        try:
+            with open(prompt_file, 'r') as f:
+                prompt_template = f.read()
+        except FileNotFoundError:
+            # Fallback to embedded prompt if file not found
+            prompt_template = """You are analyzing a conversation between a user and Claude Code (an AI coding assistant).
+
+{goal_context}
+Recent conversation history (last {conversation_summary_count} messages, showing {conversation_summary_exchanges} exchanges):
+{conversation_text}
+
+Determine if Claude stopped prematurely and needs "continue" vs if human intervention is required.
+
+Return JSON: {{"should_continue": true/false, "reason": "Brief reason", "confidence": "high/medium/low", "has_question": true/false}}"""
+
+        # Build original goal context
+        goal_context = ""
+        if original_goal:
+            goal_context = f"""ORIGINAL USER REQUEST (the initial goal for this session):
+"{original_goal}"
+"""
+
+        # Fill in the template
+        analysis_prompt = prompt_template.format(
+            goal_context=goal_context,
+            conversation_summary_count=len(conversation_summary),
+            conversation_summary_exchanges=len(conversation_summary[-10:]),
+            conversation_text=conversation_text
+        )
+
+        response = client.messages.create(
+            model="claude-opus-4-5-20251101",  # Opus 4.5 for superior reasoning
+            max_tokens=300,
+            messages=[{"role": "user", "content": analysis_prompt}]
+        )
+
+        # Parse the response
+        response_text = response.content[0].text
+
+        # Try to extract JSON from the response
+        try:
+            if '{' in response_text and '}' in response_text:
+                json_start = response_text.find('{')
+                json_end = response_text.rfind('}') + 1
+                json_str = response_text[json_start:json_end]
+                result = json.loads(json_str)
+                return result
+            else:
+                return {
+                    "should_continue": False,
+                    "reason": "Could not parse LLM response",
+                    "confidence": "low"
+                }
+        except json.JSONDecodeError:
+            return {
+                "should_continue": False,
+                "reason": "Invalid JSON in LLM response",
+                "confidence": "low"
+            }
+
+    except Exception as e:
+        return {
+            "should_continue": False,
+            "reason": f"Analysis error: {str(e)}",
+            "confidence": "low"
+        }
+
+
+def main():
+    """Main hook entry point."""
+    try:
+        # DEBUG: Log that hook was called
+        with open("/tmp/stop_hook_simple.log", "a") as f:
+            from datetime import datetime
+            f.write(f"\n[{datetime.now()}] === HOOK CALLED ===\n")
+
+        # Read hook input from stdin
+        hook_input = json.loads(sys.stdin.read())
+
+        # DEBUG: Log input
+        with open("/tmp/stop_hook_simple.log", "a") as f:
+            f.write(f"Input: {hook_input.get('session_id', 'unknown')}\n")
+
+        session_id = hook_input.get('session_id', 'unknown')
+
+        # Check our own counter to prevent truly infinite loops
+        state = get_session_state(session_id)
+        current_count = state["count"]
+
+        # If we've hit our limit, allow stop
+        if current_count >= MAX_CONSECUTIVE_BLOCKS:
+            reset_session_counter(session_id)
+            print(json.dumps({"decision": "allow"}))
+            return 0
+
+        # Claude Code's safety flag - we'll ignore it unless we hit our own limit
+        # (stop_hook_active is just informational now)
+
+        # Get API key
+        api_key = get_api_key_from_keychain()
+        if not api_key:
+            print(json.dumps({"decision": "allow"}))
+            return 0
+
+        # Get transcript path
+        transcript_path = hook_input.get('transcript_path')
+        if not transcript_path or not os.path.exists(transcript_path):
+            print(json.dumps({"decision": "allow"}))
+            return 0
+
+        # Get or update original goal (most recent user message)
+        # This ensures we track the latest user request, not just the first one
+        try:
+            with open(transcript_path, 'r') as f:
+                latest_user_msg = None
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        obj = json.loads(line)
+                        if 'message' in obj and obj['message'].get('role') == 'user':
+                            content = obj['message'].get('content', '')
+                            if isinstance(content, list):
+                                text_parts = [part.get('text', '') for part in content if part.get('type') == 'text']
+                                content = '\n'.join(text_parts)
+                            if content:
+                                latest_user_msg = content[:500]
+
+            # Update goal if we found a user message and it's different
+            if latest_user_msg and latest_user_msg != state.get("original_goal"):
+                state["original_goal"] = latest_user_msg
+                # Save state with updated goal
+                states = {}
+                if os.path.exists(COUNTER_FILE):
+                    with open(COUNTER_FILE, 'r') as cf:
+                        states = json.load(cf)
+                states[session_id] = state
+                with open(COUNTER_FILE, 'w') as cf:
+                    json.dump(states, cf)
+        except Exception:
+            pass
+
+        # Analyze the conversation
+        analysis = analyze_conversation(transcript_path, api_key, state.get("original_goal"))
+
+        # Make decision based on analysis
+        has_question = analysis.get('has_question', False)
+        should_continue = analysis.get('should_continue', False)
+        confidence = analysis.get('confidence', 'low')
+
+        # Never continue if Claude has a REAL question for the user
+        if has_question:
+            decision = {"decision": "allow"}
+            reset_session_counter(session_id)
+        elif should_continue:  # Trust Opus 4.5's analysis at all confidence levels
+            reason = analysis.get('reason', 'Continue working on the task')
+
+            # Increment our counter and check if spinning or low confidence streak
+            new_count, is_spinning, low_conf_streak = increment_session_counter(session_id, reason, confidence)
+
+            # If spinning on same problem or low confidence streak, stop and let user intervene
+            if is_spinning:
+                decision = {"decision": "allow"}
+                reset_session_counter(session_id)
+            elif low_conf_streak:
+                decision = {"decision": "allow"}
+                reset_session_counter(session_id)
+            else:
+                decision = {
+                    "decision": "block",
+                    "reason": f"Continue: {reason}"
+                }
+        else:
+            decision = {"decision": "allow"}
+            reset_session_counter(session_id)
+
+        # Play beep ONLY if allowing stop (human intervention needed)
+        if decision.get("decision") == "allow":
+            try:
+                # Use Popen to avoid blocking/timeout issues
+                process = subprocess.Popen(
+                    ["afplay", "/System/Library/Sounds/Ping.aiff"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+                # DEBUG: Log beep attempt
+                with open("/tmp/stop_hook_simple.log", "a") as f:
+                    f.write(f"Beep started: pid={process.pid}\n")
+            except Exception as e:
+                # DEBUG: Log beep failure
+                with open("/tmp/stop_hook_simple.log", "a") as f:
+                    f.write(f"Beep failed: {str(e)}\n")
+
+        # DEBUG: Log decision
+        with open("/tmp/stop_hook_simple.log", "a") as f:
+            f.write(f"Decision: {json.dumps(decision)}\n")
+            f.write(f"Analysis result: should_continue={analysis.get('should_continue')}, reason={analysis.get('reason')[:50]}\n")
+
+        # Output decision
+        print(json.dumps(decision))
+        return 0
+
+    except Exception as e:
+        # On error, allow the stop (fail open)
+        print(json.dumps({"decision": "allow"}))
+        return 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())

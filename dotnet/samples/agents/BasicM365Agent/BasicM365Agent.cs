@@ -62,7 +62,7 @@ public class BasicM365Agent : AgentApplication
             Directory.GetCurrentDirectory(),
             "..", "..", "..", ".."
         ));
-        var recordingsDir = Path.Combine(repoRoot, "test-data", "llm-recordings", "basic-m365");
+        var recordingsDir = Path.Combine(repoRoot, "test-data", "llm-recordings", "sample", "basic-m365");
 
         // Create real ChatClient if needed (for normal or recording mode)
         ChatClient? realClient = null;

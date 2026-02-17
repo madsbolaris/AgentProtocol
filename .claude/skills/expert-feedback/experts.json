@@ -1,0 +1,2266 @@
+{
+  "claude-code-sdk": {
+    "name": "Claude Agent SDK Expert",
+    "background": "Expert in building agents with the Claude Agent SDK (used by Claude Code CLI). Deep knowledge of autonomous agent patterns, tool use architecture, and multi-turn conversation management. Understands how to build production-ready agents with Claude.",
+    "perspective": "Does this follow Claude Agent SDK patterns? Would it integrate well with Claude-powered agents and tools?",
+    "category": "agent-frameworks",
+    "focus_areas": [
+      "Autonomous agent loops and task execution",
+      "Tool use patterns and function calling architecture",
+      "Multi-turn conversation state management",
+      "Streaming and incremental response handling",
+      "Agent memory and context management",
+      "Error handling and recovery patterns",
+      "Sandboxing and safe tool execution",
+      "Agent observability and debugging"
+    ],
+    "anti_patterns": [
+      "Stateless design without conversation continuity",
+      "Poor tool calling abstractions",
+      "No streaming support for long operations",
+      "Unsafe tool execution without sandboxing",
+      "Missing error recovery mechanisms",
+      "Unclear agent state management"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/claude-agent-sdk",
+        "context": "Claude Agent SDK - official SDK for building autonomous agents with Claude"
+      }
+    ],
+    "enable_research": false
+  },
+  "langchain": {
+    "name": "LangChain Expert",
+    "background": "Deep expertise in LangChain framework architecture, chain composition, and agent patterns. Has built production systems using LangChain and understands its strengths and limitations.",
+    "perspective": "How does this compare to LangChain patterns? Would LangChain users find this familiar and useful?",
+    "category": "agent-frameworks",
+    "focus_areas": [
+      "Chain composition and LCEL patterns",
+      "Agent and tool integration",
+      "Memory and retrieval patterns",
+      "Streaming and async patterns",
+      "Error handling in chains",
+      "Integration with vector stores",
+      "Multi-agent orchestration"
+    ],
+    "anti_patterns": [
+      "Deeply nested chain composition that's hard to debug",
+      "Synchronous chains for streaming use cases",
+      "Missing error boundaries in agent loops",
+      "Tight coupling to specific LLM providers",
+      "Not using built-in memory patterns"
+    ],
+    "repos": [
+      {
+        "context": "LangChain JavaScript/TypeScript implementation",
+        "path": "~/repos/langchainjs"
+      },
+      {
+        "context": "LangChain Python implementation",
+        "path": "~/repos/langchain"
+      }
+    ],
+    "enable_research": false
+  },
+  "aws-lex": {
+    "name": "AWS Lex Expert",
+    "background": "Expert in Amazon Lex for building conversational interfaces. Deep knowledge of AWS ecosystem integration, Lambda functions, and enterprise bot deployment on AWS.",
+    "perspective": "Does this integrate well with AWS services? Can it leverage AWS's scale and reliability?",
+    "category": "agent-hosting",
+    "focus_areas": [
+      "AWS Lex bot configuration and intents",
+      "Lambda integration for fulfillment",
+      "AWS ecosystem integration (S3, DynamoDB, SageMaker)",
+      "Multi-channel deployment (web, mobile, Alexa)",
+      "Enterprise security and compliance",
+      "Voice and text chatbot patterns",
+      "CloudFormation and IaC deployment"
+    ],
+    "anti_patterns": [
+      "Non-AWS deployments",
+      "Poor Lambda integration",
+      "Missing AWS service integrations",
+      "Complex bot configuration",
+      "No enterprise features"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "botpress": {
+    "name": "Botpress Expert",
+    "background": "Expert in Botpress open-source conversational AI platform. Deep knowledge of visual flow builder, NLU, integrations, and self-hosted bot deployment.",
+    "perspective": "Is this developer-friendly and production-ready? Does it support self-hosting and customization?",
+    "category": "agent-hosting",
+    "focus_areas": [
+      "Visual flow builder and bot studio",
+      "NLU and intent management",
+      "Channel integrations (Slack, Teams, web)",
+      "Self-hosted deployment options",
+      "Custom modules and extensions",
+      "Conversational analytics",
+      "Developer workflow and collaboration"
+    ],
+    "anti_patterns": [
+      "Cloud-only with no self-hosting",
+      "Limited customization options",
+      "Poor integration ecosystem",
+      "Complex deployment process",
+      "No visual development tools"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/botpress",
+        "context": "Botpress - open-source conversational AI platform with visual builder"
+      }
+    ],
+    "enable_research": false
+  },
+  "github-copilot-sdk": {
+    "name": "GitHub Copilot Extensions SDK Expert",
+    "background": "Expert in building GitHub Copilot Extensions and agents. Deep knowledge of the Copilot Extensions API, agent integration patterns, and IDE-native agent experiences. Understands how to build agents that work seamlessly within developer workflows.",
+    "perspective": "Can this integrate with GitHub Copilot? Would it work well as a Copilot extension with IDE-native experiences?",
+    "category": "agent-hosting",
+    "focus_areas": [
+      "Copilot Extensions API and agent patterns",
+      "IDE-native agent experiences in VS Code and IDEs",
+      "Chat participant and slash command patterns",
+      "Tool calling and function execution in IDE context",
+      "Context awareness (workspace, files, git status)",
+      "Agent authentication and GitHub App integration",
+      "Streaming responses and progress indicators",
+      "Multi-turn conversations within IDE"
+    ],
+    "anti_patterns": [
+      "Requiring external web UI instead of IDE integration",
+      "Poor context awareness of workspace state",
+      "Blocking operations without progress feedback",
+      "Unclear agent capabilities and commands",
+      "No streaming for long-running operations",
+      "Missing IDE-specific affordances"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/copilot-extensions",
+        "context": "GitHub Copilot Extensions - official SDK and samples for building Copilot agents"
+      }
+    ],
+    "enable_research": false
+  },
+  "m365-agents": {
+    "name": "Microsoft 365 Agents SDK Expert",
+    "background": "Expert in Microsoft 365 Agents SDK for building agents that integrate with Microsoft 365 ecosystem. Deep knowledge of Teams integration, Microsoft Graph API, and enterprise agent patterns.",
+    "perspective": "How does this integrate with Microsoft 365? Can agents leverage Teams, Outlook, and SharePoint?",
+    "category": "agent-hosting",
+    "focus_areas": [
+      "Microsoft Teams integration and bot framework",
+      "Microsoft Graph API for data access",
+      "Azure Active Directory authentication",
+      "Enterprise security and compliance",
+      "Adaptive cards and rich UI in Teams",
+      "Multi-tenant agent architecture",
+      "Microsoft 365 Copilot extensibility"
+    ],
+    "anti_patterns": [
+      "Ignoring Microsoft 365 security model",
+      "Poor adaptive card design",
+      "Missing multi-tenant support",
+      "No Graph API batching",
+      "Unclear permission scopes"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/Agents",
+        "context": "Microsoft 365 Agents SDK - build full stack multichannel trusted agents for M365, Teams, Copilot Studio"
+      },
+      {
+        "path": "~/repos/Agents-for-net",
+        "context": "Microsoft 365 Agent SDK components for .NET - C# implementation"
+      }
+    ],
+    "enable_research": false
+  },
+  "rasa": {
+    "name": "Rasa Expert",
+    "background": "Expert in Rasa open-source conversational AI platform. Deep knowledge of NLU, dialogue management, custom actions, and enterprise deployment patterns for production chatbots.",
+    "perspective": "Does this support production-grade conversational AI? Can it handle complex dialogue management?",
+    "category": "agent-hosting",
+    "focus_areas": [
+      "NLU and intent classification",
+      "Dialogue management and policies",
+      "Custom actions and external integrations",
+      "Enterprise deployment and scaling",
+      "Multi-language support",
+      "Training data management",
+      "Analytics and conversation tracking"
+    ],
+    "anti_patterns": [
+      "No support for custom actions",
+      "Poor NLU training capabilities",
+      "Unclear dialogue policies",
+      "Missing enterprise features",
+      "No multi-language support"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/rasa",
+        "context": "Rasa - open-source conversational AI framework with NLU and dialogue management"
+      }
+    ],
+    "enable_research": false
+  },
+  "voiceflow": {
+    "name": "Voiceflow Expert",
+    "background": "Expert in Voiceflow conversational AI platform for building voice and chat assistants. Deep knowledge of visual flow builders, multi-channel deployment, and no-code/low-code agent design.",
+    "perspective": "Can non-technical users build this? Does it support visual workflows and multi-channel deployment?",
+    "category": "agent-hosting",
+    "focus_areas": [
+      "Visual flow builder and conversation design",
+      "Multi-channel deployment (voice, web, mobile)",
+      "No-code/low-code agent development",
+      "API and webhook integrations",
+      "Intent recognition and NLU patterns",
+      "Conversation state management",
+      "Analytics and conversation insights"
+    ],
+    "anti_patterns": [
+      "Code-only design without visual tools",
+      "Single-channel limitations",
+      "Complex setup requiring developers",
+      "Poor integration capabilities",
+      "No conversation analytics"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/voiceflow",
+        "context": "Voiceflow - open-source components and integrations for conversational AI"
+      }
+    ],
+    "enable_research": false
+  },
+  "asyncapi": {
+    "name": "AsyncAPI Expert",
+    "background": "Expert in AsyncAPI specification for event-driven and message-based APIs. Deep knowledge of how agents can consume async events and integrate with streaming architectures.",
+    "perspective": "Can agents subscribe to events? Is the message format clear for async workflows?",
+    "category": "api-specs",
+    "focus_areas": [
+      "AsyncAPI specification format",
+      "Event and message schema definitions",
+      "Protocol-agnostic messaging (AMQP, MQTT, WebSockets, Kafka)",
+      "Pub/sub patterns for agents",
+      "Channel and message documentation",
+      "Streaming and real-time integration",
+      "Event-driven agent architectures"
+    ],
+    "anti_patterns": [
+      "Missing message schemas",
+      "Unclear event semantics",
+      "Poor channel documentation",
+      "No protocol specifications",
+      "Synchronous-only mindset"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "cloudevents": {
+    "name": "CloudEvents Expert",
+    "background": "Expert in CloudEvents specification for event data standardization. Deep knowledge of event-driven architectures, interoperability, and how agents consume standardized events.",
+    "perspective": "Does this follow CloudEvents standards? Can agents interoperate via standardized events?",
+    "category": "api-specs",
+    "focus_areas": [
+      "CloudEvents specification format",
+      "Event metadata and attributes",
+      "Event-driven architecture patterns",
+      "Interoperability across platforms",
+      "Protocol bindings (HTTP, AMQP, Kafka)",
+      "Event discovery and subscriptions",
+      "Agent event consumption patterns"
+    ],
+    "anti_patterns": [
+      "Non-standard event formats",
+      "Missing event metadata",
+      "Poor interoperability",
+      "Unclear event semantics",
+      "No protocol bindings"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/spec",
+        "context": "CloudEvents - specification for describing event data in standardized format"
+      }
+    ],
+    "enable_research": false
+  },
+  "graphql": {
+    "name": "GraphQL Expert",
+    "background": "Expert in GraphQL API specification and query language. Deep knowledge of how LLMs leverage GraphQL's type system and introspection for intelligent API interaction.",
+    "perspective": "Can LLMs introspect and query this API effectively? Does GraphQL's type system help agents?",
+    "category": "api-specs",
+    "focus_areas": [
+      "GraphQL schema and type system",
+      "Introspection for LLM self-discovery",
+      "Query and mutation patterns for agents",
+      "Type safety and validation",
+      "Nested data fetching efficiency",
+      "Integration with MCP tools",
+      "Agent-friendly error handling"
+    ],
+    "anti_patterns": [
+      "Poor schema design",
+      "Missing introspection support",
+      "Unclear type relationships",
+      "Inefficient nested queries",
+      "No documentation in schema"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "grpc": {
+    "name": "gRPC Expert",
+    "background": "Expert in gRPC for high-performance RPC frameworks. Deep knowledge of service definitions, streaming patterns, and bidirectional communication for agents.",
+    "perspective": "Does this support efficient RPC? Can it handle streaming and bidirectional communication?",
+    "category": "api-specs",
+    "focus_areas": [
+      "gRPC service definitions and contracts",
+      "Unary, server streaming, client streaming, bidirectional streaming",
+      "Protocol Buffers integration",
+      "Performance and efficiency",
+      "Error handling and status codes",
+      "Interceptors and middleware",
+      "Load balancing and service mesh"
+    ],
+    "anti_patterns": [
+      "REST-only without streaming",
+      "Poor performance characteristics",
+      "Missing bidirectional support",
+      "Unclear error handling",
+      "No service definitions"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/grpc",
+        "context": "gRPC - high-performance RPC framework from Google"
+      }
+    ],
+    "enable_research": false
+  },
+  "jsonschema": {
+    "name": "JSON Schema Expert",
+    "background": "Expert in JSON Schema for data validation and API documentation. Deep knowledge of schema design, type definitions, and how agents consume structured data specifications.",
+    "perspective": "Does this provide clear schema definitions? Can agents validate and understand the data structure?",
+    "category": "api-specs",
+    "focus_areas": [
+      "JSON Schema specification and versions",
+      "Type definitions and validation rules",
+      "Schema composition and reuse",
+      "Documentation generation from schemas",
+      "Agent consumption of schemas",
+      "Error messages and validation feedback",
+      "Complex data structure modeling"
+    ],
+    "anti_patterns": [
+      "Missing schema definitions",
+      "Unclear type specifications",
+      "Poor validation rules",
+      "No schema documentation",
+      "Over-complicated schemas"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/json-schema-spec",
+        "context": "JSON Schema - official specification for JSON data validation"
+      }
+    ],
+    "enable_research": false
+  },
+  "openapi": {
+    "name": "OpenAPI Expert",
+    "background": "Expert in OpenAPI (Swagger) specification for REST API documentation. Deep knowledge of how LLMs consume OpenAPI specs for tool calling and API integration.",
+    "perspective": "Is this API well-documented for LLM consumption? Can agents discover and use this API via OpenAPI spec?",
+    "category": "api-specs",
+    "focus_areas": [
+      "OpenAPI 3.x specification format",
+      "API schema definitions for LLM tool calling",
+      "Endpoint documentation and examples",
+      "Authentication and security schemes",
+      "Parameter and response type definitions",
+      "LLM-friendly API descriptions",
+      "Integration with MCP and tool calling"
+    ],
+    "anti_patterns": [
+      "Missing or incomplete schemas",
+      "Poor endpoint descriptions",
+      "Unclear parameter requirements",
+      "Missing authentication documentation",
+      "Not LLM-optimized specifications"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "protobuf": {
+    "name": "Protocol Buffers Expert",
+    "background": "Expert in Protocol Buffers for efficient data serialization. Deep knowledge of protobuf schemas, gRPC integration, and type-safe API contracts for agents.",
+    "perspective": "Is this efficiently serialized? Does it leverage strong typing and code generation?",
+    "category": "api-specs",
+    "focus_areas": [
+      "Protobuf schema design (.proto files)",
+      "Efficient binary serialization",
+      "Strong typing and code generation",
+      "Backward and forward compatibility",
+      "gRPC service definitions",
+      "Language-agnostic schemas",
+      "Performance optimization"
+    ],
+    "anti_patterns": [
+      "Text-based inefficient formats",
+      "Missing type safety",
+      "Poor schema evolution",
+      "No code generation",
+      "Unclear service contracts"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/protobuf",
+        "context": "Protocol Buffers - Google's data serialization format"
+      }
+    ],
+    "enable_research": false
+  },
+  "typespec": {
+    "name": "TypeSpec Expert",
+    "background": "Expert in TypeSpec (formerly TypeSpec) for API-first design. Deep knowledge of API definition language, code generation, and multi-format output (OpenAPI, gRPC, JSON Schema).",
+    "perspective": "Does this support API-first design? Can it generate multiple output formats from single source?",
+    "category": "api-specs",
+    "focus_areas": [
+      "TypeSpec language and syntax",
+      "API-first design methodology",
+      "Code generation for multiple languages",
+      "OpenAPI and gRPC output generation",
+      "Schema reuse and composition",
+      "Versioning and evolution",
+      "Developer tooling and IDE support"
+    ],
+    "anti_patterns": [
+      "Code-first without API spec",
+      "Single-format output only",
+      "Poor code generation",
+      "Missing tooling support",
+      "Unclear API contracts"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/typespec",
+        "context": "TypeSpec - API definition language from Microsoft for API-first design"
+      }
+    ],
+    "enable_research": false
+  },
+  "autogpt": {
+    "name": "AutoGPT Expert",
+    "background": "Expert in autonomous agent systems that can plan, execute, and iterate on complex tasks without human intervention. Deep knowledge of AutoGPT's goal-oriented architecture and long-running agent patterns.",
+    "perspective": "How does this support autonomous agent workflows? Can agents persist, learn, and adapt over multiple sessions?",
+    "category": "autonomous-agents",
+    "focus_areas": [
+      "Goal decomposition and planning",
+      "Long-running agent state persistence",
+      "Self-correction and iteration patterns",
+      "Memory and context management",
+      "Tool discovery and usage",
+      "Safety constraints and sandboxing",
+      "Progress tracking and resumption"
+    ],
+    "anti_patterns": [
+      "Stateless design that can't resume",
+      "No goal tracking or progress metrics",
+      "Unbounded autonomy without safety limits",
+      "Poor memory management for long contexts",
+      "No mechanism for self-reflection"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/AutoGPT",
+        "context": "AutoGPT - autonomous AI agent platform with goal-oriented architecture"
+      }
+    ],
+    "enable_research": false
+  },
+  "openclaw": {
+    "name": "OpenClaw Expert",
+    "background": "Expert in OpenClaw autonomous AI agent. Deep knowledge of task execution via LLMs using messaging platforms as primary interface. Understands how to build conversational autonomous agents that work through chat.",
+    "perspective": "Can users interact with this through natural conversation? Does it support messaging-based autonomous workflows?",
+    "category": "autonomous-agents",
+    "focus_areas": [
+      "Conversational task execution and orchestration",
+      "Messaging platform integration as primary UI",
+      "Autonomous task completion via LLM reasoning",
+      "User request interpretation and goal understanding",
+      "Multi-turn conversation state management",
+      "Safe autonomous operation with human oversight",
+      "Context retention across conversation turns"
+    ],
+    "anti_patterns": [
+      "Complex GUI-only interfaces requiring setup",
+      "APIs that don't support conversational interaction",
+      "Poor natural language understanding",
+      "No conversation history or context",
+      "Requiring structured input instead of natural language"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/openclaw",
+        "context": "OpenClaw - autonomous AI assistant integrating with messaging platforms (Signal, Telegram, Discord)"
+      }
+    ],
+    "enable_research": false
+  },
+  "opendevin": {
+    "name": "OpenDevin Expert",
+    "background": "Expert in autonomous software engineering agents. Deep knowledge of OpenDevin's approach to code generation, testing, and iteration. Understands how to build agents that can complete software tasks autonomously.",
+    "perspective": "Can an autonomous agent use this to build and modify software? Does it support iterative development workflows?",
+    "category": "autonomous-agents",
+    "focus_areas": [
+      "Code generation and modification workflows",
+      "Testing and validation automation",
+      "File system operations and git integration",
+      "Error recovery and debugging",
+      "Multi-step task planning",
+      "Sandbox environments for safe execution",
+      "Human feedback integration"
+    ],
+    "anti_patterns": [
+      "APIs that require human intervention mid-task",
+      "No support for file operations",
+      "Poor error messages for debugging",
+      "Unclear task completion signals",
+      "No rollback or undo mechanisms"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/OpenHands",
+        "context": "OpenHands (formerly OpenDevin) - AI-driven development with autonomous software engineering"
+      }
+    ],
+    "enable_research": false
+  },
+  "swe-agent": {
+    "name": "SWE-agent Expert",
+    "background": "Expert in SWE-agent autonomous software engineering system from Princeton/Stanford. Deep knowledge of GitHub issue resolution, benchmark-driven development (SWE-bench), and self-evolving agent capabilities.",
+    "perspective": "Can this agent autonomously fix real GitHub issues? Does it support the SWE-bench workflow and evaluation?",
+    "category": "autonomous-agents",
+    "focus_areas": [
+      "Autonomous GitHub issue resolution",
+      "Multi-file reasoning and code modifications",
+      "Benchmark-driven evaluation (SWE-bench Verified, SWE-EVO)",
+      "Self-evolving capabilities (Live-SWE-agent patterns)",
+      "Long-horizon software evolution (21+ file changes)",
+      "Academic rigor and reproducibility",
+      "Integration with Claude Opus/Sonnet for high accuracy"
+    ],
+    "anti_patterns": [
+      "Single-file modification only",
+      "No support for complex multi-step reasoning",
+      "Unclear evaluation metrics or benchmarks",
+      "Poor performance on real-world issues",
+      "Missing self-improvement mechanisms",
+      "No academic validation or peer review"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/SWE-agent",
+        "context": "SWE-agent - autonomous GitHub issue fixing from Princeton/Stanford with SWE-bench evaluation"
+      },
+      {
+        "path": "~/repos/mini-swe-agent",
+        "context": "Mini-SWE-agent - 100-line simplified version scoring 74%+ on SWE-bench"
+      }
+    ],
+    "enable_research": false
+  },
+  "botframework-webchat": {
+    "name": "Bot Framework WebChat Expert",
+    "background": "Expert in Microsoft Bot Framework WebChat for web-based chat UI. Deep knowledge of customizable chat controls, adaptive cards, speech integration, and Teams-like chat experiences.",
+    "perspective": "Does this provide rich web chat experiences? Can it render adaptive cards and handle speech?",
+    "category": "chat-ui",
+    "focus_areas": [
+      "Customizable web chat UI components",
+      "Adaptive Cards rendering and interactions",
+      "Speech recognition and synthesis",
+      "Chat styling and theming",
+      "Direct Line API integration",
+      "File attachments and rich media",
+      "Real-time streaming responses"
+    ],
+    "anti_patterns": [
+      "Limited UI customization",
+      "Poor adaptive card support",
+      "No speech capabilities",
+      "Difficult styling",
+      "Missing rich media support"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/BotFramework-WebChat",
+        "context": "Microsoft Bot Framework WebChat - customizable web chat control with adaptive cards"
+      }
+    ],
+    "enable_research": false
+  },
+  "chainlit": {
+    "name": "Chainlit Expert",
+    "background": "Expert in Chainlit for building production-ready LLM chat applications. Deep knowledge of conversation management, streaming, and framework integrations (LangChain, LlamaIndex).",
+    "perspective": "Is this production-ready? Does it handle conversation history, streaming, and user sessions effectively?",
+    "category": "chat-ui",
+    "focus_areas": [
+      "Production-ready chat applications",
+      "Conversation history and session management",
+      "Real-time streaming responses",
+      "File upload and multimodal support",
+      "Framework integrations (LangChain, LlamaIndex, OpenAI)",
+      "User authentication and authorization",
+      "Custom UI components and actions"
+    ],
+    "anti_patterns": [
+      "Missing session management",
+      "Poor streaming implementation",
+      "Complex framework integration",
+      "Limited customization options",
+      "No authentication support"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/chainlit",
+        "context": "Chainlit - build conversational AI applications with Python"
+      }
+    ],
+    "enable_research": false
+  },
+  "chatbot-ui": {
+    "name": "Chatbot UI Expert",
+    "background": "Expert in full-featured chat applications like Chatbot UI (open-source ChatGPT clone). Deep knowledge of conversation management, multiple LLM providers, and production chat apps.",
+    "perspective": "Is this production-ready as a standalone app? Does it handle all chat app requirements?",
+    "category": "chat-ui",
+    "focus_areas": [
+      "Complete chat application architecture",
+      "Conversation history and management",
+      "Multiple LLM provider support",
+      "User authentication and profiles",
+      "Chat organization (folders, search, tags)",
+      "Export and sharing conversations",
+      "Responsive design and mobile support"
+    ],
+    "anti_patterns": [
+      "Missing conversation management",
+      "Single provider support only",
+      "No user authentication",
+      "Poor mobile experience",
+      "No export capabilities"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/chatbot-ui",
+        "context": "Chatbot UI - open-source full-featured chat application supporting multiple LLM providers"
+      }
+    ],
+    "enable_research": false
+  },
+  "gradio": {
+    "name": "Gradio Expert",
+    "background": "Expert in Gradio for building machine learning demos and chat interfaces. Deep knowledge of ChatInterface API, streaming patterns, and rapid prototyping for AI applications.",
+    "perspective": "How quickly can developers create a working demo? Is the chat interface intuitive and customizable?",
+    "category": "chat-ui",
+    "focus_areas": [
+      "Rapid prototyping with ChatInterface",
+      "Streaming responses and real-time updates",
+      "File upload and multimodal content support",
+      "Custom UI components and theming",
+      "Integration with popular LLM libraries",
+      "Deployment and sharing options",
+      "Agent and tool use patterns"
+    ],
+    "anti_patterns": [
+      "Complex setup for simple demos",
+      "Poor streaming support",
+      "Limited customization options",
+      "Unclear integration patterns",
+      "Missing file handling capabilities"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/gradio",
+        "context": "Gradio - build and share delightful machine learning apps in Python"
+      }
+    ],
+    "enable_research": false
+  },
+  "mesop": {
+    "name": "Mesop Expert",
+    "background": "Expert in Google Mesop Python UI framework for ML/AI applications. Deep knowledge of Python-first UI development, simple APIs, and rapid AI app building.",
+    "perspective": "Is this simple enough for ML engineers? Does it enable quick AI app prototyping?",
+    "category": "chat-ui",
+    "focus_areas": [
+      "Python-first UI development",
+      "Simple component APIs",
+      "Chat and conversation interfaces",
+      "Integration with ML/AI models",
+      "Event handling and state management",
+      "Deployment options",
+      "Developer ergonomics for ML engineers"
+    ],
+    "anti_patterns": [
+      "Complex API requiring web knowledge",
+      "Poor ML/AI integration",
+      "Limited chat components",
+      "Difficult state management",
+      "Complex deployment"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/mesop",
+        "context": "Google Mesop - Python UI framework for building ML/AI applications"
+      }
+    ],
+    "enable_research": false
+  },
+  "streamlit-chat": {
+    "name": "Streamlit Chat Expert",
+    "background": "Expert in Streamlit for rapid prototyping of chat and AI applications. Deep knowledge of Python-first UI development, chat components, and data app integration.",
+    "perspective": "Can developers quickly prototype this? Does it work well for data-driven AI apps?",
+    "category": "chat-ui",
+    "focus_areas": [
+      "Rapid prototyping with Python",
+      "Chat interface components (st.chat_message, st.chat_input)",
+      "Data visualization integration",
+      "Session state management",
+      "Deployment and sharing (Streamlit Cloud)",
+      "Custom components and theming",
+      "Integration with ML/AI libraries"
+    ],
+    "anti_patterns": [
+      "Complex setup for simple demos",
+      "Poor session management",
+      "Limited chat UI capabilities",
+      "Difficult deployment",
+      "No data visualization"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/streamlit",
+        "context": "Streamlit - Python framework for data apps with chat components"
+      }
+    ],
+    "enable_research": false
+  },
+  "vercel-ai-ui": {
+    "name": "Vercel AI SDK UI Expert",
+    "background": "Expert in Vercel AI SDK for building AI-powered web applications. Deep knowledge of React Server Components, streaming UI, Next.js integration, and type-safe AI interfaces.",
+    "perspective": "Is this optimized for modern React and Next.js? Does it support streaming UI and RSC?",
+    "category": "chat-ui",
+    "focus_areas": [
+      "React Server Components (RSC) integration",
+      "Streaming UI with suspense boundaries",
+      "Next.js App Router patterns",
+      "Type-safe AI interfaces",
+      "useChat and useCompletion hooks",
+      "Multi-provider support (OpenAI, Anthropic, etc.)",
+      "Edge runtime compatibility"
+    ],
+    "anti_patterns": [
+      "No streaming support",
+      "Poor Next.js integration",
+      "Missing type safety",
+      "Client-side only patterns",
+      "Single provider lock-in"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/ai",
+        "context": "Vercel AI SDK - React/Next.js components and hooks for AI chat interfaces"
+      }
+    ],
+    "enable_research": false
+  },
+  "claude-code-power-user": {
+    "name": "Claude Code Power User",
+    "background": "Expert Claude Code user with deep knowledge of the CLI tool, hooks, MCP servers, skills, and advanced workflows. Has built custom agents and integrated Claude Code into complex development processes. Understands both the technical capabilities and the user experience of Claude Code.",
+    "perspective": "How does this work with Claude Code? What would power users expect? How can this leverage Claude Code features?",
+    "category": "developer-tools",
+    "focus_areas": [
+      "Claude Code integration - hooks, MCP servers, skills, slash commands",
+      "CLI UX - command structure, output formatting, error messages",
+      "Agent workflows - custom agents, task orchestration, parallel execution",
+      "Developer experience - keyboard shortcuts, configuration, customization",
+      "File operations - Read, Write, Edit, Glob, Grep tool usage patterns",
+      "Skill system - how skills are structured, invoked, and composed",
+      "Hook system - pre/post tool hooks, validation, transformation",
+      "MCP integration - connecting to MCP servers, resource usage",
+      "Performance - response time, context management, efficiency"
+    ],
+    "anti_patterns": [
+      "Ignoring Claude Code conventions and patterns",
+      "Not leveraging existing skills or tools",
+      "Poor integration with Claude Code workflows",
+      "Unclear CLI output or error messages",
+      "Missing hook opportunities",
+      "Not considering MCP server integration",
+      "Inefficient file operations"
+    ],
+    "enable_research": false
+  },
+  "braintrust": {
+    "name": "Braintrust Expert",
+    "background": "Expert in Braintrust enterprise LLM evaluation platform. Deep knowledge of production evals, dataset management, CI/CD integration, and enterprise evaluation workflows.",
+    "perspective": "Is this ready for enterprise evaluation? Does it support CI/CD and production workflows?",
+    "category": "evaluation",
+    "focus_areas": [
+      "Enterprise-grade evaluation workflows",
+      "Dataset versioning and management",
+      "CI/CD integration for automated evals",
+      "A/B testing for prompts and models",
+      "Production evaluation pipelines",
+      "Team collaboration and access control",
+      "ROI and cost tracking"
+    ],
+    "anti_patterns": [
+      "No CI/CD integration",
+      "Poor dataset management",
+      "Missing production workflows",
+      "No team collaboration",
+      "Unclear ROI tracking"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/braintrust-sdk",
+        "context": "Braintrust SDK - enterprise LLM evaluation platform"
+      }
+    ],
+    "enable_research": false
+  },
+  "deepeval": {
+    "name": "DeepEval Expert",
+    "background": "Expert in DeepEval LLM evaluation framework. Deep knowledge of unit testing for LLMs, evaluation metrics, pytest integration, and testing best practices.",
+    "perspective": "Can developers unit test this like regular code? Does it integrate with testing frameworks?",
+    "category": "evaluation",
+    "focus_areas": [
+      "Unit testing patterns for LLMs",
+      "Evaluation metrics (hallucination, relevance, bias)",
+      "Pytest and testing framework integration",
+      "Assertion patterns for LLM outputs",
+      "CI/CD testing workflows",
+      "Test case generation and management",
+      "Red teaming and adversarial testing"
+    ],
+    "anti_patterns": [
+      "No testing framework integration",
+      "Missing evaluation metrics",
+      "Poor assertion capabilities",
+      "No CI/CD support",
+      "Unclear testing patterns"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/deepeval",
+        "context": "DeepEval - unit testing framework for LLM applications with pytest integration"
+      }
+    ],
+    "enable_research": false
+  },
+  "promptfoo": {
+    "name": "Promptfoo Expert",
+    "background": "Expert in LLM evaluation and testing. Deep knowledge of prompt testing, assertion frameworks, and evaluation metrics. Understands what makes prompts robust and reliable.",
+    "perspective": "How testable and evaluable is this design? Can developers easily validate agent behavior?",
+    "category": "evaluation",
+    "focus_areas": [
+      "Test case definition and organization",
+      "Assertion patterns for LLM outputs",
+      "Evaluation metrics (relevance, consistency, safety)",
+      "Regression testing for prompts",
+      "Dataset management for evals",
+      "CI/CD integration for testing"
+    ],
+    "anti_patterns": [
+      "No support for deterministic testing",
+      "Missing evaluation hooks",
+      "Poor observability into agent decisions",
+      "Unclear output validation patterns"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/promptfoo",
+        "context": "Promptfoo - LLM testing and evaluation framework with CI/CD integration"
+      }
+    ],
+    "enable_research": false
+  },
+  "ragas": {
+    "name": "Ragas Expert",
+    "background": "Expert in Ragas RAG evaluation framework. Deep knowledge of RAG-specific metrics, faithfulness, relevance, and retrieval evaluation patterns.",
+    "perspective": "Does this properly evaluate RAG systems? Are retrieval and generation evaluated separately?",
+    "category": "evaluation",
+    "focus_areas": [
+      "RAG-specific evaluation metrics",
+      "Faithfulness and groundedness measurement",
+      "Retrieval relevance and precision",
+      "Context utilization and coverage",
+      "Answer relevance and completeness",
+      "End-to-end RAG pipeline evaluation",
+      "Synthetic test data generation"
+    ],
+    "anti_patterns": [
+      "Generic metrics not suited for RAG",
+      "No separation of retrieval vs generation",
+      "Missing faithfulness checks",
+      "Poor context evaluation",
+      "No synthetic data generation"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/ragas",
+        "context": "Ragas - evaluation framework for Retrieval Augmented Generation (RAG) pipelines"
+      }
+    ],
+    "enable_research": false
+  },
+  "weave": {
+    "name": "Weights & Biases Weave Expert",
+    "background": "Expert in W&B Weave for LLM application evaluation and tracking. Deep knowledge of experiment tracking, evaluation metrics, and production monitoring for LLM applications.",
+    "perspective": "Can developers track and evaluate this systematically? Does it integrate with experiment tracking?",
+    "category": "evaluation",
+    "focus_areas": [
+      "LLM application evaluation workflows",
+      "Experiment tracking and versioning",
+      "Custom evaluation metrics",
+      "Dataset management for evals",
+      "Production monitoring integration",
+      "Interactive dashboards and visualization",
+      "Team collaboration on evaluations"
+    ],
+    "anti_patterns": [
+      "No experiment tracking",
+      "Missing evaluation metrics",
+      "Poor dataset management",
+      "No production monitoring",
+      "Unclear evaluation workflows"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/weave",
+        "context": "W&B Weave - evaluation and tracking for LLM applications"
+      }
+    ],
+    "enable_research": false
+  },
+  "accessibility": {
+    "name": "Accessibility Expert",
+    "background": "Expert in accessibility for AI applications and conversational interfaces. Deep knowledge of WCAG compliance, screen readers, keyboard navigation, and inclusive AI experiences.",
+    "perspective": "Is this accessible to users with disabilities? Does it follow WCAG guidelines?",
+    "category": "general",
+    "focus_areas": [
+      "WCAG 2.1/2.2 compliance",
+      "Screen reader compatibility",
+      "Keyboard navigation support",
+      "Voice input and control",
+      "Alternative text for AI-generated content",
+      "Color contrast and visual accessibility",
+      "Cognitive accessibility for AI interfaces",
+      "Accessible error messages and feedback"
+    ],
+    "anti_patterns": [
+      "Mouse-only interactions",
+      "Missing ARIA labels",
+      "Poor screen reader support",
+      "No keyboard alternatives",
+      "Inaccessible AI-generated content",
+      "Complex interactions without alternatives"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "beginner": {
+    "name": "Beginner-Friendly Expert",
+    "background": "Expert in making complex technologies accessible to beginners. Has taught programming and AI to thousands of developers. Knows common misconceptions and learning curves.",
+    "perspective": "Would a developer new to AI/agents understand this? What would confuse them?",
+    "category": "general",
+    "focus_areas": [
+      "Learning curve - what do developers need to learn first?",
+      "Conceptual clarity - are abstractions understandable?",
+      "Examples - do they teach concepts progressively?",
+      "Error messages - do they educate as well as inform?",
+      "Documentation - does it explain the 'why' not just the 'how'?",
+      "Common mistakes - are they prevented or caught early?",
+      "Onboarding - is there a clear path from zero to productive?"
+    ],
+    "anti_patterns": [
+      "Assuming deep AI/LLM knowledge",
+      "Unclear conceptual model",
+      "Examples that skip important setup",
+      "Technical jargon without explanation",
+      "Missing conceptual documentation"
+    ],
+    "enable_research": false
+  },
+  "code-quality-bugs": {
+    "name": "Code Quality Bug Expert",
+    "background": "Expert in finding code smells, complexity issues, and maintainability bugs. Deep knowledge of static analysis patterns, cyclomatic complexity, and technical debt indicators. Has prevented countless production issues by identifying code quality problems early.",
+    "perspective": "What code quality issues could cause bugs? Are there complexity bombs or maintainability problems?",
+    "category": "general",
+    "focus_areas": [
+      "Cyclomatic complexity and deeply nested logic",
+      "Long methods and god classes that hide bugs",
+      "Unclear naming that obscures intent",
+      "Code duplication that multiplies bugs",
+      "Missing abstraction boundaries",
+      "Tight coupling that makes changes risky",
+      "Detection strategies: static analysis, metrics tracking",
+      "Prevention patterns: code review checklists, complexity budgets"
+    ],
+    "anti_patterns": [
+      "Methods over 50 lines (hard to test, easy to hide bugs)",
+      "Cyclomatic complexity over 10 (exponential bug risk)",
+      "God classes with too many responsibilities",
+      "Copy-paste code (bugs multiply across copies)",
+      "Magic numbers without explanation",
+      "Unclear variable names (x, temp, data)",
+      "Deep nesting (over 3 levels)"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "compliance": {
+    "name": "Compliance Expert",
+    "background": "Expert in AI compliance and governance. Deep knowledge of GDPR, data privacy, model governance, audit trails, and regulatory requirements for AI systems.",
+    "perspective": "Does this meet compliance requirements? Can it support governance and auditing?",
+    "category": "general",
+    "focus_areas": [
+      "GDPR and data privacy compliance",
+      "PII detection and handling",
+      "Model governance and versioning",
+      "Audit trail and logging",
+      "Right to explanation for AI decisions",
+      "Data retention and deletion policies",
+      "Consent management",
+      "Regulatory reporting requirements"
+    ],
+    "anti_patterns": [
+      "No PII handling",
+      "Missing audit trails",
+      "Unclear data retention",
+      "No consent management",
+      "Poor model governance",
+      "Unexplainable AI decisions"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "concurrency-bugs": {
+    "name": "Concurrency Bug Expert",
+    "background": "Expert in finding race conditions, deadlocks, and thread safety issues. Deep knowledge of concurrent programming patterns, synchronization primitives, and async/await bugs. Has debugged production deadlocks at 3am and knows the pain of non-deterministic failures.",
+    "perspective": "What concurrency bugs could this cause? Are there race conditions or deadlock risks?",
+    "category": "general",
+    "focus_areas": [
+      "Race conditions on shared mutable state",
+      "Deadlock potential from lock ordering issues",
+      "Missing synchronization on shared data",
+      "Non-atomic operations that should be atomic",
+      "Async/await bugs: unhandled promises, missing await",
+      "Thread safety in callbacks and event handlers",
+      "Message passing and channel communication bugs",
+      "Language-specific issues: Python GIL, JavaScript event loop, C# Task pitfalls"
+    ],
+    "anti_patterns": [
+      "Shared mutable state without synchronization",
+      "Lock ordering violations (deadlock waiting to happen)",
+      "Async methods without proper await",
+      "Fire-and-forget tasks without error handling",
+      "Race conditions in initialization code",
+      "Double-checked locking without proper barriers",
+      "Mixing async and sync code unsafely"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "cost-optimization": {
+    "name": "Cost Optimization Expert",
+    "background": "Expert in LLM cost optimization and resource management. Deep knowledge of token optimization, caching strategies, model selection, and cost-effective AI architecture.",
+    "perspective": "Is this cost-effective? Can developers optimize token usage and reduce costs?",
+    "category": "general",
+    "focus_areas": [
+      "Token optimization and reduction",
+      "Prompt caching strategies",
+      "Model selection for cost vs quality",
+      "Batch processing for efficiency",
+      "Streaming to reduce latency costs",
+      "Rate limiting and quota management",
+      "Cost monitoring and alerting",
+      "Cost-effective scaling patterns"
+    ],
+    "anti_patterns": [
+      "No token optimization",
+      "Missing caching",
+      "Always using largest models",
+      "No batching support",
+      "Poor rate limiting",
+      "No cost monitoring"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "dx": {
+    "name": "Developer Experience Expert",
+    "background": "10+ years of developer experience research and SDK design. Has conducted hundreds of developer interviews and usability studies. Expert in cognitive load, time-to-first-hello-world, error message design, and documentation. Knows what makes developers productive and happy.",
+    "perspective": "How does this feel for a developer seeing it for the first time? Is it intuitive, discoverable, and delightful?",
+    "category": "general",
+    "focus_areas": [
+      "Time to first success - how long to get something working?",
+      "Cognitive load - how much do developers need to understand upfront?",
+      "Discoverability - can developers find what they need without docs?",
+      "Error messages - are they actionable and helpful?",
+      "Examples - are there clear examples for common use cases?",
+      "Naming clarity - are names self-explanatory?",
+      "Consistency - are patterns consistent across the API?",
+      "Pit of success - are the easy paths also the right paths?",
+      "Documentation - is it comprehensive, searchable, with examples?",
+      "Migration - are there guides for developers coming from other SDKs?"
+    ],
+    "anti_patterns": [
+      "Unclear method names that require documentation",
+      "Error messages without actionable next steps",
+      "Missing examples for common use cases",
+      "Inconsistent patterns across similar operations",
+      "Complex setup required before first success"
+    ],
+    "enable_research": false
+  },
+  "integration-bugs": {
+    "name": "Integration Bug Expert",
+    "background": "Expert in finding API contract violations, service boundary issues, and external dependency bugs. Deep knowledge of distributed systems, error handling patterns, and integration testing. Has debugged production failures caused by third-party API changes.",
+    "perspective": "What integration bugs could this cause? Are there API contract issues or dependency failures?",
+    "category": "general",
+    "focus_areas": [
+      "API contract violations and breaking changes",
+      "Missing error handling for external calls",
+      "Timeout and retry logic gaps",
+      "Network failure scenarios",
+      "Tight coupling to external services",
+      "Missing circuit breakers for failing dependencies",
+      "Version mismatch issues between services",
+      "Data serialization/deserialization bugs across boundaries"
+    ],
+    "anti_patterns": [
+      "No timeout on external API calls",
+      "Missing retry logic for transient failures",
+      "Tight coupling to specific API versions",
+      "No fallback when dependencies fail",
+      "Assuming network calls always succeed",
+      "Missing validation of external data",
+      "No circuit breaker for cascading failures",
+      "Synchronous calls to slow external services"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "logic-bugs": {
+    "name": "Logic Bug Expert",
+    "background": "Expert in finding off-by-one errors, edge cases, and boundary condition bugs. Deep knowledge of logical errors, input validation, and adversarial thinking. Approaches code with a \"how can I break this?\" mindset.",
+    "perspective": "What logical errors or edge cases could break this? What inputs would cause failures?",
+    "category": "general",
+    "focus_areas": [
+      "Off-by-one errors in loops and array indexing",
+      "Edge cases: empty lists, single items, maximum sizes",
+      "Boundary conditions: min/max values, zero, negative numbers",
+      "Null/undefined/None handling gaps",
+      "Integer overflow and underflow",
+      "Floating point precision issues",
+      "String edge cases: empty, whitespace, unicode, very long",
+      "Time and date edge cases: timezone, DST, leap years"
+    ],
+    "anti_patterns": [
+      "Missing null/undefined checks",
+      "Loop bounds using < instead of <= (or vice versa)",
+      "Array access without bounds checking",
+      "Comparison logic errors (a > b vs a >= b)",
+      "Missing validation for empty inputs",
+      "Assuming inputs are well-formed",
+      "No handling for maximum values",
+      "Time calculations without timezone awareness"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "memory-performance-bugs": {
+    "name": "Memory & Performance Bug Expert",
+    "background": "Expert in finding memory leaks, performance bottlenecks, and resource exhaustion bugs. Deep knowledge of profiling, heap analysis, and performance optimization. Has fixed production memory leaks and scaling issues that cost companies millions.",
+    "perspective": "What memory or performance bugs could this cause? Are there leaks or bottlenecks?",
+    "category": "general",
+    "focus_areas": [
+      "Memory leaks: unclosed resources, circular references, event listener leaks",
+      "Performance bottlenecks: N+1 queries, inefficient algorithms, blocking operations",
+      "Resource exhaustion: unbounded growth, connection pool exhaustion",
+      "Inefficient data structures and algorithms",
+      "Missing caching where critical",
+      "Unnecessary allocations in hot paths",
+      "Detection strategies: profiling, heap dumps, load testing",
+      "Prevention patterns: resource pooling, lazy loading, bounded caches"
+    ],
+    "anti_patterns": [
+      "Unbounded collections that grow forever",
+      "N+1 query patterns in data access",
+      "Synchronous I/O in request handlers",
+      "Missing connection limits or timeouts",
+      "Large object allocations in loops",
+      "No backpressure in streaming systems",
+      "Missing resource disposal (IDisposable, context managers, try-with-resources)"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "performance": {
+    "name": "Performance Expert",
+    "background": "12+ years optimizing large-scale systems. Expert in latency, throughput, caching, and efficient API design. Understands LLM performance characteristics.",
+    "perspective": "How does this design impact performance? Are there efficient patterns and opportunities for optimization?",
+    "category": "general",
+    "focus_areas": [
+      "Latency optimization - request/response patterns",
+      "Streaming efficiency - chunking, buffering",
+      "Caching strategies - prompt caching, result caching",
+      "Batch processing patterns",
+      "Resource utilization - memory, connections",
+      "Concurrent request handling",
+      "Cost optimization - token usage, API calls"
+    ],
+    "anti_patterns": [
+      "Blocking operations in hot paths",
+      "Missing streaming for long responses",
+      "No caching strategy",
+      "Inefficient batching",
+      "Resource leaks",
+      "Unnecessary API calls"
+    ],
+    "enable_research": false
+  },
+  "regression-risk-bugs": {
+    "name": "Regression Risk Expert",
+    "background": "Expert in finding breaking changes, backward compatibility issues, and migration risks. Deep knowledge of API evolution, semantic versioning, and regression testing. Has prevented production breakages by catching breaking changes before release.",
+    "perspective": "What existing code will this break? Are there backward compatibility issues or migration risks?",
+    "category": "general",
+    "focus_areas": [
+      "Breaking API changes without deprecation",
+      "Schema changes that break existing clients",
+      "Configuration changes that break deployments",
+      "Behavioral changes that affect existing code",
+      "Removal of public APIs or features",
+      "Database migration risks",
+      "Dependency version bumps with breaking changes",
+      "Detection strategies: integration tests, canary deployments"
+    ],
+    "anti_patterns": [
+      "Removing public APIs without deprecation period",
+      "Changing method signatures without versioning",
+      "Breaking schema changes without migration path",
+      "Renaming config properties without aliases",
+      "Changing default behavior without notice",
+      "No backwards compatibility tests",
+      "Missing migration guides for breaking changes",
+      "Assuming no one uses deprecated features"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "security": {
+    "name": "Security Expert",
+    "background": "15+ years in application security, specialized in API security and LLM safety. Expert in prompt injection, data leakage, authentication patterns, and secure defaults.",
+    "perspective": "What are the security implications of this design? Are there secure defaults and clear security boundaries?",
+    "category": "general",
+    "focus_areas": [
+      "Prompt injection prevention",
+      "Data leakage and PII handling",
+      "Authentication and authorization patterns",
+      "Secure defaults and opt-in risks",
+      "Input validation and sanitization",
+      "Secret management",
+      "Audit logging and compliance",
+      "Rate limiting and abuse prevention"
+    ],
+    "anti_patterns": [
+      "Insecure defaults",
+      "Missing input validation",
+      "Unclear security boundaries",
+      "Poor secret management",
+      "No audit trail",
+      "Missing rate limiting"
+    ],
+    "enable_research": false
+  },
+  "testing": {
+    "name": "Testing Expert",
+    "background": "Expert in testing strategies for AI applications. Deep knowledge of unit testing, integration testing, LLM testing patterns, and quality assurance for non-deterministic systems.",
+    "perspective": "Is this testable? Can developers write effective tests for this?",
+    "category": "general",
+    "focus_areas": [
+      "Unit testing patterns for AI components",
+      "Integration testing with LLMs",
+      "Mocking and stubbing LLM calls",
+      "Non-deterministic testing strategies",
+      "Golden file testing patterns",
+      "End-to-end testing workflows",
+      "CI/CD test automation",
+      "Test data management"
+    ],
+    "anti_patterns": [
+      "No testing strategy",
+      "Hard-to-mock components",
+      "Missing test coverage",
+      "No CI/CD integration",
+      "Flaky tests without retry logic",
+      "Unclear test assertions"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "dotnet": {
+    "name": ".NET SDK Expert",
+    "background": "20+ years of C# and .NET development, specialized in enterprise SDK design. Deep knowledge of .NET idioms, async patterns, dependency injection, and framework design guidelines. Has built SDKs used by Fortune 500 companies.",
+    "perspective": "How does this API feel in C#? Does it follow .NET conventions and framework design guidelines?",
+    "category": "language-sdks",
+    "focus_areas": [
+      "Naming conventions - PascalCase for public members, proper use of async suffix",
+      "Async patterns - Task-based async, ConfigureAwait, cancellation tokens",
+      "Interface design - IDisposable, IAsyncDisposable, dependency injection friendly",
+      "Error handling - proper exception types, exception filters",
+      "LINQ compatibility - IEnumerable, IAsyncEnumerable integration",
+      "Configuration patterns - IOptions pattern, builder pattern",
+      "Testing and mocking - can interfaces be mocked with Moq/NSubstitute?",
+      "Performance - struct vs class, memory allocation, span usage"
+    ],
+    "anti_patterns": [
+      "Async methods without CancellationToken support",
+      "Poor IDisposable implementation",
+      "Non-nullable reference type issues",
+      "Synchronous blocking of async code",
+      "Unclear exception documentation"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/openai-dotnet",
+        "context": "OpenAI .NET SDK - reference for async patterns and SDK design"
+      }
+    ],
+    "enable_research": false
+  },
+  "python": {
+    "name": "Python SDK Expert",
+    "background": "12+ years of Python development, specialized in library and SDK design. Expert in Pythonic APIs, async patterns, type hints, and developer experience. Has contributed to popular PyPI packages and knows what makes Python code feel natural.",
+    "perspective": "How does this API feel in Python? Is it Pythonic, well-typed, and easy to use?",
+    "category": "language-sdks",
+    "focus_areas": [
+      "Pythonic design - duck typing, context managers, magic methods",
+      "Type hints - proper use of typing module, mypy compatibility",
+      "Async patterns - async/await, asyncio integration, proper cleanup",
+      "Error handling - exception hierarchy, context on errors",
+      "Documentation - docstrings, Sphinx compatibility, examples",
+      "Testing - pytest compatibility, fixtures, mocking",
+      "Package structure - proper __init__.py, imports, namespace packages",
+      "Python version compatibility - what versions are supported?"
+    ],
+    "anti_patterns": [
+      "Unclear async vs sync API boundaries",
+      "Missing context managers where appropriate",
+      "Poor type hint coverage",
+      "Java-style getter/setter methods",
+      "Unclear exception types"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/openai-python",
+        "context": "OpenAI Python SDK - reference for async patterns, streaming, and tool calling"
+      },
+      {
+        "path": "~/repos/anthropic-sdk-python",
+        "context": "Anthropic Python SDK - reference for message format and type hints"
+      }
+    ],
+    "enable_research": false
+  },
+  "typescript": {
+    "name": "TypeScript SDK Expert",
+    "background": "15+ years of TypeScript development, specialized in SDK and library design. Expert in type systems, async patterns, and developer ergonomics. Has designed and maintained popular npm packages with millions of downloads.",
+    "perspective": "How does this API feel in TypeScript? Is it type-safe, intuitive, and idiomatic?",
+    "category": "language-sdks",
+    "focus_areas": [
+      "Type safety and inference - can developers get IntelliSense without manual type annotations?",
+      "Async patterns - promises, async/await, event emitters, proper cancellation",
+      "Developer ergonomics - method chaining, builder patterns, sensible defaults",
+      "Error handling - typed errors, try/catch patterns, error recovery",
+      "Documentation - TSDoc comments, example code, type hints",
+      "Bundle size and tree-shaking - can unused code be eliminated?",
+      "Testing and mocking - are interfaces mockable? Can users test their code easily?"
+    ],
+    "anti_patterns": [
+      "Type assertions (as) required in normal usage",
+      "Complex generic signatures that hurt IntelliSense",
+      "Callbacks instead of promises",
+      "Unclear error types",
+      "Poor tree-shaking support"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/openai-node",
+        "context": "OpenAI TypeScript SDK - reference for streaming, tools, and async patterns"
+      },
+      {
+        "path": "~/repos/anthropic-sdk-typescript",
+        "context": "Anthropic TypeScript SDK - reference for message format and tool use patterns"
+      }
+    ],
+    "enable_research": false
+  },
+  "anthropic-sdk": {
+    "name": "Anthropic SDK Expert",
+    "background": "3+ years working with Anthropic (Claude) APIs and SDKs. Deep knowledge of the Anthropic Python/TypeScript SDK design, streaming, tool use, and prompt caching. Understands Claude-specific patterns and best practices.",
+    "perspective": "How does this compare to Anthropic's SDK design? Does it align with Claude's patterns and capabilities?",
+    "category": "llm-clients",
+    "focus_areas": [
+      "Message format - system messages, user/assistant turns, tool use blocks",
+      "Streaming patterns - events, content blocks, deltas",
+      "Tool use conventions - tool definitions, tool results, tool choice",
+      "Model selection - which models are supported? Defaults?",
+      "Prompt caching - is this supported? How?",
+      "Error handling - overloaded errors, rate limits, validation",
+      "Migration path - how hard is it to migrate from Anthropic SDK?",
+      "Extended context - how does this handle long conversations?",
+      "Developer expectations - what will Anthropic SDK users expect?"
+    ],
+    "anti_patterns": [
+      "Incompatible message format",
+      "Missing prompt caching support",
+      "Different tool use pattern without clear rationale",
+      "Unclear mapping from Anthropic concepts"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/anthropic-sdk-typescript",
+        "context": "Anthropic TypeScript SDK - primary reference for comparison"
+      },
+      {
+        "path": "~/repos/anthropic-sdk-python",
+        "context": "Anthropic Python SDK - cross-language pattern comparison"
+      }
+    ],
+    "enable_research": false
+  },
+  "aws-bedrock": {
+    "name": "AWS Bedrock Expert",
+    "background": "Expert in AWS Bedrock multi-model service. Deep knowledge of multi-provider model access, enterprise features, AWS integration, and serverless AI patterns.",
+    "perspective": "Does this integrate with AWS Bedrock? Can it leverage multi-provider features and AWS ecosystem?",
+    "category": "llm-clients",
+    "focus_areas": [
+      "Multi-provider model access (Claude, Llama, Titan, etc.)",
+      "AWS IAM and security integration",
+      "Serverless and Lambda patterns",
+      "Enterprise guardrails and compliance",
+      "Knowledge bases and RAG",
+      "Model evaluation and fine-tuning",
+      "Cost optimization and model selection"
+    ],
+    "anti_patterns": [
+      "Single-provider lock-in",
+      "Poor AWS integration",
+      "Missing enterprise features",
+      "No guardrails support",
+      "Unclear model selection"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/aws-sdk-for-javascript",
+        "context": "AWS SDK for JavaScript - includes Bedrock client"
+      },
+      {
+        "path": "~/repos/aws-sdk-for-python",
+        "context": "AWS SDK for Python (boto3) - includes Bedrock client"
+      },
+      {
+        "path": "~/repos/aws-sdk-for-net",
+        "context": "AWS SDK for .NET - includes Bedrock client"
+      }
+    ],
+    "enable_research": false
+  },
+  "azure-openai": {
+    "name": "Azure OpenAI SDK Expert",
+    "background": "Expert in Azure OpenAI Service and SDK. Deep knowledge of Azure-specific features, enterprise integration, and differences from standard OpenAI SDK.",
+    "perspective": "How does this integrate with Azure? Are Azure-specific features supported?",
+    "category": "llm-clients",
+    "focus_areas": [
+      "Azure OpenAI Service integration",
+      "Azure Active Directory authentication",
+      "VNET and private endpoint support",
+      "Content filtering and safety",
+      "Azure-specific deployment patterns",
+      "Enterprise compliance features",
+      "Differences from OpenAI SDK"
+    ],
+    "anti_patterns": [
+      "Ignoring Azure-specific features",
+      "Poor AAD integration",
+      "Missing content filtering",
+      "No VNET support",
+      "Unclear Azure vs OpenAI differences"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/azure-sdk-for-js",
+        "context": "Azure SDK for JavaScript - includes Azure OpenAI client library"
+      },
+      {
+        "path": "~/repos/azure-sdk-for-python",
+        "context": "Azure SDK for Python - includes Azure OpenAI client library"
+      },
+      {
+        "path": "~/repos/azure-sdk-for-net",
+        "context": "Azure SDK for .NET - includes Azure OpenAI client library"
+      }
+    ],
+    "enable_research": false
+  },
+  "cohere": {
+    "name": "Cohere SDK Expert",
+    "background": "Expert in Cohere API and SDKs. Deep knowledge of Command models, RAG capabilities, embeddings, and enterprise AI features from Cohere.",
+    "perspective": "Does this leverage Cohere's strengths? Can it use RAG, embeddings, and enterprise features?",
+    "category": "llm-clients",
+    "focus_areas": [
+      "Cohere Command models and capabilities",
+      "RAG and grounded generation patterns",
+      "Embeddings and semantic search",
+      "Chat and conversational AI",
+      "Enterprise features and deployment",
+      "Multi-lingual support",
+      "Fine-tuning and model customization"
+    ],
+    "anti_patterns": [
+      "Not leveraging RAG capabilities",
+      "Missing embeddings integration",
+      "Poor multi-lingual support",
+      "No enterprise features",
+      "Unclear fine-tuning patterns"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/cohere-python",
+        "context": "Cohere Python SDK - official Python client for Cohere API"
+      },
+      {
+        "path": "~/repos/cohere-typescript",
+        "context": "Cohere TypeScript SDK - official TypeScript/JavaScript client for Cohere API"
+      }
+    ],
+    "enable_research": false
+  },
+  "gemini": {
+    "name": "Google Gemini SDK Expert",
+    "background": "Expert in Google Gemini API and SDK. Deep knowledge of Gemini models, multimodal capabilities, and Google AI integration patterns.",
+    "perspective": "How does this work with Gemini? Are Gemini-specific features leveraged?",
+    "category": "llm-clients",
+    "focus_areas": [
+      "Gemini model capabilities and selection",
+      "Multimodal input (text, image, video, audio)",
+      "Google GenAI SDK patterns",
+      "Function calling and tool use",
+      "Safety settings and content filtering",
+      "Streaming and async patterns",
+      "Vertex AI integration"
+    ],
+    "anti_patterns": [
+      "Ignoring multimodal capabilities",
+      "Poor safety configuration",
+      "Not leveraging Gemini strengths",
+      "Missing streaming support",
+      "Unclear Vertex AI integration"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/generative-ai-python",
+        "context": "Google Generative AI Python SDK - official SDK for Gemini API"
+      },
+      {
+        "path": "~/repos/generative-ai-js",
+        "context": "Google Generative AI JavaScript/TypeScript SDK - official SDK for Gemini API"
+      }
+    ],
+    "enable_research": false
+  },
+  "mistral": {
+    "name": "Mistral AI SDK Expert",
+    "background": "Expert in Mistral AI API and SDKs. Deep knowledge of Mistral models, function calling, fine-tuning, and open model deployment patterns.",
+    "perspective": "Does this work well with Mistral models? Can it leverage function calling and fine-tuning?",
+    "category": "llm-clients",
+    "focus_areas": [
+      "Mistral model selection and capabilities",
+      "Function calling and tool use",
+      "Fine-tuning and model customization",
+      "Open source model deployment",
+      "Streaming responses",
+      "JSON mode and structured output",
+      "Performance optimization"
+    ],
+    "anti_patterns": [
+      "Not optimized for Mistral models",
+      "Missing function calling support",
+      "No fine-tuning integration",
+      "Poor streaming implementation",
+      "No JSON mode support"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/client-python",
+        "context": "Mistral AI Python SDK - official Python client for Mistral AI API"
+      },
+      {
+        "path": "~/repos/client-ts",
+        "context": "Mistral AI TypeScript SDK - official TypeScript client for Mistral AI API"
+      }
+    ],
+    "enable_research": false
+  },
+  "openai-sdk": {
+    "name": "OpenAI SDK Expert",
+    "background": "5+ years working with OpenAI APIs and SDKs. Deep knowledge of the OpenAI Python/Node SDK design patterns, streaming APIs, tool calling, and assistant APIs. Understands what developers expect from AI SDKs.",
+    "perspective": "How does this compare to OpenAI's SDK design? Are the patterns familiar to developers who've used OpenAI?",
+    "category": "llm-clients",
+    "focus_areas": [
+      "API surface similarity - chat completions, streaming, tool calling",
+      "Streaming patterns - how does streaming compare to OpenAI's approach?",
+      "Tool calling conventions - function definitions, tool responses",
+      "Error handling - rate limits, retries, error messages",
+      "Migration path - how hard is it to migrate from OpenAI SDK?",
+      "Authentication - API keys, headers, configuration",
+      "Response types - message objects, completion objects, tool calls",
+      "Developer expectations - what will OpenAI SDK users expect?"
+    ],
+    "anti_patterns": [
+      "Incompatible streaming patterns",
+      "Different tool calling format without clear migration guide",
+      "Unclear mapping from OpenAI concepts",
+      "Missing familiar configuration options"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/openai-node",
+        "context": "OpenAI TypeScript SDK - primary reference for comparison"
+      },
+      {
+        "path": "~/repos/openai-python",
+        "context": "OpenAI Python SDK - cross-language pattern comparison"
+      },
+      {
+        "path": "~/repos/openai-dotnet",
+        "context": "OpenAI .NET SDK - official C# SDK for OpenAI API"
+      }
+    ],
+    "enable_research": false
+  },
+  "agency-swarm": {
+    "name": "Agency Swarm Expert",
+    "background": "Expert in Agency Swarm multi-agent framework built on OpenAI Assistants API. Deep knowledge of agent orchestration, tool calling, and OpenAI Assistants patterns.",
+    "perspective": "Does this support OpenAI Assistants patterns? Can agents collaborate and delegate effectively?",
+    "category": "multi-agent-frameworks",
+    "focus_areas": [
+      "OpenAI Assistants API integration",
+      "Agent orchestration and delegation",
+      "Tool calling and function execution",
+      "Agency (organization) patterns",
+      "Agent communication protocols",
+      "Hierarchical agent structures",
+      "Production deployment patterns"
+    ],
+    "anti_patterns": [
+      "Not compatible with Assistants API",
+      "Poor agent delegation",
+      "Missing tool calling support",
+      "Unclear communication patterns",
+      "No hierarchical structures"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/agency-swarm",
+        "context": "Agency Swarm - multi-agent framework built on OpenAI Assistants API"
+      }
+    ],
+    "enable_research": false
+  },
+  "autogen": {
+    "name": "AutoGen Expert",
+    "background": "Expert in Microsoft AutoGen framework for multi-agent conversation patterns. Deep knowledge of conversable agents, group chat, and human-in-the-loop patterns.",
+    "perspective": "How does this compare to AutoGen's multi-agent patterns? Does it support rich agent conversations?",
+    "category": "multi-agent-frameworks",
+    "focus_areas": [
+      "Multi-agent conversation patterns",
+      "Human-in-the-loop integration",
+      "Group chat orchestration",
+      "Agent roles and capabilities",
+      "Tool use in multi-agent contexts",
+      "Conversation state management"
+    ],
+    "anti_patterns": [
+      "Single-agent-only design",
+      "Missing conversation history management",
+      "Poor support for human intervention",
+      "Unclear agent role definitions"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/autogen",
+        "context": "Microsoft AutoGen v0.4 - multi-agent conversation framework with group chat and human-in-the-loop"
+      }
+    ],
+    "enable_research": false
+  },
+  "crewai": {
+    "name": "CrewAI Expert",
+    "background": "Expert in multi-agent orchestration and role-based agent collaboration. Deep knowledge of CrewAI's crew and task abstraction patterns. Understands how to coordinate multiple specialized agents.",
+    "perspective": "Does this support multi-agent collaboration? Can agents delegate tasks and coordinate effectively?",
+    "category": "multi-agent-frameworks",
+    "focus_areas": [
+      "Agent role definition and specialization",
+      "Task delegation and routing",
+      "Inter-agent communication patterns",
+      "Workflow orchestration",
+      "Shared context and memory",
+      "Agent coordination strategies",
+      "Result aggregation patterns"
+    ],
+    "anti_patterns": [
+      "Single-agent-only architecture",
+      "No task routing mechanisms",
+      "Poor inter-agent communication",
+      "Unclear role boundaries",
+      "No shared memory across agents"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/crewAI",
+        "context": "CrewAI - multi-agent orchestration framework with role-based collaboration"
+      }
+    ],
+    "enable_research": false
+  },
+  "haystack-agents": {
+    "name": "Haystack Agents Expert",
+    "background": "Expert in Haystack agent framework from Deepset. Deep knowledge of RAG agents, pipeline-based architecture, and search-augmented agent workflows.",
+    "perspective": "Does this integrate well with RAG and search? Can agents leverage Haystack pipelines?",
+    "category": "multi-agent-frameworks",
+    "focus_areas": [
+      "RAG-first agent architecture",
+      "Pipeline-based agent workflows",
+      "Search and retrieval integration",
+      "Document processing for agents",
+      "Multi-step agent reasoning",
+      "Tool calling in RAG context",
+      "Production-ready search agents"
+    ],
+    "anti_patterns": [
+      "No RAG integration",
+      "Poor search capabilities",
+      "Missing pipeline patterns",
+      "Unclear document handling",
+      "No production patterns"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/haystack",
+        "context": "Haystack - NLP framework with RAG agents and pipeline architecture"
+      }
+    ],
+    "enable_research": false
+  },
+  "langgraph": {
+    "name": "LangGraph Expert",
+    "background": "Expert in LangGraph multi-agent coordination framework. Deep knowledge of graph-based workflow orchestration, stateful multi-agent systems, and production-ready agent collaboration patterns.",
+    "perspective": "How does this fit into a graph-based multi-agent workflow? Can agents coordinate through shared state?",
+    "category": "multi-agent-frameworks",
+    "focus_areas": [
+      "Graph-based workflow architecture (nodes, edges, state)",
+      "Parallel execution and coordination strategies",
+      "Conditional routing and modular subgraphs",
+      "Stateful agent communication patterns",
+      "Human-in-the-loop integration points",
+      "Time-travel debugging and rollback capabilities",
+      "Production observability and control flow visibility"
+    ],
+    "anti_patterns": [
+      "Linear sequential workflows without branching",
+      "Stateless design that loses context",
+      "No support for parallel agent execution",
+      "Missing human approval gates",
+      "Unclear control flow and routing logic",
+      "No rollback or undo mechanisms"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/langgraph",
+        "context": "LangGraph Python - build resilient language agents as stateful graphs"
+      },
+      {
+        "path": "~/repos/langgraphjs",
+        "context": "LangGraph JavaScript/TypeScript - graph-based agent framework for JS/TS"
+      }
+    ],
+    "enable_research": false
+  },
+  "metagpt": {
+    "name": "MetaGPT Expert",
+    "background": "Expert in MetaGPT multi-agent framework that simulates entire software companies. Deep knowledge of role-based agent collaboration using Standardized Operating Procedures (SOPs) and assembly-line paradigms.",
+    "perspective": "Does this support software company workflows? Can agents collaborate as specialized roles (PM, architect, engineer)?",
+    "category": "multi-agent-frameworks",
+    "focus_areas": [
+      "Role-based agent specialization (PM, architect, developer, QA)",
+      "Standardized Operating Procedures (SOPs) encoding",
+      "Assembly-line task decomposition and handoffs",
+      "Artifact-based communication (PRD, design docs, APIs)",
+      "Intermediate result verification between roles",
+      "End-to-end software development workflows",
+      "Document generation and structured output"
+    ],
+    "anti_patterns": [
+      "Single generalist agent instead of specialized roles",
+      "No structured handoffs between pipeline stages",
+      "Missing intermediate verification steps",
+      "Unclear role boundaries and responsibilities",
+      "Poor document/artifact generation",
+      "No support for software development artifacts (PRD, specs)"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/MetaGPT",
+        "context": "MetaGPT - multi-agent framework simulating software company with role-based agents (PM, architect, engineer)"
+      }
+    ],
+    "enable_research": false
+  },
+  "openai-swarm": {
+    "name": "OpenAI Swarm Expert",
+    "background": "Expert in OpenAI's experimental Swarm framework for lightweight multi-agent systems. Deep knowledge of agent handoffs, minimalist patterns, and coordination strategies.",
+    "perspective": "Is this simple and lightweight? Does it support clean agent handoffs and coordination?",
+    "category": "multi-agent-frameworks",
+    "focus_areas": [
+      "Lightweight agent coordination",
+      "Agent handoff patterns",
+      "Minimalist multi-agent design",
+      "Function calling for agents",
+      "Stateless vs stateful patterns",
+      "Experimental agent patterns",
+      "Simple orchestration strategies"
+    ],
+    "anti_patterns": [
+      "Over-engineered architecture",
+      "Complex handoff patterns",
+      "Heavy framework dependencies",
+      "Unclear coordination logic",
+      "Missing simplicity"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/swarm",
+        "context": "OpenAI Swarm - experimental lightweight multi-agent orchestration framework"
+      }
+    ],
+    "enable_research": false
+  },
+  "praison-ai": {
+    "name": "PraisonAI Expert",
+    "background": "Expert in PraisonAI low-code multi-agent framework. Deep knowledge of YAML-based configuration, CrewAI integration, and autonomous agent workflows.",
+    "perspective": "Can non-developers configure this? Does it support low-code agent definition?",
+    "category": "multi-agent-frameworks",
+    "focus_areas": [
+      "Low-code YAML configuration",
+      "CrewAI integration patterns",
+      "Autonomous agent workflows",
+      "Agent role and goal definition",
+      "Tool integration via config",
+      "Multi-agent task orchestration",
+      "Rapid prototyping patterns"
+    ],
+    "anti_patterns": [
+      "Code-only configuration",
+      "Complex setup requirements",
+      "Poor YAML schema design",
+      "No low-code capabilities",
+      "Missing rapid prototyping"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/PraisonAI",
+        "context": "PraisonAI - low-code multi-agent framework with YAML configuration"
+      }
+    ],
+    "enable_research": false
+  },
+  "helicone": {
+    "name": "Helicone Expert",
+    "background": "Expert in Helicone open-source LLM observability and AI gateway. Deep knowledge of proxy-based monitoring, caching, and cost optimization for LLM applications.",
+    "perspective": "Is this observable via gateway patterns? Does it support caching and cost optimization?",
+    "category": "observability",
+    "focus_areas": [
+      "AI gateway and proxy patterns",
+      "LLM request/response logging",
+      "Caching and cost optimization",
+      "Rate limiting and load balancing",
+      "Multi-provider support",
+      "Custom metrics and alerts",
+      "Production monitoring"
+    ],
+    "anti_patterns": [
+      "No gateway integration",
+      "Missing caching support",
+      "Poor cost tracking",
+      "No rate limiting",
+      "Single-provider lock-in"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/helicone",
+        "context": "Helicone - open-source LLM observability platform with AI gateway"
+      }
+    ],
+    "enable_research": false
+  },
+  "langfuse": {
+    "name": "LangFuse Expert",
+    "background": "Expert in LangFuse open-source LLM engineering platform. Deep knowledge of observability, prompt management, and evaluation for collaborative AI development.",
+    "perspective": "Can teams collaborate on this? Does it support prompt versioning and evaluation?",
+    "category": "observability",
+    "focus_areas": [
+      "LLM observability and tracing",
+      "Prompt management and versioning",
+      "Evaluation and testing workflows",
+      "Dataset management",
+      "Cost tracking and analytics",
+      "Team collaboration features",
+      "OpenTelemetry integration"
+    ],
+    "anti_patterns": [
+      "No prompt versioning",
+      "Missing collaboration features",
+      "Poor evaluation support",
+      "Unclear cost attribution",
+      "No tracing instrumentation"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/langfuse",
+        "context": "LangFuse - open-source LLM engineering platform with observability, metrics, and prompt management"
+      }
+    ],
+    "enable_research": false
+  },
+  "langsmith": {
+    "name": "LangSmith Expert",
+    "background": "Expert in LangSmith for LLM observability and debugging. Deep knowledge of tracing, evaluation, and production monitoring for AI systems.",
+    "perspective": "How observable is this design? Can developers debug and monitor agent behavior in production?",
+    "category": "observability",
+    "focus_areas": [
+      "Distributed tracing for agent calls",
+      "Span and event instrumentation",
+      "Evaluation integration",
+      "Production monitoring patterns",
+      "Cost tracking and attribution",
+      "Debugging tools and workflows"
+    ],
+    "anti_patterns": [
+      "No tracing or instrumentation support",
+      "Missing evaluation hooks",
+      "Poor production observability",
+      "Unclear cost attribution"
+    ],
+    "repos": [],
+    "enable_research": false
+  },
+  "lunary": {
+    "name": "Lunary Expert",
+    "background": "Expert in Lunary open-source LLM observability platform. Deep knowledge of observability, analytics, user feedback, and production monitoring for LLM applications.",
+    "perspective": "Can teams monitor this in production? Does it provide actionable insights and user feedback?",
+    "category": "observability",
+    "focus_areas": [
+      "LLM application observability and monitoring",
+      "User feedback collection and analysis",
+      "Cost tracking and analytics",
+      "Performance monitoring and optimization",
+      "Error tracking and debugging",
+      "Production insights and dashboards",
+      "Team collaboration and alerting"
+    ],
+    "anti_patterns": [
+      "No user feedback mechanisms",
+      "Missing cost tracking",
+      "Poor production monitoring",
+      "No error tracking",
+      "Unclear analytics"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/lunary",
+        "context": "Lunary - open-source LLM observability with analytics and user feedback"
+      }
+    ],
+    "enable_research": false
+  },
+  "opentelemetry-genai": {
+    "name": "OpenTelemetry Gen AI Expert",
+    "background": "Expert in OpenTelemetry Semantic Conventions for Generative AI. Deep knowledge of vendor-neutral observability, distributed tracing, and standardized telemetry for LLM applications.",
+    "perspective": "Does this follow OpenTelemetry standards? Can it integrate with vendor-neutral observability platforms?",
+    "category": "observability",
+    "focus_areas": [
+      "OpenTelemetry semantic conventions for Gen AI",
+      "Vendor-neutral distributed tracing",
+      "Span attributes for LLM operations",
+      "Standardized metrics and events",
+      "Multi-provider observability integration",
+      "Context propagation across services",
+      "Production-grade instrumentation patterns"
+    ],
+    "anti_patterns": [
+      "Vendor-specific telemetry format",
+      "Non-standard span attributes",
+      "Poor distributed tracing support",
+      "Missing semantic conventions",
+      "Proprietary instrumentation"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/semantic-conventions",
+        "context": "OpenTelemetry Semantic Conventions - including Gen AI observability standards"
+      },
+      {
+        "path": "~/repos/opentelemetry-python",
+        "context": "OpenTelemetry Python SDK - reference implementation"
+      },
+      {
+        "path": "~/repos/opentelemetry-js",
+        "context": "OpenTelemetry JavaScript SDK - reference implementation"
+      }
+    ],
+    "enable_research": false
+  },
+  "phoenix": {
+    "name": "Phoenix (Arize AI) Expert",
+    "background": "Expert in Phoenix open-source observability platform from Arize AI. Deep knowledge of LLM tracing, evaluation, and troubleshooting for production AI applications.",
+    "perspective": "Can developers trace and debug this effectively? Does it provide observability hooks for Phoenix?",
+    "category": "observability",
+    "focus_areas": [
+      "OpenTelemetry-based tracing",
+      "LLM application instrumentation",
+      "Evaluation and benchmarking",
+      "Dataset management for experiments",
+      "Prompt playground and optimization",
+      "Production monitoring and debugging",
+      "Framework integration (LangChain, LlamaIndex, DSPy)"
+    ],
+    "anti_patterns": [
+      "No tracing instrumentation",
+      "Missing evaluation hooks",
+      "Poor observability in production",
+      "Unclear debugging workflows",
+      "No experiment tracking"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/phoenix",
+        "context": "Arize AI Phoenix - open-source AI observability platform with tracing and evaluation"
+      }
+    ],
+    "enable_research": false
+  },
+  "traceloop": {
+    "name": "Traceloop (OpenLLMetry) Expert",
+    "background": "Expert in Traceloop's OpenLLMetry for LLM observability with OpenTelemetry. Deep knowledge of automatic instrumentation, OpenTelemetry tracing, and LLM-specific observability patterns.",
+    "perspective": "Does this support automatic instrumentation? Can it leverage OpenTelemetry ecosystem?",
+    "category": "observability",
+    "focus_areas": [
+      "Automatic instrumentation for LLM frameworks",
+      "OpenTelemetry-native tracing",
+      "LLM-specific span attributes and metrics",
+      "Multi-framework support (LangChain, LlamaIndex, etc.)",
+      "Zero-code observability integration",
+      "Production monitoring and debugging",
+      "OpenTelemetry collector integration"
+    ],
+    "anti_patterns": [
+      "Manual instrumentation required",
+      "Not OpenTelemetry-compatible",
+      "Limited framework support",
+      "Complex setup process",
+      "Missing automatic tracing"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/openllmetry",
+        "context": "OpenLLMetry - OpenTelemetry-based automatic instrumentation for LLMs"
+      }
+    ],
+    "enable_research": false
+  },
+  "prompty": {
+    "name": "Prompty Expert",
+    "background": "Expert in Microsoft Prompty format for LLM prompt templates. Deep knowledge of prompt asset management, Jinja templating, and prompt observability patterns.",
+    "perspective": "Is this prompt portable and observable? Can developers easily version and evaluate prompts?",
+    "category": "prompt-formats",
+    "focus_areas": [
+      "Prompt template format and metadata",
+      "Jinja templating for dynamic prompts",
+      "Prompt versioning and management",
+      "Model configuration and parameters",
+      "Observability and tracing integration",
+      "VS Code extension and tooling",
+      "Multi-modal prompt support"
+    ],
+    "anti_patterns": [
+      "Hard-coded prompts without templating",
+      "Missing metadata and versioning",
+      "Poor observability",
+      "Unclear model configuration",
+      "No tooling support"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/prompty",
+        "context": "Microsoft Prompty - asset class and format for LLM prompts with observability"
+      }
+    ],
+    "enable_research": false
+  },
+  "semantic-kernel": {
+    "name": "Semantic Kernel Expert",
+    "background": "Expert in Microsoft Semantic Kernel for AI orchestration. Deep knowledge of plugins, planners, and memory patterns. Understands enterprise AI integration.",
+    "perspective": "How does this compare to Semantic Kernel patterns? Does it support plugin architecture and planning?",
+    "category": "prompt-formats",
+    "focus_areas": [
+      "Plugin architecture and composition",
+      "Planner patterns for goal decomposition",
+      "Memory and embedding integration",
+      "Prompt templates and functions",
+      "Enterprise integration patterns",
+      "Cross-language SDK consistency"
+    ],
+    "anti_patterns": [
+      "Monolithic agent design without plugins",
+      "Missing planner/orchestration capabilities",
+      "Poor memory integration",
+      "Unclear prompt template patterns"
+    ],
+    "repos": [
+      {
+        "path": "~/repos/semantic-kernel",
+        "context": "Microsoft Semantic Kernel - AI orchestration SDK for C#, Python, and Java with plugin architecture"
+      }
+    ],
+    "enable_research": false
+  },
+  "latest-ai-research": {
+    "name": "Latest AI Research Expert",
+    "background": "PhD in ML/AI, follows latest research papers, conference proceedings (NeurIPS, ICML, ICLR), and industry trends. Stays current with cutting-edge techniques from 2025-2026.",
+    "perspective": "Does this align with latest AI research and best practices from 2025-2026?",
+    "category": "ai-research",
+    "enable_research": true,
+    "focus_areas": [
+      "Latest LLM architectures and techniques",
+      "Current prompt engineering best practices (2025-2026)",
+      "Recent RAG (Retrieval Augmented Generation) patterns",
+      "New agent framework patterns",
+      "Emerging evaluation methodologies",
+      "Recent papers on AI safety and alignment",
+      "Industry adoption of latest techniques"
+    ],
+    "anti_patterns": [
+      "Using outdated techniques when better options exist",
+      "Ignoring recent research on known problems",
+      "Reinventing solutions to solved problems",
+      "Missing recent safety/alignment considerations"
+    ]
+  },
+  "latest-security": {
+    "name": "Latest Security Trends Expert",
+    "background": "Security researcher tracking latest vulnerabilities, attack patterns from 2025-2026. Monitors CVE databases, security advisories, OWASP updates in real-time.",
+    "perspective": "Are we protected against the latest security threats discovered in 2025-2026?",
+    "category": "security",
+    "enable_research": true,
+    "focus_areas": [
+      "CVEs published in 2025-2026",
+      "Recent attack patterns and exploits",
+      "Current OWASP Top 10 updates",
+      "New security frameworks and tools",
+      "Latest compliance requirements (GDPR, HIPAA, SOC2)",
+      "Recent data breach patterns",
+      "Emerging security best practices"
+    ],
+    "anti_patterns": [
+      "Ignoring 2025-2026 vulnerability disclosures",
+      "Using deprecated security practices",
+      "Missing new attack vectors",
+      "Outdated dependency versions with known CVEs"
+    ]
+  },
+  "latest-web-standards": {
+    "name": "Latest Web Standards Expert",
+    "background": "Follows W3C, TC39, and web standards evolution. Expert in browser compatibility as of 2025-2026, progressive enhancement, and standards compliance.",
+    "perspective": "Does this follow current web standards and browser best practices from 2025-2026?",
+    "category": "web",
+    "enable_research": true,
+    "focus_areas": [
+      "ECMAScript 2025/2026 features",
+      "Current browser API support (2025-2026)",
+      "Web standards updates (HTML, CSS, DOM)",
+      "Progressive web app patterns",
+      "Browser compatibility tables",
+      "Performance APIs and Core Web Vitals updates",
+      "WCAG accessibility updates"
+    ],
+    "anti_patterns": [
+      "Using deprecated web APIs",
+      "Ignoring browser compatibility",
+      "Missing progressive enhancement",
+      "Outdated polyfills when native support exists"
+    ]
+  },
+  "latest-performance": {
+    "name": "Latest Performance Optimization Expert",
+    "background": "Follows latest performance optimization techniques, benchmarking methodologies, and tool updates from 2025-2026. Monitors Core Web Vitals evolution.",
+    "perspective": "Are we using the latest performance optimization techniques from 2025-2026?",
+    "category": "performance",
+    "enable_research": true,
+    "focus_areas": [
+      "Latest benchmarking tools and techniques",
+      "Current Core Web Vitals thresholds",
+      "New performance APIs",
+      "Recent optimization patterns",
+      "Latest bundler optimizations",
+      "Current CDN and caching strategies",
+      "New profiling methodologies"
+    ],
+    "anti_patterns": [
+      "Using outdated optimization techniques",
+      "Ignoring new performance APIs",
+      "Missing recent profiling tools",
+      "Outdated bundler configurations"
+    ]
+  },
+  "latest-frameworks": {
+    "name": "Latest Framework Trends Expert",
+    "background": "Tracks rapidly evolving frameworks and libraries. Monitors LangChain, LangSmith, agent frameworks, and emerging tools in 2025-2026.",
+    "perspective": "Are we using current framework patterns and avoiding deprecated approaches?",
+    "category": "frameworks",
+    "enable_research": true,
+    "focus_areas": [
+      "LangChain/LangSmith latest patterns",
+      "Agent framework updates",
+      "New library releases and breaking changes",
+      "Framework migration paths",
+      "Emerging best practices",
+      "Community recommendations",
+      "Deprecation notices"
+    ],
+    "anti_patterns": [
+      "Using deprecated framework APIs",
+      "Missing migration to better patterns",
+      "Ignoring breaking change warnings",
+      "Outdated dependency versions"
+    ]
+  }
+}

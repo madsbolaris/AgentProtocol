@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 
 // Health check endpoint
 app.get('/', (req, res) => {
-  res.send('Agent Framework Protocol SDK Sample');
+  res.send('Agent Protocol Protocol SDK Sample');
 });
 
 // Main bot endpoint - receives Bot Framework Activities

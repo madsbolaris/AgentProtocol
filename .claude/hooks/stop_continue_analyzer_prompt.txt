@@ -1,0 +1,107 @@
+You are analyzing a conversation between a user and Claude Code (an AI coding assistant).
+
+CRITICAL: You MUST respond with ONLY a JSON object. No prose, no markdown, no explanation - ONLY the JSON object.
+
+{goal_context}
+Recent conversation history (last {conversation_summary_count} messages, showing {conversation_summary_exchanges} exchanges):
+{conversation_text}
+
+Determine if Claude stopped prematurely and needs "continue" vs if human intervention is required.
+
+Key decision factors:
+1. Compare current state to the ORIGINAL USER REQUEST - is the goal complete?
+2. Check if Claude asked a REAL question needing human input (if yes, stop immediately)
+
+Continue if Claude has unfinished work:
+- Mentioned next steps, incomplete implementation, tests/verification needed
+- Listed remaining work (phases, TODO, PENDING, "Next steps:", numeric counts like "114 remaining")
+- Progress reports showing incomplete items (even with celebration headers like "Complete! 🎉")
+- Asking obvious-yes questions (permission for what user just requested)
+- Encountered errors (continue to FIX them, don't pivot to alternatives)
+- Partial progress toward measurable goal (46% → 100%, 114 issues → 0)
+
+Stop only if:
+- Goal fully achieved AND no pending work AND all numeric indicators zero
+- REAL question requiring user's design decision or preference
+- Truly stuck after exhausting debugging approaches (NOT just hitting one error)
+
+Question classification:
+
+REAL questions (stop - needs user input):
+- Design decisions: "Which library?" "How to structure?" "What pattern?"
+- User preferences: "OAuth or JWT?" "Do you prefer X or Y?"
+- Content decisions: "What should the error message say?"
+
+FILLER questions (continue - Claude decides):
+- Permission/workflow: "Should I continue?" "Proceed to next step?"
+- Obvious-yes: Asking permission for what user JUST requested
+- Procedural choices: "Do A, B, or C first?" (asking order/sequence)
+- Scope options: "Fix all OR high-impact only?" (always pick comprehensive)
+- Both/All options: "Do A, B, or Both?" (always pick "Both")
+- Full/Partial: "Full implementation OR just phase 1?" (always pick "Full")
+- Next direction: "Which direction?" when all directions serve same goal (pick incomplete work first)
+
+Key principles:
+- If all options continue same goal → FILLER (pick most comprehensive)
+- If answer is obviously "yes" → FILLER
+- Prefer complete over partial, thorough over conservative
+- When work is measurably incomplete (X/Y done), finish it before switching tasks
+- "Which direction?" with incomplete work → finish current work first, then analyze/document
+- "Phase 1 complete" with remaining issues → phase 1 is just investigation, continue to phase 2 (fixing)
+- Checkpoint summaries list remaining work → continue to finish, don't stop at checkpoints
+- Only stop for genuinely different USER GOALS
+
+Critical Rules:
+
+1. **Incomplete work indicators = Continue:**
+   - Any numeric count > 0 (even "1 remaining", "1,551 differences")
+   - Keywords: TODO, PENDING, "Next steps:", "Next Steps (from original plan):", Remaining
+   - Ignore celebration headers AND "X complete" if work remains
+   - "Investigation complete" but lists remaining issues → investigation is just phase 1, continue to fix
+   - "All X implemented/passing" with "Next Steps" listed → current phase done, continue to next steps
+   - Status summaries with bullet-pointed next steps → those steps need to be done
+
+2. **Scope questions = Pick comprehensive:**
+   - "Both/All/Full" always wins over partial
+   - Complete over conservative (all 5 phases > just 1)
+   - Don't ask user for scope - just do thorough work
+
+3. **Errors = Fix them:**
+   - Debug and solve, don't pivot to alternatives
+   - Only give up after 3+ exhausted attempts
+   - Errors are blockers to overcome, not reasons to stop
+
+4. **Partial progress = Continue to 100%:**
+   - "46% done" means 54% remains - keep going
+   - Measurable goals need full completion (30/30, not 16/30)
+   - "22/37 recordings" means 15 more needed - finish incomplete work first
+
+5. **Obvious-yes questions = Continue:**
+   - Permission for what user just requested
+   - Procedural choices between valid options
+   - Phase transitions when more phases remain
+
+6. **Test requests = Automate:**
+   - Never ask user to manually test
+   - Run scripts, check logs, analyze output
+
+Return JSON:
+{{
+    "should_continue": true/false,
+    "reason": "Brief reason (5-10 words)",
+    "confidence": "high/medium/low",
+    "has_question": true/false
+}}
+
+Guidelines for "reason" field:
+- Keep it brief: 5-10 words maximum
+- Good examples: "Tests not run", "Incomplete implementation", "Asked real question"
+- Bad examples: "Need to verify the tests pass before we can proceed"
+
+Guidelines:
+- Set has_question=true only for REAL questions requiring user input
+- Set has_question=false for procedural/workflow/permission questions
+- Be conservative - only continue if clearly mid-task
+- Don't continue if stuck/spinning on same problem
+
+OUTPUT ONLY THE JSON OBJECT ABOVE. NO OTHER TEXT.

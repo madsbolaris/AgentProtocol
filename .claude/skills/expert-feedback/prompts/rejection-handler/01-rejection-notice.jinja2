@@ -1,0 +1,139 @@
+# Rejection Notice to Experts
+
+You are sending a rejection notice to the experts who participated in the review.
+
+## Context
+
+**Workspace:** {{ workspace }}
+**Artifact Type:** {{ artifact_type }} (ADR or Implementation Plan)
+**Draft Artifact:** {{ artifact_path }}
+**Iteration:** {{ iteration }}
+**Experts:** {{ experts|join(", ") }}
+
+## User's Rejection Reason
+
+{{ rejection_reason }}
+
+## Your Task
+
+Send a message back to the experts explaining the rejection and asking them to review the draft artifact with the user's feedback in mind.
+
+### Step 1: Read the Draft Artifact
+
+Read the draft artifact first to understand what was created:
+
+```bash
+Read file: {{ artifact_path }}
+```
+
+### Step 2: Create Rejection Notice
+
+Create file: `{{ workspace }}/rejection-notice-{{ iteration }}.md`
+
+Use this structure:
+
+```markdown
+# Artifact Rejected - Iteration {{ iteration }}
+
+**Date:** {{ date }}
+**Artifact Type:** {{ artifact_type }}
+**Experts Consulted:** {{ experts|join(", ") }}
+
+## User's Feedback
+
+{{ rejection_reason }}
+
+## Draft Artifact
+
+The draft {{ artifact_type }} is available for your review:
+
+**File:** [{{ artifact_path }}]({{ artifact_path }})
+
+## Analysis of User Feedback
+
+{Analyze the rejection reason and extract specific concerns}
+
+### Key Issues Identified
+
+{Extract specific concerns from rejection reason and organize as bullet points}
+
+- **Issue 1:** {Description}
+  - **Location:** {Where in draft this applies}
+  - **Current approach:** {What draft currently says}
+  - **User concern:** {Specific user feedback}
+
+- **Issue 2:** {Description}
+  - **Location:** {Where in draft this applies}
+  - **Current approach:** {What draft currently says}
+  - **User concern:** {Specific user feedback}
+
+{Repeat for each issue}
+
+## Requested Changes
+
+Based on the user's feedback, please consider the following changes:
+
+{Translate rejection reason into actionable changes}
+
+1. **{Change category}:** {Specific action needed}
+   - Rationale: {Why this change addresses user concern}
+   - Impact: {What changes in the artifact}
+
+2. **{Change category}:** {Specific action needed}
+   - Rationale: {Why this change addresses user concern}
+   - Impact: {What changes in the artifact}
+
+{Repeat for each change}
+
+## Context for Revision
+
+### Previous Iterations
+
+Review previous synthesizions to understand the evolution:
+{% for i in range(1, iteration + 1) %}
+- Iteration {{ i }}: `{{ workspace }}/synthesized-{{ i }}.md`
+{% endfor %}
+
+### Expert Reviews
+
+Your original reviews are available:
+{% for expert in experts %}
+- {{ expert }}: `{{ workspace }}/review-{{ expert }}-*.md`
+{% endfor %}
+
+## Next Steps
+
+1. **Review the draft artifact** linked above to understand what was generated
+2. **Review the user's rejection reason** to understand their concerns
+3. **Review previous synthesizions** to recall your original recommendations
+4. **Provide updated recommendations** that address the user's concerns while maintaining technical quality
+
+The orchestrator may spawn a new iteration with this feedback, or the user may choose to manually edit the artifact.
+
+---
+
+**Rejection Timestamp:** {{ timestamp }}
+**Status:** Awaiting expert review or user decision
+```
+
+### Step 3: Verify and Complete
+
+After creating the rejection notice:
+1. Ensure all placeholders are filled with actual content
+2. Ensure key issues are specific and actionable
+3. Ensure requested changes are clear and justified
+4. Write the file to `{{ workspace }}/rejection-notice-{{ iteration }}.md`
+
+---
+
+## Important Notes
+
+- **Be objective** - Present user feedback without judgement
+- **Be specific** - Extract concrete issues from the rejection reason
+- **Be actionable** - Translate concerns into specific changes
+- **Be helpful** - Provide context to help experts understand what to change
+- **Reference the draft** - Quote specific sections that need revision
+
+## Begin Task
+
+Read the draft artifact at `{{ artifact_path }}`, analyze the user's rejection reason, and create a comprehensive rejection notice at `{{ workspace }}/rejection-notice-{{ iteration }}.md`.

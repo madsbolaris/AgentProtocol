@@ -1,0 +1,536 @@
+{% extends "base-finalize.jinja2" %}
+
+{% set output_type = "Architecture & Implementation Plan" %}
+{% set output_article = "an" %}
+{% set create_step_title = "Create Architecture & Implementation Plan" %}
+
+{% block task_description %}
+Analyze all expert feedback from iteration(s) and create a comprehensive **Architecture & Implementation Plan** that:
+
+1. Defines the overall architecture and system design
+2. Organizes implementation into logical phases
+3. Provides detailed specifications for each component
+4. Estimates time/effort for building the system
+5. Identifies critical path and dependencies
+6. Includes deployment and operational considerations
+7. Recommends technology stack based on expert input
+{% endblock %}
+
+{% block step_2_analysis %}
+## Step 2: Analyze Expert Feedback
+
+Extract from expert feedback:
+- Recommended architecture patterns and approaches
+- Technology stack recommendations with justifications
+- Component breakdown and responsibilities
+- Data model and API design considerations
+- Security, performance, and scalability requirements
+- Operational concerns (deployment, monitoring, disaster recovery)
+- Implementation sequencing and dependencies
+- Risk areas and mitigation strategies
+- Best practices and anti-patterns to avoid
+{% endblock %}
+
+{% block output_structure %}
+Create a comprehensive markdown file following this structure:
+
+```markdown
+# Architecture & Implementation Plan: {Title}
+
+**Created:** {{ date }}
+**Status:** Ready for Implementation
+**Estimated Total Time:** {X-Y weeks/months}
+**Type:** Greenfield Architecture
+
+## Executive Summary
+
+{High-level overview of the system being created, its purpose, and key architectural decisions}
+
+### Goals
+- Goal 1
+- Goal 2
+- Goal 3
+
+### Key Architectural Decisions
+1. Decision 1 - {Rationale based on expert consensus}
+2. Decision 2 - {Rationale based on expert consensus}
+
+## Critical Files
+
+**Files that will be created** (helps Claude Code understand implementation scope):
+
+- `path/to/component1/main.ext` - {Component entry point}
+- `path/to/component2/api.ext` - {API definitions}
+- `path/to/models/schema.ext` - {Data models}
+- `path/to/config/settings.ext` - {Configuration}
+
+---
+
+## System Architecture
+
+### Overview
+
+{Architectural diagram description and high-level component breakdown}
+
+**Architecture Pattern:** {e.g., Microservices, Monolith, Event-driven, Layered, etc.}
+
+**Key Principles:**
+- Principle 1 (from expert recommendations)
+- Principle 2
+
+### Components
+
+#### Component 1: {Name}
+
+**Purpose:** {What this component does}
+
+**Technology:** {Recommended tech stack based on expert feedback}
+- Language: {e.g., TypeScript, Python, C#}
+- Framework: {e.g., Express, FastAPI, ASP.NET Core}
+- Libraries: {Key dependencies}
+
+**Key Responsibilities:**
+- Responsibility 1
+- Responsibility 2
+
+**Interfaces:**
+- **Input:** {Data/API contracts}
+- **Output:** {Data/API contracts}
+
+**Dependencies:** {Other components it depends on}
+
+**Expert Consensus:** {Which experts recommended this approach and why}
+
+---
+
+{Repeat for each major component}
+
+---
+
+### Data Model
+
+**Storage Technology:** {Database choice based on expert recommendations}
+
+**Core Entities:**
+
+#### Entity 1: {Name}
+
+```language
+{Schema or model definition}
+```
+
+**Relationships:**
+- Relationship to Entity 2
+- Relationship to Entity 3
+
+**Access Patterns:**
+- Pattern 1 (optimized for...)
+- Pattern 2 (optimized for...)
+
+---
+
+{Repeat for each entity}
+
+---
+
+### API Design
+
+**API Style:** {REST/GraphQL/gRPC based on expert consensus}
+
+**Authentication:** {OAuth2, JWT, API keys, etc.}
+
+**Key Endpoints:**
+
+#### Endpoint 1: {Name}
+
+**Method:** {GET/POST/PUT/DELETE}
+**Path:** `/api/v1/{path}`
+
+**Request:**
+```json
+{request schema}
+```
+
+**Response:**
+```json
+{response schema}
+```
+
+**Rationale:** {Why this design based on expert feedback}
+
+---
+
+{Repeat for key endpoints}
+
+---
+
+### Infrastructure
+
+**Deployment Platform:** {Cloud provider, container strategy, orchestration}
+
+**Recommended Stack:**
+- **Compute:** {e.g., Kubernetes, AWS ECS, Azure Container Apps}
+- **Storage:** {Databases, caching, file storage with specific products}
+- **Networking:** {Load balancing, CDN, service mesh}
+- **Monitoring:** {Observability tools}
+
+**Scaling Strategy:**
+- **Horizontal Scaling:** {Approach}
+- **Vertical Scaling:** {Approach}
+- **Auto-scaling:** {Triggers and thresholds}
+
+**Expert Recommendations:**
+{Key infrastructure recommendations from experts with justifications}
+
+---
+
+## Implementation Phases
+
+### Phase 1: Foundation ({time estimate})
+
+**Goal:** {What this phase achieves - typically core infrastructure and basic functionality}
+
+**Deliverables:**
+- Deliverable 1
+- Deliverable 2
+
+#### 1.1 {Component/Feature Name} ({time})
+
+**Priority:** {Critical/High/Medium}
+**Complexity:** {Low/Medium/High}
+**Expert Consensus:** {Which experts recommended starting here}
+
+**What to Build:**
+{Detailed specification of what needs to be implemented}
+
+**Acceptance Criteria:**
+- User can {action}
+- System can {action}
+- Performance meets {metric}
+
+**Technical Approach:**
+```language
+{Pseudocode or key implementation details}
+```
+
+**Dependencies:** {What must be done first}
+
+**Risks:**
+- Risk 1 - {Mitigation strategy}
+- Risk 2 - {Mitigation strategy}
+
+---
+
+{Repeat for each item in Phase 1}
+
+---
+
+### Phase 2: {Name} ({time estimate})
+
+**Goal:** {What this phase achieves}
+
+{Repeat phase structure}
+
+---
+
+### Phase 3: {Name} ({time estimate})
+
+**Goal:** {What this phase achieves}
+
+{Repeat phase structure}
+
+---
+
+## Critical Path
+
+The following items are on the critical path and block other work:
+1. {Item} (blocks: {dependent items})
+2. {Item} (blocks: {dependent items})
+
+## Parallel Work Streams
+
+These can be developed in parallel:
+- **Stream 1:** {Components}
+- **Stream 2:** {Components}
+- **Stream 3:** {Components}
+
+---
+
+## Testing Strategy
+
+### Unit Testing
+**Framework:** {Recommended test framework}
+**Coverage Target:** {Percentage}
+
+**Approach:**
+{Strategy for component-level testing based on expert recommendations}
+
+### Integration Testing
+**Approach:**
+{Strategy for testing component interactions}
+
+**Key Integration Points:**
+1. {Component A} ↔ {Component B}
+2. {Component C} ↔ {External Service}
+
+### End-to-End Testing
+**Framework:** {e.g., Playwright, Cypress, etc.}
+
+**Critical User Flows:**
+1. {Flow 1}
+2. {Flow 2}
+
+### Performance Testing
+**Tools:** {Load testing tools}
+
+**SLAs:**
+- Response time: {target}
+- Throughput: {target}
+- Concurrent users: {target}
+
+**Test Scenarios:**
+1. {Scenario 1}
+2. {Scenario 2}
+
+---
+
+## Deployment Strategy
+
+### Environments
+
+**Development:**
+- Configuration: {Details}
+- Data: {Test/seed data approach}
+
+**Staging:**
+- Configuration: {Details}
+- Data: {Sanitized production data}
+
+**Production:**
+- Configuration: {Details}
+- Data: {Production data management}
+
+### CI/CD Pipeline
+
+**Build:**
+1. {Step 1}
+2. {Step 2}
+
+**Test:**
+1. {Test stage 1}
+2. {Test stage 2}
+
+**Deploy:**
+1. {Deploy step 1}
+2. {Deploy step 2}
+
+**Recommended Tools:** {CI/CD platform based on expert input}
+
+### Rollout Plan
+
+**Strategy:** {Blue-green, canary, feature flags, etc.}
+
+**Phases:**
+1. {Phase 1}: {Description}
+2. {Phase 2}: {Description}
+
+**Rollback Plan:**
+{How to quickly revert if issues arise}
+
+---
+
+## Operational Considerations
+
+### Monitoring & Observability
+
+**Metrics to Track:**
+- Business metrics: {list}
+- Technical metrics: {list}
+- User experience metrics: {list}
+
+**Logging:**
+- Format: {Structured/JSON}
+- Aggregation: {Tool}
+- Retention: {Duration}
+
+**Tracing:**
+- Tool: {Distributed tracing tool}
+- Sampling rate: {Percentage}
+
+**Alerting:**
+- Critical alerts: {List}
+- Warning alerts: {List}
+
+### Security
+
+**Authentication:** {Strategy}
+**Authorization:** {RBAC/ABAC/etc.}
+**Data Protection:**
+- At rest: {Encryption approach}
+- In transit: {TLS configuration}
+
+**Compliance:** {Relevant standards: GDPR, HIPAA, SOC2, etc.}
+
+**Security Reviews:**
+- Penetration testing schedule
+- Vulnerability scanning
+- Security audits
+
+### Disaster Recovery
+
+**Backup Strategy:**
+- Frequency: {Daily/hourly/real-time}
+- Retention: {Duration}
+- Storage location: {Details}
+
+**RTO/RPO:**
+- **Recovery Time Objective (RTO):** {Target}
+- **Recovery Point Objective (RPO):** {Target}
+
+**Failover Strategy:**
+{How to handle regional outages or service failures}
+
+### Cost Estimates
+
+**Monthly Operational Costs (estimated):**
+- Compute: ${amount}
+- Storage: ${amount}
+- Network: ${amount}
+- Monitoring: ${amount}
+- **Total:** ${amount}/month
+
+**Development Costs:**
+- Team size: {number} engineers
+- Duration: {months}
+- Estimated cost: ${amount}
+
+---
+
+## Success Metrics
+
+**Technical KPIs:**
+- {Metric 1}: {Target}
+- {Metric 2}: {Target}
+
+**Business KPIs:**
+- {Metric 1}: {Target}
+- {Metric 2}: {Target}
+
+**User Experience KPIs:**
+- {Metric 1}: {Target}
+- {Metric 2}: {Target}
+
+---
+
+## Risks & Mitigations
+
+| Risk | Impact | Probability | Mitigation | Owner |
+|------|--------|-------------|------------|-------|
+| Risk 1 | High | Medium | Mitigation strategy | Team/Person |
+| Risk 2 | Medium | Low | Mitigation strategy | Team/Person |
+| Risk 3 | High | Low | Mitigation strategy | Team/Person |
+
+---
+
+## Future Considerations
+
+**Post-Launch Features:**
+1. {Feature 1} - {Rationale}
+2. {Feature 2} - {Rationale}
+
+**Technical Debt to Address:**
+1. {Item 1}
+2. {Item 2}
+
+**Scalability Enhancements:**
+1. {Enhancement 1}
+2. {Enhancement 2}
+
+---
+
+## Technology Stack Summary
+
+**Languages:**
+- {Language 1} for {purpose}
+- {Language 2} for {purpose}
+
+**Frameworks:**
+- {Framework 1} for {purpose}
+- {Framework 2} for {purpose}
+
+**Infrastructure:**
+- {Tool 1} for {purpose}
+- {Tool 2} for {purpose}
+
+**Justification:**
+{Summarize why this stack based on expert consensus}
+
+---
+
+**Experts Consulted:** {{ experts|join(", ") }}
+**Convergence:** {{ convergence_percent }}%
+**Review Workspace:** [{{ workspace }}]({{ workspace }})
+
+---
+
+## 🤖 Implementing with Claude Code
+
+This architecture & implementation plan is designed to work with Claude Code's plan mode for streamlined execution.
+
+**To implement this plan:**
+
+\`\`\`bash
+claude-code "implement the architecture plan at {{ workspace }}/draft-plan.md"
+\`\`\`
+
+Or from within Claude Code:
+\`\`\`
+Read the architecture & implementation plan at {{ workspace }}/draft-plan.md and implement it phase by phase
+\`\`\`
+
+**Claude Code will:**
+1. Enter plan mode automatically
+2. Read the complete architecture design
+3. Explore any existing code that interfaces with this system
+4. Design the implementation approach for each phase
+5. Execute phase by phase with your approval
+6. Create tests, documentation, and deployment configurations as specified
+
+**Plan Mode Hints (for Claude Code):**
+<!-- PLAN MODE: This is an architecture & implementation plan -->
+<!-- TYPE: GREENFIELD -->
+<!-- CRITICAL COMPONENTS: {list major components from architecture} -->
+<!-- PHASES: {number of implementation phases} -->
+<!-- COMPLEXITY: {HIGH/MEDIUM/LOW based on system scope} -->
+<!-- ESTIMATED DURATION: {time estimate} -->
+<!-- DEPLOYMENT: {deployment platform mentioned} -->
+```
+{% endblock %}
+
+{% block critical_requirements %}
+## Critical Requirements
+
+1. **Comprehensive architecture** - Cover all major system components and their interactions
+2. **Detailed specifications** - Each phase should have implementable specifications
+3. **Realistic estimates** - Account for complexity, unknowns, and dependencies
+4. **Technology justification** - Explain tech stack choices using expert reasoning
+5. **Operational readiness** - Include deployment, monitoring, security, disaster recovery
+6. **Clear dependencies** - Show critical path and opportunities for parallel work
+7. **Risk management** - Identify risks with specific mitigation strategies
+8. **Scalability planning** - Address how system will scale with load
+{% endblock %}
+
+{% block specific_output %}
+Create the architecture & implementation plan in the **workspace** (temporary location for user approval):
+
+**File path:** `{{ workspace }}/draft-plan.md`
+{% endblock %}
+
+{% block template_specific_notes %}
+- **DO NOT create an ADR** - This is create mode, not review mode
+- **Use expert feedback extensively** - Reference which experts recommended each decision
+- **Be comprehensive** - This is a complete system design, not just improvements
+- **Justify choices** - Every major decision should reference expert consensus
+- **Think greenfield** - No existing codebase to constrain design
+- **Balance detail with practicality** - Provide enough detail to start implementation
+{% endblock %}

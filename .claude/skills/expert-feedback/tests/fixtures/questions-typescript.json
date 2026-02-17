@@ -1,0 +1,16 @@
+[
+  {
+    "id": "what-is-your-preferred-error-handling-pattern",
+    "question": "What is your preferred error handling pattern?",
+    "context": "Multiple patterns exist in the codebase (throw, callbacks, promises). Need to understand team preference before recommending standardization.",
+    "importance": "high",
+    "clarification": "high\n\nWould you prefer Result types, exceptions, or error callbacks? Are there any existing patterns we should follow?"
+  },
+  {
+    "id": "should-we-prioritize-performance-or-developer-expe",
+    "question": "Should we prioritize performance or developer experience?",
+    "context": "Some optimizations (like memoization) add complexity but improve performance. Need to understand priorities.",
+    "importance": "medium",
+    "clarification": "medium\n\nAre there specific performance targets we should hit, or is maintainability more important?"
+  }
+]

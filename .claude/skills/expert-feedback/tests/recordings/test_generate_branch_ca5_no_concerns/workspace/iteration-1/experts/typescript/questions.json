@@ -1,0 +1,47 @@
+[
+  {
+    "id": "1-what-is-the-expected-production-traffic-volume",
+    "question": "1. What is the expected production traffic volume?",
+    "context": "",
+    "importance": "High",
+    "clarification": "High\n\n**Why This Matters:**\n\nThis affects several architectural decisions:\n\n- **Low traffic (<100 req/s):** Current single-instance architecture is fine\n- **Medium traffic (100-1000 req/s):** Should add request rate limiting, caching headers, and performance monitoring\n- **High traffic (>1000 req/s):** Should consider clustering, load balancing, or serverless deployment\n\n**Impact on Recommendations:**\n\n- Affects whether to prioritize performance optimizations\n- Determines if request logging overhead is acceptable\n- Influences choice of validation library (Zod vs. faster alternatives like typia)\n\n---",
+    "options": null,
+    "selection_type": null
+  },
+  {
+    "id": "2-should-the-api-support-decimal-precision-require",
+    "question": "2. Should the API support decimal precision requirements?",
+    "context": "",
+    "importance": "Medium",
+    "clarification": "1. **Use built-in numbers:** Simple but has precision issues\n2. **Use decimal.js or bignumber.js:** Arbitrary precision, slower\n3. **Accept string inputs and return strings:** Preserve exact precision\n4. **Document the limitation:** Make it the caller's responsibility\n\n**Impact on Recommendations:**\n\n- Affects type definitions (number vs. string vs. Decimal type)\n- Influences validation requirements\n- Determines test coverage needs (precision edge cases)\n\n---",
+    "options": null,
+    "selection_type": null
+  },
+  {
+    "id": "3-is-authentication-authorization-required",
+    "question": "3. Is authentication/authorization required?",
+    "context": "",
+    "importance": "High",
+    "clarification": "High\n\n**Why This Matters:**\n\nCurrently the API is completely open. Anyone can call any endpoint. This affects:\n\n- Security posture\n- Architecture (stateless JWT vs. session-based)\n- Rate limiting requirements\n- Cost (public APIs can be abused)\n\n**Scenarios:**\n\n1. **Public API:** Add rate limiting, request signing, API keys\n2. **Internal API:** Add JWT validation, mTLS, or service mesh auth\n3. **No auth needed:** Document that this is intentional for testing\n\n**Impact on Recommendations:**\n\n- Determines middleware stack\n- Affects error handling (401/403 responses)\n- Influences testing strategy\n\n---",
+    "options": null,
+    "selection_type": null
+  },
+  {
+    "id": "4-what-are-the-error-response-format-requirements",
+    "question": "4. What are the error response format requirements?",
+    "context": "",
+    "importance": "Medium",
+    "clarification": "Medium\n\n**Why This Matters:**\n\nDifferent API consumers expect different error formats:\n\n1. **Simple format:**\n   ```json\n   { \"error\": \"Division by zero\" }\n   ```\n\n2. **RFC 7807 Problem Details:**\n   ```json\n   {\n     \"type\": \"https://example.com/errors/division-by-zero\",\n     \"title\": \"Division by zero\",\n     \"status\": 400,\n     \"detail\": \"The divisor cannot be zero\"\n   }\n   ```\n\n3. **JSON:API format:**\n   ```json\n   {\n     \"errors\": [\n       {\n         \"status\": \"400\",\n         \"source\": { \"pointer\": \"/data/attributes/b\" },\n         \"title\": \"Invalid value\",\n         \"detail\": \"Division by zero is not allowed\"\n       }\n     ]\n   }\n   ```\n\n**Impact on Recommendations:**\n\n- Affects error handling middleware implementation\n- Determines validation error response format\n- Influences API documentation\n\n---",
+    "options": null,
+    "selection_type": null
+  },
+  {
+    "id": "5-should-the-api-support-batch-operations",
+    "question": "5. Should the API support batch operations?",
+    "context": "",
+    "importance": "Low",
+    "clarification": "Low\n\n**Why This Matters:**\n\nCurrent design requires one HTTP request per calculation. For high-frequency use cases, batch operations reduce overhead:\n\n```json\nPOST /calculate\n{\n  \"operations\": [\n    { \"op\": \"add\", \"a\": 5, \"b\": 3 },\n    { \"op\": \"multiply\", \"a\": 2, \"b\": 4 },\n    { \"op\": \"divide\", \"a\": 10, \"b\": 2 }\n  ]\n}\n```\n\n**Trade-offs:**\n\n- **Pros:** Better performance, reduced network overhead\n- **Cons:** More complex validation, harder to cache, non-RESTful\n\n**Impact on Recommendations:**\n\n- Affects API design and endpoint structure\n- Influences validation strategy (array validation)\n- Determines transaction handling approach\n\n---",
+    "options": null,
+    "selection_type": null
+  }
+]

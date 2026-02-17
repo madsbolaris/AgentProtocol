@@ -1,0 +1,61 @@
+{
+  "expert": "typescript",
+  "iteration": 1,
+  "session_id": "mock-session-typescript-001",
+  "status": "completed",
+  "duration_seconds": 125,
+  "token_count": 5234,
+  "rating": 4,
+  "confidence": "high",
+  "strengths": [
+    "Strong type system provides excellent compile-time safety",
+    "Async/await patterns are well-implemented",
+    "Good use of discriminated unions for type safety"
+  ],
+  "concerns": [
+    {
+      "concern": "Error handling could be more consistent across the codebase",
+      "severity": "medium",
+      "locations": ["src/client.ts:142", "src/streams.ts:89"]
+    },
+    {
+      "concern": "Missing null safety checks in several public APIs",
+      "severity": "high",
+      "locations": ["src/api.ts:56", "src/api.ts:78"]
+    }
+  ],
+  "recommendations": [
+    {
+      "title": "Implement consistent error handling pattern",
+      "problem": "Error handling is inconsistent - some functions throw, others return Result types",
+      "current_approach": "Mixed error handling strategies across codebase",
+      "proposed_approach": "Standardize on Result<T, Error> type for recoverable errors, throw for programmer errors",
+      "rationale": "Improves predictability and makes error handling explicit in type signatures",
+      "dx_impact": "high",
+      "implementation_complexity": "medium"
+    },
+    {
+      "title": "Add runtime null checks for public APIs",
+      "problem": "TypeScript null checking doesn't catch runtime null values from external sources",
+      "current_approach": "Relying solely on TypeScript's strictNullChecks",
+      "proposed_approach": "Add explicit null validation at API boundaries with helpful error messages",
+      "rationale": "Prevents runtime crashes and provides better error messages to users",
+      "dx_impact": "high",
+      "implementation_complexity": "low"
+    }
+  ],
+  "questions": [
+    {
+      "question": "What is the expected behavior when a null value is passed to the streaming API?",
+      "context": "Need clarification on error handling strategy for invalid inputs",
+      "priority": "high",
+      "relates_to": ["src/streams.ts:89-102"]
+    },
+    {
+      "question": "Should we prioritize backwards compatibility or correct error handling?",
+      "context": "Fixing error handling may require breaking changes to public API",
+      "priority": "medium",
+      "relates_to": ["src/api.ts"]
+    }
+  ]
+}

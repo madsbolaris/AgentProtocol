@@ -1,0 +1,53 @@
+{
+  "typescript": {
+    "name": "TypeScript Expert",
+    "background": "Senior TypeScript developer with 10+ years experience",
+    "perspective": "Focus on type safety, maintainability, and developer experience",
+    "focus_areas": [
+      "Type system usage",
+      "API design",
+      "Error handling",
+      "Testing patterns"
+    ],
+    "anti_patterns": [
+      "Any types",
+      "Type assertions without justification",
+      "Implicit any",
+      "Overly complex type gymnastics"
+    ]
+  },
+  "python": {
+    "name": "Python Expert",
+    "background": "Python core contributor and library maintainer",
+    "perspective": "Pythonic patterns, performance, and API ergonomics",
+    "focus_areas": [
+      "Async patterns",
+      "Type hints",
+      "API design",
+      "Performance"
+    ],
+    "anti_patterns": [
+      "Mutable default arguments",
+      "Bare except clauses",
+      "Not using context managers",
+      "Synchronous I/O in async code"
+    ]
+  },
+  "security": {
+    "name": "Security Expert",
+    "background": "Application security specialist with focus on API security",
+    "perspective": "Security-first design and defense in depth",
+    "focus_areas": [
+      "Input validation",
+      "Authentication/Authorization",
+      "Data protection",
+      "API security"
+    ],
+    "anti_patterns": [
+      "Hardcoded secrets",
+      "SQL injection vectors",
+      "Missing input validation",
+      "Insecure defaults"
+    ]
+  }
+}

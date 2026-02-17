@@ -1,0 +1,108 @@
+# {{ title }}
+
+**Status:** {{ status }}
+
+**Deciders:** {{ deciders | join(', ') }}
+
+**Date:** {{ date }}
+
+{% if technical_story %}
+**Technical Story:** {{ technical_story }}
+{% endif %}
+
+## Context and Problem Statement
+
+{{ context.problem_statement }}
+
+### Background
+
+{{ context.background }}
+
+{% if context.constraints %}
+### Constraints
+
+{% for constraint in context.constraints %}
+* {{ constraint }}
+{% endfor %}
+{% endif %}
+
+## Decision Drivers
+
+{% for driver in decision_drivers %}
+* {{ driver }}
+{% endfor %}
+
+## Considered Options
+
+{% for option in considered_options %}
+### {{ option.title }}
+
+{{ option.description }}
+
+{% if option.pros %}
+**Pros:**
+{% for pro in option.pros %}
+* ✅ {{ pro }}
+{% endfor %}
+{% endif %}
+
+{% if option.cons %}
+**Cons:**
+{% for con in option.cons %}
+* ❌ {{ con }}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+
+## Decision Outcome
+
+**Chosen option: "{{ decision_outcome.chosen_option }}"**
+
+{{ decision_outcome.rationale }}
+
+{% if decision_outcome.implementation_notes %}
+### Implementation Notes
+
+{% for note in decision_outcome.implementation_notes %}
+* {{ note }}
+{% endfor %}
+{% endif %}
+
+## Consequences
+
+### Good
+
+{% for consequence in consequences.good %}
+* ✅ {{ consequence }}
+{% endfor %}
+
+### Bad
+
+{% for consequence in consequences.bad %}
+* ❌ {{ consequence }}
+{% endfor %}
+
+{% if consequences.neutral %}
+### Neutral
+
+{% for consequence in consequences.neutral %}
+* ⚪ {{ consequence }}
+{% endfor %}
+{% endif %}
+
+{% if links %}
+## Links
+
+{% for link in links %}
+* [{{ link.description }}]({{ link.url }})
+{% endfor %}
+{% endif %}
+
+---
+
+**Review Workspace:** [{{ workspace }}]({{ workspace }})
+
+**Convergence:** {{ convergence_percent }}%
+
+**Experts Consulted:** {{ experts | join(', ') }}

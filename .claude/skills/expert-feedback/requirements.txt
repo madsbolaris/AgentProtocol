@@ -1,0 +1,13 @@
+# Expert Feedback Skill Dependencies
+
+# Structured logging
+structlog>=23.2.0
+
+# Template rendering
+jinja2>=3.1.0
+
+# Async support
+aiofiles>=23.0.0
+
+# Type hints support (Python 3.8+)
+typing-extensions>=4.5.0

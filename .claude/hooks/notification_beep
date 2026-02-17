@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+"""
+Notification Hook: Play beep for human approval prompts
+Logs when called to help debug.
+"""
+import subprocess
+import sys
+from datetime import datetime
+
+# Log that the hook was called
+log_file = "/tmp/notification_hook.log"
+try:
+    with open(log_file, "a") as f:
+        f.write(f"\n[{datetime.now()}] Notification beep hook called\n")
+        f.write(f"Args: {sys.argv}\n")
+
+        # Read stdin if available
+        import select
+        if select.select([sys.stdin], [], [], 0)[0]:
+            stdin_data = sys.stdin.read()
+            f.write(f"Stdin: {stdin_data}\n")
+
+    # Play the beep - run in background so we don't block
+    # Use Popen instead of run to avoid waiting
+    process = subprocess.Popen(
+        ["afplay", "/System/Library/Sounds/Ping.aiff"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+
+    with open(log_file, "a") as f:
+        f.write(f"Beep started: pid={process.pid}\n")
+
+except Exception as e:
+    with open(log_file, "a") as f:
+        f.write(f"Error: {str(e)}\n")
+
+sys.exit(0)

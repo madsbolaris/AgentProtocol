@@ -1,56 +1,32 @@
 {
-  "runId": "run_6641a5f42b92418ea64ab0e809899278",
+  "runId": "run_osuj6zm4u9l",
   "agentId": "echo-agent",
-  "threadId": "thread_f5dc4654b0954a479e5cbedaa9d2ea74",
-  "status": "Completed",
+  "threadId": "thread_005fl7sii5zdl",
+  "status": "completed",
   "input": [
     {
-      "messageId": null,
+      "messageId": "msg_ekp4m0yyv4v",
       "role": "user",
       "contents": [
         {
           "kind": "text",
-          "text": "Hello! This is a simple text message without the text tag wrapper.",
-          "audience": null
+          "text": "Hello! This is a simple text message without the text tag wrapper."
         }
-      ],
-      "userId": null,
-      "agentId": null,
-      "authorName": null,
-      "threadId": null,
-      "runId": null,
-      "parentId": null,
-      "createdAt": null,
-      "updatedAt": null,
-      "status": null,
-      "metadata": null
+      ]
     }
   ],
   "output": [
     {
-      "messageId": "msg_27536210a1904dee81f62233d3941bec",
+      "messageId": "msg_76dlkwllpe2",
       "role": "agent",
+      "createdAt": "2026-02-09T18:38:53.127Z",
       "contents": [
         {
           "kind": "text",
-          "text": "you said: \nHello! This is a simple text message without the text tag wrapper.",
-          "audience": null
+          "text": "you said: \nHello! This is a simple text message without the text tag wrapper."
         }
-      ],
-      "userId": null,
-      "agentId": null,
-      "authorName": null,
-      "threadId": null,
-      "runId": null,
-      "parentId": null,
-      "createdAt": "2026-02-09T18:38:34.070357Z",
-      "updatedAt": null,
-      "status": null,
-      "metadata": null
+      ]
     }
   ],
-  "usage": null,
-  "error": null,
-  "createdAt": "2026-02-09T18:38:34.070358Z",
-  "completedAt": null
+  "createdAt": "2026-02-09T18:38:53.127Z"
 }

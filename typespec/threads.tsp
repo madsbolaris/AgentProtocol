@@ -6,7 +6,7 @@
  * MOVED FROM: execution.tsp
  * RATIONALE: Separate concerns - threads are conversation-centric, not execution-centric
  *
- * BASE: Microsoft Agent Framework (MAF) AgentSession
+ * BASE: Microsoft Agent Protocol (MAF) AgentSession
  * FROM: Azure Agent API (Thread resource)
  *
  * REPRESENTS: Single conversation thread with participants, messages, and lifecycle

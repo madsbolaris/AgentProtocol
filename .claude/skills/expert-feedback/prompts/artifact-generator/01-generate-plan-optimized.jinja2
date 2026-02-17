@@ -1,0 +1,80 @@
+{% extends "base-finalize.jinja2" %}
+
+{% set output_type = "Implementation Plan" %}
+{% set output_article = "an" %}
+
+{% block task_description %}
+Create a structured **Implementation Plan** that organizes improvements by priority, provides actionable steps, estimates effort, identifies dependencies, and suggests implementation order based on expert feedback.
+{% endblock %}
+
+{% block step_2_analysis %}
+## Step 2: Analyze Expert Feedback
+
+Extract key themes:
+- Common patterns across experts
+- High-priority improvements (multiple experts)
+- Quick wins (high impact, low complexity)
+- Complex changes requiring planning
+- Dependencies between improvements
+- Risk areas and testing requirements
+{% endblock %}
+
+{% block step_3_create %}
+## Step 3: Create Implementation Plan
+
+**Format:** See `output-templates/plan-format.md` for complete structure.
+
+**Key Sections Required:**
+1. Overview - Summary and success criteria
+2. Critical Files - Implementation scope
+3. Phases - Organized improvements with:
+   - Priority, complexity, expert consensus
+   - Current situation and proposed change
+   - Code examples (if applicable)
+   - Benefits, risks, dependencies, testing
+4. Implementation Order - Sequence by dependencies
+5. Quick Wins - Low-effort, high-impact items
+6. Testing Strategy - Unit, integration, regression
+7. Rollback Plan - Recovery steps
+8. Success Metrics - Measurable outcomes
+
+**Improvement Specification (for each):**
+- **Priority:** High/Medium/Low
+- **Complexity:** Low/Medium/High
+- **Expert Consensus:** {Which experts recommended}
+- **File(s):** File paths affected
+- **Current → Proposed:** Clear before/after
+- **Benefits:** Why this matters
+- **Risks:** Potential issues + mitigation
+- **Dependencies:** What must happen first
+- **Testing:** How to validate
+
+**Output as markdown file in workspace:**
+`{{ workspace }}/draft-plan.md`
+{% endblock %}
+
+{% block critical_requirements %}
+## Critical Requirements
+
+1. **Organize by priority** - High-impact, low-complexity first
+2. **Be specific** - File paths, concrete changes with examples
+3. **Explain rationale** - Reference expert feedback
+4. **Realistic estimates** - Based on complexity
+5. **Show dependencies** - Sequential vs parallel work
+6. **Include testing** - Validation for each change
+7. **Address risks** - Issues with mitigations
+8. **Make actionable** - Immediately implementable
+{% endblock %}
+
+{% block specific_output %}
+**File path:** `{{ workspace }}/draft-plan.md`
+{% endblock %}
+
+{% block template_specific_notes %}
+- **This is IMPROVE mode** - Not an ADR
+- **Reference experts extensively** - Show consensus
+- **Provide file paths and line numbers** - Be concrete
+- **Prioritize ruthlessly** - Not all feedback is immediate
+- **Balance quick wins with long-term improvements**
+- **Include Claude Code implementation hints** - Plan mode metadata
+{% endblock %}

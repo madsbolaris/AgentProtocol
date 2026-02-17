@@ -1,0 +1,45 @@
+{
+  "name": "@microsoft/agents-protocol-xml",
+  "version": "0.2.0",
+  "description": "XML serialization/deserialization for Microsoft Agents Protocol",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "dev": "tsc -b --watch",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [
+    "agents",
+    "xml",
+    "serialization",
+    "typescript",
+    "microsoft"
+  ],
+  "author": "Microsoft",
+  "license": "MIT",
+  "dependencies": {
+    "@microsoft/agents-protocol-abstractions": "*"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.8.0"
+  }
+}

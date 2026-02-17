@@ -16,7 +16,7 @@ class MockLLMClient:
     deterministic, fast, free LLM responses for testing.
 
     Example:
-        mock_client = MockLLMClient(Path("test-data/llm-recordings/basic-m365"))
+        mock_client = MockLLMClient(Path("test-data/llm-recordings/sample/basic-m365"))
         completion = await mock_client.chat.completions.create(...)
         # Returns recorded response, no API call
     """

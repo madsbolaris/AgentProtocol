@@ -20,7 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="../EmojiChatBot/EmojiChatBot.csproj" />
+		<ProjectReference Include="../../samples/agents/EmojiChatBot/EmojiChatBot.csproj" />
 	</ItemGroup>
 
 </Project>

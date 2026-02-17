@@ -1,0 +1,7 @@
+src
+tests
+*.tsbuildinfo
+.DS_Store
+coverage
+tsconfig.json
+jest.config.js

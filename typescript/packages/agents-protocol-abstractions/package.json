@@ -1,0 +1,41 @@
+{
+  "name": "@microsoft/agents-protocol-abstractions",
+  "version": "0.2.0",
+  "description": "Core TypeScript types for Microsoft Agents Protocol (generated from TypeSpec)",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "npm run compile",
+    "generate": "cd ../../../ && python3 scripts/codegen/generate_sdk.py --lang typescript",
+    "compile": "tsc -b",
+    "clean": "rm -rf dist *.tsbuildinfo src/generated",
+    "dev": "tsc -b --watch",
+    "test": "echo 'Tests will be added'"
+  },
+  "keywords": [
+    "agents",
+    "protocol",
+    "typescript",
+    "types",
+    "microsoft",
+    "typespec"
+  ],
+  "author": "Microsoft",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  }
+}

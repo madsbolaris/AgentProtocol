@@ -188,7 +188,7 @@ python scripts/ci/start_samples.py echo-m365
 python testgen/generate_golden_datasets.py --sample echo-m365
 
 # 3. Verify outputs look correct
-ls -lh ../../test-data/results/echo-m365/
+ls -lh ../../test-data/results/samples/echo-m365/
 
 # 4. Run validation tests
 pytest ../../python/microsoft-agents-protocol/tests/ -k golden

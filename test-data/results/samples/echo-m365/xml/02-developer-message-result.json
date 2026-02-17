@@ -1,65 +1,39 @@
 {
-  "runId": "run_e8959934f8db4ed98bcc66d23102d5bd",
+  "runId": "run_z5fqk71j50e",
   "agentId": "echo-agent",
-  "threadId": "thread_3c04cf76085140d3b3b3ee71a8fa8916",
-  "journalId": null,
-  "status": "Completed",
+  "threadId": "thread_xi3u8u0the9",
+  "status": "completed",
   "input": [
     {
-      "messageId": null,
+      "messageId": "msg_6iy0qho684g",
       "role": "developer",
       "contents": [
         {
           "kind": "text",
-          "text": "Additional developer instructions: Use concise responses and cite sources.",
-          "audience": null
+          "text": "Additional developer instructions: Use concise responses and cite sources."
         }
-      ],
-      "userId": null,
-      "agentId": null,
-      "authorName": null,
-      "threadId": null,
-      "runId": null,
-      "parentId": null,
-      "createdAt": null,
-      "updatedAt": null,
-      "status": null,
-      "metadata": null
+      ]
     }
   ],
-  "agent": null,
   "output": [
     {
-      "messageId": "msg_7a516207f1a44198a2cdc7d716df2b14",
+      "messageId": "msg_1zwkix0xyzo",
       "role": "agent",
+      "createdAt": "2026-02-09T18:38:52.394Z",
       "contents": [
         {
           "kind": "text",
-          "text": "you said: \nAdditional developer instructions: Use concise responses and cite sources.",
-          "audience": null
+          "text": "you said: \nAdditional developer instructions: Use concise responses and cite sources."
         }
-      ],
-      "userId": null,
-      "agentId": null,
-      "authorName": null,
-      "threadId": null,
-      "runId": null,
-      "parentId": null,
-      "createdAt": "2026-02-09T18:38:33.436785Z",
-      "updatedAt": null,
-      "status": null,
-      "metadata": null
+      ]
     }
   ],
-  "usage": null,
-  "createdAt": "2026-02-09T18:38:33.436786Z",
-  "updatedAt": null,
-  "completedAt": "2026-02-09T18:38:33.436786Z",
-  "cancelledAt": null,
-  "cancellationReason": null,
-  "error": null,
-  "userId": null,
-  "threadCleanup": null,
-  "webhook": null,
-  "metadata": null
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "totalTokens": 0
+  },
+  "createdAt": "2026-02-09T18:38:52.394Z",
+  "updatedAt": "2026-02-09T18:38:52.394Z",
+  "completedAt": "2026-02-09T18:38:52.394Z"
 }

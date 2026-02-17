@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Questions Schema",
+  "description": "Schema for expert questions with references",
+  "type": "object",
+  "required": ["expert", "iteration", "questions"],
+  "properties": {
+    "expert": {
+      "type": "string",
+      "description": "Name of the expert (e.g., 'typescript', 'python')"
+    },
+    "iteration": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Current iteration number"
+    },
+    "questions": {
+      "type": "array",
+      "description": "List of questions with references",
+      "items": {
+        "type": "object",
+        "required": ["id", "question", "context"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the question"
+          },
+          "question": {
+            "type": "string",
+            "description": "The question text"
+          },
+          "context": {
+            "type": "string",
+            "description": "Context explaining why this question matters"
+          },
+          "importance": {
+            "enum": ["high", "medium", "low"],
+            "description": "Importance level of the question"
+          },
+          "options": {
+            "type": "array",
+            "description": "2-3 clear options for answering the question",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 2,
+            "maxItems": 3
+          },
+          "selection_type": {
+            "enum": ["radio", "checkbox"],
+            "description": "radio for single choice, checkbox for multiple choice"
+          },
+          "references": {
+            "type": "array",
+            "description": "References to where this question came from",
+            "items": {
+              "type": "object",
+              "required": ["file", "context", "type"],
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "description": "File path with line reference (e.g., 'review-typescript-1.md#L45-L52')"
+                },
+                "excerpt": {
+                  "type": "string",
+                  "description": "Short quote from the referenced section (1-2 sentences)"
+                },
+                "context": {
+                  "type": "string",
+                  "description": "What this reference shows or why it matters"
+                },
+                "type": {
+                  "enum": ["concern", "recommendation", "question"],
+                  "description": "Type of reference"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

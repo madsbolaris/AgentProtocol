@@ -2,7 +2,7 @@
 AUTO-GENERATED: EchoM365 TypeSpec compliance tests.
 Generated from: typespec/messages.tsp
 
-Verifies that EchoM365 conforms to Agent Framework Protocol specification.
+Verifies that EchoM365 conforms to Agent Protocol Protocol specification.
 Tests cover:
 - Message structure (ChatMessage, role, contents)
 - Required properties (messageId, role, contents)

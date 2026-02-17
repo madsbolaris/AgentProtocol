@@ -32,6 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol.Hosting\Microsoft.Agents.Protocol.Hosting.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol.Abstractions\Microsoft.Agents.Protocol.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.Agents.Protocol.Model.Testing\Microsoft.Agents.Protocol.Model.Testing.csproj" />
   </ItemGroup>
 
 </Project>

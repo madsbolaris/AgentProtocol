@@ -1,0 +1,92 @@
+# Artifact Concern Review: {{ expert_role }}
+
+Review the generated artifact and determine if you approve it or have concerns that need to be addressed.
+
+---
+
+## Context
+
+**Iteration:** {{ iteration }}
+**Expert Role:** {{ expert_role }}
+
+**Original Review Context:**
+{{ review_context }}
+
+---
+
+## Your Previous Recommendations
+
+You previously provided these recommendations that were synthesized into the artifact:
+
+{{ expert_previous_recommendations }}
+
+---
+
+## Synthesized Feedback Summary
+
+{{ synthesis_summary }}
+
+---
+
+## Generated Artifact
+
+{{ artifact_content }}
+
+---
+
+## Task
+
+Review the artifact and decide:
+
+### Decision: Approve or Raise Concerns
+
+**Approve** if:
+- The artifact adequately addresses your previous recommendations
+- No critical issues or gaps remain
+- The artifact quality meets production standards
+
+**Raise Concerns** if:
+- Your recommendations were misunderstood or poorly implemented
+- Critical issues or security vulnerabilities were introduced
+- Important aspects were omitted or oversimplified
+- The artifact doesn't meet production readiness standards
+
+For each concern, provide:
+- **Title:** Brief, specific concern name
+- **Description:** What's wrong and why it matters (2-3 sentences)
+- **Severity:** `critical`, `high`, `medium`, `low`
+
+---
+
+## Output Format
+
+**REQUIRED:** Respond with valid JSON only. No markdown, no explanation.
+
+### If you APPROVE:
+```json
+{
+  "decision": "approve",
+  "reasoning": "Brief explanation of why you approve (1-2 sentences)"
+}
+```
+
+### If you have CONCERNS:
+```json
+{
+  "decision": "concern",
+  "reasoning": "Brief explanation of why you have concerns (1-2 sentences)",
+  "concerns": [
+    {
+      "title": "Specific concern title",
+      "description": "What's wrong and why it matters",
+      "severity": "critical|high|medium|low"
+    }
+  ]
+}
+```
+
+---
+
+## Begin
+
+Review the artifact against your previous recommendations and output your decision as JSON.

@@ -1,56 +1,32 @@
 {
-  "runId": "run_fda4779e58f74e0db267a6d1ae61bce9",
+  "runId": "run_00vf6bsapf24f",
   "agentId": "echo-agent",
-  "threadId": "thread_af096912485a4beb81fa59999aa0df15",
-  "status": "Completed",
+  "threadId": "thread_zi6ti4jbc8",
+  "status": "completed",
   "input": [
     {
-      "messageId": null,
+      "messageId": "msg_ap3broxony",
       "role": "developer",
       "contents": [
         {
           "kind": "text",
-          "text": "Additional developer instructions: Use concise responses and cite sources.",
-          "audience": null
+          "text": "Additional developer instructions: Use concise responses and cite sources."
         }
-      ],
-      "userId": null,
-      "agentId": null,
-      "authorName": null,
-      "threadId": null,
-      "runId": null,
-      "parentId": null,
-      "createdAt": null,
-      "updatedAt": null,
-      "status": null,
-      "metadata": null
+      ]
     }
   ],
   "output": [
     {
-      "messageId": "msg_6a8cecb8df7b4487a8c1bb9a7f3b76a2",
+      "messageId": "msg_mp02phj3txk",
       "role": "agent",
+      "createdAt": "2026-02-09T18:38:53.126Z",
       "contents": [
         {
           "kind": "text",
-          "text": "you said: \nAdditional developer instructions: Use concise responses and cite sources.",
-          "audience": null
+          "text": "you said: \nAdditional developer instructions: Use concise responses and cite sources."
         }
-      ],
-      "userId": null,
-      "agentId": null,
-      "authorName": null,
-      "threadId": null,
-      "runId": null,
-      "parentId": null,
-      "createdAt": "2026-02-09T18:38:34.058361Z",
-      "updatedAt": null,
-      "status": null,
-      "metadata": null
+      ]
     }
   ],
-  "usage": null,
-  "error": null,
-  "createdAt": "2026-02-09T18:38:34.058362Z",
-  "completedAt": null
+  "createdAt": "2026-02-09T18:38:53.126Z"
 }

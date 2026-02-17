@@ -1,0 +1,1131 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.0, pytest-9.0.2, pluggy-1.6.0 -- /Library/Frameworks/Python.framework/Versions/3.14/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback
+plugins: anyio-4.12.1, asyncio-1.3.0, cov-7.0.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 198 items
+
+tests/core/test_spawn_experts.py::TestLoadIterationContext::test_iteration_1_returns_empty_context PASSED [  0%]
+tests/core/test_spawn_experts.py::TestLoadIterationContext::test_iteration_2_loads_previous_convergence PASSED [  1%]
+tests/core/test_spawn_experts.py::TestLoadIterationContext::test_loads_other_experts_summaries PASSED [  1%]
+tests/core/test_spawn_experts.py::TestLoadIterationContext::test_loads_previous_dx_rating PASSED [  2%]
+tests/core/test_spawn_experts.py::TestLoadIterationContext::test_loads_consolidated_questions PASSED [  2%]
+tests/core/test_spawn_experts.py::TestLoadIterationContext::test_handles_missing_questions_file PASSED [  3%]
+tests/core/test_spawn_experts.py::TestLoadIterationContext::test_generates_iteration_diff PASSED [  3%]
+tests/core/test_spawn_experts.py::TestLoadIterationContext::test_handles_iteration_diff_error PASSED [  4%]
+tests/core/test_spawn_experts.py::TestBuildConversationalTurnPrompt::test_renders_template_with_context PASSED [  4%]
+tests/core/test_spawn_experts.py::TestBuildConversationalTurnPrompt::test_uses_correct_template_path PASSED [  5%]
+tests/core/test_spawn_experts.py::TestSpawnExpertWithTimeout::test_successful_spawn_within_timeout PASSED [  5%]
+tests/core/test_spawn_experts.py::TestSpawnExpertWithTimeout::test_timeout_handling PASSED [  6%]
+tests/core/test_spawn_experts.py::TestSpawnExpertWithTimeout::test_exception_handling PASSED [  6%]
+tests/core/test_spawn_experts.py::TestSpawnExpertWithTimeout::test_iteration_2_uses_refinement_prompt PASSED [  7%]
+tests/core/test_spawn_experts.py::TestSpawnExpertWithTimeout::test_loads_qa_answers PASSED [  7%]
+tests/core/test_spawn_experts.py::TestSpawnExpertWithTimeout::test_timeout_monitor_sends_warnings PASSED [  8%]
+tests/core/test_spawn_experts.py::TestSpawnExpertAsync::test_updates_state_on_start PASSED [  8%]
+tests/core/test_spawn_experts.py::TestSpawnExpertAsync::test_updates_state_on_completion PASSED [  9%]
+tests/core/test_spawn_experts.py::TestSpawnExpertAsync::test_notifies_progress_tracker PASSED [  9%]
+tests/core/test_spawn_experts.py::TestSpawnExpertAsync::test_handles_error_result PASSED [ 10%]
+tests/core/test_spawn_experts.py::TestSpawnExpertAsync::test_handles_timeout_result PASSED [ 10%]
+tests/core/test_spawn_experts.py::TestSpawnExpertAsync::test_passes_correlation_id PASSED [ 11%]
+tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_spawns_all_experts_in_parallel FAILED [ 11%]
+tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_handles_mixed_success_and_failure FAILED [ 12%]
+tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_updates_state_with_sessions FAILED [ 12%]
+tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_loads_existing_sessions_for_iteration_2 PASSED [ 13%]
+tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_tracks_token_metrics FAILED [ 13%]
+tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_handles_cancellation FAILED [ 14%]
+tests/core/test_spawn_experts.py::TestValidateExpertCount::test_warns_about_too_few_experts PASSED [ 14%]
+tests/core/test_spawn_experts.py::TestValidateExpertCount::test_warns_about_too_many_experts PASSED [ 15%]
+tests/core/test_spawn_experts.py::TestValidateExpertCount::test_shows_cost_estimate_for_large_count PASSED [ 15%]
+tests/core/test_spawn_experts.py::TestValidateExpertCount::test_no_warning_for_optimal_count PASSED [ 16%]
+tests/core/test_spawn_experts.py::TestMainAsync::test_main_async_orchestration PASSED [ 16%]
+tests/core/test_spawn_experts.py::TestMainAsync::test_handles_custom_convergence_target PASSED [ 17%]
+tests/core/test_spawn_experts.py::TestCLI::test_main_parses_required_args PASSED [ 17%]
+tests/core/test_spawn_experts.py::TestCLI::test_main_requires_review_context PASSED [ 18%]
+tests/core/test_spawn_experts.py::TestCLI::test_main_accepts_optional_args PASSED [ 18%]
+tests/core/test_spawn_experts.py::TestEdgeCases::test_handles_unicode_in_expert_names PASSED [ 19%]
+tests/core/test_spawn_experts.py::TestEdgeCases::test_handles_unicode_in_topic PASSED [ 19%]
+tests/core/test_spawn_experts.py::TestEdgeCases::test_handles_concurrent_state_updates FAILED [ 20%]
+tests/core/test_spawn_experts.py::TestEdgeCases::test_handles_exception_in_spawn_and_update PASSED [ 20%]
+tests/core/test_spawn_experts.py::TestEdgeCases::test_handles_empty_session_id PASSED [ 21%]
+tests/core/test_spawn_experts.py::TestEdgeCases::test_handles_malformed_questions_json PASSED [ 21%]
+tests/core/test_synthesize.py::TestFindExperts::test_find_experts_new_structure PASSED [ 22%]
+tests/core/test_synthesize.py::TestFindExperts::test_find_experts_old_structure PASSED [ 22%]
+tests/core/test_synthesize.py::TestFindExperts::test_find_experts_no_experts PASSED [ 23%]
+tests/core/test_synthesize.py::TestFindExperts::test_find_experts_prefers_new_structure PASSED [ 23%]
+tests/core/test_synthesize.py::TestFindExperts::test_find_experts_multiple_iterations PASSED [ 24%]
+tests/core/test_synthesize.py::TestFindExperts::test_find_experts_with_hyphens_in_name PASSED [ 24%]
+tests/core/test_synthesize.py::TestBuildSynthesisPrompt::test_build_prompt_iteration_1 PASSED [ 25%]
+tests/core/test_synthesize.py::TestBuildSynthesisPrompt::test_build_prompt_iteration_2 PASSED [ 25%]
+tests/core/test_synthesize.py::TestBuildSynthesisPrompt::test_build_prompt_iteration_3_low_convergence PASSED [ 26%]
+tests/core/test_synthesize.py::TestBuildSynthesisPrompt::test_build_prompt_iteration_3_high_convergence PASSED [ 26%]
+tests/core/test_synthesize.py::TestBuildSynthesisPrompt::test_build_prompt_no_experts PASSED [ 27%]
+tests/core/test_synthesize.py::TestBuildSynthesisPrompt::test_build_prompt_with_previous_summary PASSED [ 27%]
+tests/core/test_synthesize.py::TestBuildSynthesisPrompt::test_build_prompt_with_qa_answers FAILED [ 28%]
+tests/core/test_synthesize.py::TestSynthesizeFeedback::test_synthesize_feedback_first_iteration FAILED [ 28%]
+tests/core/test_synthesize.py::TestSynthesizeFeedback::test_synthesize_feedback_session_reuse FAILED [ 29%]
+tests/core/test_synthesize.py::TestSynthesizeFeedback::test_synthesize_feedback_with_deduplication FAILED [ 29%]
+tests/core/test_synthesize.py::TestSynthesizeFeedback::test_synthesize_feedback_agent_failure PASSED [ 30%]
+tests/core/test_synthesize.py::TestSynthesizeFeedback::test_synthesize_feedback_missing_output PASSED [ 30%]
+tests/core/test_synthesize.py::TestSynthesizeFeedback::test_synthesize_feedback_parse_failure FAILED [ 31%]
+tests/core/test_synthesize.py::TestPhaseCompletion::test_phase_already_complete_with_cache FAILED [ 31%]
+tests/core/test_synthesize.py::TestPhaseCompletion::test_phase_complete_fallback_to_state FAILED [ 32%]
+tests/core/test_synthesize.py::TestPhaseCompletion::test_phase_marked_complete_after_synthesis FAILED [ 32%]
+tests/core/test_synthesize.py::TestIterationSummaryRecording::test_iteration_summary_recorded FAILED [ 33%]
+tests/core/test_synthesize.py::TestMain::test_main_missing_workspace PASSED [ 33%]
+tests/core/test_synthesize.py::TestMain::test_main_successful_run PASSED [ 34%]
+tests/core/test_synthesize.py::TestMain::test_main_with_correlation_id PASSED [ 34%]
+tests/core/test_synthesize.py::TestEdgeCases::test_missing_state_file FAILED [ 35%]
+tests/core/test_synthesize.py::TestEdgeCases::test_validation_errors FAILED [ 35%]
+tests/core/test_synthesize.py::TestEdgeCases::test_deduplication_failure FAILED [ 36%]
+tests/core/test_synthesize.py::TestEdgeCases::test_build_prompt_state_load_failure PASSED [ 36%]
+tests/core/test_synthesize.py::TestEdgeCases::test_exception_during_synthesis PASSED [ 37%]
+tests/core/test_synthesize.py::TestEdgeCases::test_find_experts_empty_directory PASSED [ 37%]
+tests/core/test_synthesize.py::TestEdgeCases::test_token_metrics_update FAILED [ 38%]
+tests/core/test_artifact_review.py::TestSpawnArtifactReviewer::test_spawn_reviewer_success PASSED [ 38%]
+tests/core/test_artifact_review.py::TestSpawnArtifactReviewer::test_spawn_reviewer_agent_failure PASSED [ 39%]
+tests/core/test_artifact_review.py::TestSpawnArtifactReviewer::test_spawn_reviewer_missing_review_file PASSED [ 39%]
+tests/core/test_artifact_review.py::TestSpawnArtifactReviewer::test_spawn_reviewer_parse_failure PASSED [ 40%]
+tests/core/test_artifact_review.py::TestSynthesizeVetoes::test_synthesize_single_veto FAILED [ 40%]
+tests/core/test_artifact_review.py::TestSynthesizeVetoes::test_synthesize_multiple_vetoes FAILED [ 41%]
+tests/core/test_artifact_review.py::TestSynthesizeVetoes::test_synthesize_vetoes_markdown_formatting FAILED [ 41%]
+tests/core/test_artifact_review.py::TestSynthesizeTweaks::test_synthesize_single_tweak PASSED [ 42%]
+tests/core/test_artifact_review.py::TestSynthesizeTweaks::test_synthesize_multiple_tweaks PASSED [ 42%]
+tests/core/test_artifact_review.py::TestSynthesizeTweaks::test_synthesize_tweaks_markdown_formatting PASSED [ 43%]
+tests/core/test_artifact_review.py::TestCreateRegenerationContext::test_create_context_with_patterns FAILED [ 43%]
+tests/core/test_artifact_review.py::TestCreateRegenerationContext::test_create_context_common_themes FAILED [ 44%]
+tests/core/test_artifact_review.py::TestCreateRegenerationContext::test_create_context_no_patterns FAILED [ 44%]
+tests/core/test_artifact_review.py::TestSynthesizeArtifactConcerns::test_synthesize_concerns_success PASSED [ 45%]
+tests/core/test_artifact_review.py::TestSynthesizeArtifactConcerns::test_synthesize_concerns_no_reviews PASSED [ 45%]
+tests/core/test_artifact_review.py::TestSynthesizeArtifactConcerns::test_synthesize_concerns_agent_failure PASSED [ 46%]
+tests/core/test_artifact_review.py::TestReviewArtifact::test_review_artifact_all_approve PASSED [ 46%]
+tests/core/test_artifact_review.py::TestReviewArtifact::test_review_artifact_with_vetoes FAILED [ 47%]
+tests/core/test_artifact_review.py::TestReviewArtifact::test_review_artifact_minor_tweaks_only PASSED [ 47%]
+tests/core/test_artifact_review.py::TestReviewArtifact::test_review_artifact_mixed_results PASSED [ 48%]
+tests/core/test_artifact_review.py::TestReviewArtifact::test_review_artifact_missing_artifact PASSED [ 48%]
+tests/core/test_artifact_review.py::TestMain::test_main_missing_arguments PASSED [ 49%]
+tests/core/test_artifact_review.py::TestMain::test_main_with_valid_args PASSED [ 50%]
+tests/core/test_artifact_review.py::TestMain::test_main_error_exit_code PASSED [ 50%]
+tests/core/test_artifact_review.py::TestEdgeCases::test_synthesize_vetoes_empty_issues FAILED [ 51%]
+tests/core/test_artifact_review.py::TestEdgeCases::test_synthesize_tweaks_empty_tweaks PASSED [ 51%]
+tests/core/test_artifact_review.py::TestEdgeCases::test_regeneration_context_empty_concerns FAILED [ 52%]
+tests/core/test_artifact_review.py::TestEdgeCases::test_review_artifact_all_errors PASSED [ 52%]
+tests/core/test_artifact_review.py::TestEdgeCases::test_veto_pattern_single_expert_multiple_concerns FAILED [ 53%]
+tests/core/test_artifact_review.py::TestEdgeCases::test_synthesize_concerns_with_invalid_json PASSED [ 53%]
+tests/state/test_manager.py::TestWorkspaceState::test_minimal_creation PASSED [ 54%]
+tests/state/test_manager.py::TestWorkspaceState::test_default_values PASSED [ 54%]
+tests/state/test_manager.py::TestWorkspaceState::test_custom_values PASSED [ 55%]
+tests/state/test_manager.py::TestWorkspaceState::test_post_init_handles_none_values PASSED [ 55%]
+tests/state/test_manager.py::TestWorkspaceState::test_to_dict PASSED     [ 56%]
+tests/state/test_manager.py::TestWorkspaceState::test_from_dict_minimal PASSED [ 56%]
+tests/state/test_manager.py::TestWorkspaceState::test_from_dict_complete PASSED [ 57%]
+tests/state/test_manager.py::TestWorkspaceState::test_from_dict_missing_topic_raises_error PASSED [ 57%]
+tests/state/test_manager.py::TestWorkspaceState::test_from_dict_with_extra_fields PASSED [ 58%]
+tests/state/test_manager.py::TestWorkspaceState::test_round_trip_serialization PASSED [ 58%]
+tests/state/test_manager.py::TestStateManagerInit::test_init_creates_paths PASSED [ 59%]
+tests/state/test_manager.py::TestStateManagerInit::test_init_with_correlation_id PASSED [ 59%]
+tests/state/test_manager.py::TestStateManagerInit::test_exists_returns_false_initially PASSED [ 60%]
+tests/state/test_manager.py::TestStateManagerInit::test_exists_returns_true_after_creation PASSED [ 60%]
+tests/state/test_manager.py::TestLoadAndSave::test_save_creates_directory PASSED [ 61%]
+tests/state/test_manager.py::TestLoadAndSave::test_save_writes_valid_json PASSED [ 61%]
+tests/state/test_manager.py::TestLoadAndSave::test_load_missing_file_raises_error PASSED [ 62%]
+tests/state/test_manager.py::TestLoadAndSave::test_load_corrupted_json_raises_error PASSED [ 62%]
+tests/state/test_manager.py::TestLoadAndSave::test_save_and_load_round_trip PASSED [ 63%]
+tests/state/test_manager.py::TestCreate::test_create_saves_new_state PASSED [ 63%]
+tests/state/test_manager.py::TestCreate::test_create_raises_error_if_exists PASSED [ 64%]
+tests/state/test_manager.py::TestUpdateSessions::test_update_sessions_adds_new_session PASSED [ 64%]
+tests/state/test_manager.py::TestUpdateSessions::test_update_sessions_preserves_existing PASSED [ 65%]
+tests/state/test_manager.py::TestUpdateSessions::test_update_sessions_overwrites_existing PASSED [ 65%]
+tests/state/test_manager.py::TestUpdateSessions::test_update_sessions_multiple_experts PASSED [ 66%]
+tests/state/test_manager.py::TestSynthesisSession::test_set_synthesis_session PASSED [ 66%]
+tests/state/test_manager.py::TestSynthesisSession::test_set_synthesis_session_overwrites_existing PASSED [ 67%]
+tests/state/test_manager.py::TestArtifactGenerationSession::test_set_artifact_generation_session PASSED [ 67%]
+tests/state/test_manager.py::TestArtifactGenerationSession::test_set_artifact_generation_session_overwrites PASSED [ 68%]
+tests/state/test_manager.py::TestArtifactGenerationSession::test_set_artifact_review_needed PASSED [ 68%]
+tests/state/test_manager.py::TestArtifactGenerationSession::test_set_artifact_generation_result PASSED [ 69%]
+tests/state/test_manager.py::TestConvergence::test_update_convergence_basic PASSED [ 69%]
+tests/state/test_manager.py::TestConvergence::test_update_convergence_with_agreement_breakdown PASSED [ 70%]
+tests/state/test_manager.py::TestConvergence::test_update_convergence_reaches_consensus PASSED [ 70%]
+tests/state/test_manager.py::TestIteration::test_increment_iteration_from_1 PASSED [ 71%]
+tests/state/test_manager.py::TestIteration::test_increment_iteration_multiple_times PASSED [ 71%]
+tests/state/test_manager.py::TestIteration::test_increment_iteration_from_zero PASSED [ 72%]
+tests/state/test_manager.py::TestExpertResults::test_add_expert_result PASSED [ 72%]
+tests/state/test_manager.py::TestExpertResults::test_add_expert_result_overwrites PASSED [ 73%]
+tests/state/test_manager.py::TestExpertResults::test_add_multiple_expert_results PASSED [ 73%]
+tests/state/test_manager.py::TestExpertProgress::test_update_expert_progress_basic PASSED [ 74%]
+tests/state/test_manager.py::TestExpertProgress::test_update_expert_progress_with_metadata PASSED [ 74%]
+tests/state/test_manager.py::TestExpertProgress::test_update_expert_progress_transitions PASSED [ 75%]
+tests/state/test_manager.py::TestTokenMetrics::test_update_token_metrics_basic PASSED [ 75%]
+tests/state/test_manager.py::TestTokenMetrics::test_update_token_metrics_accumulates PASSED [ 76%]
+tests/state/test_manager.py::TestTokenMetrics::test_update_token_metrics_with_cache PASSED [ 76%]
+tests/state/test_manager.py::TestTokenMetrics::test_update_token_metrics_with_cache_accumulates PASSED [ 77%]
+tests/state/test_manager.py::TestTokenMetrics::test_cache_enabled_flag PASSED [ 77%]
+tests/state/test_manager.py::TestPhaseManagement::test_set_phase_valid PASSED [ 78%]
+tests/state/test_manager.py::TestPhaseManagement::test_set_phase_invalid_raises_error PASSED [ 78%]
+tests/state/test_manager.py::TestPhaseManagement::test_mark_phase_complete PASSED [ 79%]
+tests/state/test_manager.py::TestPhaseManagement::test_is_phase_complete PASSED [ 79%]
+tests/state/test_manager.py::TestPhaseManagement::test_get_phase_result PASSED [ 80%]
+tests/state/test_manager.py::TestPhaseManagement::test_mark_complete PASSED [ 80%]
+tests/state/test_manager.py::TestPhaseManagement::test_set_start_time PASSED [ 81%]
+tests/state/test_manager.py::TestScriptRegistry::test_register_script_intent_first_time PASSED [ 81%]
+tests/state/test_manager.py::TestScriptRegistry::test_register_script_intent_already_registered PASSED [ 82%]
+tests/state/test_manager.py::TestScriptRegistry::test_register_script_intent_same_expert PASSED [ 82%]
+tests/state/test_manager.py::TestScriptRegistry::test_complete_script PASSED [ 83%]
+tests/state/test_manager.py::TestScriptRegistry::test_get_script_owner_nonexistent PASSED [ 83%]
+tests/state/test_manager.py::TestScriptRegistry::test_get_completed_scripts_empty PASSED [ 84%]
+tests/state/test_manager.py::TestScriptRegistry::test_get_completed_scripts_multiple PASSED [ 84%]
+tests/state/test_manager.py::TestIterationHistory::test_record_iteration_summary PASSED [ 85%]
+tests/state/test_manager.py::TestIterationHistory::test_record_iteration_summary_multiple PASSED [ 85%]
+tests/state/test_manager.py::TestIterationHistory::test_iteration_history_structure PASSED [ 86%]
+tests/state/test_manager.py::TestArtifactRegeneration::test_increment_artifact_generation_attempt PASSED [ 86%]
+tests/state/test_manager.py::TestArtifactRegeneration::test_record_artifact_generation_result FAILED [ 87%]
+tests/state/test_manager.py::TestArtifactRegeneration::test_record_artifact_generation_result_multiple FAILED [ 87%]
+tests/state/test_manager.py::TestSessionsByIteration::test_update_expert_sessions_for_iteration PASSED [ 88%]
+tests/state/test_manager.py::TestSessionsByIteration::test_get_expert_sessions_for_iteration PASSED [ 88%]
+tests/state/test_manager.py::TestSessionsByIteration::test_update_synthesis_session_for_iteration PASSED [ 89%]
+tests/state/test_manager.py::TestSessionsByIteration::test_get_synthesis_session_for_iteration PASSED [ 89%]
+tests/state/test_manager.py::TestSessionsByIteration::test_sessions_by_iteration_multiple_iterations PASSED [ 90%]
+tests/state/test_manager.py::TestConcernReview::test_initialize_concern_review_state PASSED [ 90%]
+tests/state/test_manager.py::TestConcernReview::test_update_concern_review_state PASSED [ 91%]
+tests/state/test_manager.py::TestConcernReview::test_update_concern_review_state_multiple_times PASSED [ 91%]
+tests/state/test_manager.py::TestConcernReview::test_get_concern_review_state PASSED [ 92%]
+tests/state/test_manager.py::TestConcernReview::test_increment_artifact_version PASSED [ 92%]
+tests/state/test_manager.py::TestConcernReview::test_concern_review_history_structure PASSED [ 93%]
+tests/state/test_manager.py::TestEdgeCases::test_concurrent_session_updates PASSED [ 93%]
+tests/state/test_manager.py::TestEdgeCases::test_concurrent_convergence_updates PASSED [ 94%]
+tests/state/test_manager.py::TestEdgeCases::test_multiple_managers_same_workspace PASSED [ 94%]
+tests/state/test_manager.py::TestEdgeCases::test_rapid_sequential_updates PASSED [ 95%]
+tests/state/test_manager.py::TestEdgeCases::test_update_with_missing_state_file_raises_error PASSED [ 95%]
+tests/state/test_manager.py::TestEdgeCases::test_load_from_dict_with_missing_lists PASSED [ 96%]
+tests/state/test_manager.py::TestEdgeCases::test_unicode_in_expert_names PASSED [ 96%]
+tests/state/test_manager.py::TestEdgeCases::test_very_large_state PASSED [ 97%]
+tests/state/test_manager.py::TestEdgeCases::test_negative_values PASSED  [ 97%]
+tests/state/test_manager.py::TestEdgeCases::test_phase_result_persistence PASSED [ 98%]
+tests/state/test_manager.py::TestEdgeCases::test_empty_expert_list PASSED [ 98%]
+tests/state/test_manager.py::TestEdgeCases::test_zero_iteration PASSED   [ 99%]
+tests/state/test_manager.py::TestEdgeCases::test_special_characters_in_session_ids PASSED [100%]/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/_pytest/unraisableexception.py:33: RuntimeWarning: coroutine 'spawn_artifact_reviewer' was never awaited
+  gc.collect()
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+
+
+=================================== FAILURES ===================================
+___________ TestSpawnAllExperts.test_spawns_all_experts_in_parallel ____________
+tests/core/test_spawn_experts.py:931: in test_spawns_all_experts_in_parallel
+    assert result["success_count"] == 3
+E   assert 0 == 3
+------------------------------ Captured log call -------------------------------
+DEBUG    expert-feedback.state-manager:manager.py:340 Loading state from /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_spawns_all_experts_in_par0/test_workspace/state.json
+INFO     expert-feedback.state-manager:manager.py:353 Loaded state: iteration=1, convergence=0%, experts=3
+INFO     expert-feedback.state-manager:manager.py:444 Updating sessions for 0 experts: []
+INFO     expert-feedback.state-manager:manager.py:456 Sessions updated. Total expert sessions: 0
+INFO     expert-feedback.state-manager:manager.py:1223 Updated expert sessions for iteration 1: 0 experts
+__________ TestSpawnAllExperts.test_handles_mixed_success_and_failure __________
+tests/core/test_spawn_experts.py:997: in test_handles_mixed_success_and_failure
+    assert result["success_count"] == 2
+E   assert 0 == 2
+------------------------------ Captured log call -------------------------------
+DEBUG    expert-feedback.state-manager:manager.py:340 Loading state from /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_handles_mixed_success_and0/test_workspace/state.json
+INFO     expert-feedback.state-manager:manager.py:353 Loaded state: iteration=1, convergence=0%, experts=3
+INFO     expert-feedback.state-manager:manager.py:444 Updating sessions for 0 experts: []
+INFO     expert-feedback.state-manager:manager.py:456 Sessions updated. Total expert sessions: 0
+INFO     expert-feedback.state-manager:manager.py:1223 Updated expert sessions for iteration 1: 0 experts
+_____________ TestSpawnAllExperts.test_updates_state_with_sessions _____________
+tests/core/test_spawn_experts.py:1054: in test_updates_state_with_sessions
+    mock_manager.update_sessions.assert_called_once()
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:964: in assert_called_once
+    raise AssertionError(msg)
+E   AssertionError: Expected 'update_sessions' to have been called once. Called 0 times.
+------------------------------ Captured log call -------------------------------
+DEBUG    expert-feedback.state-manager:manager.py:340 Loading state from /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_updates_state_with_sessio0/test_workspace/state.json
+INFO     expert-feedback.state-manager:manager.py:353 Loaded state: iteration=1, convergence=0%, experts=1
+INFO     expert-feedback.state-manager:manager.py:444 Updating sessions for 0 experts: []
+INFO     expert-feedback.state-manager:manager.py:456 Sessions updated. Total expert sessions: 0
+INFO     expert-feedback.state-manager:manager.py:1223 Updated expert sessions for iteration 1: 0 experts
+________________ TestSpawnAllExperts.test_tracks_token_metrics _________________
+tests/core/test_spawn_experts.py:1169: in test_tracks_token_metrics
+    mock_manager.update_token_metrics.assert_called_once_with(2000, 0.10)
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:996: in assert_called_once_with
+    raise AssertionError(msg)
+E   AssertionError: Expected 'update_token_metrics' to be called once. Called 0 times.
+------------------------------ Captured log call -------------------------------
+DEBUG    expert-feedback.state-manager:manager.py:340 Loading state from /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_tracks_token_metrics0/test_workspace/state.json
+INFO     expert-feedback.state-manager:manager.py:353 Loaded state: iteration=1, convergence=0%, experts=2
+INFO     expert-feedback.state-manager:manager.py:444 Updating sessions for 0 experts: []
+INFO     expert-feedback.state-manager:manager.py:456 Sessions updated. Total expert sessions: 0
+INFO     expert-feedback.state-manager:manager.py:1223 Updated expert sessions for iteration 1: 0 experts
+________________ TestSpawnAllExperts.test_handles_cancellation _________________
+tests/core/test_spawn_experts.py:1209: in test_handles_cancellation
+    result = await spawn_experts.spawn_all_experts(
+scripts/core/spawn_experts.py:719: in spawn_all_experts
+    session_mgr.track_session(session_id)
+scripts/agents/session_lifecycle.py:72: in track_session
+    print(f"🔍 Tracking session: {session_id[:8]}...", file=sys.stderr)
+                                 ^^^^^^^^^^^^^^
+E   TypeError: 'coroutine' object is not subscriptable
+------------------------------ Captured log call -------------------------------
+DEBUG    expert-feedback.state-manager:manager.py:340 Loading state from /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_handles_cancellation0/test_workspace/state.json
+INFO     expert-feedback.state-manager:manager.py:353 Loaded state: iteration=1, convergence=0%, experts=1
+_____________ TestEdgeCases.test_handles_concurrent_state_updates ______________
+tests/core/test_spawn_experts.py:1530: in test_handles_concurrent_state_updates
+    assert result["success_count"] == 2
+E   assert 0 == 2
+------------------------------ Captured log call -------------------------------
+DEBUG    expert-feedback.state-manager:manager.py:340 Loading state from /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_handles_concurrent_state_0/test_workspace/state.json
+INFO     expert-feedback.state-manager:manager.py:353 Loaded state: iteration=1, convergence=0%, experts=2
+INFO     expert-feedback.state-manager:manager.py:444 Updating sessions for 0 experts: []
+INFO     expert-feedback.state-manager:manager.py:456 Sessions updated. Total expert sessions: 0
+INFO     expert-feedback.state-manager:manager.py:1223 Updated expert sessions for iteration 1: 0 experts
+__________ TestBuildSynthesisPrompt.test_build_prompt_with_qa_answers __________
+tests/core/test_synthesize.py:384: in test_build_prompt_with_qa_answers
+    assert "qa_answers" in args[1]
+E   AssertionError: assert 'qa_answers' in {'convergence_target': 80, 'experts': ['python'], 'iteration': 2, 'previous_consensus': False, ...}
+------------------------------ Captured log call -------------------------------
+DEBUG    expert-feedback.state-manager:manager.py:340 Loading state from /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_build_prompt_with_qa_answ0/workspace/state.json
+INFO     expert-feedback.state-manager:manager.py:353 Loaded state: iteration=1, convergence=60%, experts=0
+DEBUG    expert-feedback.state-manager:manager.py:340 Loading state from /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_build_prompt_with_qa_answ0/workspace/state.json
+INFO     expert-feedback.state-manager:manager.py:353 Loaded state: iteration=1, convergence=60%, experts=0
+DEBUG    expert-feedback.state-manager:manager.py:340 Loading state from /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_build_prompt_with_qa_answ0/workspace/state.json
+INFO     expert-feedback.state-manager:manager.py:353 Loaded state: iteration=1, convergence=60%, experts=0
+_______ TestSynthesizeFeedback.test_synthesize_feedback_first_iteration ________
+tests/core/test_synthesize.py:450: in test_synthesize_feedback_first_iteration
+    patch('parse_consolidated.parse_and_update') as mock_parse:
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:1487: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pkgutil.py:458: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1398: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1335: in _find_and_load_unlocked
+    ???
+E   ModuleNotFoundError: No module named 'parse_consolidated'
+________ TestSynthesizeFeedback.test_synthesize_feedback_session_reuse _________
+tests/core/test_synthesize.py:534: in test_synthesize_feedback_session_reuse
+    patch('parse_consolidated.parse_and_update') as mock_parse:
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:1487: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pkgutil.py:458: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1398: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1335: in _find_and_load_unlocked
+    ???
+E   ModuleNotFoundError: No module named 'parse_consolidated'
+______ TestSynthesizeFeedback.test_synthesize_feedback_with_deduplication ______
+tests/core/test_synthesize.py:618: in test_synthesize_feedback_with_deduplication
+    patch('parse_consolidated.parse_and_update') as mock_parse, \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:1487: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pkgutil.py:458: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1398: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1335: in _find_and_load_unlocked
+    ???
+E   ModuleNotFoundError: No module named 'parse_consolidated'
+________ TestSynthesizeFeedback.test_synthesize_feedback_parse_failure _________
+tests/core/test_synthesize.py:805: in test_synthesize_feedback_parse_failure
+    patch('parse_consolidated.parse_and_update') as mock_parse:
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:1487: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pkgutil.py:458: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1398: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1335: in _find_and_load_unlocked
+    ???
+E   ModuleNotFoundError: No module named 'parse_consolidated'
+__________ TestPhaseCompletion.test_phase_already_complete_with_cache __________
+tests/core/test_synthesize.py:886: in test_phase_already_complete_with_cache
+    assert result["status"] == "complete"
+E   AssertionError: assert 'error' == 'complete'
+E     
+E     - complete
+E     + error
+----------------------------- Captured stderr call -----------------------------
+  🔧 Building ClaudeAgentOptions for consolidation...
+  🔧 Starting new session
+  🚀 Calling query() for consolidation...
+  🚀 Using system_blocks (cached)
+  📨 Starting message iteration for consolidation...
+------------------------------ Captured log call -------------------------------
+DEBUG    expert-feedback.state-manager:manager.py:340 Loading state from /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_phase_already_complete_wi0/workspace/state.json
+INFO     expert-feedback.state-manager:manager.py:353 Loaded state: iteration=1, convergence=85%, experts=0
+ERROR    asyncio:base_events.py:1875 Task exception was never retrieved
+future: <Task finished name='Task-130' coro=<spawn_agent.<locals>.watch_files() done, defined at /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/scripts/agents/spawn.py:196> exception=TypeError("'<' not supported between instances of 'int' and 'Mock'")>
+Traceback (most recent call last):
+  File "/Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/scripts/agents/spawn.py", line 204, in watch_files
+    while elapsed < config.timeout_seconds:
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'int' and 'Mock'
+__________ TestPhaseCompletion.test_phase_complete_fallback_to_state ___________
+tests/core/test_synthesize.py:929: in test_phase_complete_fallback_to_state
+    assert result["status"] == "complete"
+E   AssertionError: assert 'error' == 'complete'
+E     
+E     - complete
+E     + error
+----------------------------- Captured stderr call -----------------------------
+  🔧 Building ClaudeAgentOptions for consolidation...
+  🔧 Starting new session
+  🚀 Calling query() for consolidation...
+  🚀 Using system_blocks (cached)
+  📨 Starting message iteration for consolidation...
+------------------------------ Captured log call -------------------------------
+DEBUG    expert-feedback.state-manager:manager.py:340 Loading state from /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_phase_complete_fallback_t0/workspace/state.json
+INFO     expert-feedback.state-manager:manager.py:353 Loaded state: iteration=1, convergence=80%, experts=0
+ERROR    asyncio:base_events.py:1875 Task exception was never retrieved
+future: <Task finished name='Task-136' coro=<spawn_agent.<locals>.watch_files() done, defined at /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/scripts/agents/spawn.py:196> exception=TypeError("'<' not supported between instances of 'int' and 'Mock'")>
+Traceback (most recent call last):
+  File "/Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/scripts/agents/spawn.py", line 204, in watch_files
+    while elapsed < config.timeout_seconds:
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'int' and 'Mock'
+________ TestPhaseCompletion.test_phase_marked_complete_after_synthesis ________
+tests/core/test_synthesize.py:975: in test_phase_marked_complete_after_synthesis
+    patch('parse_consolidated.parse_and_update') as mock_parse:
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:1487: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pkgutil.py:458: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1398: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1335: in _find_and_load_unlocked
+    ???
+E   ModuleNotFoundError: No module named 'parse_consolidated'
+________ TestIterationSummaryRecording.test_iteration_summary_recorded _________
+tests/core/test_synthesize.py:1066: in test_iteration_summary_recorded
+    patch('parse_consolidated.parse_and_update') as mock_parse:
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:1487: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pkgutil.py:458: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1398: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1335: in _find_and_load_unlocked
+    ???
+E   ModuleNotFoundError: No module named 'parse_consolidated'
+____________________ TestEdgeCases.test_missing_state_file _____________________
+tests/core/test_synthesize.py:1230: in test_missing_state_file
+    patch('parse_consolidated.parse_and_update') as mock_parse:
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:1487: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pkgutil.py:458: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1398: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1335: in _find_and_load_unlocked
+    ???
+E   ModuleNotFoundError: No module named 'parse_consolidated'
+_____________________ TestEdgeCases.test_validation_errors _____________________
+tests/core/test_synthesize.py:1291: in test_validation_errors
+    patch('parse_consolidated.parse_and_update') as mock_parse, \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:1487: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pkgutil.py:458: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1398: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1335: in _find_and_load_unlocked
+    ???
+E   ModuleNotFoundError: No module named 'parse_consolidated'
+___________________ TestEdgeCases.test_deduplication_failure ___________________
+tests/core/test_synthesize.py:1366: in test_deduplication_failure
+    patch('parse_consolidated.parse_and_update') as mock_parse, \
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:1487: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pkgutil.py:458: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1398: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1335: in _find_and_load_unlocked
+    ???
+E   ModuleNotFoundError: No module named 'parse_consolidated'
+___________________ TestEdgeCases.test_token_metrics_update ____________________
+tests/core/test_synthesize.py:1518: in test_token_metrics_update
+    patch('parse_consolidated.parse_and_update') as mock_parse:
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:1487: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pkgutil.py:458: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1398: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1335: in _find_and_load_unlocked
+    ???
+E   ModuleNotFoundError: No module named 'parse_consolidated'
+_______________ TestSynthesizeVetoes.test_synthesize_single_veto _______________
+tests/core/test_artifact_review.py:226: in test_synthesize_single_veto
+    result = artifact_review.synthesize_vetoes(vetoes, iteration_dir)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'core.artifact_review' has no attribute 'synthesize_vetoes'. Did you mean: 'synthesize_tweaks'?
+_____________ TestSynthesizeVetoes.test_synthesize_multiple_vetoes _____________
+tests/core/test_artifact_review.py:292: in test_synthesize_multiple_vetoes
+    result = artifact_review.synthesize_vetoes(vetoes, iteration_dir)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'core.artifact_review' has no attribute 'synthesize_vetoes'. Did you mean: 'synthesize_tweaks'?
+_______ TestSynthesizeVetoes.test_synthesize_vetoes_markdown_formatting ________
+tests/core/test_artifact_review.py:330: in test_synthesize_vetoes_markdown_formatting
+    artifact_review.synthesize_vetoes(vetoes, iteration_dir)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'core.artifact_review' has no attribute 'synthesize_vetoes'. Did you mean: 'synthesize_tweaks'?
+_______ TestCreateRegenerationContext.test_create_context_with_patterns ________
+tests/core/test_artifact_review.py:512: in test_create_context_with_patterns
+    assert len(result["veto_patterns"]) >= 1  # Type System should be a pattern
+               ^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'veto_patterns'
+_______ TestCreateRegenerationContext.test_create_context_common_themes ________
+tests/core/test_artifact_review.py:557: in test_create_context_common_themes
+    assert len(result["common_themes"]) >= 1
+E   assert 0 >= 1
+E    +  where 0 = len([])
+________ TestCreateRegenerationContext.test_create_context_no_patterns _________
+tests/core/test_artifact_review.py:592: in test_create_context_no_patterns
+    assert len(result["veto_patterns"]) == 0
+               ^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'veto_patterns'
+_____________ TestReviewArtifact.test_review_artifact_with_vetoes ______________
+tests/core/test_artifact_review.py:872: in test_review_artifact_with_vetoes
+    assert result["status"] == "vetoed"
+E   AssertionError: assert 'approved' == 'vetoed'
+E     
+E     - vetoed
+E     + approved
+----------------------------- Captured stderr call -----------------------------
+
+📋 Artifact Review Phase
+📄 Generated ADR: draft-adr.md
+👥 Spawning 3 experts to review...
+
+
+📊 Artifact Review Results:
+   ✅ Approved: 1
+   📝 Minor Tweaks: 0
+   🛑 Critical Concerns: 0
+------------------------------ Captured log call -------------------------------
+DEBUG    expert-feedback.state-manager:manager.py:340 Loading state from /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_review_artifact_with_veto0/test-workspace/state.json
+INFO     expert-feedback.state-manager:manager.py:353 Loaded state: iteration=1, convergence=85%, experts=3
+INFO     expert-feedback.state-manager:manager.py:566 Setting iteration to 2
+INFO     expert-feedback.state-manager:manager.py:576 Iteration set to 2
+______________ TestEdgeCases.test_synthesize_vetoes_empty_issues _______________
+tests/core/test_artifact_review.py:1089: in test_synthesize_vetoes_empty_issues
+    result = artifact_review.synthesize_vetoes(vetoes, iteration_dir)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: module 'core.artifact_review' has no attribute 'synthesize_vetoes'. Did you mean: 'synthesize_tweaks'?
+____________ TestEdgeCases.test_regeneration_context_empty_concerns ____________
+tests/core/test_artifact_review.py:1126: in test_regeneration_context_empty_concerns
+    assert len(result["veto_patterns"]) == 0
+               ^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'veto_patterns'
+_______ TestEdgeCases.test_veto_pattern_single_expert_multiple_concerns ________
+tests/core/test_artifact_review.py:1195: in test_veto_pattern_single_expert_multiple_concerns
+    assert len(result["veto_patterns"]) == 1
+               ^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'veto_patterns'
+_______ TestArtifactRegeneration.test_record_artifact_generation_result ________
+tests/state/test_manager.py:1399: in test_record_artifact_generation_result
+    updated = manager.record_artifact_generation_result(
+E   TypeError: StateManager.record_artifact_generation_result() got an unexpected keyword argument 'veto_count'
+------------------------------ Captured log call -------------------------------
+DEBUG    expert-feedback.state-manager:manager.py:369 Saving state: iteration=1, convergence=0%
+INFO     expert-feedback.state-manager:manager.py:380 State saved successfully to /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_record_artifact_generatio0/workspace/state.json
+___ TestArtifactRegeneration.test_record_artifact_generation_result_multiple ___
+tests/state/test_manager.py:1424: in test_record_artifact_generation_result_multiple
+    manager.record_artifact_generation_result(
+E   TypeError: StateManager.record_artifact_generation_result() got an unexpected keyword argument 'veto_count'
+------------------------------ Captured log call -------------------------------
+DEBUG    expert-feedback.state-manager:manager.py:369 Saving state: iteration=1, convergence=0%
+INFO     expert-feedback.state-manager:manager.py:380 State saved successfully to /private/var/folders/wx/9yvj5z3j1p18grmpjjbsr33r0000gn/T/pytest-of-mabolan/pytest-255/test_record_artifact_generatio1/workspace/state.json
+=============================== warnings summary ===============================
+tests/core/test_spawn_experts.py:158
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:158: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:173
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:173: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:191
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:191: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:209
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:209: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:224
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:224: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:268
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:268: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:296
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:296: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:332
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:332: PytestUnknownMarkWarning: Unknown pytest.mark.low - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.low
+
+tests/core/test_spawn_experts.py:371
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:371: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:402
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:402: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:430
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:430: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:463
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:463: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:505
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:505: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:535
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:535: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:573
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:573: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:610
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:610: PytestUnknownMarkWarning: Unknown pytest.mark.low - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.low
+
+tests/core/test_spawn_experts.py:660
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:660: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:695
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:695: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:736
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:736: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:773
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:773: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:803
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:803: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:832
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:832: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:872
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:872: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:936
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:936: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:1001
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1001: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:1059
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1059: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:1115
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1115: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:1172
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1172: PytestUnknownMarkWarning: Unknown pytest.mark.low - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.low
+
+tests/core/test_spawn_experts.py:1229
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1229: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:1238
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1238: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:1248
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1248: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:1257
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1257: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:1278
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1278: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:1319
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1319: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:1367
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1367: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:1392
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1392: PytestUnknownMarkWarning: Unknown pytest.mark.high - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.high
+
+tests/core/test_spawn_experts.py:1406
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1406: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:1450
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1450: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:1463
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1463: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:1472
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1472: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:1533
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1533: PytestUnknownMarkWarning: Unknown pytest.mark.medium - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.medium
+
+tests/core/test_spawn_experts.py:1581
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1581: PytestUnknownMarkWarning: Unknown pytest.mark.low - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.low
+
+tests/core/test_spawn_experts.py:1632
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_spawn_experts.py:1632: PytestUnknownMarkWarning: Unknown pytest.mark.low - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.low
+
+tests/core/test_synthesize.py:41
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:41: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:63
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:63: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:79
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:79: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:89
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:89: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:112
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:112: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:137
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:137: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:162
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:162: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:194
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:194: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:230
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:230: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:265
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:265: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:300
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:300: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:309
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:309: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:346
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:346: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:397
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:397: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:486
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:486: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:569
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:569: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:660
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:660: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:714
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:714: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:770
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:770: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:839
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:839: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:891
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:891: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:934
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:934: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:1015
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:1015: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:1108
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:1108: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:1116
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:1116: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:1155
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:1155: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:1202
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:1202: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:1255
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:1255: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:1330
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:1330: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:1402
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:1402: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:1427
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:1427: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:1466
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:1466: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_synthesize.py:1481
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_synthesize.py:1481: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:33
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:33: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:90
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:90: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:122
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:122: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:153
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:153: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:199
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:199: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:245
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:245: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:304
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:304: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:345
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:345: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:380
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:380: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:424
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:424: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:458
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:458: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:524
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:524: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:567
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:567: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:600
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:600: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:676
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:676: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:705
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:705: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:753
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:753: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:810
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:810: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:878
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:878: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:935
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:935: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:995
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:995: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:1021
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:1021: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:1029
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:1029: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:1052
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:1052: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:1075
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:1075: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:1095
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:1095: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:1113
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:1113: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:1130
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:1130: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:1169
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:1169: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_artifact_review.py:1201
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/tests/core/test_artifact_review.py:1201: PytestUnknownMarkWarning: Unknown pytest.mark.critical - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.critical
+
+tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_handles_cancellation
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/scripts/core/spawn_experts.py:610: RuntimeWarning: coroutine 'AsyncMockMixin._execute_mock_call' was never awaited
+    if result.get("status") == "complete" and result.get("session_id"):
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_handles_cancellation
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/scripts/core/spawn_experts.py:626: RuntimeWarning: coroutine 'AsyncMockMixin._execute_mock_call' was never awaited
+    if state_path.exists() and result.get("expert"):
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_handles_cancellation
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/scripts/core/spawn_experts.py:641: RuntimeWarning: coroutine 'AsyncMockMixin._execute_mock_call' was never awaited
+    if result.get("status") == "complete":
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_handles_cancellation
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/scripts/core/spawn_experts.py:703: RuntimeWarning: coroutine 'AsyncMockMixin._execute_mock_call' was never awaited
+    success_count = sum(1 for r in processed_results if r.get("status") == "complete")
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_handles_cancellation
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/scripts/core/spawn_experts.py:704: RuntimeWarning: coroutine 'AsyncMockMixin._execute_mock_call' was never awaited
+    error_count = sum(1 for r in processed_results if r.get("status") in ["error", "timeout"])
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_handles_cancellation
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/scripts/core/spawn_experts.py:705: RuntimeWarning: coroutine 'AsyncMockMixin._execute_mock_call' was never awaited
+    cancelled_count = sum(1 for r in processed_results if r.get("status") == "cancelled")
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/core/test_artifact_review.py::TestMain::test_main_error_exit_code
+  /Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:2252: RuntimeWarning: coroutine 'spawn_artifact_reviewer' was never awaited
+    def __init__(self, name, parent):
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/core/test_artifact_review.py::TestMain::test_main_error_exit_code
+  /Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/unittest/mock.py:2252: RuntimeWarning: coroutine 'review_artifact' was never awaited
+    def __init__(self, name, parent):
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/state/test_manager.py::TestConcernReview::test_update_concern_review_state
+tests/state/test_manager.py::TestConcernReview::test_update_concern_review_state_multiple_times
+tests/state/test_manager.py::TestConcernReview::test_update_concern_review_state_multiple_times
+tests/state/test_manager.py::TestConcernReview::test_get_concern_review_state
+tests/state/test_manager.py::TestConcernReview::test_concern_review_history_structure
+  /Users/mabolan/AgentProtocol/.claude/skills/expert-feedback/scripts/state/manager.py:1370: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    "timestamp": datetime.utcnow().isoformat()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_spawns_all_experts_in_parallel
+FAILED tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_handles_mixed_success_and_failure
+FAILED tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_updates_state_with_sessions
+FAILED tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_tracks_token_metrics
+FAILED tests/core/test_spawn_experts.py::TestSpawnAllExperts::test_handles_cancellation
+FAILED tests/core/test_spawn_experts.py::TestEdgeCases::test_handles_concurrent_state_updates
+FAILED tests/core/test_synthesize.py::TestBuildSynthesisPrompt::test_build_prompt_with_qa_answers
+FAILED tests/core/test_synthesize.py::TestSynthesizeFeedback::test_synthesize_feedback_first_iteration
+FAILED tests/core/test_synthesize.py::TestSynthesizeFeedback::test_synthesize_feedback_session_reuse
+FAILED tests/core/test_synthesize.py::TestSynthesizeFeedback::test_synthesize_feedback_with_deduplication
+FAILED tests/core/test_synthesize.py::TestSynthesizeFeedback::test_synthesize_feedback_parse_failure
+FAILED tests/core/test_synthesize.py::TestPhaseCompletion::test_phase_already_complete_with_cache
+FAILED tests/core/test_synthesize.py::TestPhaseCompletion::test_phase_complete_fallback_to_state
+FAILED tests/core/test_synthesize.py::TestPhaseCompletion::test_phase_marked_complete_after_synthesis
+FAILED tests/core/test_synthesize.py::TestIterationSummaryRecording::test_iteration_summary_recorded
+FAILED tests/core/test_synthesize.py::TestEdgeCases::test_missing_state_file
+FAILED tests/core/test_synthesize.py::TestEdgeCases::test_validation_errors
+FAILED tests/core/test_synthesize.py::TestEdgeCases::test_deduplication_failure
+FAILED tests/core/test_synthesize.py::TestEdgeCases::test_token_metrics_update
+FAILED tests/core/test_artifact_review.py::TestSynthesizeVetoes::test_synthesize_single_veto
+FAILED tests/core/test_artifact_review.py::TestSynthesizeVetoes::test_synthesize_multiple_vetoes
+FAILED tests/core/test_artifact_review.py::TestSynthesizeVetoes::test_synthesize_vetoes_markdown_formatting
+FAILED tests/core/test_artifact_review.py::TestCreateRegenerationContext::test_create_context_with_patterns
+FAILED tests/core/test_artifact_review.py::TestCreateRegenerationContext::test_create_context_common_themes
+FAILED tests/core/test_artifact_review.py::TestCreateRegenerationContext::test_create_context_no_patterns
+FAILED tests/core/test_artifact_review.py::TestReviewArtifact::test_review_artifact_with_vetoes
+FAILED tests/core/test_artifact_review.py::TestEdgeCases::test_synthesize_vetoes_empty_issues
+FAILED tests/core/test_artifact_review.py::TestEdgeCases::test_regeneration_context_empty_concerns
+FAILED tests/core/test_artifact_review.py::TestEdgeCases::test_veto_pattern_single_expert_multiple_concerns
+FAILED tests/state/test_manager.py::TestArtifactRegeneration::test_record_artifact_generation_result
+FAILED tests/state/test_manager.py::TestArtifactRegeneration::test_record_artifact_generation_result_multiple
+================= 31 failed, 167 passed, 119 warnings in 1.51s =================

@@ -24,7 +24,7 @@ namespace Microsoft.Agents.Client.Tests;
 /// <summary>
 /// Integration tests for Agent Protocol client with echo bot.
 ///
-/// Tests XML input files from test-data/input and saves results to test-data/results/echo-m365.
+/// Tests XML input files from test-data/input and saves results to test-data/results/samples/echo-m365.
 /// Covers three API patterns: XML, Wait, and Streaming.
 /// </summary>
 public class EchoM365IntegrationTests : IDisposable
@@ -47,7 +47,7 @@ public class EchoM365IntegrationTests : IDisposable
         _inputDir = Path.Combine(_testDataDir, "input", "threads");
 
         // Use shared results directory (language-agnostic)
-        var resultsBase = Path.Combine(_testDataDir, "results", "echo-m365");
+        var resultsBase = Path.Combine(_testDataDir, "results", "samples", "echo-m365");
         _xmlResultsDir = Path.Combine(resultsBase, "xml");
         _waitResultsDir = Path.Combine(resultsBase, "wait");
         _streamingResultsDir = Path.Combine(resultsBase, "streaming");

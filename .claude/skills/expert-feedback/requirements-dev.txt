@@ -1,0 +1,21 @@
+# Expert Feedback Skill - Development Dependencies
+# Test execution and coverage
+
+# Core testing framework
+pytest>=7.4.0
+
+# Coverage tools
+pytest-cov>=4.1.0
+coverage[toml]>=7.3.0
+
+# Async testing support
+pytest-asyncio>=0.21.0
+
+# Mocking and fixtures
+pytest-mock>=3.11.1
+
+# Test organization
+pytest-xdist>=3.3.1  # Parallel test execution
+
+# Code quality (optional)
+ruff>=0.1.0  # Fast Python linter

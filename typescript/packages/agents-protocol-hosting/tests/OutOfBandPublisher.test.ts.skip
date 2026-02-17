@@ -1,0 +1,200 @@
+import { OutOfBandPublisher } from '../src/hosting/OutOfBandPublisher.js';
+import { IQueue } from '../src/queue/IQueue.js';
+
+class MockQueue implements IQueue {
+  messages: any[] = [];
+
+  async enqueueAsync(message: any): Promise<void> {
+    this.messages.push(message);
+  }
+
+  async dequeueAsync(): Promise<any | null> {
+    return this.messages.shift() || null;
+  }
+
+  async acknowledgeAsync(messageId: string): Promise<void> {
+    // Mock implementation - do nothing
+  }
+
+  async rejectAsync(messageId: string, reason: string): Promise<void> {
+    // Mock implementation - do nothing
+  }
+
+  async checkHealth(): Promise<boolean> {
+    return true;
+  }
+}
+
+describe('OutOfBandPublisher', () => {
+  describe('constructor', () => {
+    it('should create publisher with queue', () => {
+      const queue = new MockQueue();
+      const publisher = new OutOfBandPublisher(queue);
+
+      expect(publisher).toBeInstanceOf(OutOfBandPublisher);
+    });
+
+    it('should create publisher without queue', () => {
+      const publisher = new OutOfBandPublisher(null);
+
+      expect(publisher).toBeInstanceOf(OutOfBandPublisher);
+    });
+  });
+
+  describe('sendToThreadAsync', () => {
+    it('should send message to thread', async () => {
+      const queue = new MockQueue();
+      const publisher = new OutOfBandPublisher(queue);
+
+      await publisher.sendToThreadAsync('thread_123', 'Hello, World!');
+
+      expect(queue.messages).toHaveLength(1);
+      const message = queue.messages[0];
+      expect(message.threadId).toBe('thread_123');
+      expect(message.content).toBe('Hello, World!');
+      expect(message.type).toBe('out_of_band');
+    });
+
+    it('should send message with string content', async () => {
+      const queue = new MockQueue();
+      const publisher = new OutOfBandPublisher(queue);
+
+      await publisher.sendToThreadAsync('thread-456', 'Test message');
+
+      expect(queue.messages).toHaveLength(1);
+      expect(queue.messages[0].content).toBe('Test message');
+    });
+
+    it('should send message with AIContent', async () => {
+      const queue = new MockQueue();
+      const publisher = new OutOfBandPublisher(queue);
+
+      const content = {
+        type: 'text' as const,
+        text: 'AIContent message'
+      };
+
+      await publisher.sendToThreadAsync('thread-789', content);
+
+      expect(queue.messages).toHaveLength(1);
+      expect(queue.messages[0].content).toEqual(content);
+    });
+
+    it('should send message with runId', async () => {
+      const queue = new MockQueue();
+      const publisher = new OutOfBandPublisher(queue);
+
+      await publisher.sendToThreadAsync('thread-abc', 'Message', 'run-123');
+
+      expect(queue.messages).toHaveLength(1);
+      expect(queue.messages[0].runId).toBe('run-123');
+    });
+
+    it('should send message with idempotency key', async () => {
+      const queue = new MockQueue();
+      const publisher = new OutOfBandPublisher(queue);
+
+      await publisher.sendToThreadAsync('thread-def', 'Message', undefined, 'key-123');
+
+      expect(queue.messages).toHaveLength(1);
+      expect(queue.messages[0].idempotencyKey).toBe('key-123');
+    });
+
+    it('should send message with cancellation token', async () => {
+      const queue = new MockQueue();
+      const publisher = new OutOfBandPublisher(queue);
+      const controller = new AbortController();
+
+      await publisher.sendToThreadAsync('thread-ghi', 'Message', undefined, undefined, controller.signal);
+
+      expect(queue.messages).toHaveLength(1);
+    });
+
+    it('should send message with all parameters', async () => {
+      const queue = new MockQueue();
+      const publisher = new OutOfBandPublisher(queue);
+      const controller = new AbortController();
+
+      await publisher.sendToThreadAsync('thread-jkl', 'Message', 'run-456', 'key-789', controller.signal);
+
+      expect(queue.messages).toHaveLength(1);
+      const message = queue.messages[0];
+      expect(message.threadId).toBe('thread-jkl');
+      expect(message.content).toBe('Message');
+      expect(message.runId).toBe('run-456');
+      expect(message.idempotencyKey).toBe('key-789');
+    });
+
+    it('should not throw when queue is null', async () => {
+      const publisher = new OutOfBandPublisher(null);
+
+      // Should not throw, just log warning
+      await expect(
+        publisher.sendToThreadAsync('thread-mno', 'Test message')
+      ).resolves.not.toThrow();
+    });
+
+    it('should handle cancellation', async () => {
+      const queue = new MockQueue();
+      const publisher = new OutOfBandPublisher(queue);
+      const controller = new AbortController();
+      controller.abort();
+
+      await expect(
+        publisher.sendToThreadAsync('thread-pqr', 'Message', undefined, undefined, controller.signal)
+      ).rejects.toThrow('Operation was cancelled');
+
+      expect(queue.messages).toHaveLength(0);
+    });
+  });
+
+  describe('sendToMultipleThreadsAsync', () => {
+    it('should send message to multiple threads', async () => {
+      const queue = new MockQueue();
+      const publisher = new OutOfBandPublisher(queue);
+
+      const threadIds = ['thread-1', 'thread-2', 'thread-3'];
+      await publisher.sendToMultipleThreadsAsync(threadIds, 'Broadcast message');
+
+      expect(queue.messages).toHaveLength(3);
+      threadIds.forEach((threadId, index) => {
+        expect(queue.messages[index].threadId).toBe(threadId);
+        expect(queue.messages[index].content).toBe('Broadcast message');
+      });
+    });
+
+    it('should send to empty thread list', async () => {
+      const queue = new MockQueue();
+      const publisher = new OutOfBandPublisher(queue);
+
+      await publisher.sendToMultipleThreadsAsync([], 'Message');
+
+      expect(queue.messages).toHaveLength(0);
+    });
+
+    it('should send to multiple threads without queue', async () => {
+      const publisher = new OutOfBandPublisher(null);
+
+      const threadIds = ['thread-1', 'thread-2'];
+      await expect(
+        publisher.sendToMultipleThreadsAsync(threadIds, 'Test message')
+      ).resolves.not.toThrow();
+    });
+  });
+
+  describe('integration', () => {
+    it('should accumulate multiple sends', async () => {
+      const queue = new MockQueue();
+      const publisher = new OutOfBandPublisher(queue);
+
+      await publisher.sendToThreadAsync('thread-1', 'Message 1');
+      await publisher.sendToThreadAsync('thread-2', 'Message 2');
+      await publisher.sendToThreadAsync('thread-3', 'Message 3');
+
+      expect(queue.messages).toHaveLength(3);
+      expect(queue.messages[0].content).toBe('Message 1');
+      expect(queue.messages[1].content).toBe('Message 2');
+      expect(queue.messages[2].content).toBe('Message 3');
+    });
+  });
+});

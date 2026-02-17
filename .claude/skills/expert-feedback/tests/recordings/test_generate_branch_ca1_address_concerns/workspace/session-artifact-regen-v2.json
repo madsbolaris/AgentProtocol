@@ -1,0 +1,14 @@
+{
+  "agent_type": "artifact-generation",
+  "agent_id": "artifact-regen-v2",
+  "session_id": "d4d61396-df60-48fc-bc3d-8df95aaaf316",
+  "turn_count": 1,
+  "conversation": [
+    {
+      "turn": 1,
+      "prompt_template": "04-regenerate-with-concerns.jinja2",
+      "timestamp": "2026-02-17T17:50:34.974808",
+      "response_summary": "{\n  \"adr_markdown\": \"# Calculator REST API Production Readiness Assessment\\n\\n**Status:** review-in-progress\\n\\n**Reviewers:** typescript, python, User\\n\\n**Date:** 2026-02-17\\n\\n**Technical Story:** ..."
+    }
+  ]
+}

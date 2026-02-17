@@ -1,0 +1,47 @@
+{
+  "iteration": 1,
+  "questions": [
+    {
+      "id": "what-is-your-preferred-error-handling-pattern",
+      "question": "What is your preferred error handling pattern?",
+      "context": "Multiple patterns exist in the codebase (throw, callbacks, promises). Need to understand team preference before recommending standardization.",
+      "importance": "high",
+      "asked_by": [
+        "typescript",
+        "python"
+      ],
+      "requires_user_decision": true,
+      "references": [
+        {
+          "expert": "typescript",
+          "file": "tests/fixtures/sample-review.md",
+          "excerpt": "Recommended Result types"
+        },
+        {
+          "expert": "python",
+          "file": "iteration-1/experts/review-python.md",
+          "excerpt": "Suggested exceptions"
+        }
+      ]
+    },
+    {
+      "id": "conflict-error-handling-approach",
+      "question": "How should we resolve: Error Handling Approach?",
+      "context": "TypeScript expert recommends Result types while Python expert prefers traditional exceptions.",
+      "importance": "high",
+      "requires_user_decision": true,
+      "asked_by": [
+        "typescript",
+        "python"
+      ],
+      "conflict_details": {
+        "experts_position_a": [
+          "typescript"
+        ],
+        "experts_position_b": [
+          "python"
+        ]
+      }
+    }
+  ]
+}

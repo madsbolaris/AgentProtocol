@@ -24,7 +24,7 @@ namespace EchoM365.Tests.IntegrationTests;
 /// This test suite:
 /// 1. Connects to running echo bot servers on ports 3978, 3979, 3980
 /// 2. Sends test-data/input/threads/*.xml files to each bot
-/// 3. Validates responses against test-data/results/echo-m365/json/ and xml/ golden files
+/// 3. Validates responses against test-data/results/samples/echo-m365/json/ and xml/ golden files
 /// 4. Ensures all three language implementations (Python, C#, TypeScript) behave identically
 /// 5. Tests both JSON and XML output formats
 ///

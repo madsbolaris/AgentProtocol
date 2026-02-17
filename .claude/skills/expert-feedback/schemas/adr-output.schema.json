@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": [
+    "title",
+    "status",
+    "deciders",
+    "date",
+    "context",
+    "decision_drivers",
+    "considered_options",
+    "decision_outcome",
+    "consequences"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "ADR title (without number prefix)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "accepted", "rejected", "deprecated", "superseded"],
+      "description": "ADR status"
+    },
+    "deciders": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "List of experts and stakeholders who participated"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date in YYYY-MM-DD format"
+    },
+    "technical_story": {
+      "type": "string",
+      "description": "Optional technical story or ticket reference"
+    },
+    "context": {
+      "type": "object",
+      "required": ["problem_statement", "background", "constraints"],
+      "properties": {
+        "problem_statement": {"type": "string"},
+        "background": {"type": "string"},
+        "constraints": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "decision_drivers": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Key factors influencing the decision"
+    },
+    "considered_options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "description"],
+        "properties": {
+          "title": {"type": "string"},
+          "description": {"type": "string"},
+          "pros": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "cons": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        }
+      }
+    },
+    "decision_outcome": {
+      "type": "object",
+      "required": ["chosen_option", "rationale"],
+      "properties": {
+        "chosen_option": {"type": "string"},
+        "rationale": {"type": "string"},
+        "implementation_notes": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "consequences": {
+      "type": "object",
+      "required": ["good", "bad"],
+      "properties": {
+        "good": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "bad": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "neutral": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["description", "url"],
+        "properties": {
+          "description": {"type": "string"},
+          "url": {"type": "string"}
+        }
+      }
+    }
+  }
+}

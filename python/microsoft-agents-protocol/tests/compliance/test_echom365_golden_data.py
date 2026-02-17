@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 # Golden data location
-GOLDEN_DATA_DIR = Path(__file__).parent.parent.parent.parent.parent.parent / "test-data" / "results" / "echom365"
+GOLDEN_DATA_DIR = Path(__file__).parent.parent.parent.parent.parent.parent / "test-data" / "results" / "samples" / "echo-m365"
 
 
 # Bot configurations

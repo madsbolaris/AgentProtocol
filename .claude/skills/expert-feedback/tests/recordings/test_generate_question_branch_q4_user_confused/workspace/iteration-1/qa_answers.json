@@ -1,0 +1,64 @@
+{
+  "answers": [
+    {
+      "question_id": "1-what-are-the-expected-numeric-input-ranges",
+      "question": "1. What are the expected numeric input ranges?",
+      "user_answer": "I'm not sure I understand the question about numeric ranges. Could you clarify:\n\n1. Are you asking about what range we WANT to support, or what the current code supports?\n2. When you say \"handle values outside the range\" - do you mean return errors, use BigInt, or something else?\n3. Is this about integer ranges specifically, or does it include floats/decimals?\n4. Are there any performance implications I should consider?\n\nI want to make sure I answer correctly, so more context would help.",
+      "answered_at": "2026-02-16T12:00:00Z"
+    },
+    {
+      "question_id": "2-what-is-the-expected-request-volume-and-concurre",
+      "question": "2. What is the expected request volume and concurrency?",
+      "user_answer": "I'm not entirely clear on what you're asking. Could you rephrase or provide more context?\n\nSpecifically:\n1. What problem are you trying to solve?\n2. Are there any constraints I should be aware of?\n3. Is this a technical question or more about business requirements?\n\nI'd like to help, but I need a bit more clarity first. Thank you!",
+      "answered_at": "2026-02-16T12:00:00Z"
+    },
+    {
+      "question_id": "3-are-there-specific-compliance-or-security-requir",
+      "question": "3. Are there specific compliance or security requirements?",
+      "user_answer": "I'm not entirely clear on what you're asking. Could you rephrase or provide more context?\n\nSpecifically:\n1. What problem are you trying to solve?\n2. Are there any constraints I should be aware of?\n3. Is this a technical question or more about business requirements?\n\nI'd like to help, but I need a bit more clarity first. Thank you!",
+      "answered_at": "2026-02-16T12:00:00Z"
+    },
+    {
+      "question_id": "4-should-the-api-support-batch-operations",
+      "question": "4. Should the API support batch operations?",
+      "user_answer": "I'm not entirely clear on what you're asking. Could you rephrase or provide more context?\n\nSpecifically:\n1. What problem are you trying to solve?\n2. Are there any constraints I should be aware of?\n3. Is this a technical question or more about business requirements?\n\nI'd like to help, but I need a bit more clarity first. Thank you!",
+      "answered_at": "2026-02-16T12:00:00Z"
+    },
+    {
+      "question_id": "5-what-is-the-deployment-target-environment",
+      "question": "5. What is the deployment target environment?",
+      "user_answer": "I'm not entirely clear on what you're asking. Could you rephrase or provide more context?\n\nSpecifically:\n1. What problem are you trying to solve?\n2. Are there any constraints I should be aware of?\n3. Is this a technical question or more about business requirements?\n\nI'd like to help, but I need a bit more clarity first. Thank you!",
+      "answered_at": "2026-02-16T12:00:00Z"
+    },
+    {
+      "question_id": "1-what-is-the-expected-production-traffic-volume",
+      "question": "1. What is the expected production traffic volume?",
+      "user_answer": "I'm not entirely clear on what you're asking. Could you rephrase or provide more context?\n\nSpecifically:\n1. What problem are you trying to solve?\n2. Are there any constraints I should be aware of?\n3. Is this a technical question or more about business requirements?\n\nI'd like to help, but I need a bit more clarity first. Thank you!",
+      "answered_at": "2026-02-16T12:00:00Z"
+    },
+    {
+      "question_id": "2-should-the-api-support-decimal-precision-require",
+      "question": "2. Should the API support decimal precision requirements?",
+      "user_answer": "I'm not entirely clear on what you're asking. Could you rephrase or provide more context?\n\nSpecifically:\n1. What problem are you trying to solve?\n2. Are there any constraints I should be aware of?\n3. Is this a technical question or more about business requirements?\n\nI'd like to help, but I need a bit more clarity first. Thank you!",
+      "answered_at": "2026-02-16T12:00:00Z"
+    },
+    {
+      "question_id": "3-is-authentication-authorization-required",
+      "question": "3. Is authentication/authorization required?",
+      "user_answer": "I'm not entirely clear on what you're asking. Could you rephrase or provide more context?\n\nSpecifically:\n1. What problem are you trying to solve?\n2. Are there any constraints I should be aware of?\n3. Is this a technical question or more about business requirements?\n\nI'd like to help, but I need a bit more clarity first. Thank you!",
+      "answered_at": "2026-02-16T12:00:00Z"
+    },
+    {
+      "question_id": "4-what-are-the-error-response-format-requirements",
+      "question": "4. What are the error response format requirements?",
+      "user_answer": "I'm confused about the error handling question:\n\n1. Are you asking what we SHOULD do, or what we're CURRENTLY doing?\n2. By \"structured error responses\" - do you have a specific format in mind (JSON schema, error codes, etc.)?\n3. Should we use standard HTTP status codes (400, 422, etc.) or custom codes?\n4. Are you referring to client-facing errors only, or also internal error handling?\n\nSorry for the confusion - I want to give you the right information.",
+      "answered_at": "2026-02-16T12:00:00Z"
+    },
+    {
+      "question_id": "5-should-the-api-support-batch-operations",
+      "question": "5. Should the API support batch operations?",
+      "user_answer": "I'm not entirely clear on what you're asking. Could you rephrase or provide more context?\n\nSpecifically:\n1. What problem are you trying to solve?\n2. Are there any constraints I should be aware of?\n3. Is this a technical question or more about business requirements?\n\nI'd like to help, but I need a bit more clarity first. Thank you!",
+      "answered_at": "2026-02-16T12:00:00Z"
+    }
+  ]
+}

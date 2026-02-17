@@ -66,17 +66,21 @@ class TestingChatClient:
         self,
         messages: List[Dict[str, Any]],
         tools: Optional[List[Dict[str, Any]]] = None,
+        prompt_cache_key: Optional[str] = None,
+        prompt_cache_retention: Optional[str] = None,
         **kwargs
     ):
-        """Create a chat completion, either by calling the real LLM or replaying a recording.
+        """Create a chat completion with optional prompt caching, either by calling the real LLM or replaying a recording.
 
         Args:
             messages: List of conversation messages
             tools: Optional list of tool definitions
+            prompt_cache_key: Optional cache key for OpenAI caching (improves hit rates)
+            prompt_cache_retention: Optional cache retention policy
             **kwargs: Additional arguments (ignored for hashing compatibility)
 
         Returns:
-            Chat completion response (either real or replayed)
+            Chat completion response (either real or replayed) with cache token usage
         """
         self._call_count += 1
         call_id = self._call_count
@@ -89,12 +93,23 @@ class TestingChatClient:
         if self._real_client is None:
             raise ValueError("Real client not available. Use recording mode with a valid AsyncOpenAI client.")
 
-        response = await self._real_client.chat.completions.create(
-            model=self._model_id,
-            messages=messages,
-            tools=tools if tools else None,
+        # Build completion kwargs
+        completion_kwargs = {
+            "model": self._model_id,
+            "messages": messages,
             **kwargs
-        )
+        }
+
+        if tools:
+            completion_kwargs["tools"] = tools
+
+        # Add caching parameters if provided
+        if prompt_cache_key:
+            completion_kwargs["prompt_cache_key"] = prompt_cache_key
+        if prompt_cache_retention:
+            completion_kwargs["prompt_cache_retention"] = prompt_cache_retention
+
+        response = await self._real_client.chat.completions.create(**completion_kwargs)
 
         if self._record_mode:
             await self._record_interaction(call_id, hash_key, messages, tools, response)

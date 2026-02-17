@@ -1,0 +1,63 @@
+You are synthesizing updated recommendations from domain experts who addressed user-agreed concerns in an artifact.
+
+## Context
+
+The artifact was reviewed and concerns were raised. The user agreed that some concerns should be addressed. Each expert has now provided updated recommendations to address those concerns.
+
+## Expert Recommendations
+
+{% for expert_id, rec_data in expert_recommendations.items() %}
+### {{expert_id | title}} Expert
+
+{% if rec_data.status == "success" %}
+{% for rec in rec_data.updated_recommendations %}
+- **{{rec.title}}**: {{rec.recommendation}}
+{% if rec.rationale %}
+  - *Rationale*: {{rec.rationale}}
+{% endif %}
+{% endfor %}
+
+{% if rec_data.additional_notes %}
+**Additional Notes**: {{rec_data.additional_notes}}
+{% endif %}
+{% elif rec_data.status == "skipped" %}
+*No concerns to address*
+{% else %}
+*Error: {{rec_data.get('error', 'Unknown error')}}*
+{% endif %}
+
+{% endfor %}
+
+## Your Task
+
+Consolidate the {{num_experts}} expert(s)' updated recommendations into a coherent set of recommendations for regenerating the artifact.
+
+1. **Identify common themes** - Group related recommendations together
+2. **Resolve conflicts** - If experts disagree, synthesize a balanced approach
+3. **Prioritize** - Order recommendations by importance
+4. **Clarify** - Make each recommendation clear and actionable
+
+Return your response as JSON:
+
+```json
+{
+  "consolidated_recommendations": [
+    {
+      "title": "Clear, actionable title",
+      "recommendation": "Detailed recommendation text",
+      "rationale": "Why this matters and how it addresses the concerns",
+      "priority": "high|medium|low",
+      "affected_experts": ["expert1", "expert2"]
+    }
+  ],
+  "synthesis_summary": "Brief summary of the consolidated recommendations and how they address the agreed concerns",
+  "conflicts_resolved": [
+    {
+      "issue": "Description of conflicting recommendations",
+      "resolution": "How you resolved it"
+    }
+  ]
+}
+```
+
+Focus on creating clear, implementable recommendations that directly address the user-agreed concerns while maintaining the artifact's quality and coherence.

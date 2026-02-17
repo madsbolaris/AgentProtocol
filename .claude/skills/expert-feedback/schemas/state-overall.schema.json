@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Overall State Schema",
+  "description": "Schema for overall feedback process state",
+  "type": "object",
+  "required": ["iteration", "experts", "status"],
+  "properties": {
+    "iteration": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Current iteration number"
+    },
+    "experts": {
+      "type": "array",
+      "description": "List of experts participating",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "enum": ["in_progress", "complete", "failed"],
+      "description": "Current status of the feedback process"
+    },
+    "convergence_percent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Percentage of convergence between expert opinions"
+    },
+    "consensus_reached": {
+      "type": "boolean",
+      "description": "Whether consensus has been reached (typically >= 80%)"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Brief summary of the synthesized feedback"
+    },
+    "expert_sessions": {
+      "type": "object",
+      "description": "Mapping of expert names to their session IDs",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the state was created"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the state was last updated"
+    }
+  }
+}

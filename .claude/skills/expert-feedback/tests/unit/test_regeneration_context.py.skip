@@ -1,0 +1,203 @@
+#!/usr/bin/env python3
+"""
+Unit tests for regeneration context creation (Context Gap Fix 1.3).
+
+Tests the _create_regeneration_context() function in artifact_review.py.
+"""
+import pytest
+import sys
+from pathlib import Path
+
+# Add scripts to path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
+
+from core.artifact_review import _create_regeneration_context
+
+
+class TestRegenerationContext:
+    """Test suite for regeneration context creation."""
+
+    def test_extracts_veto_patterns_from_themes(self):
+        """Should identify patterns when multiple concerns share a theme."""
+        concerns_data = {
+            "concerns": [
+                {
+                    "id": "con-001",
+                    "title": "Missing authentication",
+                    "theme": "Security",
+                    "expert": "typescript"
+                },
+                {
+                    "id": "con-002",
+                    "title": "No input validation",
+                    "theme": "Security",
+                    "expert": "python"
+                },
+                {
+                    "id": "con-003",
+                    "title": "Unclear error messages",
+                    "theme": "UX",
+                    "expert": "typescript"
+                }
+            ]
+        }
+
+        expert_reviews = {
+            "typescript": {"decision": "veto"},
+            "python": {"decision": "veto"}
+        }
+
+        context = _create_regeneration_context(concerns_data, expert_reviews)
+
+        # Should identify Security as a pattern (2 concerns)
+        veto_patterns = context["veto_patterns"]
+        security_pattern = next(p for p in veto_patterns if p["theme"] == "Security")
+
+        assert security_pattern["concern_count"] == 2
+        assert security_pattern["expert_count"] == 2
+        assert "con-001" in security_pattern["concerns"]
+        assert "con-002" in security_pattern["concerns"]
+
+    def test_extracts_common_themes(self):
+        """Should identify themes mentioned by multiple experts."""
+        concerns_data = {
+            "concerns": [
+                {"id": "con-001", "theme": "Performance", "expert": "typescript"},
+                {"id": "con-002", "theme": "Performance", "expert": "python"},
+                {"id": "con-003", "theme": "Testing", "expert": "typescript"},
+                {"id": "con-004", "theme": "Testing", "expert": "csharp"},
+                {"id": "con-005", "theme": "Documentation", "expert": "typescript"}
+            ]
+        }
+
+        expert_reviews = {
+            "typescript": {
+                "decision": "veto",
+                "concerns": [
+                    {"theme": "Performance"},
+                    {"theme": "Testing"},
+                    {"theme": "Documentation"}
+                ]
+            },
+            "python": {
+                "decision": "veto",
+                "concerns": [
+                    {"theme": "Performance"}
+                ]
+            },
+            "csharp": {
+                "decision": "veto",
+                "concerns": [
+                    {"theme": "Testing"}
+                ]
+            }
+        }
+
+        context = _create_regeneration_context(concerns_data, expert_reviews)
+
+        # Common themes: Performance (2 experts), Testing (2 experts)
+        # Not common: Documentation (1 expert)
+        common_themes = context["common_themes"]
+        theme_names = [t["theme"] for t in common_themes]
+
+        assert "Performance" in theme_names
+        assert "Testing" in theme_names
+        assert "Documentation" not in theme_names
+
+        # Verify expert counts
+        perf_theme = next(t for t in common_themes if t["theme"] == "Performance")
+        assert perf_theme["expert_count"] == 2
+        assert set(perf_theme["experts"]) == {"typescript", "python"}
+
+    def test_single_concern_theme_no_pattern(self):
+        """Should not create pattern for themes with single concern."""
+        concerns_data = {
+            "concerns": [
+                {"id": "con-001", "theme": "Security", "expert": "typescript"}
+            ]
+        }
+
+        expert_reviews = {
+            "typescript": {"decision": "veto"}
+        }
+
+        context = _create_regeneration_context(concerns_data, expert_reviews)
+
+        # No pattern (need 2+ concerns)
+        veto_patterns = context["veto_patterns"]
+        assert len(veto_patterns) == 0
+
+    def test_includes_synthesized_concerns(self):
+        """Should include full concerns data in context."""
+        concerns_data = {
+            "concerns": [
+                {"id": "con-001", "title": "Security issue", "theme": "Security"}
+            ]
+        }
+
+        expert_reviews = {
+            "typescript": {"decision": "veto"}
+        }
+
+        context = _create_regeneration_context(concerns_data, expert_reviews)
+
+        # Should include original concerns data
+        assert context["synthesized_concerns"] == concerns_data
+        assert context["total_concerns"] == 1
+
+    def test_counts_themes(self):
+        """Should count total unique themes."""
+        concerns_data = {
+            "concerns": [
+                {"id": "con-001", "theme": "Security"},
+                {"id": "con-002", "theme": "Security"},
+                {"id": "con-003", "theme": "Performance"},
+                {"id": "con-004", "theme": "Testing"}
+            ]
+        }
+
+        expert_reviews = {}
+
+        context = _create_regeneration_context(concerns_data, expert_reviews)
+
+        # 3 unique themes
+        assert context["themes_count"] == 3
+
+    def test_empty_concerns(self):
+        """Should handle empty concerns gracefully."""
+        concerns_data = {"concerns": []}
+        expert_reviews = {}
+
+        context = _create_regeneration_context(concerns_data, expert_reviews)
+
+        assert context["total_concerns"] == 0
+        assert context["veto_patterns"] == []
+        assert context["common_themes"] == []
+        assert context["themes_count"] == 0
+
+    def test_pattern_summary_format(self):
+        """Should generate readable pattern summaries."""
+        concerns_data = {
+            "concerns": [
+                {"id": "con-001", "theme": "Security", "expert": "typescript"},
+                {"id": "con-002", "theme": "Security", "expert": "python"},
+                {"id": "con-003", "theme": "Security", "expert": "csharp"}
+            ]
+        }
+
+        expert_reviews = {
+            "typescript": {"decision": "veto"},
+            "python": {"decision": "veto"},
+            "csharp": {"decision": "veto"}
+        }
+
+        context = _create_regeneration_context(concerns_data, expert_reviews)
+
+        pattern = context["veto_patterns"][0]
+        assert "3 expert" in pattern["summary"]
+        assert "3 concern" in pattern["summary"]
+        assert "Security" in pattern["summary"]
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

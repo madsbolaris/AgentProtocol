@@ -1,9 +1,0 @@
-# TypeSpec configuration for Agent Runtime API
-emit:
-  - "@typespec/openapi3"
-
-options:
-  "@typespec/openapi3":
-    output-file: "../.generated/openapi.json"
-    omit-unreachable-types: true
-    new-line: lf

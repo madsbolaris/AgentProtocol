@@ -476,6 +476,8 @@
 
         .detail-content-wrapper {
             flex: 1;
+            display: flex;
+            flex-direction: column;
             overflow-y: auto;
             position: relative;
             padding: 0px 2rem;
@@ -742,6 +744,8 @@
 
         .document-view {
             display: none;
+            flex: 1;
+            min-height: 0;
             padding: 2rem 0 0 0;
         }
 
@@ -1522,55 +1526,44 @@
 
         /* Loading State */
         .loading-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 3rem 2rem;
-            text-align: center;
+            display: block;
+            padding: 48px;
         }
 
         .loading-spinner {
-            font-size: 3rem;
-            color: var(--accent-blue);
-            margin-bottom: 1.5rem;
+            display: inline-block;
+            font-size: 16px;
+            color: rgb(17, 24, 39);
+            margin-bottom: 24px;
         }
 
         .loading-spinner i {
-            font-size: 3rem;
+            font-size: inherit;
         }
 
         .loading-title {
-            font-size: 1.25rem;
-            font-weight: 600;
+            font-size: 18.72px;
+            font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 0.5rem;
+            margin: 0 0 8px 0;
         }
 
         .loading-description {
-            font-size: 0.9375rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
+            font-size: 16px;
+            color: rgb(107, 114, 128);
+            margin: 0 0 32px 0;
         }
 
         .loading-skeleton {
             width: 100%;
             max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+            display: block;
         }
 
         .skeleton-line {
             height: 1rem;
-            background: linear-gradient(
-                90deg,
-                var(--bg-tertiary) 25%,
-                var(--bg-secondary) 50%,
-                var(--bg-tertiary) 75%
-            );
-            background-size: 200% 100%;
-            animation: skeleton-loading 1.5s infinite;
+            background-color: rgb(243, 244, 246);
+            margin: 0 0 16px 0;
             border-radius: 0.25rem;
         }
 
@@ -1622,9 +1615,9 @@
         }
 
         .panel-header h3 {
-            font-size: 1.25rem;
-            line-height: 2rem;
-            font-weight: 600;
+            font-size: 1.17rem;
+            line-height: 1.872rem;
+            font-weight: 700;
             margin-bottom: 0.5rem;
         }
 
@@ -2017,6 +2010,9 @@
 
         /* Document Content Styling */
         .document-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             padding: 2rem;
             max-width: 800px;
             margin: 0 auto;

@@ -1,0 +1,108 @@
+# Synthesize Expert Concerns
+
+Consolidate concerns from multiple experts into a unified, user-reviewable format.
+
+---
+
+## Context
+
+{{ num_experts }} experts reviewed the generated artifact. Some approved, some raised concerns.
+
+**Experts Approving:** {{ experts_approving | join(', ') or 'None' }}
+**Experts with Concerns:** {{ experts_with_concerns | join(', ') or 'None' }}
+
+---
+
+## Expert Concerns
+
+{% for expert_id, concern_data in expert_concerns.items() %}
+### {{ expert_id }}
+
+**Decision:** {{ concern_data.decision }}
+
+{% if concern_data.decision == "concern" %}
+**Reasoning:** {{ concern_data.get('reasoning', 'No reasoning provided') }}
+
+**Concerns:**
+{% for concern in concern_data.get('concerns', []) %}
+- **{{ concern.title }}** ({{ concern.severity }})
+  {{ concern.description }}
+{% endfor %}
+{% endif %}
+
+---
+{% endfor %}
+
+---
+
+## Task
+
+### 1. Group Concerns by Theme
+
+Analyze all concerns and group them by common themes (e.g., "Security", "Performance", "Documentation", "Architecture", "Testing").
+
+For each theme:
+- List which experts raised concerns in that theme
+- List the specific concerns within that theme
+- Calculate severity distribution (how many critical/high/medium/low)
+
+### 2. Prioritize Concerns
+
+Create a priority order array with concern IDs ordered by:
+1. Severity (critical → high → medium → low)
+2. Number of experts who raised similar concerns (more experts = higher priority)
+
+### 3. Calculate Statistics
+
+- **Total concerns:** Count of unique concerns across all experts
+- **Experts approving:** List of expert IDs who approved
+- **Experts with concerns:** List of expert IDs who raised concerns
+
+---
+
+## Output Format
+
+**REQUIRED:** Respond with valid JSON only. No markdown, no explanation.
+
+```json
+{
+  "total_concerns": 0,
+  "experts_approving": ["expert1", "expert2"],
+  "experts_with_concerns": ["expert3", "expert4"],
+  "concerns_by_theme": {
+    "Theme Name": {
+      "experts": ["expert3", "expert4"],
+      "concerns": [
+        {
+          "expert": "expert3",
+          "title": "Concern title",
+          "description": "Concern description",
+          "severity": "critical|high|medium|low"
+        }
+      ],
+      "severity_distribution": {
+        "critical": 0,
+        "high": 1,
+        "medium": 2,
+        "low": 0
+      }
+    }
+  },
+  "priority_order": [
+    {"expert": "expert3", "title": "Most critical concern"},
+    {"expert": "expert4", "title": "Second most critical concern"}
+  ]
+}
+```
+
+**Notes:**
+- Group similar concerns together under common themes
+- If only one expert raised a concern, still include it
+- Theme names should be clear and descriptive (e.g., "Security Vulnerabilities", "Missing Documentation")
+- Priority order should list concerns from most to least critical
+
+---
+
+## Begin
+
+Analyze expert concerns and output synthesized data as JSON.

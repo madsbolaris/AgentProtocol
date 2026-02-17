@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "jsx": "react",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"],
+  "references": [
+    { "path": "../agents-protocol-abstractions" },
+    { "path": "../agents-protocol-client" }
+  ]
+}

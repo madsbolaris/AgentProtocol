@@ -205,9 +205,9 @@ Golden files follow the naming convention:
 
 For example:
 - Input: `test-data/input/01-user-message.xml`
-- JSON Result: `test-data/results/echo-m365/json/01-user-message-result.json`
-- XML Result: `test-data/results/echo-m365/xml/01-user-message-result.xml`
-- Golden: `test-data/results/echo-m365/golden/01-user-message-result.json`
+- JSON Result: `test-data/results/samples/echo-m365/json/01-user-message-result.json`
+- XML Result: `test-data/results/samples/echo-m365/xml/01-user-message-result.xml`
+- Golden: `test-data/results/samples/echo-m365/golden/01-user-message-result.json`
 
 ## Troubleshooting
 

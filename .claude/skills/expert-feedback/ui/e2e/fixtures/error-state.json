@@ -1,0 +1,59 @@
+{
+  "workspace_path": "/test/workspace/error",
+  "topic": "Debug and fix critical production issues",
+  "phase": "error",
+  "current_iteration": 1,
+  "max_iterations": 3,
+  "convergence_percent": 15,
+  "experts": ["debugger-expert", "error-handling-expert", "monitoring-expert", "incident-expert"],
+  "expert_progress": {
+    "debugger-expert": {
+      "status": "complete",
+      "duration_seconds": 67,
+      "accurate_cost": 0.0112,
+      "total_tokens": 7123,
+      "input_tokens": 4234,
+      "output_tokens": 1889,
+      "cache_creation_tokens": 600,
+      "cache_read_tokens": 400
+    },
+    "error-handling-expert": {
+      "status": "complete",
+      "duration_seconds": 89,
+      "accurate_cost": 0.0145,
+      "total_tokens": 9234,
+      "input_tokens": 5456,
+      "output_tokens": 2778,
+      "cache_creation_tokens": 700,
+      "cache_read_tokens": 300
+    },
+    "monitoring-expert": {
+      "status": "failed",
+      "duration_seconds": 120,
+      "accurate_cost": 0.0067,
+      "total_tokens": 4234,
+      "input_tokens": 2456,
+      "output_tokens": 778,
+      "cache_creation_tokens": 500,
+      "cache_read_tokens": 500
+    },
+    "incident-expert": {
+      "status": "timeout",
+      "duration_seconds": 180,
+      "accurate_cost": 0.0034,
+      "total_tokens": 2156,
+      "input_tokens": 1234,
+      "output_tokens": 422,
+      "cache_creation_tokens": 300,
+      "cache_read_tokens": 200
+    }
+  },
+  "total_duration_seconds": 456,
+  "total_cost": 0.0358,
+  "total_tokens": 22747,
+  "total_input_tokens": 13380,
+  "total_output_tokens": 5867,
+  "total_cache_creation_tokens": 2100,
+  "total_cache_read_tokens": 1400,
+  "cache_enabled": true
+}

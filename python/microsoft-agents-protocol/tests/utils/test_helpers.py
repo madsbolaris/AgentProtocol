@@ -51,7 +51,7 @@ def create_llm_client(
     Use: python scripts/generate_golden_datasets.py --sample basic-m365 --record-llm
 
     Args:
-        recordings_dir: Directory for recordings (default: test-data/llm-recordings/basic-m365)
+        recordings_dir: Directory for recordings (default: test-data/llm-recordings/sample/basic-m365)
         test_mode: Force specific mode (default: from environment)
 
     Returns:
@@ -74,7 +74,7 @@ def create_llm_client(
             "\n"
             "The .NET bot will:\n"
             "1. Generate golden files from .NET (canonical source)\n"
-            "2. Record LLM interactions to test-data/llm-recordings/basic-m365/\n"
+            "2. Record LLM interactions to test-data/llm-recordings/sample/basic-m365/\n"
             "\n"
             "Then run Python tests in test mode to validate against those recordings."
         )

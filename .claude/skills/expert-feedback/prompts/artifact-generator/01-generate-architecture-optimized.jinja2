@@ -1,0 +1,131 @@
+{% extends "base-finalize.jinja2" %}
+
+{% set output_type = "Architecture & Implementation Plan" %}
+{% set output_article = "an" %}
+{% set create_step_title = "Create Architecture & Implementation Plan" %}
+
+{% block task_description %}
+Create a comprehensive **Architecture & Implementation Plan** that defines system design, implementation phases, component specifications, and deployment considerations based on expert feedback.
+{% endblock %}
+
+{% block step_2_analysis %}
+## Step 2: Analyze Expert Feedback
+
+Extract key recommendations:
+- Architecture patterns and approaches
+- Technology stack with justifications
+- Component breakdown and responsibilities
+- Data model and API design
+- Security, performance, and scalability requirements
+- Implementation sequencing and dependencies
+- Risk mitigation strategies
+{% endblock %}
+
+{% block output_structure %}
+**Format:** See `output-templates/architecture-format.md` for complete structure.
+
+**Key Sections Required:**
+1. Executive Summary - Goals, key decisions
+2. Critical Files - Implementation scope
+3. System Architecture - Components, tech stack
+4. Data Architecture - Model, storage, flow
+5. API Design - Endpoints, authentication
+6. Implementation Plan - Phased approach with deliverables
+7. Testing Strategy - Unit, integration, E2E, performance
+8. Deployment Strategy - Environments, process, rollback
+9. Operational Considerations - Monitoring, logging, backup
+
+**Component Specification (for each):**
+- Purpose, technology, responsibilities
+- Interfaces (input/output)
+- Dependencies
+
+**Phase Specification (for each):**
+- Goal, deliverables, time estimate
+- Acceptance criteria, risks, dependencies
+
+**JSON Output:**
+```json
+{
+  "architecture_markdown": "# Architecture & Implementation Plan: {Title}\n\n{content}",
+  "artifact_type": "architecture",
+  "total_phases": {number},
+  "estimated_time": "{weeks/months}",
+  "critical_path_items": {number},
+  "parallel_streams": {number}
+}
+```
+{% endblock %}
+
+{% block expert_context %}
+## Step 3: Expert Feedback Context
+
+{% if iteration_reviews %}
+### Reviews from Iteration {{ iteration }}
+
+{% for expert_name, review in iteration_reviews.items() %}
+**{{ expert_name | title }} Expert:**
+{{ review.content | truncate(500) }}
+
+{% endfor %}
+{% else %}
+No expert reviews available for this iteration.
+{% endif %}
+
+**Key Points to Address:**
+- Synthesize architectural recommendations across all experts
+- Resolve conflicts between different expert suggestions
+- Base technology choices on expert consensus
+- Include rationale for each major decision
+- Reference specific expert feedback in justifications
+{% endblock %}
+
+{% block validation_checklist %}
+## Validation Checklist
+
+Before finalizing, verify:
+
+**Completeness:**
+- [ ] All major components defined with tech stack
+- [ ] Implementation broken into logical phases
+- [ ] Testing strategy covers all levels
+- [ ] Deployment and operational plans included
+
+**Quality:**
+- [ ] Decisions justified with expert consensus
+- [ ] Technology choices match expert recommendations
+- [ ] Critical path and dependencies identified
+- [ ] Risks addressed with mitigation strategies
+
+**Feasibility:**
+- [ ] Time estimates realistic for scope
+- [ ] Parallel work streams identified
+- [ ] Resource requirements considered
+- [ ] Success metrics measurable
+
+**Expert Alignment:**
+- [ ] Addresses concerns from all experts
+- [ ] Resolves conflicting recommendations
+- [ ] Includes rationale for choices made
+{% endblock %}
+
+{% block output_guidelines %}
+## Output Guidelines
+
+**Architecture Pattern:** Choose based on expert recommendations (microservices, monolith, event-driven, layered).
+
+**Technology Stack:** Justify each choice with expert feedback. If experts disagreed, explain resolution.
+
+**Implementation Phases:**
+- Order by dependencies and priority
+- Estimate 1-2 weeks per deliverable
+- Include acceptance criteria for each
+
+**Critical Path:** Identify 3-5 blocking items that prevent parallel work.
+
+**Testing:** Specify framework choices based on expert recommendations for the chosen tech stack.
+
+**Operational:** Include monitoring, logging, and disaster recovery as recommended by experts.
+
+Return complete architecture document as JSON with markdown content.
+{% endblock %}

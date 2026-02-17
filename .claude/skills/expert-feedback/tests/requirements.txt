@@ -1,0 +1,13 @@
+# Test requirements for expert-feedback skill
+
+# Core testing framework
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# Testing utilities
+pytest-asyncio>=0.21.0
+pytest-mock>=3.10.0
+
+# Optional: for better test output
+pytest-html>=3.2.0
+pytest-xdist>=3.0.0  # parallel test execution

@@ -1,0 +1,114 @@
+# Expert Review: {{ expert_name }}
+
+Provide expert analysis of the codebase from a {{ expert_name }} perspective.
+
+---
+
+## Context
+
+**Iteration:** {{ iteration }}
+**Workspace:** {{ workspace }}
+**Expert Role:** {{ expert_perspective }}
+
+**Focus Areas:** {{ focus_areas | join(', ') }}
+
+**Review Context:**
+{{ review_context }}
+
+---
+
+## Input
+
+Explore project code in workspace:
+
+- {{ workspace }} (focus on project directories, not entire workspace)
+
+---
+
+## Output
+
+**File:** {{ workspace }}/iteration-{{ iteration }}/experts/review-{{ expert }}.md
+
+**Format:** Read `.claude/skills/expert-feedback/prompts/experts/format-specification.md` and follow it exactly. Parser errors will occur otherwise.
+
+**Scripts (optional):** Write analysis scripts to {{ workspace }}/iteration-{{ iteration }}/experts/{{ expert }}/scripts/ if needed. Don't modify project files.
+
+---
+
+## Task
+
+### 1. Rate DX (1-5 stars)
+
+Be honest and critical:
+
+- 1 star = fundamentally broken
+- 5 stars = excellent DX
+- Include confidence level (low/medium/high)
+- Justify your rating
+
+### 2. Identify Concerns
+
+**This should be 40-50% of your review** (most valuable section).
+
+For each concern:
+
+- Assess severity (critical/high/medium/low) and impact
+- Provide specific evidence with file paths and line numbers
+- Use format: `file.ext#L42` or `file.ext#L67-89`
+- Suggest concrete fixes with code examples
+
+### 3. Propose Recommendations
+
+Make them actionable:
+
+- Set priority, complexity, and DX impact
+- Include implementation details or code examples
+- List benefits AND risks/trade-offs
+- Every recommendation needs implementation guidance
+
+### 4. Note Strengths
+
+What the code does well:
+
+- Be specific, not generic praise
+- Explain why this is a good pattern
+- Helps identify what to preserve during refactoring
+
+### 5. Ask Questions
+
+Clarifying questions for next iteration:
+
+- Explain why the question matters
+- Show how the answer impacts your analysis
+- Don't ask questions you can answer by reading code
+- Set importance level (critical/high/medium/low)
+
+---
+
+## Field Values
+
+### DX Rating
+
+- **Rating:** 1-5 with star emoji (1 = broken, 5 = excellent)
+- **Confidence:** `low`, `medium`, `high`
+
+### Concerns
+
+- **Severity:** `critical`, `high`, `medium`, `low`
+- **Impact:** `high`, `medium`, `low`
+
+### Recommendations
+
+- **Priority:** `critical`, `high`, `medium`, `low`
+- **Complexity:** `low`, `medium`, `high`
+- **DX Impact:** `high`, `medium`, `low`
+
+### Questions
+
+- **Importance:** `critical`, `high`, `medium`, `low`
+
+---
+
+## Begin
+
+Read format spec, explore workspace, create review markdown.

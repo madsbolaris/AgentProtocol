@@ -1,56 +1,32 @@
 {
-  "runId": "run_d4f00a8cdbe44b638faabb3cb1bd8ce7",
+  "runId": "run_1h8ybfjc2nx",
   "agentId": "echo-agent",
-  "threadId": "thread_bb22bc919fa64338b4c0084a22b6a5e7",
-  "status": "Completed",
+  "threadId": "thread_5ngwmrwxv9e",
+  "status": "completed",
   "input": [
     {
-      "messageId": null,
+      "messageId": "msg_6wv3f0vmqvq",
       "role": "system",
       "contents": [
         {
           "kind": "text",
-          "text": "You are a helpful AI assistant with access to various tools and capabilities.",
-          "audience": null
+          "text": "You are a helpful AI assistant with access to various tools and capabilities."
         }
-      ],
-      "userId": null,
-      "agentId": null,
-      "authorName": null,
-      "threadId": null,
-      "runId": null,
-      "parentId": null,
-      "createdAt": null,
-      "updatedAt": null,
-      "status": null,
-      "metadata": null
+      ]
     }
   ],
   "output": [
     {
-      "messageId": "msg_2b374ce5d80d4d94bfae1c6bbec5fdbd",
+      "messageId": "msg_7afvmpz01xo",
       "role": "agent",
+      "createdAt": "2026-02-09T18:38:53.124Z",
       "contents": [
         {
           "kind": "text",
-          "text": "you said: \nYou are a helpful AI assistant with access to various tools and capabilities.",
-          "audience": null
+          "text": "you said: \nYou are a helpful AI assistant with access to various tools and capabilities."
         }
-      ],
-      "userId": null,
-      "agentId": null,
-      "authorName": null,
-      "threadId": null,
-      "runId": null,
-      "parentId": null,
-      "createdAt": "2026-02-09T18:38:34.045644Z",
-      "updatedAt": null,
-      "status": null,
-      "metadata": null
+      ]
     }
   ],
-  "usage": null,
-  "error": null,
-  "createdAt": "2026-02-09T18:38:34.04569Z",
-  "completedAt": null
+  "createdAt": "2026-02-09T18:38:53.124Z"
 }

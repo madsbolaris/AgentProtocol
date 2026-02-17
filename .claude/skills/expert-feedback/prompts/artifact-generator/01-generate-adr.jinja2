@@ -1,0 +1,161 @@
+{% extends "base-finalize.jinja2" %}
+
+{% set output_type = "Architecture Decision Record (ADR)" %}
+{% set output_article = "an" %}
+
+{% block mode_specific_guidance %}
+## Multiple ADRs
+
+You MAY create multiple ADRs if the decisions are logically separable. Consider creating separate ADRs when:
+
+- **Independent subsystems:** Decisions affect separate components or modules
+- **Tactical vs Strategic:** Short-term implementation decisions vs long-term architectural choices
+- **Client vs Server:** Client-side SDK design vs server-side API implementation
+- **Different domains:** Data model design vs API contracts vs deployment architecture
+- **Orthogonal concerns:** Security model vs performance optimization vs developer experience
+
+### When to split into multiple ADRs:
+
+**Example 1:** Expert feedback covers both "streaming API design" and "error handling strategy"
+- ADR 0042: Streaming API Design (technical implementation)
+- ADR 0043: Error Handling Strategy (operational patterns)
+
+**Example 2:** Feedback addresses both immediate tactical needs and future architectural direction
+- ADR 0042: Short-term API compatibility fixes (tactical)
+- ADR 0043: Long-term API versioning strategy (strategic)
+
+### Guidelines for multiple ADRs:
+
+1. **Each ADR should:**
+   - Address a single architectural decision
+   - Be independently understandable
+   - Have its own context and consequences
+   - Be cross-referenced to related ADRs if needed
+
+2. **Numbering:** If creating multiple ADRs, number them sequentially:
+   - First ADR: Use next available number (e.g., 0042)
+   - Second ADR: Increment (0043)
+   - Third ADR: Increment (0044)
+
+3. **Cross-references:** Link related ADRs in the "More Information" section:
+   - "See also ADR-0042 for streaming implementation details"
+   - "Complements ADR-0043 on error handling patterns"
+
+4. **Default to single ADR:** When in doubt, synthesize into one comprehensive ADR rather than splitting unnecessarily.
+{% endblock %}
+
+{% block task_description %}
+Analyze the expert feedback and determine if ONE or MULTIPLE ADRs are appropriate. Then create ADR(s) following the MADR template by mapping expert feedback to ADR sections.
+
+### ADR Output Format
+
+**CRITICAL:** You MUST output a JSON file, not a markdown ADR directly.
+
+Create JSON file at: `{{ workspace }}/adr-data.json`
+
+The JSON must conform to the schema at: `.claude/skills/expert-feedback/schemas/adr-output.schema.json`
+
+The Python script will later render this JSON into a markdown ADR using a Jinja2 template.
+{% endblock %}
+
+{% block step_3_create %}
+## Step 3: Create ADR JSON Data
+
+Create `{{ workspace }}/adr-data.json` with the following structure based on expert feedback:
+
+```json
+{
+  "title": "Short decision title (no ADR number prefix)",
+  "status": "accepted or proposed (use accepted if {{ convergence_percent }}% >= 80%)",
+  "deciders": ["{{ experts|join('", "') }}", "User"],
+  "date": "YYYY-MM-DD (today's date)",
+  "technical_story": "Workspace: {{ workspace }}",
+  "context": {
+    "problem_statement": "Extract from {{ topic }} - what problem is being solved?",
+    "background": "Why is this decision needed? What led to this review?",
+    "constraints": [
+      "List constraints from expert feedback",
+      "Technical limitations",
+      "Business requirements"
+    ]
+  },
+  "decision_drivers": [
+    "Extract from expert concerns and focus areas",
+    "DX impact considerations",
+    "Implementation complexity",
+    "Migration/compatibility concerns"
+  ],
+  "considered_options": [
+    {
+      "title": "Option 1: Current Approach",
+      "description": "Detailed description of this option",
+      "pros": [
+        "Benefits from expert feedback",
+        "DX improvements",
+        "Best practice alignment"
+      ],
+      "cons": [
+        "Concerns from experts",
+        "Implementation challenges",
+        "Migration complexity"
+      ]
+    },
+    {
+      "title": "Option 2: Recommended Approach",
+      "description": "Based on synthesized expert recommendations",
+      "pros": ["..."],
+      "cons": ["..."]
+    }
+  ],
+  "decision_outcome": {
+    "chosen_option": "Option name that was chosen",
+    "rationale": "Detailed explanation based on convergence ({{ convergence_percent }}%) and expert agreement",
+    "implementation_notes": [
+      "Specific steps or considerations for implementation",
+      "References to expert recommendations"
+    ]
+  },
+  "consequences": {
+    "good": [
+      "DX improvements from expert feedback",
+      "Benefits and strengths identified by experts"
+    ],
+    "bad": [
+      "Implementation challenges noted by experts",
+      "Trade-offs and complexity concerns"
+    ],
+    "neutral": [
+      "Trade-offs that are neither good nor bad"
+    ]
+  },
+  "links": [
+    {
+      "description": "Related ADR or design document",
+      "url": "path/to/document"
+    }
+  ]
+}
+```
+{% endblock %}
+
+{% block critical_requirements %}
+## Critical Requirements
+
+1. **Extract from synthesizions** - Read all `synthesized-*.md` files for comprehensive understanding
+2. **Map expert feedback to JSON** - Ensure all major expert concerns and recommendations are captured
+3. **Set correct status** - Use "accepted" if consensus reached ({{ convergence_percent }}% >= 80%), otherwise "proposed"
+4. **Include all deciders** - List all experts: {{ experts|join(', ') }} plus "User"
+5. **Date format** - Use YYYY-MM-DD format
+6. **Actionable content** - Decision should be implementable based on the information provided
+{% endblock %}
+
+{% block specific_output %}
+Use the Write tool to create: `{{ workspace }}/adr-data.json`
+
+**Do NOT create the final markdown ADR file** - the Python script will do that using a Jinja2 template.
+
+**After creating adr-data.json:**
+- Verify it's valid JSON
+- Ensure all required fields are present
+- Make sure content is comprehensive and actionable
+{% endblock %}

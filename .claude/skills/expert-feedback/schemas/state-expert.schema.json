@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Expert State Schema",
+  "description": "Schema for expert review state output",
+  "type": "object",
+  "required": ["expert", "iteration", "dx_rating", "confidence"],
+  "properties": {
+    "expert": {
+      "type": "string",
+      "description": "Name of the expert (e.g., 'typescript', 'python')"
+    },
+    "iteration": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Current iteration number"
+    },
+    "dx_rating": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Developer experience rating (1-5)"
+    },
+    "confidence": {
+      "enum": ["high", "medium", "low"],
+      "description": "Confidence level in the assessment"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Brief summary of the overall assessment"
+    },
+    "strengths": {
+      "type": "array",
+      "description": "List of identified strengths",
+      "items": {
+        "type": "object",
+        "required": ["title", "description"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Short title of the strength"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the strength"
+          }
+        }
+      }
+    },
+    "concerns": {
+      "type": "array",
+      "description": "List of identified concerns",
+      "items": {
+        "type": "object",
+        "required": ["title", "description", "severity"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Short title of the concern"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the concern"
+          },
+          "impact": {
+            "type": "string",
+            "description": "Description of the impact"
+          },
+          "severity": {
+            "enum": ["high", "medium", "low"],
+            "description": "Severity level of the concern"
+          }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "List of recommendations for improvement",
+      "items": {
+        "type": "object",
+        "required": ["title", "problem", "proposed", "rationale"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Short title of the recommendation"
+          },
+          "problem": {
+            "type": "string",
+            "description": "Description of the problem being addressed"
+          },
+          "current": {
+            "type": "string",
+            "description": "Current state or approach"
+          },
+          "proposed": {
+            "type": "string",
+            "description": "Proposed solution"
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Rationale for the recommendation"
+          },
+          "dx_impact": {
+            "enum": ["high", "medium", "low"],
+            "description": "Expected impact on developer experience"
+          },
+          "implementation_complexity": {
+            "enum": ["high", "medium", "low"],
+            "description": "Expected complexity of implementation"
+          }
+        }
+      }
+    }
+  }
+}

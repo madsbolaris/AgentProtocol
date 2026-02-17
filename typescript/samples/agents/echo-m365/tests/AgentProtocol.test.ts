@@ -301,7 +301,7 @@ describe('Agent Protocol Integration Tests', () => {
   });
 
   describe('XML Results Whitespace Validation', () => {
-    const resultsBase = path.join(testDataDir, 'results', 'echom365');
+    const resultsBase = path.join(testDataDir, 'results', 'samples', 'echo-m365');
     const xmlResultsDir = path.join(resultsBase, 'xml');
     const waitResultsDir = path.join(resultsBase, 'wait');
 

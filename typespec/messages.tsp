@@ -413,6 +413,22 @@ enum ChatRole {
  */
 
 /**
+ * Audience Enum
+ *
+ * Defines who can see specific content.
+ */
+enum AudienceRole {
+  /** Content visible to user */
+  user,
+
+  /** Content visible to agent */
+  agent,
+
+  /** Content visible to channel */
+  channel,
+}
+
+/**
  * Base model for all AI content types.
  * Provides common properties for audience filtering, encryption, and extensibility.
  *
@@ -425,12 +441,13 @@ enum ChatRole {
  */
 model AIContentBase {
   /**
-   * Target audience filter (comma-separated roles).
+   * Target audience filter.
    * Controls which roles should see this content:
    * - Omitted/null: Visible to all roles (default)
-   * - "user": Human-only content (UI hints, summaries)
-   * - "agent": Agent-only content (reasoning, internal context)
-   * - "user,agent": Explicitly visible to both
+   * - []: Empty array - Visible only to sender (self)
+   * - ["user"]: Human-only content (UI hints, summaries)
+   * - ["agent"]: Agent-only content (reasoning, internal context)
+   * - ["user", "agent"]: Explicitly visible to both
    *
    * EXAMPLES:
    * - <thinking audience="agent">reasoning here</thinking>
@@ -438,7 +455,7 @@ model AIContentBase {
    * - <adaptive-card audience="user" />
    */
   @xmlAttribute
-  audience?: string;
+  audience?: AudienceRole[];
 
   /**
    * Encryption information (simplified as string for XML).
@@ -463,6 +480,41 @@ model AIContentBase {
   additionalProperties?: Record<unknown>;
 }
 
+/**
+ * Base model for all chunk content types.
+ * Extends AIContentBase with streaming-specific metadata.
+ *
+ * RATIONALE: DRY principle - chunk metadata inherited by all chunk types
+ *
+ * PROPERTIES:
+ * - chunkIndex: Position of this chunk in the stream (0-based)
+ * - isLastChunk: Indicates if this is the final chunk
+ *
+ * USAGE: All chunk types (TextContentChunk, FunctionCallContentChunk, etc.) extend
+ * their complete counterparts and inherit these chunk metadata fields.
+ */
+model AIContentChunkBase extends AIContentBase {
+  /**
+   * Index of this chunk in the stream (0-based).
+   * Useful for ordering and tracking partial content assembly.
+   */
+  @xmlIgnore
+  chunkIndex?: int32;
+
+  /**
+   * Whether this is the final chunk in the stream.
+   * When true, indicates the content is complete and no more chunks will arrive.
+   */
+  @xmlIgnore
+  isLastChunk?: boolean;
+}
+
+/**
+ * AI Content - Complete/Buffered Content
+ *
+ * Union of all complete (non-chunked) content types. Use this when working with
+ * buffered/finalized content that has been fully received or constructed.
+ */
 @discriminator("kind")
 union AIContent {
   // Core LLM Content (6 types)
@@ -504,6 +556,43 @@ union AIContent {
   ContentFilterResultContent,
 }
 
+/**
+ * AI Content Chunk - Streaming/Partial Content
+ *
+ * Union of all chunk (partial) content types used during streaming. Chunk types
+ * inherit from their complete counterparts and add streaming metadata (chunkIndex, isLastChunk).
+ *
+ * Use this when working with streaming content that arrives in multiple parts.
+ */
+@discriminator("kind")
+union AIContentChunk {
+  // Core LLM Content Chunks (6 types)
+  TextContentChunk,
+  FunctionCallContentChunk,
+  FunctionResultContentChunk,
+  ErrorContentChunk,
+  TextReasoningContentChunk,
+  DataContentChunk,
+
+  // Additional chunk types can be added as needed for multimedia/document content
+}
+
+/**
+ * IStreamable - Anything That Can Appear in a Stream
+ *
+ * Union of complete content and chunks. Use this in middleware signatures and
+ * streaming contexts where either complete items or partial chunks may be yielded.
+ *
+ * RATIONALE:
+ * - Complete content can be yielded in streams (e.g., buffered middleware yielding complete items)
+ * - Chunks are always streamed by definition
+ * - Middleware output uses IStreamable to support both patterns
+ */
+union IStreamable {
+  AIContent,      // Complete/buffered content
+  AIContentChunk, // Streaming chunks
+}
+
 // ============================================
 // SECTION 2: CORE LLM CONTENT (6 types)
 //
@@ -531,6 +620,20 @@ model TextContent extends AIContentBase {
   @xmlText
   @contentType("text")
   text: string;
+}
+
+/**
+ * Text Content Chunk (Streaming)
+ *
+ * Represents a partial text chunk during streaming. Inherits all fields from TextContent
+ * and adds chunk metadata from AIContentChunkBase (chunkIndex, isLastChunk).
+ *
+ * XML: <text>Hello</text> (same as complete TextContent)
+ */
+@xmlRoot("text")
+model TextContentChunk extends TextContent {
+  kind: "textChunk";
+  ...AIContentChunkBase;
 }
 
 /**
@@ -562,6 +665,20 @@ model FunctionCallContent extends AIContentBase {
 }
 
 /**
+ * Function Call Content Chunk (Streaming)
+ *
+ * Represents a partial function call during streaming (e.g., large arguments being streamed).
+ * Inherits from FunctionCallContent and adds chunk metadata from AIContentChunkBase.
+ *
+ * XML: <function-call call-id="..." name="...">{"arg":</function-call> (same as complete)
+ */
+@xmlRoot("function-call")
+model FunctionCallContentChunk extends FunctionCallContent {
+  kind: "functionCallChunk";
+  ...AIContentChunkBase;
+}
+
+/**
  * Function Result Content
  *
  * BASE: Microsoft.Extensions.AI.FunctionResultContent
@@ -590,6 +707,20 @@ model FunctionResultContent extends AIContentBase {
 }
 
 /**
+ * Function Result Content Chunk (Streaming)
+ *
+ * Represents a partial function result during streaming (e.g., large results being streamed).
+ * Inherits from FunctionResultContent and adds chunk metadata from AIContentChunkBase.
+ *
+ * XML: <function-result call-id="..." name="...">{"result":</function-result> (same as complete)
+ */
+@xmlRoot("function-result")
+model FunctionResultContentChunk extends FunctionResultContent {
+  kind: "functionResultChunk";
+  ...AIContentChunkBase;
+}
+
+/**
  * Error Content
  *
  * BASE: Microsoft.Extensions.AI.ErrorContent
@@ -612,6 +743,20 @@ model ErrorContent extends AIContentBase {
   /** Stack trace */
   @xmlElement("stack-trace")
   stackTrace?: string;
+}
+
+/**
+ * Error Content Chunk (Streaming)
+ *
+ * Represents a partial error during streaming (e.g., stack trace being built up).
+ * Inherits from ErrorContent and adds chunk metadata from AIContentChunkBase.
+ *
+ * XML: <error code="..."><message>...</message></error> (same as complete)
+ */
+@xmlRoot("error")
+model ErrorContentChunk extends ErrorContent {
+  kind: "errorChunk";
+  ...AIContentChunkBase;
 }
 
 /**
@@ -640,6 +785,20 @@ model TextReasoningContent extends AIContentBase {
 }
 
 /**
+ * Text Reasoning Content Chunk (Streaming)
+ *
+ * Represents a partial reasoning chunk during streaming extended thinking.
+ * Inherits from TextReasoningContent and adds chunk metadata from AIContentChunkBase.
+ *
+ * XML: <thinking audience="agent">Internal...</thinking> (same as complete)
+ */
+@xmlRoot("thinking")
+model TextReasoningContentChunk extends TextReasoningContent {
+  kind: "reasoningChunk";
+  ...AIContentChunkBase;
+}
+
+/**
  * Data Content
  *
  * BASE: Microsoft.Extensions.AI.DataContent
@@ -664,6 +823,20 @@ model DataContent extends AIContentBase {
   /** Data value (base64 or text) */
   @xmlText
   value?: string;
+}
+
+/**
+ * Data Content Chunk (Streaming)
+ *
+ * Represents a partial data chunk during streaming (e.g., large base64 data being streamed).
+ * Inherits from DataContent and adds chunk metadata from AIContentChunkBase.
+ *
+ * XML: <data uri="..." mime-type="...">base64...</data> (same as complete)
+ */
+@xmlRoot("data")
+model DataContentChunk extends DataContent {
+  kind: "dataChunk";
+  ...AIContentChunkBase;
 }
 
 // ============================================

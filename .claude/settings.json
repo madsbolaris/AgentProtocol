@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/stop",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/notification_beep",
+            "statusMessage": "Permission needed"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "deny": [
+      "Bash(* .claude/skills/expert-feedback/scripts/spawn-all-experts.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/synthesize-feedback.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/finalize.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/artifact-review.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/approve-artifact.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/handle-rejection.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/common.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/parse_*.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/session_lifecycle.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/convergence.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/circuit_breaker.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/config.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/conversational_session.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/deduplicate_questions.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/errors.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/progress_tracker.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/validation.py*)",
+      "Bash(* .claude/skills/expert-feedback/scripts/*-*.py*)"
+    ]
+  }
+}

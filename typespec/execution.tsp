@@ -3,7 +3,7 @@
  *
  * This file defines the core execution primitives for agent runtime.
  *
- * BASE: Microsoft Agent Framework (MAF)
+ * BASE: Microsoft Agent Protocol (MAF)
  * - AIAgent: Core agent abstraction
  * - AgentResponse: Response model
  * - AgentSession: Session/thread abstraction

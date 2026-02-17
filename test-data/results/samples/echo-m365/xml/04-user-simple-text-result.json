@@ -1,65 +1,39 @@
 {
-  "runId": "run_bcda7435ec6c47f1ba673fe7e557aca6",
+  "runId": "run_pe9uuc1jzy",
   "agentId": "echo-agent",
-  "threadId": "thread_b9b211c7bae9473293a5e09fc5a4131e",
-  "journalId": null,
-  "status": "Completed",
+  "threadId": "thread_z395x2urwbo",
+  "status": "completed",
   "input": [
     {
-      "messageId": null,
+      "messageId": "msg_ne18a35lxh",
       "role": "user",
       "contents": [
         {
           "kind": "text",
-          "text": "Hello! This is a simple text message without the text tag wrapper.",
-          "audience": null
+          "text": "Hello! This is a simple text message without the text tag wrapper."
         }
-      ],
-      "userId": null,
-      "agentId": null,
-      "authorName": null,
-      "threadId": null,
-      "runId": null,
-      "parentId": null,
-      "createdAt": null,
-      "updatedAt": null,
-      "status": null,
-      "metadata": null
+      ]
     }
   ],
-  "agent": null,
   "output": [
     {
-      "messageId": "msg_5e4644df7a524f3d80ae4b3abd19d86f",
+      "messageId": "msg_ji2lsmjm97b",
       "role": "agent",
+      "createdAt": "2026-02-09T18:38:52.533Z",
       "contents": [
         {
           "kind": "text",
-          "text": "you said: \nHello! This is a simple text message without the text tag wrapper.",
-          "audience": null
+          "text": "you said: \nHello! This is a simple text message without the text tag wrapper."
         }
-      ],
-      "userId": null,
-      "agentId": null,
-      "authorName": null,
-      "threadId": null,
-      "runId": null,
-      "parentId": null,
-      "createdAt": "2026-02-09T18:38:33.455881Z",
-      "updatedAt": null,
-      "status": null,
-      "metadata": null
+      ]
     }
   ],
-  "usage": null,
-  "createdAt": "2026-02-09T18:38:33.455882Z",
-  "updatedAt": null,
-  "completedAt": "2026-02-09T18:38:33.455882Z",
-  "cancelledAt": null,
-  "cancellationReason": null,
-  "error": null,
-  "userId": null,
-  "threadCleanup": null,
-  "webhook": null,
-  "metadata": null
+  "usage": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "totalTokens": 0
+  },
+  "createdAt": "2026-02-09T18:38:52.533Z",
+  "updatedAt": "2026-02-09T18:38:52.533Z",
+  "completedAt": "2026-02-09T18:38:52.533Z"
 }

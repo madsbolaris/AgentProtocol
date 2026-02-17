@@ -1,0 +1,59 @@
+{
+  "workspace_path": "/test/workspace/partial",
+  "topic": "Review and optimize React component architecture",
+  "phase": "spawning_experts",
+  "current_iteration": 2,
+  "max_iterations": 5,
+  "convergence_percent": 45,
+  "experts": ["frontend-expert", "architecture-expert", "performance-expert", "code-review-expert", "testing-expert"],
+  "expert_progress": {
+    "frontend-expert": {
+      "status": "complete",
+      "duration_seconds": 89,
+      "accurate_cost": 0.0145,
+      "total_tokens": 9234,
+      "input_tokens": 5123,
+      "output_tokens": 3111,
+      "cache_creation_tokens": 800,
+      "cache_read_tokens": 200
+    },
+    "architecture-expert": {
+      "status": "complete",
+      "duration_seconds": 102,
+      "accurate_cost": 0.0167,
+      "total_tokens": 10567,
+      "input_tokens": 6234,
+      "output_tokens": 3333,
+      "cache_creation_tokens": 900,
+      "cache_read_tokens": 100
+    },
+    "performance-expert": {
+      "status": "complete",
+      "duration_seconds": 76,
+      "accurate_cost": 0.0123,
+      "total_tokens": 7890,
+      "input_tokens": 4456,
+      "output_tokens": 2434,
+      "cache_creation_tokens": 700,
+      "cache_read_tokens": 300
+    },
+    "code-review-expert": {
+      "status": "running",
+      "duration_seconds": 45,
+      "accurate_cost": 0.0089,
+      "total_tokens": 5678,
+      "input_tokens": 3234,
+      "output_tokens": 1444,
+      "cache_creation_tokens": 600,
+      "cache_read_tokens": 400
+    }
+  },
+  "total_duration_seconds": 312,
+  "total_cost": 0.0524,
+  "total_tokens": 33369,
+  "total_input_tokens": 19047,
+  "total_output_tokens": 10322,
+  "total_cache_creation_tokens": 3000,
+  "total_cache_read_tokens": 1000,
+  "cache_enabled": true
+}

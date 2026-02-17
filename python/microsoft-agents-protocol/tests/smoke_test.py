@@ -92,19 +92,19 @@ def test_golden_file_paths():
     test_data_dir = get_test_data_dir()
 
     # JSON path should exist (renamed from wait)
-    json_dir = test_data_dir / "results" / "basic-m365" / "json"
+    json_dir = test_data_dir / "results" / "samples" / "basic-m365" / "json"
     assert json_dir.exists(), f"JSON directory doesn't exist: {json_dir}"
     print(f"  ✅ JSON golden files directory exists")
 
     # Wait path should NOT exist anymore
-    wait_dir = test_data_dir / "results" / "basic-m365" / "wait"
+    wait_dir = test_data_dir / "results" / "samples" / "basic-m365" / "wait"
     if wait_dir.exists():
         print(f"  ⚠️  Old 'wait' directory still exists: {wait_dir}")
     else:
         print(f"  ✅ Old 'wait' directory removed")
 
     # XML path should exist
-    xml_dir = test_data_dir / "results" / "basic-m365" / "xml"
+    xml_dir = test_data_dir / "results" / "samples" / "basic-m365" / "xml"
     assert xml_dir.exists(), f"XML directory doesn't exist: {xml_dir}"
     print(f"  ✅ XML golden files directory exists")
 

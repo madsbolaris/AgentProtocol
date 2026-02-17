@@ -37,6 +37,12 @@ try:
 except ImportError:
     from testing_chat_client import TestingChatClient
 
+# Import caching utilities from common package
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "common"))
+from caching_utils import generate_cache_key, compute_static_content_hash, should_use_caching
+from cost_tracking import TokenUsage
+
 # Set up logging
 logging.basicConfig(
     level=logging.INFO,
@@ -67,11 +73,13 @@ class EmojiBot:
         self.conversation_history = []
         self.model = "gpt-5-nano"
         self.testing_client = None
+        self.static_content_hash = None  # Computed on first message
+        self.total_usage = TokenUsage()  # Track cumulative usage
 
         # Find recordings directory (navigate up to repo root)
         # From: python/samples/agents/emoji-chat/src/emoji_chat_bot.py → repo root (6 levels up)
         repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
-        recordings_dir = repo_root / "test-data" / "llm-recordings" / "emoji-chat"
+        recordings_dir = repo_root / "test-data" / "llm-recordings" / "sample" / "emoji-chat"
 
         # Determine recording/playback mode
         use_recordings = os.environ.get("USE_LLM_RECORDINGS", "").lower() == "true"

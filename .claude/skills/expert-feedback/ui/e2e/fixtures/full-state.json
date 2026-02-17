@@ -1,0 +1,69 @@
+{
+  "workspace_path": "/test/workspace/full",
+  "topic": "Implement comprehensive E2E testing for Expert Feedback UI",
+  "phase": "complete",
+  "current_iteration": 3,
+  "max_iterations": 5,
+  "convergence_percent": 92,
+  "experts": ["testing-expert", "ui-expert", "performance-expert", "accessibility-expert", "security-expert"],
+  "expert_progress": {
+    "testing-expert": {
+      "status": "complete",
+      "duration_seconds": 145,
+      "accurate_cost": 0.0234,
+      "total_tokens": 15420,
+      "input_tokens": 8230,
+      "output_tokens": 5190,
+      "cache_creation_tokens": 1500,
+      "cache_read_tokens": 500
+    },
+    "ui-expert": {
+      "status": "complete",
+      "duration_seconds": 132,
+      "accurate_cost": 0.0198,
+      "total_tokens": 12890,
+      "input_tokens": 7120,
+      "output_tokens": 4770,
+      "cache_creation_tokens": 1000,
+      "cache_read_tokens": 0
+    },
+    "performance-expert": {
+      "status": "complete",
+      "duration_seconds": 98,
+      "accurate_cost": 0.0156,
+      "total_tokens": 10234,
+      "input_tokens": 5890,
+      "output_tokens": 3344,
+      "cache_creation_tokens": 800,
+      "cache_read_tokens": 200
+    },
+    "accessibility-expert": {
+      "status": "complete",
+      "duration_seconds": 178,
+      "accurate_cost": 0.0287,
+      "total_tokens": 18765,
+      "input_tokens": 9876,
+      "output_tokens": 6889,
+      "cache_creation_tokens": 1500,
+      "cache_read_tokens": 500
+    },
+    "security-expert": {
+      "status": "complete",
+      "duration_seconds": 156,
+      "accurate_cost": 0.0245,
+      "total_tokens": 16123,
+      "input_tokens": 8567,
+      "output_tokens": 5556,
+      "cache_creation_tokens": 1200,
+      "cache_read_tokens": 800
+    }
+  },
+  "total_duration_seconds": 709,
+  "total_cost": 0.112,
+  "total_tokens": 73432,
+  "total_input_tokens": 39683,
+  "total_output_tokens": 25749,
+  "total_cache_creation_tokens": 6000,
+  "total_cache_read_tokens": 2000,
+  "cache_enabled": true
+}

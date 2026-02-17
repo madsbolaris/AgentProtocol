@@ -106,7 +106,7 @@ def _init_llm():
 
     # Find recordings directory
     repo_root = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
-    recordings_dir = repo_root / "test-data" / "llm-recordings" / "basic-m365"
+    recordings_dir = repo_root / "test-data" / "llm-recordings" / "sample" / "basic-m365"
 
     # Create real OpenAI client if needed (for normal or recording mode)
     real_client = None

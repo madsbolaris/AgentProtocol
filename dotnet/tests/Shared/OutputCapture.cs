@@ -284,8 +284,8 @@ namespace Microsoft.Agents.Testing
             // Determine output directory relative to test assembly
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
             var repoRoot = FindRepositoryRoot(baseDir);
-            // Use shared results directory (language-agnostic)
-            var outputDir = Path.Combine(repoRoot, "test-data", "results", "shared");
+            // Use docs results directory for documentation examples
+            var outputDir = Path.Combine(repoRoot, "test-data", "results", "docs");
 
             // Check if we're in update mode via environment variable
             var updateMode = Environment.GetEnvironmentVariable("UPDATE_GOLDEN") == "1";

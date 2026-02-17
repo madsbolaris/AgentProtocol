@@ -68,7 +68,7 @@ public class EmojiBotAgent : AgentProtocolApplication<EmojiContext>
             Directory.GetCurrentDirectory(),
             "..", "..", "..", ".."
         ));
-        var recordingsDir = Path.Combine(repoRoot, "test-data", "llm-recordings", "emoji-chat");
+        var recordingsDir = Path.Combine(repoRoot, "test-data", "llm-recordings", "sample", "emoji-chat");
 
         // Create real OpenAI client if needed (for normal or recording mode)
         ChatClient? realClient = null;

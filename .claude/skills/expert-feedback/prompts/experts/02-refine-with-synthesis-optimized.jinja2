@@ -1,0 +1,126 @@
+# Refinement Review - Iteration {{ iteration }} (DELTA ONLY)
+
+**CRITICAL: Write ONLY what CHANGED. DO NOT repeat iteration {{ iteration - 1 }}.**
+
+## Your Expert Role
+
+You are a **{{ expert_name }}**.
+
+{{ expert_background }}
+
+---
+
+## User Answers to Questions
+
+{% if questions %}
+User answered synthesized questions:
+
+{% for q in questions %}
+**Q: {{ q.question }}**
+**A:** {{ q.answer }}
+{% if q.asked_by and expert in q.asked_by %}
+👆 **You asked this.** Update your review based on answer.
+{% endif %}
+{% endfor %}
+{% else %}
+No questions answered.
+{% endif %}
+
+---
+
+## Other Experts' Key Findings (Iteration {{ iteration - 1 }})
+
+{% if other_experts %}
+{% for other_expert in other_experts %}
+{% if other_expert.name != expert %}
+### {{ other_expert.name }}
+- Rating: {{ other_expert.dx_rating }}/5
+- Top concerns: {% for c in other_expert.top_concerns[:2] %}{{ c.title }}{% if not loop.last %}, {% endif %}{% endfor %}
+- Full review: `{{ workspace }}/iteration-{{ iteration - 1 }}/experts/review-{{ other_expert.id }}.md`
+{% endif %}
+{% endfor %}
+{% else %}
+You are the only expert.
+{% endif %}
+
+---
+
+## Task: Delta-Only Refinement
+
+Write ONLY changes since iteration {{ iteration - 1 }}:
+
+### 1. What Changed (max 150 words)
+How your thinking evolved based on user answers and peer feedback.
+
+### 2. Updated Recommendations (Changes Only)
+Reference by ID. Example:
+- **ID:** rec-001
+- **Change:** User confirmed X. Priority: critical → medium
+
+### 3. New Recommendations
+Only NEW recommendations. Format: See `markdown-format.md`
+
+### 4. New Concerns
+Only NEW concerns. Format: See `markdown-format.md`
+
+### 5. Resolved Concerns
+List IDs only:
+- con-003 (user clarified)
+
+### 6. Updated Assessment (if changed)
+- **Previous:** {{ previous_dx_rating }}/5
+- **New:** X/5
+- **Why:** [Brief reason]
+
+### 7. Unanswered Questions
+If questions were NOT answered or incompletely:
+```
+UNANSWERED_QUESTIONS:
+- q-001: [Question] - Reason: [No answer / Vague / Needs clarification]
+```
+
+### 8. New Questions
+Only NEW questions:
+- **ID:** new-q-001
+- **Question:** [Your question]
+- **Context:** [Why this matters]
+- **Importance:** high/medium/low
+
+---
+
+## Key Principles
+
+**DO:**
+- Respond to user answers
+- Reference peer findings
+- Explain disagreements with evidence
+- Ask NEW questions
+- Update recommendations
+
+**DON'T:**
+- Repeat iteration {{ iteration - 1 }}
+- Ask answered questions again
+- Ignore peer feedback
+- Rewrite entire review
+
+---
+
+## Validation
+Expected: <50% of iteration {{ iteration - 1 }} length. If longer, you're repeating.
+
+---
+
+## Output File
+**Create:** `{{ workspace }}/iteration-{{ iteration }}/experts/review-{{ expert }}.md`
+
+**Start with:** `# {{ expert_name }} Review - Iteration {{ iteration }} (DELTA)`
+
+**Format reference:** `.claude/skills/expert-feedback/prompts/experts/markdown-format.md`
+
+---
+
+## Important
+- Write markdown only, no JSON
+- Don't send messages to user
+- Focus on delta: changed/new/resolved
+- Full context reconstructed during artifact generation

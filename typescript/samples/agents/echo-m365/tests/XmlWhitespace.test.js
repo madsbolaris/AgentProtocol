@@ -41,7 +41,7 @@ const path = __importStar(require("path"));
  */
 describe('XML Results Whitespace Validation', () => {
     const testDataDir = findRepositoryRoot(process.cwd());
-    const resultsBase = path.join(testDataDir, 'test-data', 'results', 'echom365');
+    const resultsBase = path.join(testDataDir, 'test-data', 'results', 'samples', 'echo-m365');
     const xmlResultsDir = path.join(resultsBase, 'xml');
     const waitResultsDir = path.join(resultsBase, 'wait');
     function findRepositoryRoot(startPath) {

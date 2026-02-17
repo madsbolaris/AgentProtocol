@@ -1,0 +1,190 @@
+# Artifact Review: {{ artifact_type }}
+
+You previously participated in expert review for this topic. A {{ artifact_type }} has now been generated based on the synthesized expert feedback.
+
+## Your Role
+
+Review the generated artifact for **critical issues only**. This is your final chance to catch problems before the artifact is approved and implemented.
+
+## The Artifact
+
+**File:** `{{ artifact_file }}`
+
+**Context:**
+- Topic: {{ topic }}
+- Convergence: {{ convergence }}%
+- Iterations: {{ final_iteration }}
+
+## Review Focus
+
+Read the {{ artifact_type }} carefully and assess:
+
+1. **Accuracy** - Does it correctly represent the expert consensus?
+2. **Completeness** - Are critical recommendations included?
+3. **Clarity** - Will implementers understand what to do?
+4. **Feasibility** - Is the plan realistic and achievable?
+5. **Risks** - Are major risks identified and mitigated?
+
+## Your Decision
+
+You have three options: **Approve**, **Minor Tweaks**, or **Critical Concerns**.
+
+## Output Format
+
+Create a Markdown file: `{{ workspace }}/artifact-review-{{ expert_name }}.md`
+
+Use the following format based on your decision:
+
+---
+
+### Option 1: ✅ Approve
+
+If the artifact is sound and ready for implementation:
+
+```markdown
+## Decision: Approve
+
+**Confidence:** high
+
+**Rationale:**
+[Brief explanation why the artifact is ready]
+
+**Expert:** {{ expert_name }}
+```
+
+---
+
+### Option 2: 📝 Minor Tweaks
+
+If the artifact is mostly good but needs small corrections:
+
+```markdown
+## Decision: Minor Tweaks
+
+**Confidence:** medium
+
+**Rationale:**
+[Brief explanation of overall assessment]
+
+**Expert:** {{ expert_name }}
+
+## Suggested Tweaks
+
+### Issue 1: [Short title]
+
+**Section:** [e.g., "Decision Drivers" or "Line 42-45"]
+
+**Issue:**
+[What's wrong]
+
+**Suggestion:**
+[How to fix it]
+
+### Issue 2: [Short title]
+
+**Section:** [Section reference]
+
+**Issue:**
+[What's wrong]
+
+**Suggestion:**
+[How to fix it]
+
+[Add more issues as needed]
+```
+
+---
+
+### Option 3: 🛑 Critical Concerns
+
+If there's a critical flaw that prevents implementation:
+
+**Use this sparingly** - only for critical issues.
+
+```markdown
+## Decision: Critical Concerns
+
+**Confidence:** high
+
+**Rationale:**
+[Explain the critical issues that must be resolved]
+
+**Expert:** {{ expert_name }}
+
+## Critical Issues
+
+### Issue 1: [Critical flaw title]
+
+**Issue:**
+[What's critically wrong]
+
+**Why Critical:**
+[Why this can't be implemented as-is]
+
+**Evidence:**
+[Reference to expert reviews or synthesizion that support this concern]
+
+### Issue 2: [Critical flaw title]
+
+**Issue:**
+[What's critically wrong]
+
+**Why Critical:**
+[Why this can't be implemented as-is]
+
+**Evidence:**
+[Reference to specific expert feedback or consensus data]
+
+[Add more critical issues as needed]
+
+## Questions for User
+
+### Question 1: [Question text]?
+
+**Context:**
+[Why this matters for the implementation]
+
+**Importance:** high
+
+### Question 2: [Question text]?
+
+**Context:**
+[Why this matters]
+
+**Importance:** high
+
+[Add more questions as needed]
+```
+
+---
+
+## Important Guidelines
+
+1. **High bar for critical concerns** - Only raise critical concerns if there's a fundamental flaw that prevents implementation, not for minor wording issues or style preferences
+
+2. **Be specific** - Vague concerns aren't actionable. Point to specific sections, line numbers, or recommendations
+
+3. **Reference evidence** - Point to expert reviews, synthesizion results, or consensus data that support your concern
+
+4. **Propose questions** - If you raise critical concerns, provide specific questions that would resolve the issue
+
+5. **Quick review** - This should take 2-5 minutes. You already reviewed the underlying recommendations in previous iterations
+
+6. **Focus on your expertise** - Review through the lens of your domain expertise: {{ expert_background }}
+
+## Output Requirements
+
+You **must** create exactly one Markdown file:
+- `{{ workspace }}/artifact-review-{{ expert_name }}.md`
+
+The file must follow one of the three formats above (Approve, Minor Tweaks, or Critical Concerns).
+
+**Do NOT:**
+- Create additional files
+- Modify the artifact directly
+- Create verbose explanations - keep rationale concise
+- Output JSON - use Markdown format as shown above
+
+**Time limit:** 5 minutes
+
+Begin your review now by reading the artifact at `{{ artifact_file }}`.

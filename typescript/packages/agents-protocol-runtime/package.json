@@ -1,0 +1,42 @@
+{
+  "name": "@microsoft/agents-protocol-runtime",
+  "version": "0.2.0",
+  "description": "Shared utilities for Microsoft Agents Protocol Client and Hosting SDKs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "agents",
+    "ai",
+    "llm",
+    "tools",
+    "functions",
+    "schema",
+    "microsoft"
+  ],
+  "author": "Microsoft",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/agentprotocol"
+  },
+  "peerDependencies": {
+    "@microsoft/agents-protocol-abstractions": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}

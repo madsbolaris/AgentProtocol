@@ -1,0 +1,192 @@
+# Generate Architecture & Implementation Plan
+
+Create a comprehensive Architecture & Implementation Plan based on expert feedback.
+
+## Context
+
+**Workspace:** {{ workspace }}
+**Expert Reviews:** {% for expert in experts %}`{{ workspace }}/iteration-final/experts/review-{{ expert }}.md`{% if not loop.last %}, {% endif %}{% endfor %}
+**Synthesis:** `{{ workspace }}/iteration-final/synthesized.md`
+
+---
+
+## Your Task
+
+Analyze all expert feedback and create an **Architecture & Implementation Plan** that:
+1. Defines overall architecture and system design
+2. Organizes implementation into logical phases
+3. Provides detailed specifications for each component
+4. Estimates time/effort for building the system
+5. Identifies critical path and dependencies
+6. Includes deployment and operational considerations
+7. Recommends technology stack based on expert input
+
+---
+
+## Analysis Steps
+
+1. **Read all expert reviews** - Extract recommendations, concerns, patterns
+2. **Extract key themes:**
+   - Architecture patterns and approaches
+   - Technology stack recommendations
+   - Component breakdown and responsibilities
+   - Data model and API design
+   - Security, performance, scalability requirements
+   - Operational concerns (deployment, monitoring, DR)
+   - Implementation sequencing
+   - Risk areas and mitigation strategies
+
+---
+
+## Output Structure
+
+```markdown
+# Architecture & Implementation Plan: {Title}
+
+**Created:** {{ date }}
+**Status:** Ready for Implementation
+**Estimated Total Time:** {X-Y weeks/months}
+
+## Executive Summary
+
+{High-level overview, purpose, key architectural decisions}
+
+### Goals
+- Goal 1
+- Goal 2
+
+### Key Architectural Decisions
+1. Decision 1 - {Rationale from expert consensus}
+2. Decision 2 - {Rationale}
+
+## Critical Files
+
+Files to be created:
+- `path/to/component1/main.ext` - {Purpose}
+- `path/to/config/settings.ext` - {Purpose}
+
+---
+
+## System Architecture
+
+### Overview
+{Architectural diagram description, component breakdown}
+
+**Pattern:** {Microservices / Monolith / Event-driven / Layered}
+
+**Principles:**
+- Principle 1 (from expert recommendations)
+- Principle 2
+
+### Components
+
+#### Component 1: {Name}
+- **Purpose:** {What it does}
+- **Technology:** {Stack based on expert feedback}
+- **Responsibilities:** {List}
+- **Interfaces:** Input/Output contracts
+- **Dependencies:** {Other components}
+
+{Repeat for each component}
+
+---
+
+## Data Model
+
+### Entities
+#### Entity 1: {Name}
+- **Fields:** {List}
+- **Relationships:** {To other entities}
+
+### Data Flow
+{How data moves through the system}
+
+---
+
+## API Design
+
+### Endpoint: {Method} /path
+- **Purpose:** {What it does}
+- **Input:** {Schema}
+- **Output:** {Schema}
+- **Status Codes:** {List}
+
+{Repeat for each endpoint}
+
+---
+
+## Implementation Plan
+
+### Phase 1: {Name} (Est: X weeks)
+**Goal:** {What this phase delivers}
+
+**Tasks:**
+1. Task 1 (X days)
+2. Task 2 (X days)
+
+**Success Criteria:** {How we know it's done}
+
+### Phase 2: {Name} (Est: X weeks)
+{Same structure}
+
+---
+
+## Security Considerations
+
+From expert feedback:
+- Concern 1 & mitigation
+- Concern 2 & mitigation
+
+---
+
+## Performance & Scalability
+
+**Load Estimates:** {Expected traffic/data}
+**Bottlenecks:** {Potential issues from experts}
+**Optimizations:** {Recommendations}
+
+---
+
+## Deployment
+
+**Environment:** {Dev/Staging/Prod setup}
+**CI/CD:** {Pipeline description}
+**Infrastructure:** {Servers, databases, services}
+**Monitoring:** {Tools and metrics}
+
+---
+
+## Risks & Mitigation
+
+From expert analysis:
+- **Risk:** {Description} → **Mitigation:** {Strategy}
+
+---
+
+## Technology Stack Justification
+
+{Why each technology was chosen based on expert consensus}
+
+---
+
+## Success Metrics
+
+- Metric 1: {Target}
+- Metric 2: {Target}
+
+---
+
+## Next Steps
+
+1. Step 1
+2. Step 2
+3. Step 3
+```
+
+---
+
+## Output File
+
+Create using Write tool: `{{ workspace }}/artifacts/architecture-plan.md`
+
+Follow the structure above. Keep concise - focus on decisions and rationale, not obvious details.

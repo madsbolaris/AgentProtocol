@@ -1,0 +1,74 @@
+# ⚠️ Parsing Error - Please Fix Your Review Format
+
+Your markdown review couldn't be parsed to JSON. This breaks the workflow and prevents your feedback from being included.
+
+## Errors Found ({{ errors|length }})
+
+{% for error in errors %}
+### Error {{ loop.index }}: {{ error.section }}
+
+**Issue:** {{ error.issue }}
+**Location:** Line {{ error.location }}
+**Expected format:** `{{ error.expected_format }}`
+**What you wrote:** `{{ error.actual_content }}`
+**How to fix:** {{ error.fix_hint }}
+
+{% endfor %}
+
+## Your Original Review (first 500 chars)
+
+```markdown
+{{ original_content[:500] }}...
+```
+
+## Required Format Specification
+
+**Read the complete format specification:** `prompts/experts/markdown-format.md`
+
+**Key requirements you must follow:**
+1. **Field names are case-sensitive:** Use `**Severity:**` not `Severity:` or `**severity:**`
+2. **Include all required metadata fields** at the top of your review
+3. **Use proper section headers:** Exactly `## Concerns ⚠️` and `## Recommendations 💡`
+4. **Format lists with bullets:** Every concern and recommendation must start with `-`
+5. **Required fields per concern:**
+   - **Severity:** (critical/high/medium/low)
+   - **Category:** (architecture/performance/security/etc)
+   - **Issue:** (description)
+   - **Evidence:** (what you observed)
+6. **Required fields per recommendation:**
+   - **Priority:** (critical/high/medium/low)
+   - **Complexity:** (low/medium/high)
+   - **Title:** (brief title)
+   - **Problem:** (what needs improvement)
+   - **Solution:** (how to fix it)
+   - **Benefits:** (why this matters)
+
+## Examples of Common Mistakes
+
+### ❌ Wrong - Inconsistent field format
+```markdown
+Severity: high  ← Missing bold markers
+**Category:** performance  ← Correct
+```
+
+### ✅ Correct - Consistent field format
+```markdown
+**Severity:** high
+**Category:** performance
+```
+
+### ❌ Wrong - Missing section header
+```markdown
+Here are my concerns:  ← Informal header
+- Concern 1
+```
+
+### ✅ Correct - Exact section header
+```markdown
+## Concerns ⚠️
+- Concern 1
+```
+
+---
+
+**Please rewrite your review following the format specification exactly.** The parsing script will extract JSON from your markdown automatically - you don't need to create JSON yourself.

@@ -42,9 +42,14 @@ export const phaseConfigs: Record<UIPhase, PhaseConfig> = {
     },
     actionPane: {
       type: 'empty',
-      title: 'Status',
+      title: 'Actions',
+      convergencePercent: 55,
+      convergenceTarget: 60,
+      consensusReached: false,
       content: {
-        message: 'Synthesis agent is consolidating expert feedback and identifying areas that need clarification.'
+        icon: 'hourglass-half',
+        title: 'Synthesis in progress',
+        description: 'Consolidating expert feedback and calculating convergence'
       }
     }
   },

@@ -1,69 +1,60 @@
-# Tool Failure Hook - Handle Interrupted Agents
+# Tool Failure Hook - Auto-Continue on Interruptions
 
 ## What This Does
 
-The `tool_failure` hook fires when Claude encounters an error executing a tool (Bash, Read, Write, etc.) and gets interrupted. This is different from the normal `Stop` hook, which only fires when Claude finishes normally.
+When Claude encounters a tool error (bash parsing error, file not found, permission denied, etc.), it gets "Interrupted". This hook **automatically tells Claude to continue** so it can handle the error itself.
 
-## Current Behavior
+**No LLM needed** - Claude already knows what went wrong from the error message, so we just tell it to keep going.
 
-Right now, the hook:
-1. **Logs the failure** to `/tmp/tool_failure_hook.log`
-2. **Plays a beep** to alert you
-3. **Allows the interruption** (Claude stops and waits for you)
+## How It Works
 
-## How to Continue After Interruption
+1. Tool fails (e.g., bash syntax error)
+2. Claude would normally show "Interrupted" and wait
+3. Hook intercepts and sends "continue" automatically
+4. Claude sees the error and can fix it or try another approach
 
-When you see "Interrupted" status, just type:
+## Example
+
+**Before (without hook):**
 ```
-continue
+OUT: Failed to parse command: Bad substitution: i
+
+Interrupted  ← You have to manually type "continue"
 ```
 
-Or be more specific:
+**After (with hook):**
 ```
-fix that bash error and continue
-```
+OUT: Failed to parse command: Bad substitution: i
 
-## Auto-Continue for Recoverable Errors (Optional)
-
-You can modify the hook to automatically continue for certain types of errors:
-
-```python
-# In tool_failure hook, replace the return section:
-
-# Classify error type
-is_recoverable = False
-
-# Example: Auto-continue on bash parsing errors
-if tool_name == "Bash" and "substitution" in error_message.lower():
-    is_recoverable = True
-    continue_message = "Fix the bash syntax error and try the command again"
-
-# Example: Auto-continue on file not found
-if "not found" in error_message.lower():
-    is_recoverable = True
-    continue_message = "The file doesn't exist. Please check the path and try again"
-
-if is_recoverable:
-    # Block the interruption and send continue message
-    print(json.dumps({
-        "decision": "block",
-        "continueMessage": continue_message
-    }))
-else:
-    # Allow interruption for non-recoverable errors
-    print(json.dumps({"decision": "allow"}))
+← Hook auto-continues, Claude keeps working
+I see the bash syntax error. Let me fix that heredoc...
 ```
 
 ## Logs
 
-Check logs to see what errors are being caught:
+Check what errors are being auto-continued:
 ```bash
 tail -20 /tmp/tool_failure_hook.log
 ```
 
+## When This Helps
+
+- **Bash syntax errors** - Claude can fix and retry
+- **File not found** - Claude can create the file or try another path
+- **Permission denied** - Claude can try with sudo or different approach
+- **Timeouts** - Claude can adjust timeout or simplify command
+
+## When to Disable
+
+If you want to manually review every tool failure before continuing, remove this hook from `.claude/settings.json`:
+
+```json
+"PostToolUseFailure": [...]  ← Delete this section
+```
+
 ## Hook Configuration
 
-The hook is configured in `.claude/settings.json`:
+Location: `.claude/settings.json`
 ```json
 "PostToolUseFailure": [
   {
@@ -72,20 +63,9 @@ The hook is configured in `.claude/settings.json`:
         "type": "command",
         "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/tool_failure",
         "timeout": 10,
-        "statusMessage": "Tool failed - interrupted"
+        "statusMessage": "Tool failed - auto-continuing"
       }
     ]
   }
 ]
 ```
-
-## Common Error Types to Handle
-
-Based on your bash error, common patterns you might want to auto-continue:
-
-1. **Bash parsing errors** - Syntax mistakes in heredocs, substitutions
-2. **File not found** - Claude tries to read missing files
-3. **Permission denied** - Missing execute permissions
-4. **Timeout errors** - Commands taking too long
-
-For each type, you can teach the hook to recognize it and send a helpful continue message.

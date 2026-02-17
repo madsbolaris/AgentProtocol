@@ -42,15 +42,17 @@ jobs:
             mkdocs-awesome-pages-plugin \
             mkdocs-section-index \
             mkdocs-git-revision-date-localized-plugin
+          # Install custom plugins
+          pip install -e mkdocs/plugins
 
       - name: Build documentation
         run: |
-          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+          export PYTHONPATH="${PYTHONPATH}:$(pwd):$(pwd)/mkdocs/plugins"
           mkdocs build
 
       - name: Deploy to GitHub Pages
         run: |
-          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+          export PYTHONPATH="${PYTHONPATH}:$(pwd):$(pwd)/mkdocs/plugins"
           mkdocs gh-deploy --force --clean --verbose
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

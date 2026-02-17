@@ -49,7 +49,7 @@ export function DocumentView({ title, content, showDiff = false }: DocumentViewP
   }
 
   return (
-    <div className="document-view">
+    <div className="document-view active">
       <div className="document-header">
         <div className="document-title-group">
           <h2>{title}</h2>

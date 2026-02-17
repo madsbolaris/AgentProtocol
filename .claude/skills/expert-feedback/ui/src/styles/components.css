@@ -1451,7 +1451,9 @@
             margin-bottom: 2rem;
             border: 1px solid var(--border-color);
             width: 100%;
-            display: block;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .iteration-header-row {

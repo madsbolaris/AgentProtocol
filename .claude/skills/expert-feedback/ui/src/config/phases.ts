@@ -80,9 +80,9 @@ export const phaseConfigs: Record<UIPhase, PhaseConfig> = {
             expert: 'synthesis-agent',
             type: 'radio',
             options: [
-              { value: 'async-only', label: 'Async only' },
-              { value: 'both', label: 'Both sync and async' },
-              { value: 'sync-only', label: 'Sync only' }
+              { value: 'async-only', label: 'Async only', description: 'Modern async/await pattern for better performance' },
+              { value: 'both', label: 'Both sync and async', description: 'Support both patterns for maximum flexibility' },
+              { value: 'sync-only', label: 'Sync only', description: 'Simple synchronous operations only' }
             ]
           }
         ]

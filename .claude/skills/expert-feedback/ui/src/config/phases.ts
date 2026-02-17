@@ -75,15 +75,73 @@ export const phaseConfigs: Record<UIPhase, PhaseConfig> = {
         questions: [
           {
             id: 'q1',
-            question: 'Should the API support both synchronous and asynchronous patterns?',
-            context: 'TypeScript and Python experts suggest async-first design for better scalability.',
+            question: 'What is the expected scale of this application?',
+            context: '',
             expert: 'synthesis-agent',
             type: 'radio',
             options: [
-              { value: 'async-only', label: 'Async only', description: 'Modern async/await pattern for better performance' },
-              { value: 'both', label: 'Both sync and async', description: 'Support both patterns for maximum flexibility' },
-              { value: 'sync-only', label: 'Sync only', description: 'Simple synchronous operations only' }
-            ]
+              { value: 'small', label: 'Small (1-10 users)', description: 'Personal or small team use' },
+              { value: 'medium', label: 'Medium (10-1000 users)', description: 'Department or small organization' },
+              { value: 'large', label: 'Large (1000+ users)', description: 'Enterprise-scale deployment' },
+              { value: 'other-scale', label: 'Other', description: 'Specify below' }
+            ],
+            allowOther: true
+          },
+          {
+            id: 'q2',
+            question: 'Are there specific performance requirements we should target?',
+            context: '',
+            expert: 'synthesis-agent',
+            type: 'radio',
+            options: [
+              { value: 'no-specific', label: 'No specific requirements', description: 'General best practices are sufficient' },
+              { value: 'response-time', label: 'Response time critical', description: 'Sub-100ms response times needed' },
+              { value: 'throughput', label: 'High throughput', description: 'Handle 1000+ requests/second' },
+              { value: 'other-perf', label: 'Other', description: 'Specify below' }
+            ],
+            allowOther: true
+          },
+          {
+            id: 'q3',
+            question: 'What is the deployment environment?',
+            context: '',
+            expert: 'synthesis-agent',
+            type: 'radio',
+            options: [
+              { value: 'cloud', label: 'Cloud (AWS, Azure, GCP)', description: '' },
+              { value: 'on-premise', label: 'On-Premise', description: '' },
+              { value: 'hybrid', label: 'Hybrid', description: '' },
+              { value: 'other-deploy', label: 'Other', description: '' }
+            ],
+            allowOther: true
+          },
+          {
+            id: 'q4',
+            question: "What's the primary deployment target for the SDK? We need to understand the runtime environment to make architectural decisions.",
+            context: '',
+            expert: 'synthesis-agent',
+            type: 'radio',
+            options: [
+              { value: 'nodejs', label: 'Node.js Server', description: 'Backend services and server-side applications' },
+              { value: 'browser', label: 'Browser', description: 'Frontend web applications' },
+              { value: 'both', label: 'Both (Universal)', description: 'Support both Node.js and browser environments with conditional exports, dual package hazard mitigation, and environment-specific polyfills for platform APIs' },
+              { value: 'other-target', label: 'Other', description: '' }
+            ],
+            allowOther: true
+          },
+          {
+            id: 'q5',
+            question: 'Which validation approaches should be supported? (Select all that apply)',
+            context: '',
+            expert: 'synthesis-agent',
+            type: 'checkbox',
+            options: [
+              { value: 'zod', label: 'Zod', description: 'TypeScript-first schema validation' },
+              { value: 'joi', label: 'Joi', description: 'Popular Node.js validation library' },
+              { value: 'yup', label: 'Yup', description: 'Schema builder for value parsing' },
+              { value: 'other-validation', label: 'Other', description: '' }
+            ],
+            allowOther: true
           }
         ]
       }

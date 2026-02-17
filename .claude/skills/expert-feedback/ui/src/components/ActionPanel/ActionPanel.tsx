@@ -24,7 +24,12 @@ export function ActionPanel({ type, title, content, onSubmit, convergencePercent
         <h3>{title}</h3>
         {showConvergence && (
           <div className="convergence-badge">
-            <span>Convergence:</span>
+            <div className="convergence-label">
+              <span>Convergence:</span>
+              <span className={`convergence-value ${consensusReached ? 'converged' : 'not-converged'}`}>
+                {convergencePercent}%
+              </span>
+            </div>
             <div className="convergence-bar">
               <div
                 className="convergence-fill"
@@ -32,7 +37,6 @@ export function ActionPanel({ type, title, content, onSubmit, convergencePercent
                 style={{ width: `${convergencePercent}%` }}
               />
             </div>
-            <span style={{ fontWeight: 600 }}>{convergencePercent}%</span>
           </div>
         )}
       </div>

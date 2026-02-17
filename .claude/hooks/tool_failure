@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""
+Tool Failure Hook: Auto-continue on tool failures
+
+When a tool fails (bash error, file not found, etc.), Claude gets "Interrupted".
+This hook automatically tells Claude to continue so it can handle the error itself.
+
+No LLM needed - Claude already knows what went wrong from the error message.
+"""
+
+import json
+import sys
+
+def main():
+    """Main hook entry point."""
+    try:
+        # Read hook input from stdin
+        hook_input = json.loads(sys.stdin.read())
+
+        # Log the failure for debugging
+        try:
+            with open("/tmp/tool_failure_hook.log", "a") as f:
+                from datetime import datetime
+                tool_name = hook_input.get('tool_name', 'unknown')
+                error_message = hook_input.get('error_message', '')
+                f.write(f"\n[{datetime.now()}] Tool: {tool_name}, Error: {error_message[:200]}\n")
+        except Exception:
+            pass  # Don't fail the hook if logging fails
+
+        # Auto-continue - let Claude handle the error
+        print(json.dumps({
+            "decision": "block",
+            "continueMessage": "continue"
+        }))
+        return 0
+
+    except Exception:
+        # On error, allow the interruption (fail open)
+        print(json.dumps({"decision": "allow"}))
+        return 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -1622,7 +1622,8 @@
         }
 
         .panel-header h3 {
-            font-size: 1rem;
+            font-size: 1.25rem;
+            line-height: 2rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
         }
@@ -1728,6 +1729,14 @@
             color: var(--text-primary);
         }
 
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            font-size: 0.9375rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+        }
+
         .question-options {
             display: flex;
             flex-direction: column;
@@ -1736,9 +1745,9 @@
 
         .question-option {
             display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.875rem 1rem;
+            align-items: start;
+            gap: 0.875rem;
+            padding: 1rem;
             border: 1px solid var(--border-color);
             border-radius: 0.375rem;
             cursor: pointer;

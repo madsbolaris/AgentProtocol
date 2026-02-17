@@ -275,7 +275,7 @@ describe('Hosting SDK Quickstart Samples', () => {
       // <snippet>
       import { TextContent, Thread } from '@microsoft/agents-protocol';
 
-      async function* commandRouter(
+      const commandRouter: Middleware<TextContent> = async function*(
           content: TextContent,
           thread: Thread
       ): AsyncIterable<IStreamable> {
@@ -289,7 +289,7 @@ describe('Hosting SDK Quickstart Samples', () => {
               // Pass through to LLM
               yield content;
           }
-      }
+      };
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -344,7 +344,7 @@ describe('Hosting SDK Quickstart Samples', () => {
       // <snippet>
       import { MessageReactionContent, DeveloperMessage, TextContent } from '@microsoft/agents-protocol';
 
-      async function* handleReactions(
+      const handleReactions: Middleware<MessageReactionContent> = async function*(
           reaction: MessageReactionContent,
           thread: Thread
       ): AsyncIterable<IStreamable> {
@@ -358,7 +358,7 @@ describe('Hosting SDK Quickstart Samples', () => {
           });
           yield reaction;
           yield developerMsg;  // Yield so LLM can process the notification
-      }
+      };
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -416,7 +416,7 @@ describe('Hosting SDK Quickstart Samples', () => {
     it('should uppercase streamed content chunks', async () => {
       // Sample from quickstart guide
       // <snippet>
-      async function* uppercaseContent(
+      const uppercaseContent: Middleware<TextContentChunk> = async function*(
           stream: AsyncIterable<TextContentChunk>,
           thread: Thread
       ): AsyncIterable<IStreamable> {
@@ -424,7 +424,7 @@ describe('Hosting SDK Quickstart Samples', () => {
               chunk.text = chunk.text.toUpperCase();
               yield chunk;
           }
-      }
+      };
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -683,7 +683,7 @@ describe('Hosting SDK Quickstart Samples', () => {
       const errors: string[] = [];
 
       // <snippet>
-      async function errorMiddleware(
+      const errorMiddleware: MessageMiddleware = async function(
           message: ChatMessage,
           thread: Thread,
           next: () => Promise<void>
@@ -698,7 +698,7 @@ describe('Hosting SDK Quickstart Samples', () => {
               });
               thread.addMessage(errorResponse);
           }
-      }
+      };
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -843,7 +843,7 @@ describe('Hosting SDK Quickstart Samples', () => {
       // <snippet>
       import { TextContent, Thread, IStreamable } from '@microsoft/agents-protocol';
 
-      async function* contentFilter(
+      const contentFilter: Middleware<TextContent> = async function*(
           content: TextContent,
           thread: Thread
       ): AsyncIterable<IStreamable> {
@@ -857,7 +857,7 @@ describe('Hosting SDK Quickstart Samples', () => {
               content.text = filteredText;
               yield content;
           }
-      }
+      };
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -892,7 +892,7 @@ describe('Hosting SDK Quickstart Samples', () => {
       // <snippet>
       import { TextContent, DeveloperMessage, Thread, IStreamable } from '@microsoft/agents-protocol';
 
-      async function* metadataEnricher(
+      const metadataEnricher: Middleware<TextContent> = async function*(
           content: TextContent,
           thread: Thread
       ): AsyncIterable<IStreamable> {
@@ -908,7 +908,7 @@ describe('Hosting SDK Quickstart Samples', () => {
           };
 
           yield content; // Pass through original
-      }
+      };
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -946,7 +946,7 @@ describe('Hosting SDK Quickstart Samples', () => {
       // <snippet>
       import { TextContentChunk, Thread, IStreamable } from '@microsoft/agents-protocol';
 
-      async function* responseFormatter(
+      const responseFormatter: Middleware<TextContentChunk> = async function*(
           stream: AsyncIterable<TextContentChunk>,
           thread: Thread
       ): AsyncIterable<IStreamable> {
@@ -959,7 +959,7 @@ describe('Hosting SDK Quickstart Samples', () => {
               }
               yield chunk;
           }
-      }
+      };
 
       const config: AgentConfig = {
           model: "gpt-4",

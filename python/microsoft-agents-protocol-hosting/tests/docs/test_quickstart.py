@@ -256,6 +256,9 @@ class TestHostingQuickstartSamples:
                 # Pass through to LLM
                 yield content
 
+        # Type annotation shows the signature matches Middleware
+        _: Middleware[TextContent] = command_router
+
         config = AgentConfig(
             model="gpt-4",
             instructions="You are helpful.",
@@ -324,6 +327,9 @@ class TestHostingQuickstartSamples:
             yield reaction
             yield developer_msg  # Yield so LLM can process the notification
 
+        # Type annotation shows the signature matches Middleware
+        _: Middleware[MessageReactionContent] = handle_reactions
+
         config = AgentConfig(
             model="gpt-4",
             instructions="You are helpful.",
@@ -374,6 +380,9 @@ class TestHostingQuickstartSamples:
             async for chunk in stream:
                 chunk.text = chunk.text.upper()
                 yield chunk
+
+        # Type annotation shows the signature matches Middleware
+        _: Middleware[TextContentChunk] = uppercase_content
 
         config = AgentConfig(
             model="gpt-4",
@@ -536,7 +545,11 @@ class TestHostingQuickstartSamples:
         captured_errors = []
 
         # <snippet>
-        async def error_middleware(message, thread, next):
+        async def error_middleware(
+            message: ChatMessage,
+            thread: Thread,
+            next: Callable[[], Awaitable[None]]
+        ) -> None:
             try:
                 await next()
             except Exception as e:
@@ -549,6 +562,9 @@ class TestHostingQuickstartSamples:
                     ]
                 )
                 thread.add_message(error_msg)
+
+        # Type annotation shows the signature matches MessageMiddleware
+        _: MessageMiddleware = error_middleware
 
         config = AgentConfig(
             model="gpt-4",
@@ -603,6 +619,9 @@ class TestHostingQuickstartSamples:
             else:
                 content.text = filtered_text
                 yield content
+
+        # Type annotation shows the signature matches Middleware
+        _: Middleware[TextContent] = content_filter
         # </snippet>
 
         # Test the filter
@@ -641,6 +660,9 @@ class TestHostingQuickstartSamples:
             )
             yield context_msg
             yield content  # Pass through original message
+
+        # Type annotation shows the signature matches Middleware
+        _: Middleware[TextContent] = metadata_enricher
         # </snippet>
 
         # Test the enricher
@@ -670,6 +692,9 @@ class TestHostingQuickstartSamples:
                     chunk.text = f"🤖 **Agent Response:**\n\n{chunk.text}"
                     first_chunk = False
                 yield chunk
+
+        # Type annotation shows the signature matches Middleware
+        _: Middleware[TextContentChunk] = response_formatter
         # </snippet>
 
         # Test the formatter

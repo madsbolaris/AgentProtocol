@@ -96,13 +96,11 @@ export function DetailView({
                 isTyping={isTyping}
               />
             </div>
-            <div className="document-view active">
-              <DocumentView
-                title={title}
-                content={documentContent}
-                showDiff={showDiff}
-              />
-            </div>
+            <DocumentView
+              title={title}
+              content={documentContent}
+              showDiff={showDiff}
+            />
           </>
         )}
       </div>

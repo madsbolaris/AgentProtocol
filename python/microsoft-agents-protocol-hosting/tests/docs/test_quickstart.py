@@ -247,7 +247,7 @@ class TestHostingQuickstartSamples:
         async def command_router(
             content: TextContent,
             thread: Thread
-        ) -> AsyncIterable[IStreamable]:
+        ):
             # Check if it's the /help command
             if content.text.strip() == "/help":
                 # Handle command - return result without calling LLM
@@ -255,9 +255,6 @@ class TestHostingQuickstartSamples:
             else:
                 # Pass through to LLM
                 yield content
-
-        # Type annotation shows the signature matches Middleware
-        _: Middleware[TextContent] = command_router
 
         config = AgentConfig(
             model="gpt-4",
@@ -315,7 +312,7 @@ class TestHostingQuickstartSamples:
         async def handle_reactions(
             reaction: MessageReactionContent,
             thread: Thread
-        ) -> AsyncIterable[IStreamable]:
+        ):
             # Convert reaction to a message the agent can understand
             emoji = reaction.reactions_added[0].type if reaction.reactions_added else "unknown"
             developer_msg = DeveloperMessage(
@@ -327,9 +324,6 @@ class TestHostingQuickstartSamples:
             yield reaction
             yield developer_msg  # Yield so LLM can process the notification
 
-        # Type annotation shows the signature matches Middleware
-        _: Middleware[MessageReactionContent] = handle_reactions
-
         config = AgentConfig(
             model="gpt-4",
             instructions="You are helpful.",
@@ -338,6 +332,8 @@ class TestHostingQuickstartSamples:
                 (MessageReactionContent, handle_reactions),
             ]
         )
+
+        agent = AgentHost(config)
         # </snippet>
 
         # Assert - Verify middleware is registered
@@ -376,13 +372,10 @@ class TestHostingQuickstartSamples:
         async def uppercase_content(
             stream: AsyncIterable[TextContentChunk],
             thread: Thread
-        ) -> AsyncIterable[IStreamable]:
+        ):
             async for chunk in stream:
                 chunk.text = chunk.text.upper()
                 yield chunk
-
-        # Type annotation shows the signature matches Middleware
-        _: Middleware[TextContentChunk] = uppercase_content
 
         config = AgentConfig(
             model="gpt-4",
@@ -430,7 +423,7 @@ class TestHostingQuickstartSamples:
             stream: AsyncIterable[TextContentChunk],
             thread: Thread,
             next: Callable[[AsyncIterable[IStreamable]], Awaitable[AsyncIterable[TextContentChunk]]]
-        ) -> AsyncIterable[IStreamable]:
+        ):
             start = time.time()
             captured_logs.append("🚀 Starting stream")
 
@@ -440,9 +433,6 @@ class TestHostingQuickstartSamples:
             captured_logs.append(f"✅ Stream completed in {elapsed:.2f}s")
 
             return result
-
-        # Type annotation shows the signature matches ChainedMiddleware[TextContentChunk]
-        _: ChainedMiddleware[TextContentChunk] = time_streaming
 
         config = AgentConfig(
             model="gpt-4",
@@ -549,7 +539,7 @@ class TestHostingQuickstartSamples:
             message: ChatMessage,
             thread: Thread,
             next: Callable[[], Awaitable[None]]
-        ) -> None:
+        ):
             try:
                 await next()
             except Exception as e:
@@ -562,9 +552,6 @@ class TestHostingQuickstartSamples:
                     ]
                 )
                 thread.add_message(error_msg)
-
-        # Type annotation shows the signature matches MessageMiddleware
-        _: MessageMiddleware = error_middleware
 
         config = AgentConfig(
             model="gpt-4",
@@ -608,7 +595,7 @@ class TestHostingQuickstartSamples:
         async def content_filter(
             content: TextContent,
             thread: Thread
-        ) -> AsyncIterable[IStreamable]:
+        ):
             """Filter profanity and sensitive information"""
             # Check for profanity
             filtered_text = content.text.replace("badword", "***")
@@ -619,9 +606,6 @@ class TestHostingQuickstartSamples:
             else:
                 content.text = filtered_text
                 yield content
-
-        # Type annotation shows the signature matches Middleware
-        _: Middleware[TextContent] = content_filter
         # </snippet>
 
         # Test the filter
@@ -646,7 +630,7 @@ class TestHostingQuickstartSamples:
         async def metadata_enricher(
             content: TextContent,
             thread: Thread
-        ) -> AsyncIterable[IStreamable]:
+        ):
             """Add contextual metadata to messages"""
             # Get user context from thread metadata
             user_timezone = thread.metadata.get("user_timezone", "UTC")
@@ -660,9 +644,6 @@ class TestHostingQuickstartSamples:
             )
             yield context_msg
             yield content  # Pass through original message
-
-        # Type annotation shows the signature matches Middleware
-        _: Middleware[TextContent] = metadata_enricher
         # </snippet>
 
         # Test the enricher
@@ -683,7 +664,7 @@ class TestHostingQuickstartSamples:
         async def response_formatter(
             stream: AsyncIterable[TextContentChunk],
             thread: Thread
-        ) -> AsyncIterable[IStreamable]:
+        ):
             """Format agent responses with branding and markdown"""
             first_chunk = True
             async for chunk in stream:
@@ -692,9 +673,6 @@ class TestHostingQuickstartSamples:
                     chunk.text = f"🤖 **Agent Response:**\n\n{chunk.text}"
                     first_chunk = False
                 yield chunk
-
-        # Type annotation shows the signature matches Middleware
-        _: Middleware[TextContentChunk] = response_formatter
         # </snippet>
 
         # Test the formatter

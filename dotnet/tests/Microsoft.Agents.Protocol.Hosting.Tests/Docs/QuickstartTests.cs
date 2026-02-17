@@ -195,7 +195,6 @@ public class QuickstartTests : IDisposable
         var builder = WebApplication.CreateBuilder();
 
         #region Snippet
-        // Type: Middleware<TextContent>
         async IAsyncEnumerable<IStreamable> CommandRouter(
             TextContent content,
             Thread thread,
@@ -250,7 +249,6 @@ public class QuickstartTests : IDisposable
         var builder = WebApplication.CreateBuilder();
 
         #region Snippet
-        // Type: Middleware<MessageReactionContent>
         async IAsyncEnumerable<IStreamable> HandleReactions(
             MessageReactionContent reaction,
             Thread thread,
@@ -304,7 +302,6 @@ public class QuickstartTests : IDisposable
         var builder = WebApplication.CreateBuilder();
 
         #region Snippet
-        // Type: Middleware<TextContentChunk>
         async IAsyncEnumerable<IStreamable> UppercaseContent(
             IAsyncEnumerable<TextContentChunk> stream,
             Thread thread,
@@ -451,7 +448,6 @@ public class QuickstartTests : IDisposable
         var builder = WebApplication.CreateBuilder();
 
         #region Snippet
-        // Type: MessageMiddleware
         async Task ErrorMiddleware(
             ChatMessage message,
             Thread thread,
@@ -499,7 +495,6 @@ public class QuickstartTests : IDisposable
     public async Task Step4_ContentFilterMiddleware_ConfigurationWorks()
     {
         #region Snippet
-        // Type: Middleware<TextContent>
         async IAsyncEnumerable<IStreamable> ContentFilter(
             TextContent content,
             Thread thread)
@@ -538,7 +533,6 @@ public class QuickstartTests : IDisposable
     public async Task Step4_MetadataEnrichmentMiddleware_ConfigurationWorks()
     {
         #region Snippet
-        // Type: Middleware<TextContent>
         async IAsyncEnumerable<IStreamable> MetadataEnricher(
             TextContent content,
             Thread thread)
@@ -583,7 +577,6 @@ public class QuickstartTests : IDisposable
     public async Task Step4_ResponseFormatterMiddleware_ConfigurationWorks()
     {
         #region Snippet
-        // Type: Middleware<TextContentChunk>
         async IAsyncEnumerable<IStreamable> ResponseFormatter(
             IAsyncEnumerable<TextContentChunk> stream,
             Thread thread)

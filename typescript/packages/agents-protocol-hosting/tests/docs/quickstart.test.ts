@@ -275,10 +275,10 @@ describe('Hosting SDK Quickstart Samples', () => {
       // <snippet>
       import { TextContent, Thread } from '@microsoft/agents-protocol';
 
-      const commandRouter: Middleware<TextContent> = async function*(
+      async function* commandRouter(
           content: TextContent,
           thread: Thread
-      ): AsyncIterable<IStreamable> {
+      ) {
           // Check if it's the /help command
           if (content.text.trim() === "/help") {
               // Handle command - return result without calling LLM
@@ -289,7 +289,7 @@ describe('Hosting SDK Quickstart Samples', () => {
               // Pass through to LLM
               yield content;
           }
-      };
+      }
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -358,7 +358,7 @@ describe('Hosting SDK Quickstart Samples', () => {
           });
           yield reaction;
           yield developerMsg;  // Yield so LLM can process the notification
-      };
+      }
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -424,7 +424,7 @@ describe('Hosting SDK Quickstart Samples', () => {
               chunk.text = chunk.text.toUpperCase();
               yield chunk;
           }
-      };
+      }
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -497,7 +497,7 @@ describe('Hosting SDK Quickstart Samples', () => {
           console.log(`✅ Stream completed in ${Date.now() - start}ms`);
 
           return result;
-      };
+      }
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -578,7 +578,7 @@ describe('Hosting SDK Quickstart Samples', () => {
 
           const elapsed = Date.now() - start;
           console.log(`✅ Completed in ${elapsed}ms`);
-      };
+      }
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -698,7 +698,7 @@ describe('Hosting SDK Quickstart Samples', () => {
               });
               thread.addMessage(errorResponse);
           }
-      };
+      }
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -857,7 +857,7 @@ describe('Hosting SDK Quickstart Samples', () => {
               content.text = filteredText;
               yield content;
           }
-      };
+      }
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -908,7 +908,7 @@ describe('Hosting SDK Quickstart Samples', () => {
           };
 
           yield content; // Pass through original
-      };
+      }
 
       const config: AgentConfig = {
           model: "gpt-4",
@@ -959,7 +959,7 @@ describe('Hosting SDK Quickstart Samples', () => {
               }
               yield chunk;
           }
-      };
+      }
 
       const config: AgentConfig = {
           model: "gpt-4",
